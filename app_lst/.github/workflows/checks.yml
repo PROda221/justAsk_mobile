@@ -1,0 +1,32 @@
+name: Lint and TypeScript
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-typescript:
+    name: Run lint and TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run lint
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+
+      - name: Run TypeScript
+        uses: actions/typescript-action@v1
+        with:
+          tsconfig: 'tsconfig.json'
