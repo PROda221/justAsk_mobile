@@ -1,0 +1,17 @@
+name: CodeQL Analysis
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  codeql-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
