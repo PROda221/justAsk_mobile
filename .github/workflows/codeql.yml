@@ -13,5 +13,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        queries: security-and-quality
+
     - name: Run CodeQL Analysis
       uses: github/codeql-action/analyze@v2
