@@ -11,7 +11,7 @@ const HomeScreen = (): JSX.Element => {
 
 	return (<View>
 		<Typography bgColor='blue' type='displayLarge' size='large'>
-			{content.homeScreen.helloRajat}
+			{content.homeScreen.helloNishant}
 		</Typography>
 		<Text>{count}</Text>
 		<Button title="Increment" onPress={() => dispatch(increment())} />
