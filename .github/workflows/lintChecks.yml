@@ -16,7 +16,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 20.11.0
 
     - name: Install Dependencies
       run: |
@@ -24,4 +24,4 @@ jobs:
         npm install -g @react-native-community/cli
 
     - name: Linting
-      run: npm run lint
+      run: yarn run lint
