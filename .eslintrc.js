@@ -7,6 +7,7 @@ module.exports = {
 	extends: [
 		'xo',
 		'plugin:react/recommended',
+		'prettier',
 	],
 	overrides: [
 		{
@@ -37,6 +38,7 @@ module.exports = {
 	plugins: [
 		'react',
 		'react-native',
+		'prettier'
 	],
 	rules: {
 		// Allow .js files to contain JSX code
