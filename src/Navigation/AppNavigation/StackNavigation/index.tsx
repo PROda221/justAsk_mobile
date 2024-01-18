@@ -8,7 +8,7 @@ const AppStack = () => (
 	<AppScreensStack.Navigator  screenOptions={{
 		headerShown: false,
 	}}>
-		<AppScreensStack.Screen name="Home" component={HomeScreen} />
+		<AppScreensStack.Screen name="Home Stack" component={HomeScreen} />
 	</AppScreensStack.Navigator>
 );
 

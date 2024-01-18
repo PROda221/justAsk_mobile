@@ -8,7 +8,7 @@ const AppDrawer = createDrawerNavigator();
 
 const AppDrawerScreens = () => (
 	<AppDrawer.Navigator>
-		<AppDrawer.Screen name="Home" component={AppBottomScreens} />
+		<AppDrawer.Screen name="Home Drawer" component={AppBottomScreens} />
 	</AppDrawer.Navigator>
 );
 

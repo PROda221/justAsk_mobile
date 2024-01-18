@@ -9,7 +9,7 @@ const AppBottomScreens = () => (
 	  <BottomTab.Navigator screenOptions={{
 		headerShown: false,
 	}}>
-		<BottomTab.Screen name="Home" component={AppStack} />
+		<BottomTab.Screen name="Home Bottom Screen" component={AppStack} />
 		<BottomTab.Screen name="Settings" component={SettingsScreen} />
 	  </BottomTab.Navigator>
 );
