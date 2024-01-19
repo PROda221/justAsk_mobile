@@ -54,9 +54,6 @@ const StyledText = styled(Text)<StyledTextType>`
   font-size: ${(props) => setFonts(props.size)};
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid #bf4f74;
-  border-radius: 3px;
-  text-align: center;
 `;
 
 export const Typography = (
