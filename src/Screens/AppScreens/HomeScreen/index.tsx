@@ -1,4 +1,4 @@
-import {View, Text, Button} from 'react-native';
+import {View, Button} from 'react-native';
 import React from 'react';
 import {useAppDispatch, useAppSelector} from '../../../Redux/hooks';
 import {
@@ -52,7 +52,7 @@ const HomeScreen = (): JSX.Element => {
 		secureTextEntry={true}
 		rules={{required: 'Password required'}}
       />
-      <Text>{count}</Text>
+      <Typography bgColor='black' type='displaySmall' size='large'>{count}</Typography>
       <Button title="Increment" onPress={() => dispatch(increment())} />
       <Button title="Decrement" onPress={() => dispatch(decrement())} />
       <Button
