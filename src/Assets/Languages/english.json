@@ -1,5 +1,7 @@
 {
   "homeScreen": {
-    "helloNishant": "Hello Nishant"
+    "helloNishant": "Hello Nishant",
+    "username": "Username",
+    "password": "Password"
   }
 }
