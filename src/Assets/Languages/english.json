@@ -1,5 +1,11 @@
 {
   "homeScreen": {
-    "helloNishant": "Hello Nishant"
+    "helloNishant": "Hello Nishant",
+    "hello":"hello",
+    "world":"world",
+    "firstcard":"firstcard"
+
+
   }
+
 }

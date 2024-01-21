@@ -1,3 +1,5 @@
-import { Typography } from "./Typography"
+import { Typography } from './Typography';
+import { CustomButton } from './CustomButton';
+import { CustomCard } from './CustomCard';
 
-export {Typography}
+export { Typography, CustomButton, CustomCard };

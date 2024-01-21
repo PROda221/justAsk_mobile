@@ -26,7 +26,7 @@ type TypographyProps = {
 type StyledTextType = {
   bgColor: string;
   size: 'small' | 'medium' | 'large';
-}
+};
 
 const setFonts = (size: string) => {
   let fontSize = 0;
@@ -54,7 +54,7 @@ const StyledText = styled(Text)<StyledTextType>`
   font-size: ${(props) => setFonts(props.size)};
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid #bf4f74;
+  border: 2px;
   border-radius: 3px;
   text-align: center;
 `;
