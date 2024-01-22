@@ -63,6 +63,7 @@ const StyledButton = styled(Button)<StyledButtonType>`
 
 const ButtonText = styled(Text)<StyledButtonTextType>`
   font-size: 16px;
+  font-family: 'Segoe UI';
   font-weight: bold;
   flex: 1;
   width: 100%;

@@ -1,8 +1,11 @@
 import * as React from 'react';
-import SettingsScreen from '../../../Screens/AppScreens/SettingsScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AppStack from '../StackNavigation';
-import CustomTabBar from '../../../Screens/AppScreens/CustomTabBar';
+import CustomTabBar from './CustomTabBar';
+import OnlineCoursesScreen from '../../../Screens/AuthScreens/OnlineCourses';
+import AboutUsScreen from '../../../Screens/AuthScreens/AboutUs';
+import AccountScreen from '../../../Screens/AppScreens/SettingsScreen';
+import FeesScreen from '../../../Screens/AuthScreens/Fees';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -11,10 +14,13 @@ const AppBottomScreens = () => (
     screenOptions={{
       headerShown: false,
     }}
-    tabBar={(props) => <CustomTabBar {...props} />} // Use your custom tab bar component
+    tabBar={props => <CustomTabBar {...props} />} // Use your custom tab bar component
   >
-    <BottomTab.Screen name="Home Bottom Screen" component={AppStack} />
-    <BottomTab.Screen name="Settings" component={SettingsScreen} />
+    <BottomTab.Screen name="Courses" component={OnlineCoursesScreen} />
+    <BottomTab.Screen name="Fees" component={FeesScreen} />
+    <BottomTab.Screen name="Home Screen" component={AppStack} />
+    <BottomTab.Screen name="About Us" component={AboutUsScreen} />
+    <BottomTab.Screen name="Account" component={AccountScreen} />
   </BottomTab.Navigator>
 );
 

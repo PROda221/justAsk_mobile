@@ -51,6 +51,7 @@ const setFonts = (size: string) => {
 const StyledText = styled(Text)<StyledTextType>`
   /* Adapt the colors based on primary prop */
   color: ${props => props.bgColor};
+  font-family: 'Segoe UI';
   font-size: ${props => setFonts(props.size)};
   margin: 1em;
   padding: 0.25em 1em;
