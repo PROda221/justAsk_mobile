@@ -3,9 +3,9 @@
     "helloNishant": "Hello Nishant",
     "hello":"hello",
     "world":"world",
-    "firstcard":"firstcard"
-
-
+    "firstcard":"firstcard",
+    "username": "Username",
+    "password": "Password"
   }
 
 }

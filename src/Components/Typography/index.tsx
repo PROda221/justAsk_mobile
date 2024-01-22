@@ -1,6 +1,6 @@
-import React, { type ReactNode } from 'react';
+import React, {type ReactNode} from 'react';
 import styled from 'styled-components/native';
-import { Text } from 'react-native-paper';
+import {Text} from 'react-native-paper';
 
 type TypographyProps = {
   bgColor: string;
@@ -50,17 +50,14 @@ const setFonts = (size: string) => {
 
 const StyledText = styled(Text)<StyledTextType>`
   /* Adapt the colors based on primary prop */
-  color: ${(props) => props.bgColor};
-  font-size: ${(props) => setFonts(props.size)};
+  color: ${props => props.bgColor};
+  font-size: ${props => setFonts(props.size)};
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px;
-  border-radius: 3px;
-  text-align: center;
 `;
 
 export const Typography = (
-  props: TypographyProps & Readonly<{ children?: ReactNode }>
+  props: TypographyProps & Readonly<{children?: ReactNode}>,
 ): JSX.Element => (
   <StyledText variant={props.type} bgColor={props.bgColor} size={props.size}>
     {props.children}

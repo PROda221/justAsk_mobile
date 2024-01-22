@@ -1,22 +1,50 @@
+import {View, Text, Button} from 'react-native';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import content from '../../../Assets/Languages/english.json';
-import { Typography } from '../../../Components';
-import { CustomButton } from '../../../Components/CustomButton';
-import { CustomCard } from '../../../Components/CustomCard';
-import { decrement, increment, incrementAsync } from '../../../Redux/Slices/counterSlice';
-import { useAppDispatch, useAppSelector } from '../../../Redux/hooks';
+import {Typography} from '../../../Components';
+import {CustomButton} from '../../../Components/CustomButton';
+import {CustomCard} from '../../../Components/CustomCard';
+import {
+  decrement,
+  increment,
+  incrementAsync,
+} from '../../../Redux/Slices/counterSlice';
+import {useAppDispatch, useAppSelector} from '../../../Redux/hooks';
 
 const HomeScreen = (): JSX.Element => {
-  const count = useAppSelector((state) => state.counterSlice.value);
+  const {control, handleSubmit} = useForm<FormData>();
+
+  const count = useAppSelector(state => state.counterSlice.value);
   const dispatch = useAppDispatch();
 
+  const onSubmit: SubmitHandler<FormData> = data => {
+    // eslint-disable-next-line no-console, no-restricted-syntax
+    console.log('data is :', data);
+  };
+
   return (
-    <View style={styles.container}>
+    <View>
       <Typography bgColor="blue" type="displayLarge" size="large">
-        {content.homeScreen.helloNishant}
+        {homeScreenContent.helloNishant}
       </Typography>
-      <Text>{count}</Text>
+      <TextInput
+        control={control}
+        name={'username'}
+        label={homeScreenContent.username}
+        secureTextEntry={false}
+        rules={{required: 'Username required'}}
+      />
+      <TextInput
+        control={control}
+        name={'password'}
+        label={homeScreenContent.password}
+        secureTextEntry={true}
+        rules={{required: 'Password required'}}
+      />
+      <Typography bgColor="black" type="displaySmall" size="large">
+        {count}
+      </Typography>
       <Button title="Increment" onPress={() => dispatch(increment())} />
       <Button title="Decrement" onPress={() => dispatch(decrement())} />
       <Button
@@ -25,35 +53,7 @@ const HomeScreen = (): JSX.Element => {
           dispatch(incrementAsync());
         }}
       />
-      {/* <Button title="Increment" onPress={() => dispatch(increment())} /> */}
-      <CustomButton
-        variant="tertiary"
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onPress={() => {}}
-        label={`${content.homeScreen.hello}`}
-      />
-      <View style={styles.buttonsView}>
-        <CustomButton
-          variant="primary"
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onPress={() => {}}
-          label={`${content.homeScreen.hello}`}
-        />
-        <CustomButton
-          variant="secondary"
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          onPress={() => {}}
-          label={`${content.homeScreen.hello}`}
-        />
-      </View>
-
-      <CustomCard
-        title={`${content.homeScreen.firstcard}`}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onPress={() => {}}
-        mode="elevated"
-        imageSource={{ uri: 'https://picsum.photos/700' }}
-      />
+      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
   );
 };
@@ -67,5 +67,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     width: '100%',
   },
-  container: { alignItems: 'center', display: 'flex', justifyContent: 'center' },
+  container: {alignItems: 'center', display: 'flex', justifyContent: 'center'},
 });
