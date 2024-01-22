@@ -1,7 +1,21 @@
 {
   "homeScreen": {
     "helloNishant": "Hello Nishant",
+    "hello":"hello",
+    "world":"world",
+    "firstcard":"firstcard",
     "username": "Username",
     "password": "Password"
+  },
+  "navigation": {
+    "homePage": "Home Page",
+    "onlineCourses": "Online Courses",
+    "levelQualifications": "Level 4 Qualifications",
+    "campusCourses": "Campus Courses",
+    "lstTeen": "LST-Teen",
+    "Fees": "Fees",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "Login": "Login"
   }
 }

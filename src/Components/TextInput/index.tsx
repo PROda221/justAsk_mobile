@@ -22,6 +22,7 @@ type TextInputProps = {
 const StyledTextInput = styled(RPTextInput)`
   border-radius: 5px;
   font-size: 15px;
+  font-family: 'Segoe UI';
 `;
 
 export const TextInput = ({
