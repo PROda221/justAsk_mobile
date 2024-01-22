@@ -1,16 +1,22 @@
-import {View, Text, Button} from 'react-native';
+import {View, Button} from 'react-native';
 import React from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import content from '../../../Assets/Languages/english.json';
-import {Typography} from '../../../Components';
-import {CustomButton} from '../../../Components/CustomButton';
-import {CustomCard} from '../../../Components/CustomCard';
+import {useAppDispatch, useAppSelector} from '../../../Redux/hooks';
 import {
-  decrement,
   increment,
+  decrement,
   incrementAsync,
 } from '../../../Redux/Slices/counterSlice';
-import {useAppDispatch, useAppSelector} from '../../../Redux/hooks';
+import {TextInput, Typography} from '../../../Components';
+import content from '../../../Assets/Languages/english.json';
+import {type SubmitHandler, useForm} from 'react-hook-form';
+import {type HomeScreenType} from '../../../Assets/Languages/englishTypes';
+
+type FormData = {
+  username: string;
+  password: string;
+};
+
+const homeScreenContent: HomeScreenType = content.homeScreen;
 
 const HomeScreen = (): JSX.Element => {
   const {control, handleSubmit} = useForm<FormData>();
@@ -59,13 +65,3 @@ const HomeScreen = (): JSX.Element => {
 };
 
 export default HomeScreen;
-
-const styles = StyleSheet.create({
-  buttonsView: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
-  },
-  container: {alignItems: 'center', display: 'flex', justifyContent: 'center'},
-});
