@@ -14,6 +14,7 @@ const AppBottomScreens = () => (
     screenOptions={{
       headerShown: false,
     }}
+    initialRouteName="Home Screen"
     tabBar={props => <CustomTabBar {...props} />} // Use your custom tab bar component
   >
     <BottomTab.Screen name="Courses" component={OnlineCoursesScreen} />

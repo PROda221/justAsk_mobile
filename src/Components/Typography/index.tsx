@@ -21,11 +21,14 @@ type TypographyProps = {
     | 'labelMedium'
     | 'labelSmall';
   size: 'small' | 'medium' | 'large';
+  fontWeight: string;
 };
 
 type StyledTextType = {
   bgColor: string;
   size: 'small' | 'medium' | 'large';
+  fontWeight: string;
+  variant: 'small' | 'medium' | 'large';
 };
 
 const setFonts = (size: string) => {
@@ -53,14 +56,19 @@ const StyledText = styled(Text)<StyledTextType>`
   color: ${props => props.bgColor};
   font-family: 'Segoe UI';
   font-size: ${props => setFonts(props.size)};
-  margin: 1em;
-  padding: 0.25em 1em;
+  margin: 0px;
+  padding: 0.25px 1px;
+  font-weight: ${props => props.fontWeight};
 `;
 
 export const Typography = (
   props: TypographyProps & Readonly<{children?: ReactNode}>,
 ): JSX.Element => (
-  <StyledText variant={props.type} bgColor={props.bgColor} size={props.size}>
+  <StyledText
+    variant={props.type}
+    bgColor={props.bgColor}
+    size={props.size}
+    fontWeight={props.fontWeight}>
     {props.children}
   </StyledText>
 );

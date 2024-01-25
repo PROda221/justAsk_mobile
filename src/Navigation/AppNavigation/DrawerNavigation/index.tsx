@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import AppBottomScreens from '../BottomNavigation';
 import CustomDrawerContent from './CustomDrawerContent';
-import { type DrawerParamList } from '../../types';
+import {type DrawerParamList} from '../../types';
 import OnlineCoursesScreen from '../../../Screens/AuthScreens/OnlineCourses';
 import LevelQualScreen from '../../../Screens/AuthScreens/LevelQualification';
 import CampusCourseScreen from '../../../Screens/AuthScreens/CampusCourses';
@@ -16,13 +16,15 @@ const AppDrawer = createDrawerNavigator<DrawerParamList>();
 
 const AppDrawerScreens = () => (
   <AppDrawer.Navigator
-    screenOptions={{ swipeEdgeWidth: 5 }} // SwipeEdgeWidth: 0 to disable swipe gestures in drawer
+    screenOptions={{headerShown: false, swipeEdgeWidth: 5}} // SwipeEdgeWidth: 0 to disable swipe gestures in drawer
     // @ts-expect-error ts is acting bonkers
-    drawerContent={(props) => <CustomDrawerContent {...props} /> }
-  >
+    drawerContent={props => <CustomDrawerContent {...props} />}>
     <AppDrawer.Screen name={'HomePage'} component={AppBottomScreens} />
     <AppDrawer.Screen name={'Online Courses'} component={OnlineCoursesScreen} />
-    <AppDrawer.Screen name={'Level 4 Qualifications'} component={LevelQualScreen} />
+    <AppDrawer.Screen
+      name={'Level 4 Qualifications'}
+      component={LevelQualScreen}
+    />
     <AppDrawer.Screen name={'Campus Courses'} component={CampusCourseScreen} />
     <AppDrawer.Screen name={'LST-Teen'} component={LstTeenScreen} />
     <AppDrawer.Screen name={'Fees'} component={FeesScreen} />

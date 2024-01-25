@@ -1,11 +1,16 @@
 {
   "homeScreen": {
     "helloNishant": "Hello Nishant",
-    "hello":"hello",
-    "world":"world",
-    "firstcard":"firstcard",
+    "hello": "hello",
+    "world": "world",
+    "firstcard": "firstcard",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "onlineCourse": "Online Course",
+    "level4Qualification": "Level 4 Qualifications",
+    "campusCourses": "Campus Courses",
+    "meetTheTeam": "Meet The Team",
+    "ourStudentPortfolios": "Our Student Portfolios"
   },
   "navigation": {
     "homePage": "Home Page",
@@ -17,5 +22,9 @@
     "aboutUs": "About Us",
     "contactUs": "Contact Us",
     "Login": "Login"
+  },
+  "DatialsScreen": {},
+  "ProgramScreen": {
+    "moreCourses": "More courses that you may like..."
   }
 }

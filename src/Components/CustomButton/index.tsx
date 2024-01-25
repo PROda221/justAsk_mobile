@@ -1,32 +1,32 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { Button, Text } from 'react-native-paper';
+import {Button, Text} from 'react-native-paper';
 
 type CustomButtonProps = {
   onPress: () => void;
   label: string;
-  variant: 'primary' | 'secondary' | 'tertiary';
+  variant: 'typeA' | 'typeB' | 'typeC' | 'typeD';
 };
 
 type StyledButtonType = {
   onPress: () => void;
   label: string;
-  variant: 'primary' | 'secondary' | 'tertiary';
+  variant: 'typeA' | 'typeB' | 'typeC' | 'typeD';
 };
 
 type StyledButtonTextType = {
-  mode: 'primary' | 'secondary' | 'tertiary';
+  mode: 'typeA' | 'typeB' | 'typeC' | 'typeD';
 };
 
 const StyledButton = styled(Button)<StyledButtonType>`
-  background-color: ${(props) => props.buttonColor};
+  background-color: ${props => props.buttonColor};
   border: 1px solid rgba(27, 31, 35, 0.15);
   align-items: center;
   justify-content: center;
 
-  ${({ variant }) => {
+  ${({variant}) => {
     switch (variant) {
-      case 'primary':
+      case 'typeA':
         return `
           background-color: #000000;
           color: #fff;
@@ -34,27 +34,36 @@ const StyledButton = styled(Button)<StyledButtonType>`
           border: 1px solid rgba(27, 31, 35, 0.15);
           height:50px;
           width:30%;
-
-
         `;
-      case 'secondary':
+      case 'typeB':
         return `
           background-color: #ffffff;
           color: #000000;
-          border-radius: 3px;
+          border-radius: 1px;
           border: 1px solid  #000000;
           height:50px;
           width:50%;
-
-
         `;
-      case 'tertiary':
+      case 'typeC':
         return `
-          background-color: #d0d7dd;
-          color: #312d2d;
-          border: 1px solid rgba(27, 31, 35, 0.15);
+          background-color: #ffffff;
+          color: #000000;
+          border: 1px solid #000000;
+          height:19px;
+          width:62px;
+          justify-content: center;
+          align-items: center;
         `;
-
+      case 'typeD':
+        return `
+          background-color: #ffffff;
+          color: #000000;
+          border: 1px solid #A9A5A5;
+          height:30px;
+          width:78px;
+          justify-content: center;
+          align-items: center;
+        `;
       default:
         return '';
     }
@@ -62,25 +71,28 @@ const StyledButton = styled(Button)<StyledButtonType>`
 `;
 
 const ButtonText = styled(Text)<StyledButtonTextType>`
-  font-size: 16px;
   font-family: 'Segoe UI';
   font-weight: bold;
-  flex: 1;
-  width: 100%;
-  ${({ mode }) => {
+
+  ${({mode}) => {
     switch (mode) {
-      case 'primary':
+      case 'typeA':
         return `
-          color: #fff;
-          
+          color: #ffffff;       
         `;
-      case 'secondary':
+      case 'typeB':
         return `
           color: #000000;
         `;
-      case 'tertiary':
+      case 'typeC':
         return `
-          color: #312d2d;
+          color: #000000;
+          font-size:9px;
+        `;
+      case 'typeD':
+        return `
+          color: #000000;
+          font-size: 9px;
         `;
       default:
         return '';
@@ -88,7 +100,10 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
   }};
 `;
 
-export const CustomButton: React.FC<CustomButtonProps> = ({ onPress, ...props }) => (
+export const CustomButton: React.FC<CustomButtonProps> = ({
+  onPress,
+  ...props
+}) => (
   <StyledButton onPress={onPress} variant={props.variant} label={props.label}>
     <ButtonText mode={props.variant}>{props.label}</ButtonText>
   </StyledButton>
