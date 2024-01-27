@@ -84,8 +84,7 @@ const AccountScreen = (): JSX.Element => {
               bgColor={'#000000'}
               type={'titleMedium'}
               size={'medium'}
-              fontWeight={'400'}
-              style={styles.textStyle}>
+              fontWeight={'400'}>
               {` Welcome to the London School of Trends. Please login to your account.`}
             </Typography>
           </View>
