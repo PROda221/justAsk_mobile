@@ -2,15 +2,17 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Typography} from '../../../Components';
 import {colors} from '../../../DesignTokens/Colors';
-import { moderateScale, verticalScale } from '../../../Functions/StyleScale';
+import {moderateScale, verticalScale} from '../../../Functions/StyleScale';
 
-type courseOverviewData = {
+type CourseOverviewData = {
   title: string;
   content: string;
   data: string[];
 };
 
-const courseOverviewContent: courseOverviewData = {
+const bullet = '\u2022 ';
+
+const courseOverviewContent: CourseOverviewData = {
   content:
     'This course is ideal for students in the creative industries who are interested in starting their own business or improving the structure of an existing one. This course also meets the perfect fit for recent graduates, designers, creatives, managers, and entrepreneurs in the creative field. Get the classroom experience from the comfort of your home. We give you real-world advice on what to expect and how to maximise your creative and professional prospects.',
   title: 'Highlights',
@@ -53,7 +55,7 @@ const CourseOverview: React.FC = () => (
             size="large"
             textStyle={styles.textLeft}
             fontWeight="400">
-            {`\u2022 `}
+            {bullet}
           </Typography>
           <Typography
             bgColor={colors.black}
@@ -71,7 +73,6 @@ const CourseOverview: React.FC = () => (
 const styles = StyleSheet.create({
   container: {paddingHorizontal: moderateScale(16)},
   innerContainer: {marginTop: verticalScale(20)},
-  pointers: {marginLeft: verticalScale(5)},
   pointersContainers: {flexDirection: 'row'},
   textLeft: {
     textAlign: 'left',
