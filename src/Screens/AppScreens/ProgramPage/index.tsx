@@ -263,7 +263,7 @@ const ProgramPage = (): JSX.Element => {
               renderItem={({item}) => (
                 <CustomCard
                   variant={'small'}
-                  onPress={console.log('clicked')}
+                  onPress={() => console.log('clicked')}
                   title={item.title}
                   imageSource={item.imageSource}
                   mode={'elevated'}
