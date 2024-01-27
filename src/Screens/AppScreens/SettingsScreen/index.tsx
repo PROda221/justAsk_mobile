@@ -1,26 +1,37 @@
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Typography} from '../../../Components/Typography';
 import {useNavigation} from '@react-navigation/native';
+import {colors} from '../../../DesignTokens/Colors';
+import {type SettingType} from '../../../Assets/Languages/englishTypes';
 import {
   horizontalScale,
   verticalScale,
   moderateScale,
 } from '../../../Functions/StyleScale';
-import {CustomButton} from '../../../Components';
+import {CustomButton, TextInput} from '../../../Components';
 import {
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetModalProvider,
-  BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import {BottomSheetComponent} from './BottomSheetComponent';
+import {type SubmitHandler, useForm} from 'react-hook-form';
+
+import content from '../../../Assets/Languages/english.json';
+
+type FormData = {
+  username: string;
+  password: string;
+};
 
 const AccountScreen = (): JSX.Element => {
-  const navigation = useNavigation();
+  const settingScreenContent: SettingType = content.SettingScreen;
 
+  const navigation = useNavigation();
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
+  const {control, handleSubmit} = useForm<FormData>();
   const snapPoints = useMemo(() => ['60%'], []);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -28,15 +39,16 @@ const AccountScreen = (): JSX.Element => {
     bottomSheetModalRef.current?.present();
   }, []);
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
     setIsSheetOpen(index !== -1);
   }, []);
   const handleBackPress = () => {
     navigation.navigate('Home Screen');
   };
-  useEffect(() => {
-    console.log('isSheetOpen', isSheetOpen);
-  }, [isSheetOpen]);
+
+  const onSubmit: SubmitHandler<FormData> = data => {
+    // eslint-disable-next-line no-console, no-restricted-syntax
+    console.log('data is :', data);
+  };
 
   return (
     <BottomSheetModalProvider>
@@ -44,24 +56,23 @@ const AccountScreen = (): JSX.Element => {
         <SafeAreaView
           style={[
             styles.container,
-            {backgroundColor: isSheetOpen ? 'grey' : 'white'},
+            {backgroundColor: isSheetOpen ? colors.grey : colors.white},
           ]}>
           <View style={styles.header}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
+            <View style={styles.innerHeader}>
               <TouchableOpacity onPress={handleBackPress}>
-                <MaterialIcons name={'chevron-left'} size={25} color="black" />
+                <MaterialIcons
+                  name={'chevron-left'}
+                  size={25}
+                  color={colors.drawerFontColor}
+                />
               </TouchableOpacity>
               <Typography
-                bgColor={'black'}
+                bgColor={colors.drawerFontColor}
                 type={'titleSmall'}
                 size={'large'}
-                fontWeight="600"
-                style={styles.textStyle}>
-                {`Login Into your Account`}
+                fontWeight="600">
+                {settingScreenContent.loginAccount}
               </Typography>
             </View>
           </View>
@@ -75,34 +86,41 @@ const AccountScreen = (): JSX.Element => {
             handlePresentModalPress={handlePresentModalPress}
           />
 
-          <View
-            style={{
-              marginVertical: verticalScale(16),
-              alignItems: 'center',
-            }}>
+          <View style={styles.welcomeText}>
             <Typography
-              bgColor={'#000000'}
+              bgColor={colors.drawerFontColor}
               type={'titleMedium'}
               size={'medium'}
               fontWeight={'400'}>
-              {` Welcome to the London School of Trends. Please login to your account.`}
+              {settingScreenContent.welcomeToLondonSchool}
             </Typography>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              marginVertical: verticalScale(16),
-              justifyContent: 'space-evenly',
-            }}>
+          <TextInput
+            control={control}
+            name={'username'}
+            label={settingScreenContent.username}
+            secureTextEntry={false}
+            rules={{required: 'Username required'}}
+          />
+
+          <TextInput
+            control={control}
+            name={'password'}
+            label={settingScreenContent.password}
+            secureTextEntry={true}
+            rules={{required: 'Password required'}}
+          />
+
+          <View style={styles.buttonView}>
             <CustomButton
-              onPress={() => console.log('hello')}
-              label={'LOGIN'}
+              onPress={handleSubmit(onSubmit)}
+              label={settingScreenContent.login}
               variant={'typeA'}
             />
             <CustomButton
               onPress={handlePresentModalPress}
-              label={'FORGOT PASSWORD'}
+              label={settingScreenContent.forgotPassword}
               variant={'typeB'}
             />
           </View>
@@ -113,7 +131,16 @@ const AccountScreen = (): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  safeAreaContainer: {flex: 1},
+  buttonView: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: verticalScale(16),
+  },
+
+  container: {
+    flex: 1,
+  },
+
   header: {
     alignItems: 'center',
     borderBottomWidth: moderateScale(1),
@@ -122,17 +149,15 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(16),
   },
 
-  container: {
-    flex: 1,
-  },
-
-  contentContainer: {
-    flex: 1,
+  innerHeader: {
     alignItems: 'center',
+    flexDirection: 'row',
   },
 
-  textStyle: {
-    textAlign: 'right',
+  welcomeText: {
+    alignItems: 'center',
+    marginVertical: verticalScale(16),
+    paddingHorizontal: horizontalScale(16),
   },
 });
 

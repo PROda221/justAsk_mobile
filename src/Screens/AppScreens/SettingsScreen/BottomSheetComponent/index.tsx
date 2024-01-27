@@ -1,65 +1,81 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
-import {CustomButton, Typography} from '../../../../Components';
-import {
-  verticalScale,
-  horizontalScale,
-  moderateScale,
-} from '../../../../Functions/StyleScale';
+import {CustomButton, TextInput, Typography} from '../../../../Components';
+import {verticalScale, horizontalScale} from '../../../../Functions/StyleScale';
+import {colors} from '../../../../DesignTokens/Colors';
+import content from '../../../../Assets/Languages/english.json';
+import {type SettingType} from '../../../../Assets/Languages/englishTypes';
+import {type SubmitHandler, useForm} from 'react-hook-form';
 
-interface BottomSheetComponentProps {
+type BottomSheetComponentProps = {
   handleSheetChanges: ((index: number) => void) | undefined;
   handlePresentModalPress: () => void;
-
   index: number | undefined;
   isSheetOpen: boolean;
-
   snapPoints: string[];
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
-}
+};
+
+type FormData = {
+  username: string;
+  password: string;
+};
+
+const settingScreenContent: SettingType = content.SettingScreen;
 
 export const BottomSheetComponent: React.FC<
   BottomSheetComponentProps
 > = props => {
+  const {control, handleSubmit} = useForm<FormData>();
+  const onSubmit: SubmitHandler<FormData> = data => {
+    // eslint-disable-next-line no-console, no-restricted-syntax
+    console.log('data is :', data);
+  };
+
   return (
     <BottomSheetModal
       ref={props.bottomSheetModalRef}
       index={props.index}
       snapPoints={props.snapPoints}
-      onChange={props.handleSheetChanges}
-      // backdropComponent={props => (
-      //   <BottomSheetBackdrop {...props} pressBehavior="close" />
-      // )}
-    >
+      onChange={props.handleSheetChanges}>
       <View style={styles.contentContainer}>
         <Typography
-          bgColor={'#000000'}
+          bgColor={colors.drawerFontColor}
           type={'titleMedium'}
           size={'medium'}
           fontWeight={'600'}>
-          {`Forgotten Your Password`}
+          {settingScreenContent.forgottenPassowrd}
         </Typography>
         <View style={styles.innerContainer}>
           <Typography
-            bgColor={'#000000'}
+            bgColor={colors.drawerFontColor}
             type={'titleMedium'}
             size={'medium'}
             fontWeight={'400'}>
-            {`Please enter the email address you used to register on the system to identify yourself. If this email address exists in our database an automatic email will be sent to the associated email address.`}
+            {settingScreenContent.enterYourEmail}
           </Typography>
         </View>
       </View>
+
+      <TextInput
+        control={control}
+        name={'email'}
+        label={settingScreenContent.Email}
+        secureTextEntry={false}
+        rules={{required: 'Email Required'}}
+      />
+
       <View style={styles.buttonView}>
         <CustomButton
-          onPress={() => console.log('hello')}
-          label={'SUBMIT'}
+          onPress={handleSubmit(onSubmit)}
+          label={settingScreenContent.submit}
           variant={'typeA'}
         />
 
         <CustomButton
           onPress={props.handlePresentModalPress}
-          label={'LOGIN YOUR ACCOUNT?'}
+          label={settingScreenContent.loginAccount}
           variant={'typeB'}
         />
       </View>
@@ -68,23 +84,20 @@ export const BottomSheetComponent: React.FC<
 };
 
 const styles = StyleSheet.create({
-  container: {
+  buttonView: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: verticalScale(16),
   },
 
   contentContainer: {
     alignItems: 'center',
+    marginVertical: verticalScale(16),
   },
 
   innerContainer: {
     alignItems: 'center',
-    paddingHorizontal: horizontalScale(16),
-  },
-
-  buttonView: {
-    flex: 1,
-    flexDirection: 'row',
-    marginVertical: verticalScale(16),
-    justifyContent: 'space-evenly',
+    paddingHorizontal: horizontalScale(32),
   },
 });
