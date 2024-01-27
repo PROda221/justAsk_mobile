@@ -5,9 +5,9 @@ import {Text, TouchableOpacity, View} from 'react-native';
 import {FrontArrow} from '../../Assets/Images';
 
 type CustomButtonProps = {
-  onPress: () => void;
+  onPress?: () => void;
   label: string;
-  variant: 'typeA' | 'typeB' | 'typeC' | 'typeD';
+  variant?: 'typeA' | 'typeB' | 'typeC' | 'typeD';
   backArrow?: boolean;
 };
 
@@ -40,7 +40,7 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
           border-radius: 4px;
           border: 1px solid rgba(27, 31, 35, 0.15);
           height:52px;
-          width:160px;
+          width:150px;
         `;
       case 'typeB':
         return `
@@ -49,7 +49,7 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
           border-radius: 4px;
           border: 1px solid  #000000;
           height:52px;
-          width:203px;
+          width:190px;
         `;
       case 'typeC':
         return `
@@ -85,12 +85,12 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
       case 'typeA':
         return `
           color: #ffffff; 
-          font-size:15px;
+          font-size:13px;
         `;
       case 'typeB':
         return `
           color: #000000;
-          font-size:15px;
+          font-size:13px;
         `;
       case 'typeC':
         return `

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import {BottomSheetModal, BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {CustomButton, TextInput, Typography} from '../../../../Components';
 import {verticalScale, horizontalScale} from '../../../../Functions/StyleScale';
 import {colors} from '../../../../DesignTokens/Colors';
 import content from '../../../../Assets/Languages/english.json';
-import {type SettingType} from '../../../../Assets/Languages/englishTypes';
+import {type AccountType} from '../../../../Assets/Languages/englishTypes';
 import {type SubmitHandler, useForm} from 'react-hook-form';
 
 type BottomSheetComponentProps = {
@@ -22,7 +22,7 @@ type FormData = {
   password: string;
 };
 
-const settingScreenContent: SettingType = content.SettingScreen;
+const settingScreenContent: AccountType = content.SettingScreen;
 
 export const BottomSheetComponent: React.FC<
   BottomSheetComponentProps
@@ -33,16 +33,29 @@ export const BottomSheetComponent: React.FC<
     console.log('data is :', data);
   };
 
+  const renderBackdrop = useCallback(
+    props => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
+    ),
+    [],
+  );
+
   return (
     <BottomSheetModal
       ref={props.bottomSheetModalRef}
       index={props.index}
       snapPoints={props.snapPoints}
-      onChange={props.handleSheetChanges}>
+      backdropComponent={renderBackdrop}
+      onChange={props.handleSheetChanges}
+      backgroundStyle={styles.bottomSheet}>
       <View style={styles.contentContainer}>
         <Typography
           bgColor={colors.drawerFontColor}
-          type={'titleMedium'}
           size={'medium'}
           fontWeight={'600'}>
           {settingScreenContent.forgottenPassowrd}
@@ -50,21 +63,21 @@ export const BottomSheetComponent: React.FC<
         <View style={styles.innerContainer}>
           <Typography
             bgColor={colors.drawerFontColor}
-            type={'titleMedium'}
             size={'medium'}
             fontWeight={'400'}>
             {settingScreenContent.enterYourEmail}
           </Typography>
         </View>
       </View>
-
-      <TextInput
-        control={control}
-        name={'email'}
-        label={settingScreenContent.Email}
-        secureTextEntry={false}
-        rules={{required: 'Email Required'}}
-      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          control={control}
+          name={'email'}
+          label={settingScreenContent.Email}
+          secureTextEntry={false}
+          rules={{required: 'Email Required'}}
+        />
+      </View>
 
       <View style={styles.buttonView}>
         <CustomButton
@@ -84,6 +97,8 @@ export const BottomSheetComponent: React.FC<
 };
 
 const styles = StyleSheet.create({
+  bottomSheet: {borderRadius: 40},
+
   buttonView: {
     flex: 1,
     flexDirection: 'row',
@@ -95,9 +110,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: verticalScale(16),
   },
-
   innerContainer: {
     alignItems: 'center',
-    paddingHorizontal: horizontalScale(32),
+    marginTop: verticalScale(24),
+    paddingHorizontal: horizontalScale(16),
+  },
+
+  inputContainer: {
+    paddingHorizontal: horizontalScale(16),
   },
 });

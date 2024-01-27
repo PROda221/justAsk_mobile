@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+ 
 import {View, FlatList, StyleSheet} from 'react-native';
 import React from 'react';
 import {CustomCard} from '../../../Components';

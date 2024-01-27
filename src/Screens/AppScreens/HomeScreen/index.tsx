@@ -13,6 +13,13 @@ import {
   type StackScreens,
 } from '../../../Navigation/types';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {colors} from '../../../DesignTokens/Colors';
+import {Profile} from '../../../Assets/Images';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../Functions/StyleScale';
 
 type CardData = {
   id: string;
@@ -256,6 +263,25 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
               )}
             />
           </CardContainer>
+
+          <CardContainer
+            fontColor={colors.black}
+            fontSize="large"
+            fontWeight="700"
+            title={homeScreenContent.whatOurStudentSay}>
+            <View style={styles.studentsPoint}>
+              <Profile width={horizontalScale(72)} height={verticalScale(72)} />
+              <Typography
+                bgColor={colors.black}
+                size={'medium'}
+                textStyle={styles.textStyle}
+                fontWeight={'400'}>
+                {
+                  'The course proved to be immensely engaging and beneficial, particularly in light of my aspirations to embark on a career in fashion communication...'
+                }
+              </Typography>
+            </View>
+          </CardContainer>
         </Scroll>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -263,7 +289,24 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
-  safeAreaContainer: {flex: 1},
+  safeAreaContainer: {backgroundColor: colors.white, flex: 1},
+  studentsPoint: {
+    alignItems: 'center',
+    backgroundColor: colors.studentCard,
+    borderRadius: moderateScale(5),
+    flexDirection: 'row',
+    height: verticalScale(140),
+    justifyContent: 'space-between',
+    marginTop: moderateScale(15),
+    paddingHorizontal: moderateScale(16),
+    width: horizontalScale(350),
+  },
+  textStyle: {
+    fontSize: moderateScale(12), // Overriding the font size
+    maxWidth: horizontalScale(250),
+    paddingLeft: horizontalScale(10),
+    textAlign: 'left',
+  },
 });
 
 export default HomeScreen;

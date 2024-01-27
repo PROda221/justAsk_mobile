@@ -9,6 +9,8 @@ export type HomeScreenType = {
   campusCourses: string;
   meetTheTeam: string;
   ourStudentPortfolios: string;
+  whatOurStudentSay:string
+
 };
 export type OnlineCourses = {
   title: string;
@@ -35,7 +37,7 @@ export type NavigationType = {
   Login: string;
 };
 
-export type SettingType = {
+export type AccountType = {
   loginIntoYourAccount:string;
   welcomeToLondonSchool:string;
   login:string,

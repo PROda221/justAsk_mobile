@@ -16,6 +16,8 @@ import Hamburger from './Hamburger.svg'
 import FrontArrow from './FrontArrow.svg'
 import Tick from './Tick.svg'
 import HeaderBackArrow from './HeaderBackArrow.svg'
+import BackButton from './BackButton.svg'
+import Profile from './Profile.svg'
  
 export {
   HomeIcon,
@@ -35,5 +37,7 @@ export {
   Hamburger,
   FrontArrow,
   Tick,
-  HeaderBackArrow
+  HeaderBackArrow,
+  BackButton,
+  Profile
 };

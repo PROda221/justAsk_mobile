@@ -62,11 +62,7 @@ export const TextInput = ({
             }
           />
           {error && (
-            <Typography
-              bgColor="red"
-              size="medium"
-              type="bodyMedium"
-              fontWeight="400">
+            <Typography bgColor="red" size="medium" fontWeight="400">
               {error?.message}
             </Typography>
           )}

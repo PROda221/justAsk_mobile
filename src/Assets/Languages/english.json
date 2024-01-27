@@ -12,7 +12,9 @@
     "meetTheTeam": "Meet The Team",
     "ourStudentPortfolios": "Our Student Portfolios",
     "headerTitle": "Welcome To Lst",
-    "viewAll": "VIEW ALL"
+    "viewAll": "VIEW ALL",
+    "whatOurStudentSay":"What Our students Have To Say...."
+
   },
   "onlineCourses": {
     "title": "Our Online Courses"
@@ -41,10 +43,10 @@
   },
 
   "SettingScreen": {
-    "loginIntoYourAccount": "Login Into your Account",
+    "loginIntoYourAccount": "Login to your Account",
     "welcomeToLondonSchool":"Welcome to the London School of Trends. Please login to your account.",
     "login":"LOGIN",
-    "forgotPassword":"FORGOT PASSWORD",
+    "forgotPassword":"FORGOT PASSWORD?",
     "username": "Username",
     "password": "Password",
     "forgottenPassowrd":"Forgotten Your Password",

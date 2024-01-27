@@ -7,6 +7,8 @@ export const colors = {
     black50Perc: 'rgba(0, 0, 0, 0.5)',
     lightGreen: '#29f408',
     drawerFontColor: '#000000',
-    grey:'grey'
+    grey:'grey',
+    studentCard: '#F1F1F1'
+
 
 }

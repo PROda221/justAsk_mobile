@@ -36,7 +36,7 @@ const Scroll = styled(ScrollView)`
 
 const EnrollContainer = styled(View)`
   position: absolute;
-  height: 273px;
+  height: 100%;
   width: 259px;
   background-color: rgba(0, 0, 0, 0.5);
 `;
@@ -87,81 +87,82 @@ const ProgramPage = (): JSX.Element => {
       <SafeAreaViewCompat style={styles.safeAreaContainer}>
         <Header title={programScreenContent.title} />
         <Scroll>
-          <Image
-            source={{uri: 'https://picsum.photos/702'}}
-            style={styles.imageCorouselStyle}
-          />
-          <EnrollContainer>
-            <View style={styles.enrollContentSpace}>
-              <View style={styles.enrollTextSpace}>
-                <Typography
-                  textStyle={styles.textLeft}
-                  bgColor={colors.white}
-                  size={'medium'}
-                  fontWeight="700">
-                  {programScreenContent.level}
+          <View>
+            <Image
+              source={{uri: 'https://picsum.photos/702'}}
+              style={styles.imageCorouselStyle}
+            />
+            <EnrollContainer>
+              <View style={styles.enrollContentSpace}>
+                <View style={styles.enrollTextSpace}>
+                  <Typography
+                    textStyle={styles.textLeft}
+                    bgColor={colors.white}
+                    size={'medium'}
+                    fontWeight="700">
+                    {programScreenContent.level}
+                    <Typography
+                      bgColor={colors.white}
+                      size={'medium'}
+                      fontWeight="400">
+                      {' - Beginner'}
+                    </Typography>
+                  </Typography>
+                </View>
+                <View style={styles.enrollTextSpace}>
+                  <Typography
+                    textStyle={styles.textLeft}
+                    bgColor={colors.white}
+                    size={'medium'}
+                    fontWeight="700">
+                    {programScreenContent.duration}
+                    <Typography
+                      bgColor={colors.white}
+                      size={'medium'}
+                      fontWeight="400">
+                      {' - 6 Week'}
+                    </Typography>
+                  </Typography>
+                </View>
+                <View style={styles.enrollTextSpace}>
+                  <Typography
+                    bgColor={colors.white}
+                    textStyle={styles.textLeft}
+                    size={'medium'}
+                    fontWeight="400">
+                    {'Certified Diploma'}
+                  </Typography>
+                </View>
+                <View>
                   <Typography
                     bgColor={colors.white}
                     size={'medium'}
+                    textStyle={styles.textLeft}
                     fontWeight="400">
-                    {' - Beginner'}
+                    {'Course Delivered 100% Online'}
                   </Typography>
-                </Typography>
+                </View>
               </View>
-              <View style={styles.enrollTextSpace}>
+              <View style={styles.priceContainer}>
                 <Typography
                   textStyle={styles.textLeft}
                   bgColor={colors.white}
-                  size={'medium'}
+                  size={'large'}
                   fontWeight="700">
-                  {programScreenContent.duration}
+                  {'₹30,000.00'}
+                </Typography>
+                <EnrollButton>
                   <Typography
-                    bgColor={colors.white}
+                    bgColor={colors.black}
                     size={'medium'}
-                    fontWeight="400">
-                    {' - 6 Week'}
+                    fontWeight="700"
+                    textStyle={styles.textLeft}>
+                    {programScreenContent.enrollNow}
                   </Typography>
-                </Typography>
+                </EnrollButton>
               </View>
-              <View style={styles.enrollTextSpace}>
-                <Typography
-                  bgColor={colors.white}
-                  textStyle={styles.textLeft}
-                  size={'medium'}
-                  fontWeight="400">
-                  {'Certified Diploma'}
-                </Typography>
-              </View>
-              <View>
-                <Typography
-                  bgColor={colors.white}
-                  size={'medium'}
-                  textStyle={styles.textLeft}
-                  fontWeight="400">
-                  {'Course Delivered 100% Online'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.priceContainer}>
-              <Typography
-                textStyle={styles.textLeft}
-                bgColor={colors.white}
-                size={'large'}
-                fontWeight="700">
-                {'₹30,000.00'}
-              </Typography>
-              <EnrollButton>
-                <Typography
-                  bgColor={colors.black}
-                  size={'medium'}
-                  fontWeight="700"
-                  textStyle={styles.textLeft}>
-                  {programScreenContent.enrollNow}
-                </Typography>
-              </EnrollButton>
-            </View>
-          </EnrollContainer>
-
+            </EnrollContainer>
+          </View>
           <View>
             {/* Tab buttons */}
             <View style={styles.tabContainer}>
@@ -232,7 +233,9 @@ const ProgramPage = (): JSX.Element => {
               renderItem={({item}) => (
                 <CustomCard
                   variant={'small'}
-                  onPress={() => { console.log('clicked'); }}
+                  onPress={() => {
+                    console.log('clicked');
+                  }}
                   title={item.title}
                   imageSource={item.imageSource}
                 />
@@ -262,7 +265,7 @@ const styles = StyleSheet.create({
 
   imageCorouselStyle: {
     alignSelf: 'center',
-    height: verticalScale(283),
+    height: verticalScale(273),
     width: '100%',
   },
   innerContainer: {
