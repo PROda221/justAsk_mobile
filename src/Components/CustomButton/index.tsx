@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import {Button, Text} from 'react-native-paper';
+import {colors} from '../../DesignTokens/Colors';
+import {Text, TouchableOpacity, View} from 'react-native';
+import {FrontArrow} from '../../Assets/Images';
 
 type CustomButtonProps = {
   onPress: () => void;
   label: string;
   variant: 'typeA' | 'typeB' | 'typeC' | 'typeD';
+  backArrow?: boolean;
 };
 
 type StyledButtonType = {
@@ -18,11 +21,15 @@ type StyledButtonTextType = {
   mode: 'typeA' | 'typeB' | 'typeC' | 'typeD';
 };
 
-const StyledButton = styled(Button)<StyledButtonType>`
-  background-color: ${props => props.buttonColor};
-  border: 1px solid rgba(27, 31, 35, 0.15);
+const ContentContainer = styled(View)`
+  flex-direction: row;
   align-items: center;
+`;
+
+const Button = styled(TouchableOpacity)<StyledButtonType>`
+  border: 1px;
   justify-content: center;
+  align-items: center;
 
   ${({variant}) => {
     switch (variant) {
@@ -46,23 +53,22 @@ const StyledButton = styled(Button)<StyledButtonType>`
         `;
       case 'typeC':
         return `
-          background-color: #ffffff;
-          color: #000000;
-          border: 1px solid #000000;
+          background-color: ${colors.white};
+          color: ${colors.black};
+          border: 1px;
+          border-color: ${colors.black};
           height:19px;
           width:62px;
-          justify-content: center;
-          align-items: center;
+          border-radius: 12px;
         `;
       case 'typeD':
         return `
           background-color: #ffffff;
-          color: #000000;
-          border: 1px solid #A9A5A5;
-          height:30px;
-          width:78px;
-          justify-content: center;
-          align-items: center;
+          border: 1px;
+          border-color: ${colors.buttonBorder};
+          border-radius: 12px;
+          height: 22px;
+          width: 70px;
         `;
       default:
         return '';
@@ -91,7 +97,8 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
         `;
       case 'typeD':
         return `
-          color: #000000;
+        color: ${colors.buttonBorder};
+          font-weight: 700;
           font-size: 9px;
         `;
       default:
@@ -104,7 +111,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   ...props
 }) => (
-  <StyledButton onPress={onPress} variant={props.variant} label={props.label}>
-    <ButtonText mode={props.variant}>{props.label}</ButtonText>
-  </StyledButton>
+  <Button onPress={onPress} variant={props.variant} label={props.label}>
+    <ContentContainer>
+      <ButtonText mode={props.variant}>{props.label + ' '}</ButtonText>
+      {props.backArrow && <FrontArrow />}
+    </ContentContainer>
+  </Button>
 );

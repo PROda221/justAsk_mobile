@@ -110,7 +110,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = ({
         <IconContainer>
           <Icon width={width} height={height} />
         </IconContainer>
-        <CustomDrawerItemLabel fontColor={colors.drawerFontColor}>{label}</CustomDrawerItemLabel>
+        <CustomDrawerItemLabel fontColor={colors.black}>{label}</CustomDrawerItemLabel>
       </CustomDrawerItemLabelContainer>
       {!last && <Line />}
     </CustomDrawerItemContainer>

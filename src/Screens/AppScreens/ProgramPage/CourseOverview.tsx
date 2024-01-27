@@ -1,8 +1,8 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Typography} from '../../../Components';
-
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {colors} from '../../../DesignTokens/Colors';
+import { moderateScale, verticalScale } from '../../../Functions/StyleScale';
 
 type courseOverviewData = {
   title: string;
@@ -25,42 +25,57 @@ const courseOverviewContent: courseOverviewData = {
 };
 
 const CourseOverview: React.FC = () => (
-  <View style={{padding: 16}}>
-    <View style={{marginVertical: 10}}>
+  <View style={styles.container}>
+    <View style={styles.innerContainer}>
       <Typography
-        bgColor="#000000"
-        type="titleSmall"
+        bgColor={colors.black}
         size="medium"
-        fontWeight="400">
+        fontWeight="400"
+        textStyle={styles.textLeft}>
         {courseOverviewContent.content}
       </Typography>
     </View>
-    <View style={{marginVertical: 10}}>
+
+    <View style={styles.innerContainer}>
       <Typography
-        bgColor="#000000"
-        type="titleSmall"
+        bgColor={colors.black}
         size="large"
-        fontWeight="700">
+        fontWeight="700"
+        textStyle={styles.textLeft}>
         {courseOverviewContent.title}
       </Typography>
     </View>
-    <View style={{marginVertical: 10}}>
+    <View style={styles.innerContainer}>
       {courseOverviewContent.data.map((item, index) => (
-        <View key={index} style={{flexDirection: 'row', alignItems: 'center'}}>
-          <MaterialIcons name={'circle'} size={10} color="#000000" />
-          <View style={{marginLeft: 5}}>
-            <Typography
-              bgColor="#000000"
-              type="bodyMedium"
-              size="medium"
-              fontWeight="400">
-              {` ${item}`}
-            </Typography>
-          </View>
+        <View key={index} style={styles.pointersContainers}>
+          <Typography
+            bgColor={colors.black}
+            size="large"
+            textStyle={styles.textLeft}
+            fontWeight="400">
+            {`\u2022 `}
+          </Typography>
+          <Typography
+            bgColor={colors.black}
+            size="medium"
+            textStyle={styles.textLeft}
+            fontWeight="400">
+            {item}
+          </Typography>
         </View>
       ))}
     </View>
   </View>
 );
+
+const styles = StyleSheet.create({
+  container: {paddingHorizontal: moderateScale(16)},
+  innerContainer: {marginTop: verticalScale(20)},
+  pointers: {marginLeft: verticalScale(5)},
+  pointersContainers: {flexDirection: 'row'},
+  textLeft: {
+    textAlign: 'left',
+  },
+});
 
 export default CourseOverview;

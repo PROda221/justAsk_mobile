@@ -10,7 +10,12 @@
     "level4Qualification": "Level 4 Qualifications",
     "campusCourses": "Campus Courses",
     "meetTheTeam": "Meet The Team",
-    "ourStudentPortfolios": "Our Student Portfolios"
+    "ourStudentPortfolios": "Our Student Portfolios",
+    "headerTitle": "Welcome To Lst",
+    "viewAll": "VIEW ALL"
+  },
+  "onlineCourses": {
+    "title": "Our Online Courses"
   },
   "navigation": {
     "homePage": "Home Page",
@@ -25,6 +30,13 @@
   },
   "DatialsScreen": {},
   "ProgramScreen": {
-    "moreCourses": "More courses that you may like..."
+    "title": "Programs Page",
+    "moreCourses": "More courses that you may like...",
+    "level": "Level",
+    "duration": "Duration",
+    "enrollNow": "Enroll Now",
+    "courseOverview": "Course Overview",
+    "modulesCovered": "Modules Covered",
+    "review": "Review"
   }
 }

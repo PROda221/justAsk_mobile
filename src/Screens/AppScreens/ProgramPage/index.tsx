@@ -3,35 +3,53 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-  Text,
   StyleSheet,
   Image,
-  Dimensions,
 } from 'react-native';
 import React, {useState} from 'react';
-import {CustomButton, CustomCard, Typography} from '../../../Components';
+import {CustomCard, Typography} from '../../../Components';
 import {
   horizontalScale,
-  verticalScale,
   moderateScale,
+  verticalScale,
 } from '../../../Functions/StyleScale';
 
 import {
   SafeAreaProvider,
   SafeAreaView as SafeAreaViewCompat,
 } from 'react-native-safe-area-context';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import content from '../../../Assets/Languages/english.json';
-import {type ProgramScreenType} from '../../../Assets/Languages/englishTypes';
+import {type ProgramsPage} from '../../../Assets/Languages/englishTypes';
 
 import CourseOverview from './CourseOverview';
 import ModulesCovered from './ModulesOverview';
 import Review from './Review';
+import Header from '../../../Components/Header';
+import styled from 'styled-components/native';
+import {colors} from '../../../DesignTokens/Colors';
 
-const windowWidth = Dimensions.get('window').width;
+const programScreenContent: ProgramsPage = content.ProgramScreen;
 
-const programScreenContent: ProgramScreenType = content.ProgramScreen;
+const Scroll = styled(ScrollView)`
+  flex-grow: 1;
+`;
+
+const EnrollContainer = styled(View)`
+  position: absolute;
+  height: 273px;
+  width: 259px;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const EnrollButton = styled(TouchableOpacity)`
+  height: 38px;
+  width: 111px;
+  background-color: ${colors.lightGreen};
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  margin-top: 15px;
+`;
 
 type CardData = {
   id: string;
@@ -46,144 +64,103 @@ const cardData: CardData[] = [
   {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
 ];
 
-const ProgramPage = (): JSX.Element => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
+const renderContent = (selectedTab: string) => {
+  switch (selectedTab) {
+    case 'CourseOverview':
+      return <CourseOverview />;
+    case 'ModulesCovered':
+      return <ModulesCovered />;
+    case 'Review':
+      return <Review />;
+    default:
+      return null;
+  }
+};
 
+const ProgramPage = (): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<
     'CourseOverview' | 'ModulesCovered' | 'Review'
   >('CourseOverview');
 
-  const renderContent = () => {
-    switch (selectedTab) {
-      case 'CourseOverview':
-        return <CourseOverview />;
-      case 'ModulesCovered':
-        return <ModulesCovered />;
-      case 'Review':
-        return <Review />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <SafeAreaProvider>
       <SafeAreaViewCompat style={styles.safeAreaContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBackPress}>
-            <MaterialIcons name={'chevron-left'} size={25} color="#000000" />
-          </TouchableOpacity>
-          <Typography
-            bgColor={'black'}
-            type={'displayLarge'}
-            size={'large'}
-            fontWeight="00">
-            {route.name}
-          </Typography>
-        </View>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          <View style={{}}>
-            <Image
-              source={{uri: 'https://picsum.photos/702'}}
-              style={styles.imageCorouselStyle}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                width: 259,
-                height: 273,
-              }}>
-              <View style={{paddingLeft: 20, paddingTop: 20}}>
-                <View style={{marginBottom: 10}}>
-                  <Typography
-                    bgColor={'white'}
-                    type={'bodyLarge'}
-                    size={'large'}
-                    fontWeight="700">
-                    Level
-                    <Typography
-                      bgColor={'white'}
-                      type={'bodyMedium'}
-                      size={'medium'}
-                      fontWeight="700">
-                      - Beginner
-                    </Typography>
-                  </Typography>
-                </View>
-                <View style={{marginBottom: 10}}>
-                  <Typography
-                    bgColor={'white'}
-                    type={'bodyLarge'}
-                    size={'large'}
-                    fontWeight="700">
-                    Duration
-                    <Typography
-                      bgColor={'white'}
-                      type={'bodyMedium'}
-                      size={'medium'}
-                      fontWeight="700">
-                      - 6 Week
-                    </Typography>
-                  </Typography>
-                </View>
-                <View style={{marginBottom: 10}}>
-                  <Typography
-                    bgColor={'white'}
-                    type={'bodyMedium'}
-                    size={'medium'}
-                    fontWeight="700">
-                    Certified Diploma
-                  </Typography>
-                </View>
-                <View>
-                  <Typography
-                    bgColor={'white'}
-                    type={'bodyMedium'}
-                    size={'medium'}
-                    fontWeight="700">
-                    Course Delivered 100% Online
-                  </Typography>
-                </View>
-              </View>
-              <View
-                style={{
-                  paddingLeft: 20,
-                  paddingBottom: 20,
-                  position: 'absolute',
-                  bottom: 0,
-                }}>
+        <Header title={programScreenContent.title} />
+        <Scroll>
+          <Image
+            source={{uri: 'https://picsum.photos/702'}}
+            style={styles.imageCorouselStyle}
+          />
+          <EnrollContainer>
+            <View style={styles.enrollContentSpace}>
+              <View style={styles.enrollTextSpace}>
                 <Typography
-                  bgColor={'white'}
-                  type={'titleLarge'}
-                  size={'large'}
+                  textStyle={styles.textLeft}
+                  bgColor={colors.white}
+                  size={'medium'}
                   fontWeight="700">
-                  ₹30,000.00
-                </Typography>
-                <TouchableOpacity
-                  style={{
-                    height: 38,
-                    width: 111,
-                    backgroundColor: '#29F408',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                  }}>
+                  {programScreenContent.level}
                   <Typography
-                    bgColor={'#000000'}
-                    type={'titleMedium'}
+                    bgColor={colors.white}
                     size={'medium'}
-                    fontWeight="700">
-                    Enroll Now
+                    fontWeight="400">
+                    {' - Beginner'}
                   </Typography>
-                </TouchableOpacity>
+                </Typography>
+              </View>
+              <View style={styles.enrollTextSpace}>
+                <Typography
+                  textStyle={styles.textLeft}
+                  bgColor={colors.white}
+                  size={'medium'}
+                  fontWeight="700">
+                  {programScreenContent.duration}
+                  <Typography
+                    bgColor={colors.white}
+                    size={'medium'}
+                    fontWeight="400">
+                    {' - 6 Week'}
+                  </Typography>
+                </Typography>
+              </View>
+              <View style={styles.enrollTextSpace}>
+                <Typography
+                  bgColor={colors.white}
+                  textStyle={styles.textLeft}
+                  size={'medium'}
+                  fontWeight="400">
+                  {'Certified Diploma'}
+                </Typography>
+              </View>
+              <View>
+                <Typography
+                  bgColor={colors.white}
+                  size={'medium'}
+                  textStyle={styles.textLeft}
+                  fontWeight="400">
+                  {'Course Delivered 100% Online'}
+                </Typography>
               </View>
             </View>
-          </View>
+            <View style={styles.priceContainer}>
+              <Typography
+                textStyle={styles.textLeft}
+                bgColor={colors.white}
+                size={'large'}
+                fontWeight="700">
+                {'₹30,000.00'}
+              </Typography>
+              <EnrollButton>
+                <Typography
+                  bgColor={colors.black}
+                  size={'medium'}
+                  fontWeight="700"
+                  textStyle={styles.textLeft}>
+                  {programScreenContent.enrollNow}
+                </Typography>
+              </EnrollButton>
+            </View>
+          </EnrollContainer>
 
           <View>
             {/* Tab buttons */}
@@ -196,17 +173,13 @@ const ProgramPage = (): JSX.Element => {
                 onPress={() => {
                   setSelectedTab('CourseOverview');
                 }}>
-                <View>
-                  <Typography
-                    bgColor={'#000000'}
-                    type={'titleSmall'}
-                    size={'medium'}
-                    fontWeight={
-                      selectedTab === 'CourseOverview' ? '600' : '400'
-                    }>
-                    {`Course Overview`}
-                  </Typography>
-                </View>
+                <Typography
+                  bgColor={colors.black}
+                  size={'medium'}
+                  textStyle={styles.textLeft}
+                  fontWeight={selectedTab === 'CourseOverview' ? '700' : '400'}>
+                  {programScreenContent.courseOverview}
+                </Typography>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -218,11 +191,11 @@ const ProgramPage = (): JSX.Element => {
                   setSelectedTab('ModulesCovered');
                 }}>
                 <Typography
-                  bgColor={'#000000'}
-                  type={'titleSmall'}
+                  bgColor={colors.black}
                   size={'medium'}
-                  fontWeight={selectedTab === 'ModulesCovered' ? '600' : '400'}>
-                  {`Modules Covered`}
+                  textStyle={styles.textLeft}
+                  fontWeight={selectedTab === 'ModulesCovered' ? '700' : '400'}>
+                  {programScreenContent.modulesCovered}
                 </Typography>
               </TouchableOpacity>
 
@@ -235,23 +208,19 @@ const ProgramPage = (): JSX.Element => {
                   setSelectedTab('Review');
                 }}>
                 <Typography
-                  bgColor={'#000000'}
-                  type={'titleSmall'}
+                  bgColor={colors.black}
                   size={'medium'}
-                  fontWeight={selectedTab === 'Review' ? '600' : '400'}>
-                  {`Review`}
+                  textStyle={styles.textLeft}
+                  fontWeight={selectedTab === 'Review' ? '700' : '400'}>
+                  {programScreenContent.review}
                 </Typography>
               </TouchableOpacity>
             </View>
-            {renderContent()}
+            {renderContent(selectedTab)}
           </View>
           <View style={styles.container}>
             <View style={styles.innerContainer}>
-              <Typography
-                bgColor="black"
-                type="titleSmall"
-                size="large"
-                fontWeight="700">
+              <Typography bgColor={colors.black} size="large" fontWeight="700">
                 {programScreenContent.moreCourses}
               </Typography>
             </View>
@@ -263,15 +232,14 @@ const ProgramPage = (): JSX.Element => {
               renderItem={({item}) => (
                 <CustomCard
                   variant={'small'}
-                  onPress={console.log('clicked')}
+                  onPress={() => { console.log('clicked'); }}
                   title={item.title}
                   imageSource={item.imageSource}
-                  mode={'elevated'}
                 />
               )}
             />
           </View>
-        </ScrollView>
+        </Scroll>
       </SafeAreaViewCompat>
     </SafeAreaProvider>
   );
@@ -280,47 +248,48 @@ const ProgramPage = (): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+    padding: horizontalScale(15),
   },
 
-  header: {
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 16,
+  enrollContentSpace: {
+    paddingLeft: horizontalScale(15),
+    paddingTop: verticalScale(20),
   },
 
+  enrollTextSpace: {
+    marginBottom: verticalScale(10),
+  },
+
+  imageCorouselStyle: {
+    alignSelf: 'center',
+    height: verticalScale(283),
+    width: '100%',
+  },
   innerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
 
+  priceContainer: {
+    paddingLeft: horizontalScale(15),
+    paddingTop: verticalScale(20),
+  },
   safeAreaContainer: {flex: 1},
-
   selectedTab: {
-    borderBottomWidth: 2,
+    borderBottomWidth: moderateScale(2),
   },
-
-  selectedText: {
-    fontWeight: 'bold',
-  },
-
   tabButton: {
     alignItems: 'center',
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
   },
-
   tabContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-evenly',
-    paddingVertical: 16,
+    paddingVertical: verticalScale(16),
   },
-  imageCorouselStyle: {
-    height: 273,
-    width: 473,
-    alignSelf: 'center',
+  textLeft: {
+    textAlign: 'left',
   },
 });
 

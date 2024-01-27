@@ -1,13 +1,17 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import {Card} from 'react-native-paper';
-import {View, type ImageSourcePropType} from 'react-native';
+import {View, type ImageSourcePropType, StyleSheet} from 'react-native';
 import {CustomButton, Typography} from '..';
 import content from '../../Assets/Languages/english.json';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {colors} from '../../DesignTokens/Colors';
+import {type HomeScreenType} from '../../Assets/Languages/englishTypes';
+import {Tick} from '../../Assets/Images';
+import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
+
+const homeScreenContent: HomeScreenType = content.homeScreen;
 
 type CustomCardProps = {
-  mode: 'elevated' | 'outlined' | 'contained';
   onPress: () => void;
   onPressReadMore?: () => void;
   title: string;
@@ -20,23 +24,21 @@ const getCardStyles = (variant: CustomCardProps['variant']) => {
   switch (variant) {
     case 'small':
       return `
-        margin: 15px 5px 15px 5px;
-        width: 192px;
-        height: 220px;
+        width: 175px;
+        height: 236px;
         border-radius: 15px;
         elevation: 5;
-        background-color: black;
+        background-color: ${colors.black};
       `;
     case 'medium':
       return `
         width: 120px;
         height: 120px;
         border-radius: 240px;
-        background-color: red;
       `;
     case 'large':
       return `
-        background-color: white;
+        background-color: ${colors.white};
         margin: 15px;
         width: 160px;
         height: 240px;
@@ -63,7 +65,7 @@ const getCardCoverStyles = (variant: CustomCardProps['variant']) => {
         border-radius: 240px;
         width: 120px;
         height: 120px;
-        padding: 2px;
+        padding: 5px;
         border-width: 1px;
         border-color: #000; 
       `;
@@ -80,42 +82,42 @@ const getCardCoverStyles = (variant: CustomCardProps['variant']) => {
 };
 
 const StyledCard = styled(Card)<{variant: CustomCardProps['variant']}>`
-  ${({variant}) => getCardStyles(variant)}
+  margin: 15px 5px 15px 5px;
+  ${({variant}) => getCardStyles(variant)};
 `;
 
 const StyledCardCover = styled(Card.Cover)<{
   variant: CustomCardProps['variant'];
 }>`
-  ${({variant}) => getCardCoverStyles(variant)}
-`;
-
-const StyledCardContent = styled(Card.Content)`
-  justify-content: center;
-  align-items: center;
+  ${({variant}) => getCardCoverStyles(variant)};
 `;
 
 const StyledView = styled.View`
-  width: 100%;
+  padding-top: 10px;
   flex-direction: row;
   justify-content: space-evenly;
-  align-items: center;
-  margin: 10px;
+  flex-wrap: wrap;
 `;
 
 const TitleView = styled.View`
   align-items: center;
-  margin-top: 15px;
+  padding-top: 15px;
 `;
 
 const DetailsView = styled.View`
+  flex: 1;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
-const ButtonView = styled.View<{variant: CustomCardProps['variant']}>`
+const FeeContainer = styled.View`
+  padding: 10px 0 10px 0;
+`;
+
+const ButtonView = styled(View)`
   z-index: 1000;
-  position: absolute;
-  bottom: -20px;
-  align-self: center;
+  align-items: center;
 `;
 
 export const CustomCard: React.FC<CustomCardProps> = ({
@@ -123,60 +125,64 @@ export const CustomCard: React.FC<CustomCardProps> = ({
   onPress,
   title,
   imageSource,
-}) =>
-  variant === 'small' ? (
-    <StyledCard onPress={onPress} variant={variant}>
-      <View style={{zIndex: 1, alignItems: 'center'}}>
-        <StyledCardCover variant={variant} source={imageSource} />
-        <View style={{zIndex: 1}}>
+}) => (
+  <StyledCard onPress={onPress} variant={variant}>
+    {variant === 'small' ? (
+      <View>
+        <View style={styles.zIndex1}>
+          <StyledCardCover variant={variant} source={imageSource} />
           <TitleView>
-            <Typography
-              bgColor={'white'}
-              type="labelLarge"
-              size="large"
-              fontWeight="600">
+            <Typography bgColor={colors.white} size="large" fontWeight="700">
               {title}
             </Typography>
           </TitleView>
-          <StyledCardContent>
-            <StyledView>
-              <DetailsView>
-                <MaterialIcons name={'verified'} size={15} color="white" />
-                <Typography
-                  bgColor={'white'}
-                  type="labelMedium"
-                  size="medium"
-                  fontWeight="600">
-                  {content.homeScreen.hello}
-                </Typography>
-              </DetailsView>
-              <DetailsView>
-                <MaterialIcons name={'verified'} size={15} color="white" />
-                <Typography
-                  bgColor={'white'}
-                  type="labelMedium"
-                  size="medium"
-                  fontWeight="600">
-                  {content.homeScreen.world}
-                </Typography>
-              </DetailsView>
-            </StyledView>
-            <Typography
-              bgColor={'white'}
-              type="labelMedium"
-              size="medium"
-              fontWeight="600">
-              {content.homeScreen.world}
+          <StyledView>
+            <DetailsView>
+              <Tick
+                width={horizontalScale(15)}
+                height={verticalScale(15)}
+                style={styles.imageContainer}
+              />
+              <Typography bgColor={colors.white} size="medium" fontWeight="400">
+                {' ' + content.homeScreen.hello}
+              </Typography>
+            </DetailsView>
+            <DetailsView>
+              <Tick
+                width={horizontalScale(15)}
+                height={verticalScale(15)}
+                style={styles.imageContainer}
+              />
+              <Typography bgColor={colors.white} size="medium" fontWeight="400">
+                {' ' + content.homeScreen.world}
+              </Typography>
+            </DetailsView>
+          </StyledView>
+          <FeeContainer>
+            <Typography bgColor={colors.white} size="medium" fontWeight="400">
+              {'Fees : ' + 300000.0}
             </Typography>
-          </StyledCardContent>
+          </FeeContainer>
         </View>
+        <ButtonView>
+          <CustomButton
+            onPress={onPress}
+            label={homeScreenContent.viewAll}
+            variant={'typeC'}
+          />
+        </ButtonView>
       </View>
-      <ButtonView>
-        <CustomButton onPress={onPress} label={'Read More'} variant={'typeC'} />
-      </ButtonView>
-    </StyledCard>
-  ) : (
-    <StyledCard onPress={onPress} variant={variant}>
+    ) : (
       <StyledCardCover variant={variant} source={imageSource} />
-    </StyledCard>
-  );
+    )}
+  </StyledCard>
+);
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    marginTop: 4,
+  },
+  zIndex1: {
+    zIndex: 1,
+  },
+});
