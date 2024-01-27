@@ -38,5 +38,19 @@
     "courseOverview": "Course Overview",
     "modulesCovered": "Modules Covered",
     "review": "Review"
+  },
+
+  "SettingScreen": {
+    "loginIntoYourAccount": "Login Into your Account",
+    "welcomeToLondonSchool":"Welcome to the London School of Trends. Please login to your account.",
+    "login":"LOGIN",
+    "forgotPassword":"FORGOT PASSWORD",
+    "username": "Username",
+    "password": "Password",
+    "forgottenPassowrd":"Forgotten Your Password",
+    "enterYourEmail":"Please enter the email address you used to register on the system to identify yourself. If this email address exists in our database an automatic email will be sent to the associated email address.",
+    "submit":"SUBMIT",
+    "loginAccount":"LOGIN YOUR ACCOUNT?",
+    "Email":"Email"
   }
 }

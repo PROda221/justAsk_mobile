@@ -37,19 +37,19 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
         return `
           background-color: #000000;
           color: #fff;
-          border-radius: 3px;
+          border-radius: 4px;
           border: 1px solid rgba(27, 31, 35, 0.15);
-          height:50px;
-          width:30%;
+          height:52px;
+          width:160px;
         `;
       case 'typeB':
         return `
           background-color: #ffffff;
           color: #000000;
-          border-radius: 1px;
+          border-radius: 4px;
           border: 1px solid  #000000;
-          height:50px;
-          width:50%;
+          height:52px;
+          width:203px;
         `;
       case 'typeC':
         return `
@@ -84,11 +84,13 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
     switch (mode) {
       case 'typeA':
         return `
-          color: #ffffff;       
+          color: #ffffff; 
+          font-size:15px;
         `;
       case 'typeB':
         return `
           color: #000000;
+          font-size:15px;
         `;
       case 'typeC':
         return `

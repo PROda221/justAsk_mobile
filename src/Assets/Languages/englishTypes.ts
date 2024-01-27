@@ -34,3 +34,17 @@ export type NavigationType = {
   contactUs: string;
   Login: string;
 };
+
+export type SettingType = {
+  loginIntoYourAccount:string;
+  welcomeToLondonSchool:string;
+  login:string,
+  forgotPassword:string
+  username: string;
+  password: string;
+  forgottenPassowrd:string;
+  enterYourEmail:string;
+  submit:string;
+  loginAccount:string;
+  Email:string
+}
