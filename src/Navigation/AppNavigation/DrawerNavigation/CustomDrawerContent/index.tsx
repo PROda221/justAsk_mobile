@@ -3,11 +3,7 @@ import {type DrawerNavigationProp} from '@react-navigation/drawer';
 import styled from 'styled-components/native';
 import {StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  type DrawerParamList,
-  type DrawerScreens,
-} from '../../../types';
+import {type DrawerParamList, type DrawerScreens} from '../../../types';
 import {
   HomeIcon,
   Bag,
@@ -20,9 +16,11 @@ import {
   Shield,
 } from '../../../../Assets/Images';
 import {type SvgProps} from 'react-native-svg';
-import content from '../../../../Assets/Languages/english.json'
-import { type NavigationType } from '../../../../Assets/Languages/englishTypes';
-import { colors } from '../../../../DesignTokens/Colors';
+import content from '../../../../Assets/Languages/english.json';
+import {type NavigationType} from '../../../../Assets/Languages/englishTypes';
+import {colors} from '../../../../DesignTokens/Colors';
+import {BackButton} from '../../../../Assets/Images';
+import {horizontalScale, verticalScale} from '../../../../Functions/StyleScale';
 
 const navigationContent: NavigationType = content.navigation as NavigationType;
 
@@ -36,7 +34,7 @@ type CustomDrawerItemProps = {
   Icon: FunctionComponent<SvgProps>;
   width: number;
   height: number;
-  last?: boolean
+  last?: boolean;
 };
 
 const DrawerContentContainer = styled.View`
@@ -103,14 +101,16 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = ({
     Icon,
     width,
     height,
-    last
+    last,
   }) => (
     <CustomDrawerItemContainer onPress={onPress}>
       <CustomDrawerItemLabelContainer>
         <IconContainer>
           <Icon width={width} height={height} />
         </IconContainer>
-        <CustomDrawerItemLabel fontColor={colors.drawerFontColor}>{label}</CustomDrawerItemLabel>
+        <CustomDrawerItemLabel fontColor={colors.black}>
+          {label}
+        </CustomDrawerItemLabel>
       </CustomDrawerItemLabelContainer>
       {!last && <Line />}
     </CustomDrawerItemContainer>
@@ -124,7 +124,10 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = ({
             onPress={() => {
               navigation.closeDrawer();
             }}>
-            <Icon name="arrow-back" size={30} color="black" />
+            <BackButton
+              width={horizontalScale(25)}
+              height={verticalScale(25)}
+            />
           </TouchableOpacity>
         </DrawerHeader>
         <DrawerContentInnerContainer>
@@ -184,7 +187,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = ({
               height={26}
             />
             <CustomDrawerItem
-             label={navigationContent.aboutUs}
+              label={navigationContent.aboutUs}
               onPress={() => {
                 handleDrawerItemClick('About Us');
               }}

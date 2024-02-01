@@ -4,7 +4,7 @@ import AppStack from '../StackNavigation';
 import CustomTabBar from './CustomTabBar';
 import OnlineCoursesScreen from '../../../Screens/AuthScreens/OnlineCourses';
 import AboutUsScreen from '../../../Screens/AuthScreens/AboutUs';
-import AccountScreen from '../../../Screens/AppScreens/SettingsScreen';
+import AccountScreen from '../../../Screens/AppScreens/AccountScreen';
 import FeesScreen from '../../../Screens/AuthScreens/Fees';
 
 const BottomTab = createBottomTabNavigator();
@@ -14,6 +14,7 @@ const AppBottomScreens = () => (
     screenOptions={{
       headerShown: false,
     }}
+    initialRouteName="Home Screen"
     tabBar={props => <CustomTabBar {...props} />} // Use your custom tab bar component
   >
     <BottomTab.Screen name="Courses" component={OnlineCoursesScreen} />

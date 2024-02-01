@@ -12,7 +12,13 @@ import Hearts from './Hearts.svg';
 import Courses from './Courses.svg';
 import Monetization from './Monetization.svg';
 import HomeButtonTab from './HomeBottomTab.svg';
-
+import Hamburger from './Hamburger.svg'
+import FrontArrow from './FrontArrow.svg'
+import Tick from './Tick.svg'
+import HeaderBackArrow from './HeaderBackArrow.svg'
+import BackButton from './BackButton.svg'
+import Profile from './Profile.svg'
+ 
 export {
   HomeIcon,
   Bag,
@@ -28,4 +34,10 @@ export {
   Monetization,
   HomeButtonTab,
   Courses,
+  Hamburger,
+  FrontArrow,
+  Tick,
+  HeaderBackArrow,
+  BackButton,
+  Profile
 };
