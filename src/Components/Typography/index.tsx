@@ -1,32 +1,22 @@
-import React, { type ReactNode } from 'react';
+import React, {type ReactNode} from 'react';
 import styled from 'styled-components/native';
-import { Text } from 'react-native-paper';
+import {Text} from 'react-native-paper';
+import { type TextStyle} from 'react-native';
 
 type TypographyProps = {
   bgColor: string;
-  type:
-    | 'displayLarge'
-    | 'displayMedium'
-    | 'displaySmall'
-    | 'headlineLarge'
-    | 'headlineMedium'
-    | 'headlineSmall'
-    | 'titleLarge'
-    | 'titleMedium'
-    | 'titleSmall'
-    | 'bodyLarge'
-    | 'bodyMedium'
-    | 'bodySmall'
-    | 'labelLarge'
-    | 'labelMedium'
-    | 'labelSmall';
   size: 'small' | 'medium' | 'large';
+  fontWeight: string;
+  textStyle?: TextStyle;
+  bullets?: boolean;
+  bulletSize?: number;
 };
 
 type StyledTextType = {
   bgColor: string;
   size: 'small' | 'medium' | 'large';
-}
+  fontWeight: string;
+};
 
 const setFonts = (size: string) => {
   let fontSize = 0;
@@ -50,19 +40,21 @@ const setFonts = (size: string) => {
 
 const StyledText = styled(Text)<StyledTextType>`
   /* Adapt the colors based on primary prop */
-  color: ${(props) => props.bgColor};
-  font-size: ${(props) => setFonts(props.size)};
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid #bf4f74;
-  border-radius: 3px;
   text-align: center;
+  color: ${props => props.bgColor};
+  font-family: 'Segoe UI';
+  font-size: ${props => setFonts(props.size)};
+  font-weight: ${props => props.fontWeight};
 `;
 
 export const Typography = (
-  props: TypographyProps & Readonly<{ children?: ReactNode }>
+  props: TypographyProps & Readonly<{children?: ReactNode}>,
 ): JSX.Element => (
-  <StyledText variant={props.type} bgColor={props.bgColor} size={props.size}>
+  <StyledText
+    style={props.textStyle}
+    bgColor={props.bgColor}
+    size={props.size}
+    fontWeight={props.fontWeight}>
     {props.children}
   </StyledText>
 );
