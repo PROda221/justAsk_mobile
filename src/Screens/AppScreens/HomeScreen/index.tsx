@@ -1,5 +1,5 @@
-import {View, ScrollView, FlatList, StyleSheet} from 'react-native';
-import React from 'react';
+import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
+import React, {useState} from 'react';
 import {Typography} from '../../../Components';
 import content from '../../../Assets/Languages/english.json';
 import {type HomeScreenType} from '../../../Assets/Languages/englishTypes';
@@ -20,6 +20,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import Carousel from 'react-native-reanimated-carousel';
 
 type CardData = {
   id: string;
@@ -41,7 +42,20 @@ type CardPortfoliosData = {
   imageSource: {uri: string};
 };
 
+type CarouselData = {
+  id: string;
+  title: string;
+  imageSource: {uri: string};
+};
+
 const cardData: CardData[] = [
+  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
+  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
+  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
+  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
+];
+
+const carouselData: CarouselData[] = [
   {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
   {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
   {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
@@ -106,11 +120,43 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
     navigation.navigate(screen);
   };
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const RenderPagination = () => (
+    <View style={styles.paginatorContainer}>
+      {carouselData.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.paginator,
+            {
+              backgroundColor:
+                index === currentIndex ? colors.black : colors.lightGrey,
+            },
+          ]}
+        />
+      ))}
+    </View>
+  );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeAreaContainer}>
         <Header title={homeScreenContent.headerTitle} drawer />
         <Scroll>
+          <Carousel
+            width={horizontalScale(400 - 40)}
+            height={verticalScale(224)}
+            data={carouselData}
+            autoPlay={false}
+            onProgressChange={(_, absoluteProgress) => {
+              setCurrentIndex(Math.round(absoluteProgress));
+            }}
+            renderItem={({item}) => (
+              <Image source={item.imageSource} style={styles.carouselImage} />
+            )}
+          />
+          <RenderPagination />
+
           <CardContainer
             fontColor="black"
             fontSize="large"
@@ -289,10 +335,30 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
+  carouselImage: {
+    borderRadius: moderateScale(10),
+    height: '100%',
+    resizeMode: 'cover',
+    width: '100%',
+  },
+
+  paginator: {
+    borderRadius: moderateScale(5),
+    height: verticalScale(5),
+    marginHorizontal: moderateScale(5),
+    width: horizontalScale(5),
+  },
+
+  paginatorContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: moderateScale(10),
+  },
+
   safeAreaContainer: {backgroundColor: colors.white, flex: 1},
   studentsPoint: {
     alignItems: 'center',
-    backgroundColor: colors.studentCard,
+    backgroundColor: colors.white,
     borderRadius: moderateScale(5),
     flexDirection: 'row',
     height: verticalScale(140),
@@ -301,6 +367,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(16),
     width: horizontalScale(350),
   },
+
   textStyle: {
     fontSize: moderateScale(12), // Overriding the font size
     maxWidth: horizontalScale(250),

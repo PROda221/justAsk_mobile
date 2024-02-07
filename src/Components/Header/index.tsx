@@ -17,7 +17,7 @@ const Container = styled(View)<{drawer?: boolean}>`
   padding: 16px 0 16px 16px;
   align-items: center;
   border-bottom-width: ${props => (props.drawer ? 0 : '1px')};
-  border-color: ${props => (props.drawer ? colors.white : 'gray')};
+  border-color: ${props => (props.drawer ? colors.white : colors.headerBottom)};
 `;
 
 const Title = styled(Text)<{drawer?: boolean}>`

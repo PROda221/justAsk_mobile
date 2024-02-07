@@ -18,6 +18,9 @@ import Tick from './Tick.svg'
 import HeaderBackArrow from './HeaderBackArrow.svg'
 import BackButton from './BackButton.svg'
 import Profile from './Profile.svg'
+import UserProfile from './UserProfile.svg'
+import DropdownArrow from './DropdownArrow.svg'
+
  
 export {
   HomeIcon,
@@ -39,5 +42,7 @@ export {
   Tick,
   HeaderBackArrow,
   BackButton,
-  Profile
+  Profile,
+  UserProfile,
+  DropdownArrow
 };
