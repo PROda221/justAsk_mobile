@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {
   moderateScale,
   verticalScale,
@@ -39,7 +39,6 @@ export const Dropdown: React.FC<DropdownProps> = ({items, label, onSelect}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
-        {/* <Text>{selectedItem ? selectedItem.label : label}</Text> */}
         <View style={styles.labelContainer}>
           <Typography
             bgColor={colors.black}
@@ -66,7 +65,13 @@ export const Dropdown: React.FC<DropdownProps> = ({items, label, onSelect}) => {
               onPress={() => {
                 handleSelect(item);
               }}>
-              <Text>{item.label}</Text>
+              <Typography
+                bgColor={colors.black}
+                size={'medium'}
+                fontWeight={'400'}
+                textStyle={styles.dropDownButtonText}>
+                {item.label}
+              </Typography>
             </TouchableOpacity>
           ))}
         </View>
@@ -82,14 +87,15 @@ const styles = StyleSheet.create({
   container: {
     // Position: 'absolute',
     flex: 1,
+    zIndex: 1,
   },
 
-  dropDownButtonText: {marginHorizontal: moderateScale(10), textAlign: 'left'},
+  dropDownButtonText: {fontFamily: "Arial", marginHorizontal: moderateScale(10), textAlign: 'left'},
   dropdownButton: {
     borderColor: colors.lightGrey,
     borderRadius: moderateScale(4),
     borderWidth: moderateScale(1),
-    height: verticalScale(35),
+    height: verticalScale(40),
     justifyContent: 'center',
     marginHorizontal: moderateScale(10),
     width: horizontalScale(220),
@@ -97,17 +103,21 @@ const styles = StyleSheet.create({
   dropdownItem: {
     borderBottomColor: colors.lightGrey,
     borderBottomWidth: moderateScale(1),
-    padding: moderateScale(10),
+    height: verticalScale(40),
+    paddingBottom: moderateScale(10),
+    paddingTop: moderateScale(8),
     width: horizontalScale(220),
   },
 
   dropdownList: {
     backgroundColor: colors.white,
-    borderColor: colors.lightGrey,
+    borderColor: colors.white,
     borderRadius: moderateScale(5),
     borderWidth: moderateScale(1),
     marginHorizontal: moderateScale(10),
+    position: 'absolute',
     width: horizontalScale(220),
+    zIndex: 10000,
 
     // Position: 'absolute',
     // top: moderateScale(40),

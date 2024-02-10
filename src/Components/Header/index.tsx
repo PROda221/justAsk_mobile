@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import styled from 'styled-components';
@@ -10,6 +11,7 @@ import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 type HeaderProps = {
   title: string;
   drawer?: boolean;
+  center?: boolean;
 };
 
 const Container = styled(View)<{drawer?: boolean}>`
@@ -20,10 +22,13 @@ const Container = styled(View)<{drawer?: boolean}>`
   border-color: ${props => (props.drawer ? colors.white : colors.headerBottom)};
 `;
 
-const Title = styled(Text)<{drawer?: boolean}>`
+const Title = styled(Text)<{drawer?: boolean, textCenter?: boolean}>`
   color: ${({drawer}) => (drawer ? colors.homeTitle : colors.black)};
   margin-left: 10px;
   font-size: 16px;
+  flex: 1;
+  text-align: ${({textCenter})=> textCenter ? "center" : "left"};
+  padding-right: 30px;
 `;
 
 const leftFeatureHandler = (
@@ -55,7 +60,7 @@ const Header = (props: HeaderProps) => {
           />
         )}
       </TouchableOpacity>
-      <Title drawer={props.drawer}>{props.title}</Title>
+      <Title textCenter={props.center} drawer={props.drawer}>{props.title}</Title>
     </Container>
   );
 };

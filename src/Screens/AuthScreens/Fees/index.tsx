@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import React from 'react';
 import styled from 'styled-components';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
@@ -50,21 +50,23 @@ const FeesScreen = (): JSX.Element => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeAreaContainer}>
-        <Header title={'Assignment'} />
+        <Header title={'Assignments'} center={true} />
         <Scroll>
           <View style={styles.container}>
             <Typography
               bgColor={colors.black}
-              size={'medium'}
+              size={'large'}
               fontWeight={'700'}
+            
               textStyle={styles.testContainer}>
-              {'Upload Assignment'}
+              {'Upload Assignments'}
             </Typography>
 
             <Typography
               bgColor={colors.black}
               size={'medium'}
               fontWeight={'400'}
+           
               textStyle={styles.testContainer}>
               {'Dear Sachin,'}
             </Typography>
@@ -72,6 +74,7 @@ const FeesScreen = (): JSX.Element => {
               bgColor={colors.black}
               size={'medium'}
               fontWeight={'400'}
+           
               textStyle={styles.testContainer}>
               {
                 'Please select the module and accordingly upload the associated documents, to check your submission history  and  quiz results please click on the tabs below.'
@@ -88,6 +91,7 @@ const FeesScreen = (): JSX.Element => {
               <Typography
                 bgColor={colors.noteText}
                 size={'medium'}
+                textStyle={styles.noteTextStyle}
                 fontWeight={'400'}>
                 {`Note : Submissions which are emailed will not show up under submission history tab so please keep a record of the same.`}
               </Typography>
@@ -118,15 +122,6 @@ Team LST`}
                   {':-'}
                 </Typography>
               </View>
-              {/* <View
-                style={{
-                  borderWidth: moderateScale(1),
-                  width: '60%',
-                  marginHorizontal: 10,
-                  borderColor: '#D4D1D1',
-                  borderRadius: 4,
-                }}></View> */}
-
               <Dropdown
                 items={dropdownOptions}
                 label="Select Course"
@@ -151,14 +146,6 @@ Team LST`}
                   {':-'}
                 </Typography>
               </View>
-              {/* <View
-                style={{
-                  borderWidth: moderateScale(1),
-                  width: '60%',
-                  marginHorizontal: 10,
-                  borderColor: '#D4D1D1',
-                  borderRadius: 4,
-                }}></View> */}
 
               <Dropdown
                 items={dropdownOptions}
@@ -180,8 +167,8 @@ Team LST`}
                     justifyContent: 'center',
                     marginHorizontal: moderateScale(10),
                   }}
-                  buttonTextStyles={{color: colors.black}}
-                  containerStyles={{marginBottom: 20}}
+                  buttonTextStyles={{color: colors.black, fontFamily: "Arial"}}
+                  containerStyles={{marginBottom: verticalScale(20)}}
                   onDocumentPick={handleDocumentPick}
                 />
 
@@ -212,6 +199,11 @@ const styles = StyleSheet.create({
     paddingBottom: moderateScale(10),
   },
 
+  noteTextStyle: {
+    fontSize: moderateScale(12),
+    textAlign: 'left',
+  },
+
   safeAreaContainer: {
     backgroundColor: colors.white,
     flex: 1,
@@ -226,19 +218,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.noteBackground,
     borderRadius: moderateScale(10),
     padding: moderateScale(10),
-    marginTop: moderateScale(10),
+    marginTop: verticalScale(20),
   },
 
   bottomContainer: {
     flexDirection: 'row',
     marginTop: moderateScale(10),
+    justifyContent: 'center'
   },
 
   innerBottomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: horizontalScale(91),
-    // alignSelf: 'center',
+    alignItems: 'center'
   },
 
   textstyles: {textAlign: 'left'},
