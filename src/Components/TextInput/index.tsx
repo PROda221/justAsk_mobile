@@ -5,6 +5,7 @@ import {StyleSheet, View} from 'react-native';
 import {moderateScale} from '../../Functions/StyleScale';
 import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
+import { type ViewStyle} from 'react-native';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +14,10 @@ type TextInputProps = {
   label: string;
   secureTextEntry: boolean;
   rules: Record<string, unknown>;
+    // Add any custom styles you want to accept as props
+  viewStyle:ViewStyle;
+  multiline?:boolean
+  
 };
 
 const StyledTextInput = styled(RPTextInput)`
@@ -27,6 +32,9 @@ export const TextInput = ({
   name,
   secureTextEntry,
   rules = {},
+  viewStyle={},
+  multiline=false
+
 }: TextInputProps) => {
   const [showPass, setShowPass] = useState<boolean>(false);
 
@@ -43,6 +51,8 @@ export const TextInput = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <View>
           <StyledTextInput
+            style={viewStyle}
+            multiline={multiline}
             mode="outlined"
             value={value as string}
             outlineStyle={styles.outlineStyle}

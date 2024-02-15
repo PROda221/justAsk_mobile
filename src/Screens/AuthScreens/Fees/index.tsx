@@ -122,11 +122,14 @@ Team LST`}
                   {':-'}
                 </Typography>
               </View>
-              <Dropdown
-                items={dropdownOptions}
-                label="Select Course"
-                onSelect={handleDropdownSelect}
-              />
+              <View style={styles.dropdownContainer}>
+
+                <Dropdown
+                  items={dropdownOptions}
+                  label="Select Course"
+                  onSelect={handleDropdownSelect}
+                />
+              </View>
             </View>
 
             <View style={styles.bottomContainer}>
@@ -146,12 +149,13 @@ Team LST`}
                   {':-'}
                 </Typography>
               </View>
-
-              <Dropdown
-                items={dropdownOptions}
-                label="Select Module"
-                onSelect={handleDropdownSelect}
-              />
+              <View style={styles.dropdownContainer}>
+                <Dropdown
+                  items={dropdownOptions}
+                  label="Select Module"
+                  onSelect={handleDropdownSelect}
+                />
+              </View>
             </View>
 
             <View style={styles.bottomContainer}>
@@ -235,6 +239,8 @@ const styles = StyleSheet.create({
   },
 
   textstyles: {textAlign: 'left'},
+
+  dropdownContainer:{marginLeft:horizontalScale(10)}
 });
 
 export default FeesScreen;

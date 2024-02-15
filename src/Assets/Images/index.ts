@@ -20,8 +20,10 @@ import BackButton from './BackButton.svg'
 import Profile from './Profile.svg'
 import UserProfile from './UserProfile.svg'
 import DropdownArrow from './DropdownArrow.svg'
+import MyProfile from './MyProfile.svg'
+import EditProfile from './EditProfile.svg'
+import   RadioButtonChecked from './RadioButtonChecked.svg'
 
- 
 export {
   HomeIcon,
   Bag,
@@ -44,5 +46,8 @@ export {
   BackButton,
   Profile,
   UserProfile,
-  DropdownArrow
+  DropdownArrow,
+  MyProfile,
+  EditProfile,
+  RadioButtonChecked
 };

@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
     borderWidth: moderateScale(1),
     height: verticalScale(40),
     justifyContent: 'center',
-    marginHorizontal: moderateScale(10),
     width: horizontalScale(220),
   },
   dropdownItem: {
