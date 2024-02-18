@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import {colors} from '../../../DesignTokens/Colors';
 import {
   moderateScale,
-  horizontalScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
 import {TextInput} from '../../../Components';
@@ -62,9 +61,8 @@ const LstTeenScreen = (): JSX.Element => {
   };
 
   const radioData: RadioItem[] = [
-    {id: 1, isChecked: false, label: 'Option 1'},
-    {id: 2, isChecked: false, label: 'Option 2'},
-    {id: 3, isChecked: false, label: 'Option 3'},
+    {id: 1, isChecked: false, label: 'Print  Certificate'},
+    {id: 2, isChecked: false, label: 'E-Certificate'},
   ];
 
   const myArray: MyCard[] = [
@@ -145,14 +143,15 @@ const LstTeenScreen = (): JSX.Element => {
             <TextInput
               control={control}
               name={'username'}
-              label={'Address where you want the certificate'}
+              labelExists={false}
+              placeholder={'Address where you want the certificate'}
               secureTextEntry={false}
-              rules={undefined}
-              viewStyle={{height:100}}
+              rules={{}}
+              viewStyle={styles.addressTextInput}
               multiline={true}
             />
 
-            <View style={{marginVertical: moderateScale(10)}}>
+            <View style={styles.dropdownContainer}>
               <CustomButton variant="typeA" label={'Pay (£20)'} />
             </View>
           </View>
@@ -164,7 +163,7 @@ const LstTeenScreen = (): JSX.Element => {
                 marginBottom: moderateScale(10),
               },
             ]}>
-            <View style={{padding: moderateScale(16)}}>
+            <View style={styles.headingBottomContainer}>
               <Typography
                 bgColor={colors.black}
                 size={'large'}
@@ -188,7 +187,7 @@ const LstTeenScreen = (): JSX.Element => {
                     bgColor={colors.black}
                     size={'medium'}
                     fontWeight={'400'}
-                    textStyle={styles.textContentStyle}>
+                    textStyle={styles.textContent}>
                     {item.description}
                   </Typography>
 
@@ -197,13 +196,13 @@ const LstTeenScreen = (): JSX.Element => {
                       bgColor={colors.black}
                       size={'medium'}
                       fontWeight={'400'}
-                      textStyle={styles.textContentStyle}>
+                      textStyle={styles.textContent}>
                       {item.date}
                     </Typography>
                   </View>
                 </View>
                 <View style={styles.dropdownContainer}>
-                  <CustomButton variant="typeA" label={'Pay (£20)'} />
+                  <CustomButton variant="typeA" label={'Download Certificate'}viewStyle={styles.buttonStyle}  />
                 </View>
               </View>
             ))}
@@ -215,6 +214,10 @@ const LstTeenScreen = (): JSX.Element => {
 };
 
 const styles = StyleSheet.create({
+  addressTextInput:{height:verticalScale(100)},
+
+  buttonStyle:  {height: 30, marginBottom: 10, width: 132},
+
   cardStyle: {
     borderColor: colors.lightGrey,
     borderTopWidth: moderateScale(1),
@@ -231,13 +234,14 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(10),
     paddingHorizontal: moderateScale(20),
   },
-
   dropdownContainer: {marginVertical: moderateScale(10)},
 
   heading: {
     marginTop: moderateScale(16),
     textAlign: 'left',
   },
+
+  headingBottomContainer:{padding: moderateScale(16)},
 
   safeAreaContainer: {
     backgroundColor: colors.white,
@@ -254,8 +258,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: moderateScale(10),
   },
+  textContent:{fontSize:12,textAlign: 'left'},
 
   textContentStyle: {textAlign: 'left'},
+
 });
+
+
 
 export default LstTeenScreen;

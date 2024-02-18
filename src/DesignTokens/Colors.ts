@@ -12,7 +12,8 @@ export const colors = {
     lightGrey:'#D4D1D1',
     noteText: '#B91D1D',
     noteBackground: '#FFD1D1',
-    headerBottom:'#C5C5C5'
+    headerBottom:'#C5C5C5',
+    buttonGreen:'#1F9F34'
 
 
 

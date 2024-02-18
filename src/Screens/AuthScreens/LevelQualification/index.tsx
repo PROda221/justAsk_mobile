@@ -66,21 +66,16 @@ Learners Support Team`,
                       textStyle={styles.textContentStyle}>
                       {'Phone No.'}
                     </Typography>
+                  </View>
+                  <View style={styles.valueStyle}>
                     <Typography
                       bgColor={colors.black}
                       size={'medium'}
                       fontWeight={'400'}
                       textStyle={styles.textContentStyle}>
-                      {':-'}
+                      {':- 89839944030'}
                     </Typography>
                   </View>
-                  <Typography
-                    bgColor={colors.black}
-                    size={'medium'}
-                    fontWeight={'400'}
-                    textStyle={styles.textContentStyle}>
-                    {' 89839944030'}
-                  </Typography>
                 </View>
                 <View style={styles.sideContainer}>
                   <View style={styles.sideInnerContainer}>
@@ -91,21 +86,16 @@ Learners Support Team`,
                       textStyle={styles.textContentStyle}>
                       {'Address'}
                     </Typography>
+                  </View>
+                  <View style={styles.valueStyle}>
                     <Typography
                       bgColor={colors.black}
                       size={'medium'}
                       fontWeight={'400'}
                       textStyle={styles.textContentStyle}>
-                      {':-'}
+                      {':- abc sector-100'}
                     </Typography>
                   </View>
-                  <Typography
-                    bgColor={colors.black}
-                    size={'medium'}
-                    fontWeight={'400'}
-                    textStyle={styles.textContentStyle}>
-                    {' ajnfalslfa l vlas '}
-                  </Typography>
                 </View>
                 <View style={styles.sideContainer}>
                   <View style={styles.sideInnerContainer}>
@@ -116,21 +106,16 @@ Learners Support Team`,
                       textStyle={styles.textContentStyle}>
                       {'Age'}
                     </Typography>
+                  </View>
+                  <View style={styles.valueStyle}>
                     <Typography
                       bgColor={colors.black}
                       size={'medium'}
                       fontWeight={'400'}
                       textStyle={styles.textContentStyle}>
-                      {':-'}
+                      {':- 20'}
                     </Typography>
                   </View>
-                  <Typography
-                    bgColor={colors.black}
-                    size={'medium'}
-                    fontWeight={'400'}
-                    textStyle={styles.textContentStyle}>
-                    {'20'}
-                  </Typography>
                 </View>
                 <View style={styles.sideContainer}>
                   <View style={styles.sideInnerContainer}>
@@ -141,21 +126,23 @@ Learners Support Team`,
                       textStyle={styles.textContentStyle}>
                       {'Joined'}
                     </Typography>
+                  </View>
+                  <View style={styles.joinedValueDate}>
                     <Typography
                       bgColor={colors.black}
                       size={'medium'}
                       fontWeight={'400'}
                       textStyle={styles.textContentStyle}>
-                      {' :-'}
+                      {':- '}
+                    </Typography>
+                    <Typography
+                      bgColor={colors.black}
+                      size={'medium'}
+                      fontWeight={'400'}
+                      textStyle={styles.textContentStyle}>
+                      {'YYYY-MM-DD HH:MM:SS'}
                     </Typography>
                   </View>
-                  <Typography
-                    bgColor={colors.black}
-                    size={'medium'}
-                    fontWeight={'400'}
-                    textStyle={styles.textContentStyle}>
-                    {'YYYY-MM-DD HH:MM:SS'}
-                  </Typography>
                 </View>
               </View>
             </View>
@@ -227,6 +214,9 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(15),
     marginVertical: moderateScale(20),
   },
+
+  joinedValueDate:{flexDirection: 'row', width: '60%'},
+
   middleContentContainer: {
     marginBottom: moderateScale(20),
     paddingHorizontal: moderateScale(15),
@@ -241,12 +231,15 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(15),
     width: horizontalScale(220),
   },
+
   sideInnerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '50%',
+    width: '40%',
   },
+
   textContentStyle: {textAlign: 'left'},
+  valueStyle:{width: '60%'}
 });
 
 export default LevelQualScreen;

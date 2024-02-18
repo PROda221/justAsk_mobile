@@ -47,7 +47,7 @@ const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({data}) => {
             size={24}
             color={colors.black}
           />
-          <Typography bgColor={colors.black} size={'medium'} fontWeight={'600'} textStyle={styles.label}>{item.label}</Typography>
+          <Typography bgColor={colors.black} size={'medium'} fontWeight={'700'} textStyle={styles.label}>{item.label}</Typography>
         </TouchableOpacity>
       ))}
     </View>
