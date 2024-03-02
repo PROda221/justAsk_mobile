@@ -1,8 +1,8 @@
 import {combineReducers} from '@reduxjs/toolkit';
-import counterSlice from './Slices/counterSlice';
+import homeSliderSlice from './Slices/HomeSliderSlice';
 
 const rootReducer = combineReducers({
-	counterSlice,
+	homeSliderSlice,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -1,5 +1,7 @@
+ 
+ 
 import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Typography} from '../../../Components';
 import content from '../../../Assets/Languages/english.json';
 import {type HomeScreenType} from '../../../Assets/Languages/englishTypes';
@@ -21,6 +23,9 @@ import {
   verticalScale,
 } from '../../../Functions/StyleScale';
 import Carousel from 'react-native-reanimated-carousel';
+import {useDispatch, useSelector} from 'react-redux';
+import {callHomeSlider} from '../../../Redux/Slices/HomeSliderSlice';
+import {type RootState} from '../../../Redux/rootReducers';
 
 type CardData = {
   id: string;
@@ -112,6 +117,21 @@ const Scroll = styled(ScrollView)`
 `;
 
 const HomeScreen = ({navigation}: Props): JSX.Element => {
+  const dispatch = useDispatch();
+  const homeSliderData = useSelector(
+    (state: RootState) => state.homeSliderSlice,
+  );
+
+  useEffect(() => {
+    dispatch(callHomeSlider());
+  }, []);
+
+  useEffect(() => {
+    if (homeSliderData) {
+      console.log('homeSliderData :', homeSliderData);
+    }
+  }, [homeSliderData]);
+
   const handleViewAllPress = (screen: StackScreens) => {
     navigation.navigate(screen);
   };
