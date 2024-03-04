@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {CustomCard, Typography} from '../../../Components';
 import {
   horizontalScale,
@@ -27,6 +27,9 @@ import Review from './Review';
 import Header from '../../../Components/Header';
 import styled from 'styled-components/native';
 import {colors} from '../../../DesignTokens/Colors';
+import { callGetOnlineCoursesById } from '../../../Redux/Slices/OnlineCoursesSlice';
+import { useDispatch , useSelector} from 'react-redux';
+import { type RootState } from '../../../Redux/rootReducers'
 
 const programScreenContent: ProgramsPage = content.ProgramScreen;
 
@@ -77,10 +80,23 @@ const renderContent = (selectedTab: string) => {
   }
 };
 
-const ProgramPage = (): JSX.Element => {
+const ProgramPage = ({route}): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<
     'CourseOverview' | 'ModulesCovered' | 'Review'
   >('CourseOverview');
+
+  const dispatch = useDispatch();
+  const onlineCoursesData=useSelector(
+    (state: RootState) => state.onlineCoursesSlice,
+  );
+
+  useEffect(() => {
+    dispatch(callGetOnlineCoursesById(route.params.id))
+  }, []);
+
+  useEffect(() => {
+    console.log('nami',JSON.stringify(onlineCoursesData.successById))
+  }, [onlineCoursesData]);
 
   return (
     <SafeAreaProvider>
@@ -89,7 +105,7 @@ const ProgramPage = (): JSX.Element => {
         <Scroll>
           <View>
             <Image
-              source={{uri: 'https://picsum.photos/702'}}
+              source={{uri: onlineCoursesData?.successById?.document.image}}
               style={styles.imageCorouselStyle}
             />
             <EnrollContainer>
@@ -105,7 +121,7 @@ const ProgramPage = (): JSX.Element => {
                       bgColor={colors.white}
                       size={'medium'}
                       fontWeight="400">
-                      {' - Beginner'}
+                      {`- ${onlineCoursesData?.successById?.document?.courselevel}`}
                     </Typography>
                   </Typography>
                 </View>
@@ -120,7 +136,7 @@ const ProgramPage = (): JSX.Element => {
                       bgColor={colors.white}
                       size={'medium'}
                       fontWeight="400">
-                      {' - 6 Week'}
+                      {`- ${onlineCoursesData?.successById?.document?.courselength}`}
                     </Typography>
                   </Typography>
                 </View>
@@ -130,7 +146,7 @@ const ProgramPage = (): JSX.Element => {
                     textStyle={styles.textLeft}
                     size={'medium'}
                     fontWeight="400">
-                    {'Certified Diploma'}
+                    {onlineCoursesData?.successById?.document?.coursetype}
                   </Typography>
                 </View>
                 <View>
@@ -149,7 +165,7 @@ const ProgramPage = (): JSX.Element => {
                   bgColor={colors.white}
                   size={'large'}
                   fontWeight="700">
-                  {'₹30,000.00'}
+                 {onlineCoursesData?.successById?.document?.coursefees.fees}
                 </Typography>
                 <EnrollButton>
                   <Typography
@@ -268,6 +284,7 @@ const styles = StyleSheet.create({
     height: verticalScale(273),
     width: '100%',
   },
+
   innerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -278,19 +295,24 @@ const styles = StyleSheet.create({
     paddingLeft: horizontalScale(15),
     paddingTop: verticalScale(20),
   },
+
   safeAreaContainer: {flex: 1},
+
   selectedTab: {
     borderBottomWidth: moderateScale(2),
   },
+
   tabButton: {
     alignItems: 'center',
     flex: 1,
     paddingVertical: verticalScale(10),
   },
+
   tabContainer: {
     flexDirection: 'row',
     paddingVertical: verticalScale(16),
   },
+
   textLeft: {
     textAlign: 'left',
   },

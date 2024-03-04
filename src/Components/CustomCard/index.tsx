@@ -18,6 +18,12 @@ type CustomCardProps = {
   imageSource?: ImageSourcePropType;
   variant: 'small' | 'medium' | 'large';
   data?: Array<{label: string; icon: string}>;
+  courseFee?:string;
+  courseDuration?:string;
+  courseType?:string;
+  
+
+
 };
 
 const getCardStyles = (variant: CustomCardProps['variant']) => {
@@ -125,6 +131,9 @@ export const CustomCard: React.FC<CustomCardProps> = ({
   onPress,
   title,
   imageSource,
+  courseFee='',
+  courseDuration='',
+  courseType='',
 }) => (
   <StyledCard onPress={onPress} variant={variant}>
     {variant === 'small' ? (
@@ -132,7 +141,7 @@ export const CustomCard: React.FC<CustomCardProps> = ({
         <View style={styles.zIndex1}>
           <StyledCardCover variant={variant} source={imageSource} />
           <TitleView>
-            <Typography bgColor={colors.white} size="large" fontWeight="700">
+            <Typography bgColor={colors.white} size="medium" fontWeight="700">
               {title}
             </Typography>
           </TitleView>
@@ -143,8 +152,8 @@ export const CustomCard: React.FC<CustomCardProps> = ({
                 height={verticalScale(15)}
                 style={styles.imageContainer}
               />
-              <Typography bgColor={colors.white} size="medium" fontWeight="400">
-                {' ' + content.homeScreen.hello}
+              <Typography bgColor={colors.white} size="small" fontWeight="400">
+                {' ' + courseDuration}
               </Typography>
             </DetailsView>
             <DetailsView>
@@ -153,16 +162,16 @@ export const CustomCard: React.FC<CustomCardProps> = ({
                 height={verticalScale(15)}
                 style={styles.imageContainer}
               />
-              <Typography bgColor={colors.white} size="medium" fontWeight="400">
-                {' ' + content.homeScreen.world}
+              <Typography bgColor={colors.white} size="small" fontWeight="400">
+                {' ' + courseType}
               </Typography>
             </DetailsView>
           </StyledView>
-          <FeeContainer>
-            <Typography bgColor={colors.white} size="medium" fontWeight="400">
-              {'Fees : ' + 300000.0}
+          {courseFee && <FeeContainer>
+            <Typography bgColor={colors.white} size="small" fontWeight="400">
+              {'Fees : ' + courseFee}
             </Typography>
-          </FeeContainer>
+          </FeeContainer>}
         </View>
         <ButtonView>
           <CustomButton

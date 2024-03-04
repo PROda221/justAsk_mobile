@@ -1,5 +1,3 @@
- 
- 
 import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Typography} from '../../../Components';
@@ -26,6 +24,10 @@ import Carousel from 'react-native-reanimated-carousel';
 import {useDispatch, useSelector} from 'react-redux';
 import {callHomeSlider} from '../../../Redux/Slices/HomeSliderSlice';
 import {type RootState} from '../../../Redux/rootReducers';
+import { callHomeStudentPortfoliosSlider } from '../../../Redux/Slices/HomeStudentPortfoliosSlider';
+import { callGetOnlineCourses, } from '../../../Redux/Slices/OnlineCoursesSlice';
+import { callCampusCourses } from '../../../Redux/Slices/CampusCoursesSlice';
+import { callLevel4Courses } from '../../../Redux/Slices/Level4CoursesSlice';
 
 type CardData = {
   id: string;
@@ -122,22 +124,66 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
     (state: RootState) => state.homeSliderSlice,
   );
 
-  useEffect(() => {
-    dispatch(callHomeSlider());
-  }, []);
+  const homeStudentPortfoliosSliderData = useSelector(
+    (state: RootState) => state.homeStudentPortfoliosSlider,
+  );
+
+  const onlineCoursesData = useSelector(
+    (state: RootState) => state.onlineCoursesSlice,
+  );
+
+  const campusCoursesData = useSelector(
+    (state: RootState) => state.campusCoursesSlice,
+  );
+
+  const level4CoursesData = useSelector(
+    (state: RootState) => state.level4CoursesSlice,
+  );
 
   useEffect(() => {
-    if (homeSliderData) {
-      console.log('homeSliderData :', homeSliderData);
-    }
-  }, [homeSliderData]);
+    dispatch(callHomeSlider());
+    dispatch(callHomeStudentPortfoliosSlider())
+    dispatch(callGetOnlineCourses())
+    dispatch(callCampusCourses())
+    dispatch(callLevel4Courses())
+  }, []);
+
+  // UseEffect(() => {
+  //   if (homeSliderData) {
+  //     console.log('homeSliderData :', homeSliderData);
+  //   }
+  // }, [homeSliderData]);
+
+  // useEffect(() => {
+  //   if (homeStudentPortfoliosSliderData) {
+  //     console.log('homeStudentPortfoliosSliderData :', homeStudentPortfoliosSliderData);
+  //   }
+  // }, [homeStudentPortfoliosSliderData]);
+
+  // useEffect(() => {
+  //   if (campusCoursesData) {
+  //     console.log('Online Courses :', campusCoursesData);
+  //   }
+  // }, [campusCoursesData]);
+
+  // useEffect(() => {
+  //   if (onlineCoursesData) {
+  //     console.log('Online Courses :', onlineCoursesData);
+  //   }
+  // }, [onlineCoursesData]);
+
+  // useEffect(() => {
+  //   if (level4CoursesData) {
+  //     console.log('Online Courses :', level4CoursesData);
+  //   }
+  // }, [level4CoursesData]);
 
   const handleViewAllPress = (screen: StackScreens) => {
     navigation.navigate(screen);
   };
 
-  const handleCardPress = (screen: StackScreens) => {
-    navigation.navigate(screen);
+  const handleCardPress = (screen: StackScreens, courseId:number) => {
+    navigation.navigate(screen,{id:courseId});
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -175,8 +221,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
               <Image source={item.imageSource} style={styles.carouselImage} />
             )}
           />
-          <RenderPagination />
-
+          <RenderPagination/>
           <CardContainer
             fontColor="black"
             fontSize="large"
@@ -190,17 +235,20 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             }}>
             <FlatList
               horizontal
-              data={cardData}
-              keyExtractor={item => item.id}
+              data={onlineCoursesData?.success?.document?.records}
+              keyExtractor={item => `${item?.id}`}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CustomCard
                   variant={'small'}
                   onPress={() => {
-                    handleCardPress('Program Page');
+                    handleCardPress('Program Page',item?.id);
                   }}
-                  title={item.title}
-                  imageSource={item.imageSource}
+                  title={item?.coursetitle}
+                  imageSource={{uri:item?.image}}
+                  courseFee={item?.coursefees?.fees}
+                  courseDuration={item?.courselength}
+                  courseType={item?.coursetype}
                 />
               )}
             />
@@ -218,18 +266,21 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             }}>
             <FlatList
               horizontal
-              data={cardData}
-              keyExtractor={item => item.id}
+              data={level4CoursesData?.success?.document?.records}
+              keyExtractor={item => `${item?.id}`}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CustomCard
-                  variant={'small'}
-                  onPress={() => {
-                    handleCardPress('Program Page');
-                  }}
-                  title={item.title}
-                  imageSource={item.imageSource}
-                />
+                variant={'small'}
+                onPress={() => {
+                  handleCardPress('Program Page',item?.id);
+                }}
+                title={item?.coursetitle}
+                imageSource={{uri:item?.image}}
+                courseFee={item?.coursefee}
+                courseDuration={item?.courselength}
+                courseType={item?.coursetype}
+              />
               )}
             />
           </CardContainer>
@@ -246,18 +297,21 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             }}>
             <FlatList
               horizontal
-              data={cardData}
-              keyExtractor={item => item.id}
+              data={campusCoursesData?.success?.document?.records}
+              keyExtractor={item => `${item?.id}`}
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CustomCard
-                  variant={'small'}
-                  onPress={() => {
-                    handleCardPress('Program Page');
-                  }}
-                  title={item.title}
-                  imageSource={item.imageSource}
-                />
+                variant={'small'}
+                onPress={() => {
+                  handleCardPress('Program Page',item?.id);
+                }}
+                title={item?.coursetitle}
+                imageSource={{uri:item?.image}}
+                courseFee={item?.coursefee}
+                courseDuration={item?.courselength}
+                courseType={item?.coursetype}
+              />
               )}
             />
           </CardContainer>
@@ -314,19 +368,21 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             }}>
             <FlatList
               horizontal
-              data={cardPortfoliosData}
-              keyExtractor={item => item.id}
+              data={homeStudentPortfoliosSliderData?.success?.document?.records}
+              keyExtractor={(item, index) => `${index}`}
               showsHorizontalScrollIndicator={false}
-              renderItem={({item}) => (
+              renderItem={({item,index}) => 
+(
                 <CustomCard
                   variant={'large'}
                   onPress={() => {
                     console.log('hello');
                   }}
-                  title={item.title}
-                  imageSource={item.imageSource}
+                  title={`${index}`}
+                  imageSource={{uri: item}}
                 />
-              )}
+              )
+            }
             />
           </CardContainer>
 
