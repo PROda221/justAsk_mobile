@@ -66,7 +66,7 @@ type OnlineCoursesByIdType = {
         courselevel: string;
         video: string;
         tabs: {
-          Modules_Covered:string;
+          'Modules Covered':string;
           Reviews:Array<{
               point:string
           }>;
@@ -103,7 +103,7 @@ export const callGetOnlineCoursesById = createAsyncThunk(
     async (id:number, {rejectWithValue}) => {
       try {
         const response = await get<OnlineCoursesByIdType>(`/onlinecourses/read_one.php?id=${id}&countrycode=IN`);
-        if (response.status === 200) {
+        if (response.status === 200) {        
           return response.data;
         }
   
@@ -140,6 +140,11 @@ const onlinecourses = createSlice({
       state.loading = false;
       state.error = null;
     },
+    resetSliderIdResponse(state){
+      state.loadingById = false;
+      state.errorById = undefined;
+      state.successById = undefined
+    }
   },
 
   extraReducers(builder) {
@@ -169,6 +174,6 @@ const onlinecourses = createSlice({
   },
 });
 
-export const {resetSliderResponse} = onlinecourses.actions;
+export const {resetSliderResponse, resetSliderIdResponse} = onlinecourses.actions;
 
 export default onlinecourses.reducer;

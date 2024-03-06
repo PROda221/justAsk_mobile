@@ -1,14 +1,16 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Typography} from '../../../Components/Typography';
 import {moderateScale} from '../../../Functions/StyleScale';
-import {colors} from '../../../DesignTokens/Colors';
+import RenderHtml from 'react-native-render-html';
 
-const ModulesCovered: React.FC = () => (
+
+type PropsTypes = {
+  content: string
+}
+
+const ModulesCovered = ({content}: PropsTypes): JSX.Element => (
   <View style={styles.container}>
-    <Typography bgColor={colors.black} size={'medium'} fontWeight="400">
-      {'ModulesCovered'}
-    </Typography>
+    <RenderHtml contentWidth={10} source={{html: content}} />
   </View>
 );
 

@@ -1,46 +1,43 @@
- 
-import {View, FlatList, StyleSheet} from 'react-native';
-import React from 'react';
+ import {FlatList, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
 import {CustomCard} from '../../../Components';
 import {
   SafeAreaProvider,
   SafeAreaView as SafeAreaViewCompat,
 } from 'react-native-safe-area-context';
 import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { type StackParamList } from '../../../Navigation/types';
+import { type StackScreens, type StackParamList } from '../../../Navigation/types';
 import Header from '../../../Components/Header';
 import { type OnlineCourses } from '../../../Assets/Languages/englishTypes';
 import content from '../../../Assets/Languages/english.json'
-import styled from 'styled-components/native';
 import { horizontalScale } from '../../../Functions/StyleScale';
+import { callGetOnlineCourses } from '../../../Redux/Slices/OnlineCoursesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { type RootState } from '../../../Redux/rootReducers';
 
-type CardData = {
-  id: string;
-  title: string;
-  imageSource: {uri: string};
-};
 
 type PropsType = {
   navigation: NativeStackNavigationProp<StackParamList, 'Online Courses'>;
 }
 
-const cardData: CardData[] = [
-  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
-  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
-  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
-  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
-];
-
-const Row = styled(View)`
-  flex-direction: row;
-`
-
 const onlineCoursesScreen: OnlineCourses = content.onlineCourses;
 
 const OnlineCoursesScreen = ({navigation}: PropsType): JSX.Element => {
+  const dispatch = useDispatch();
 
-  const handleCardPress = () => {
-    navigation.navigate('Program Page');
+  const onlineCoursesData = useSelector(
+    (state: RootState) => state.onlineCoursesSlice,
+  );
+
+  useEffect(() => {
+    if(onlineCoursesData){
+      dispatch(callGetOnlineCourses())
+    }
+    
+  }, [onlineCoursesData])
+
+  const handleCardPress = (screen: StackScreens, courseId:number) => {
+    navigation.navigate(screen,{id:courseId});
   };
 
   return (
@@ -49,24 +46,19 @@ const OnlineCoursesScreen = ({navigation}: PropsType): JSX.Element => {
         <Header title={onlineCoursesScreen.title} />
           <FlatList
             style={styles.listPadding}
-            data={cardData}
-            keyExtractor={item=> item.id}
+            data={onlineCoursesData?.success?.document?.records}
+            keyExtractor={item=> item.id.toString()}
+            numColumns={2}
             renderItem={({item}) => (
-              <Row>
                 <CustomCard
                   variant={'small'} 
-                  onPress={handleCardPress}
-                  title={item.title}
-                  imageSource={item.imageSource}
+                  onPress={()=>{ handleCardPress("Program Page", item?.id); }}
+                  title={item?.coursetitle}
+                  courseDuration={item?.courselength}
+                  courseType={item?.coursetype}
+                  imageSource={{uri:item?.image}}
+                  courseFee={item?.coursefees.fees}
                 />
-
-                <CustomCard
-                  variant={'small'} 
-                  onPress={handleCardPress}
-                  title={item.title}
-                  imageSource={item.imageSource}
-                />
-              </Row>
             )}
             showsVerticalScrollIndicator={false}
           />

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Typography} from '../../../Components';
@@ -147,36 +149,6 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
     dispatch(callCampusCourses())
     dispatch(callLevel4Courses())
   }, []);
-
-  // UseEffect(() => {
-  //   if (homeSliderData) {
-  //     console.log('homeSliderData :', homeSliderData);
-  //   }
-  // }, [homeSliderData]);
-
-  // useEffect(() => {
-  //   if (homeStudentPortfoliosSliderData) {
-  //     console.log('homeStudentPortfoliosSliderData :', homeStudentPortfoliosSliderData);
-  //   }
-  // }, [homeStudentPortfoliosSliderData]);
-
-  // useEffect(() => {
-  //   if (campusCoursesData) {
-  //     console.log('Online Courses :', campusCoursesData);
-  //   }
-  // }, [campusCoursesData]);
-
-  // useEffect(() => {
-  //   if (onlineCoursesData) {
-  //     console.log('Online Courses :', onlineCoursesData);
-  //   }
-  // }, [onlineCoursesData]);
-
-  // useEffect(() => {
-  //   if (level4CoursesData) {
-  //     console.log('Online Courses :', level4CoursesData);
-  //   }
-  // }, [level4CoursesData]);
 
   const handleViewAllPress = (screen: StackScreens) => {
     navigation.navigate(screen);
