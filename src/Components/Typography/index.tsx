@@ -10,6 +10,8 @@ type TypographyProps = {
   textStyle?: TextStyle;
   bullets?: boolean;
   bulletSize?: number;
+  elipses?: "tail" | "head";
+  numberOfLines?: number;
 };
 
 type StyledTextType = {
@@ -51,6 +53,9 @@ export const Typography = (
   props: TypographyProps & Readonly<{children?: ReactNode}>,
 ): JSX.Element => (
   <StyledText
+    {...props.numberOfLines && {numberOfLines: props.numberOfLines}}
+    numberOfLines={props.numberOfLines}
+    ellipsizeMode={props.elipses}
     style={props.textStyle}
     bgColor={props.bgColor}
     size={props.size}
