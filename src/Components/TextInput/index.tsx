@@ -17,7 +17,7 @@ type TextInputProps = {
   placeholder?: string;
   rules: Record<string, unknown>;
     // Add any custom styles you want to accept as props
-  viewStyle:ViewStyle;
+  viewStyle?:ViewStyle;
   multiline?:boolean
   
 };

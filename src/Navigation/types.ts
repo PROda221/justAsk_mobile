@@ -4,7 +4,7 @@ import { type OnlineCoursesType, type Record } from "../Redux/Slices/OnlineCours
 
 export type DrawerParamList = {
   HomePage: undefined;
-  'Online Courses': undefined;
+  'Online Courses': {item: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined} | undefined;
   'Level 4 Qualifications': undefined;
   'Campus Courses': undefined;
   'LST-Teen': undefined;
@@ -19,7 +19,7 @@ export type DrawerScreens = keyof DrawerParamList;
 export type StackParamList = {
   HomePage: undefined;
   'Program Page': {item: Record, list: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined};
-  'Online Courses': {item: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined};
+  'Online Courses': {item: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined} | undefined;
   'Level 4 Qualifications': undefined;
 };
 
