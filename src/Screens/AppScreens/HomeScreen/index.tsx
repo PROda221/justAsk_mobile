@@ -136,8 +136,11 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
     navigation.navigate('Online Courses', {item});
   };
 
-  const handleCardPress = (item: Record) => {
-    navigation.navigate('Program Page', {item});
+  const handleCardPress = (item: Record, list: CampusCoursesTypes
+    | Level4CoursesTypes
+    | OnlineCoursesType
+    | undefined) => {
+    navigation.navigate('Program Page', {item, list });
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -196,7 +199,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
                 <CustomCard
                   variant={'small'}
                   onPress={() => {
-                    handleCardPress(item);
+                    handleCardPress(item, onlineCoursesData.success);
                   }}
                   title={item?.coursetitle}
                   imageSource={{uri: item?.image}}
@@ -227,7 +230,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
                 <CustomCard
                   variant={'small'}
                   onPress={() => {
-                    handleCardPress(item);
+                    handleCardPress(item, level4CoursesData?.success);
                   }}
                   title={item?.coursetitle}
                   imageSource={{uri: item?.image}}
@@ -258,7 +261,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
                 <CustomCard
                   variant={'small'}
                   onPress={() => {
-                    handleCardPress(item);
+                    handleCardPress(item, campusCoursesData?.success);
                   }}
                   title={item?.coursetitle}
                   imageSource={{uri: item?.image}}

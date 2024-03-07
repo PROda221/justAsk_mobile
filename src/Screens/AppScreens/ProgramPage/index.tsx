@@ -27,12 +27,15 @@ import Review from './Review';
 import Header from '../../../Components/Header';
 import styled from 'styled-components/native';
 import {colors} from '../../../DesignTokens/Colors';
-import {type Record} from '../../../Redux/Slices/OnlineCoursesSlice';
+import {type OnlineCoursesType, type Record} from '../../../Redux/Slices/OnlineCoursesSlice';
 import {useSelector} from 'react-redux';
 import {type RootState} from '../../../Redux/rootReducers';
 import Loader from '../../../Components/Loader/Loader';
-import { type RouteProp } from '@react-navigation/native';
-import { type StackParamList } from '../../../Navigation/types';
+import {type RouteProp} from '@react-navigation/native';
+import {type StackParamList} from '../../../Navigation/types';
+import { type CampusCoursesTypes } from '../../../Redux/Slices/CampusCoursesSlice';
+import { type Level4CoursesTypes } from '../../../Redux/Slices/Level4CoursesSlice';
+import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const programScreenContent: ProgramsPage = content.ProgramScreen;
 
@@ -56,19 +59,6 @@ const EnrollButton = styled(TouchableOpacity)`
   border-radius: 10px;
   margin-top: 15px;
 `;
-
-type CardData = {
-  id: string;
-  title: string;
-  imageSource: {uri: string};
-};
-
-const cardData: CardData[] = [
-  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
-  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
-  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
-  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
-];
 
 const renderContent = (selectedTab: string, itemData: Record) => {
   switch (selectedTab) {
@@ -103,10 +93,11 @@ const renderContent = (selectedTab: string, itemData: Record) => {
 };
 
 type PropsType = {
+  navigation: NativeStackNavigationProp<StackParamList, 'Program Page'>;
   route: RouteProp<StackParamList, 'Program Page'>;
 };
 
-const ProgramPage = ({route}: PropsType): JSX.Element => {
+const ProgramPage = ({navigation, route}: PropsType): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<
     'CourseOverview' | 'ModulesCovered' | 'Review'
   >('CourseOverview');
@@ -114,7 +105,8 @@ const ProgramPage = ({route}: PropsType): JSX.Element => {
     (state: RootState) => state.onlineCoursesSlice,
   );
 
-  const itemData: Record = route.params.item
+  const itemData: Record = route.params.item;
+  const listData: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined = route.params.list;
 
   // UseEffect(() =>{
   //   if(onlineCoursesData.successById ?? onlineCoursesData.errorById){
@@ -132,7 +124,7 @@ const ProgramPage = ({route}: PropsType): JSX.Element => {
   return (
     <SafeAreaProvider>
       <SafeAreaViewCompat style={styles.safeAreaContainer}>
-        {onlineCoursesData.loading || onlineCoursesData.loadingById  ? (
+        {onlineCoursesData.loading || onlineCoursesData.loadingById ? (
           <Loader isLoading={true} />
         ) : (
           <>
@@ -200,27 +192,26 @@ const ProgramPage = ({route}: PropsType): JSX.Element => {
                       </Typography>
                     </View>
                   </View>
-                  {itemData?.coursefees ? <View style={styles.priceContainer}>
-                    <Typography
-                      textStyle={styles.textLeft}
-                      bgColor={colors.white}
-                      size={'large'}
-                      fontWeight="700">
-                      {
-                        itemData.coursefees.fees
-                      }
-                    </Typography>
-                    <EnrollButton>
+                  {itemData?.coursefees ? (
+                    <View style={styles.priceContainer}>
                       <Typography
-                        bgColor={colors.black}
-                        size={'medium'}
-                        fontWeight="700"
-                        textStyle={styles.textLeft}>
-                        {programScreenContent.enrollNow}
+                        textStyle={styles.textLeft}
+                        bgColor={colors.white}
+                        size={'large'}
+                        fontWeight="700">
+                        {itemData.coursefees.fees}
                       </Typography>
-                    </EnrollButton>
-                  </View> : null}
-                  
+                      <EnrollButton>
+                        <Typography
+                          bgColor={colors.black}
+                          size={'medium'}
+                          fontWeight="700"
+                          textStyle={styles.textLeft}>
+                          {programScreenContent.enrollNow}
+                        </Typography>
+                      </EnrollButton>
+                    </View>
+                  ) : null}
                 </EnrollContainer>
               </View>
               <View>
@@ -281,10 +272,7 @@ const ProgramPage = ({route}: PropsType): JSX.Element => {
                     </Typography>
                   </TouchableOpacity>
                 </View>
-                {renderContent(
-                  selectedTab,
-                  itemData,
-                )}
+                {renderContent(selectedTab, itemData)}
               </View>
               <View style={styles.container}>
                 <View style={styles.innerContainer}>
@@ -297,17 +285,26 @@ const ProgramPage = ({route}: PropsType): JSX.Element => {
                 </View>
                 <FlatList
                   horizontal
-                  data={cardData}
-                  keyExtractor={item => item.id}
+                  data={listData?.document?.records}
+                  keyExtractor={item => `${item.id}`}
                   showsHorizontalScrollIndicator={false}
                   renderItem={({item}) => (
                     <CustomCard
                       variant={'small'}
                       onPress={() => {
-                        console.log('clicked');
+                        navigation.push('Program Page', {item, list: listData});
                       }}
-                      title={item.title}
-                      imageSource={item.imageSource}
+                      title={item?.coursetitle}
+                      courseDuration={item?.courselength}
+                      courseType={item?.coursetype}
+                      imageSource={{uri: item?.image}}
+                      courseFee={
+                        item.coursefee
+                          ? item.coursefee
+                          : item.coursefees?.fees
+                            ? item.coursefees.fees
+                            : '30000'
+                      }
                     />
                   )}
                 />

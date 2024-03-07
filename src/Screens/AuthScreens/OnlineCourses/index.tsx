@@ -13,11 +13,14 @@ import content from '../../../Assets/Languages/english.json';
 import {horizontalScale} from '../../../Functions/StyleScale';
 import {
   callGetOnlineCourses,
+  type OnlineCoursesType,
   type Record,
 } from '../../../Redux/Slices/OnlineCoursesSlice';
 import {type RouteProp} from '@react-navigation/native';
 import {type RootState} from '../../../Redux/rootReducers';
 import {useDispatch, useSelector} from 'react-redux';
+import { type CampusCoursesTypes } from '../../../Redux/Slices/CampusCoursesSlice';
+import { type Level4CoursesTypes } from '../../../Redux/Slices/Level4CoursesSlice';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<StackParamList, 'Online Courses'>;
@@ -46,8 +49,11 @@ const OnlineCoursesScreen = ({navigation, route}: PropsType): JSX.Element => {
     }
   }, []);
 
-  const handleCardPress = (item: Record) => {
-    navigation.navigate('Program Page', {item});
+  const handleCardPress = (item: Record, list: CampusCoursesTypes
+    | Level4CoursesTypes
+    | OnlineCoursesType
+    | undefined) => {
+    navigation.navigate('Program Page', {item, list});
   };
 
   return (
@@ -63,7 +69,7 @@ const OnlineCoursesScreen = ({navigation, route}: PropsType): JSX.Element => {
             <CustomCard
               variant={'small'}
               onPress={() => {
-                handleCardPress(item);
+                handleCardPress(item, itemData);
               }}
               title={item?.coursetitle}
               courseDuration={item?.courselength}

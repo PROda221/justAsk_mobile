@@ -18,7 +18,7 @@ export type DrawerScreens = keyof DrawerParamList;
 
 export type StackParamList = {
   HomePage: undefined;
-  'Program Page': {item: Record};
+  'Program Page': {item: Record, list: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined};
   'Online Courses': {item: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined};
   'Level 4 Qualifications': undefined;
 };
