@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {get} from '../../Api/AxiosConfig'
-type Level4CoursesTypes = {
+export type Level4CoursesTypes = {
   status: string;
   code: number;
   message: string;

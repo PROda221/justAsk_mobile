@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {CustomCard, Typography} from '../../../Components';
 import {
   horizontalScale,
@@ -27,14 +27,12 @@ import Review from './Review';
 import Header from '../../../Components/Header';
 import styled from 'styled-components/native';
 import {colors} from '../../../DesignTokens/Colors';
-import {
-  callGetOnlineCoursesById,
-  resetSliderIdResponse,
-} from '../../../Redux/Slices/OnlineCoursesSlice';
-import {useDispatch, useSelector} from 'react-redux';
+import {type Record} from '../../../Redux/Slices/OnlineCoursesSlice';
+import {useSelector} from 'react-redux';
 import {type RootState} from '../../../Redux/rootReducers';
-import {type HtmlData} from './Types';
 import Loader from '../../../Components/Loader/Loader';
+import { type RouteProp } from '@react-navigation/native';
+import { type StackParamList } from '../../../Navigation/types';
 
 const programScreenContent: ProgramsPage = content.ProgramScreen;
 
@@ -72,14 +70,14 @@ const cardData: CardData[] = [
   {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
 ];
 
-const renderContent = (selectedTab: string, htmlData: HtmlData) => {
+const renderContent = (selectedTab: string, itemData: Record) => {
   switch (selectedTab) {
     case 'CourseOverview':
       return (
         <CourseOverview
-          content={htmlData?.coursecontent ? htmlData?.coursecontent : ' '}
+          content={itemData?.coursecontent ? itemData?.coursecontent : ' '}
           highlights={
-            htmlData?.coursehighlights ? htmlData?.coursehighlights : ' '
+            itemData?.coursehighlights ? itemData?.coursehighlights : ' '
           }
         />
       );
@@ -87,8 +85,8 @@ const renderContent = (selectedTab: string, htmlData: HtmlData) => {
       return (
         <ModulesCovered
           content={
-            htmlData?.tabs['Modules Covered']
-              ? htmlData?.tabs['Modules Covered']
+            itemData?.tabs?.['Modules Covered']
+              ? itemData?.tabs['Modules Covered']
               : ' '
           }
         />
@@ -96,7 +94,7 @@ const renderContent = (selectedTab: string, htmlData: HtmlData) => {
     case 'Review':
       return (
         <Review
-          content={htmlData?.tabs.Reviews ? htmlData?.tabs.Reviews : []}
+          content={itemData?.tabs?.Reviews ? itemData?.tabs.Reviews : []}
         />
       );
     default:
@@ -104,48 +102,51 @@ const renderContent = (selectedTab: string, htmlData: HtmlData) => {
   }
 };
 
-const ProgramPage = ({route}): JSX.Element => {
+type PropsType = {
+  route: RouteProp<StackParamList, 'Program Page'>;
+};
+
+const ProgramPage = ({route}: PropsType): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<
     'CourseOverview' | 'ModulesCovered' | 'Review'
   >('CourseOverview');
-  const [initialLoad, setInitialLoad] = useState<boolean>(true)
-
-  const dispatch = useDispatch();
   const onlineCoursesData = useSelector(
     (state: RootState) => state.onlineCoursesSlice,
   );
 
-  useEffect(() =>{
-    if(onlineCoursesData.successById ?? onlineCoursesData.errorById){
-      setInitialLoad(false)
-    }
-  }, [onlineCoursesData.successById, onlineCoursesData.errorById])
+  const itemData: Record = route.params.item
 
-  useEffect(() => {
-    dispatch(callGetOnlineCoursesById(route.params.id));
-    return () => {
-      dispatch(resetSliderIdResponse());
-    };
-  }, []);
+  // UseEffect(() =>{
+  //   if(onlineCoursesData.successById ?? onlineCoursesData.errorById){
+  //     setInitialLoad(false)
+  //   }
+  // }, [onlineCoursesData.successById, onlineCoursesData.errorById])
+
+  // useEffect(() => {
+  //   dispatch(callGetOnlineCoursesById(route.params.id));
+  //   return () => {
+  //     dispatch(resetSliderIdResponse());
+  //   };
+  // }, []);
 
   return (
     <SafeAreaProvider>
       <SafeAreaViewCompat style={styles.safeAreaContainer}>
-        {onlineCoursesData.loading || onlineCoursesData.loadingById || initialLoad ? (
+        {onlineCoursesData.loading || onlineCoursesData.loadingById  ? (
           <Loader isLoading={true} />
         ) : (
           <>
             <Header
               title={
-                onlineCoursesData.successById
-                  ? onlineCoursesData.successById?.document.coursetitle
+                itemData.coursetitle
+                  ? itemData.coursetitle
                   : programScreenContent.title
               }
             />
             <Scroll>
               <View>
                 <Image
-                  source={{uri: onlineCoursesData?.successById?.document.image}}
+                  source={{uri: itemData.image}}
                   style={styles.imageCorouselStyle}
                 />
                 <EnrollContainer>
@@ -161,7 +162,7 @@ const ProgramPage = ({route}): JSX.Element => {
                           bgColor={colors.white}
                           size={'medium'}
                           fontWeight="400">
-                          {`- ${onlineCoursesData?.successById?.document?.courselevel}`}
+                          {`- ${itemData.courselevel}`}
                         </Typography>
                       </Typography>
                     </View>
@@ -176,7 +177,7 @@ const ProgramPage = ({route}): JSX.Element => {
                           bgColor={colors.white}
                           size={'medium'}
                           fontWeight="400">
-                          {`- ${onlineCoursesData?.successById?.document?.courselength}`}
+                          {`- ${itemData.courselength}`}
                         </Typography>
                       </Typography>
                     </View>
@@ -186,7 +187,7 @@ const ProgramPage = ({route}): JSX.Element => {
                         textStyle={styles.textLeft}
                         size={'medium'}
                         fontWeight="400">
-                        {onlineCoursesData?.successById?.document?.coursetype}
+                        {itemData.coursetype}
                       </Typography>
                     </View>
                     <View>
@@ -199,15 +200,14 @@ const ProgramPage = ({route}): JSX.Element => {
                       </Typography>
                     </View>
                   </View>
-                  <View style={styles.priceContainer}>
+                  {itemData?.coursefees ? <View style={styles.priceContainer}>
                     <Typography
                       textStyle={styles.textLeft}
                       bgColor={colors.white}
                       size={'large'}
                       fontWeight="700">
                       {
-                        onlineCoursesData?.successById?.document?.coursefees
-                          .fees
+                        itemData.coursefees.fees
                       }
                     </Typography>
                     <EnrollButton>
@@ -219,7 +219,8 @@ const ProgramPage = ({route}): JSX.Element => {
                         {programScreenContent.enrollNow}
                       </Typography>
                     </EnrollButton>
-                  </View>
+                  </View> : null}
+                  
                 </EnrollContainer>
               </View>
               <View>
@@ -282,7 +283,7 @@ const ProgramPage = ({route}): JSX.Element => {
                 </View>
                 {renderContent(
                   selectedTab,
-                  onlineCoursesData.successById?.document,
+                  itemData,
                 )}
               </View>
               <View style={styles.container}>

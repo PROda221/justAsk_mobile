@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {View, ScrollView, FlatList, StyleSheet, Image} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {Typography} from '../../../Components';
@@ -10,10 +8,7 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import styled from 'styled-components';
 import Header from '../../../Components/Header';
 import CardContainer from '../../../Components/CardContainer';
-import {
-  type StackParamList,
-  type StackScreens,
-} from '../../../Navigation/types';
+import {type StackParamList} from '../../../Navigation/types';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {colors} from '../../../DesignTokens/Colors';
 import {Profile} from '../../../Assets/Images';
@@ -26,16 +21,20 @@ import Carousel from 'react-native-reanimated-carousel';
 import {useDispatch, useSelector} from 'react-redux';
 import {callHomeSlider} from '../../../Redux/Slices/HomeSliderSlice';
 import {type RootState} from '../../../Redux/rootReducers';
-import { callHomeStudentPortfoliosSlider } from '../../../Redux/Slices/HomeStudentPortfoliosSlider';
-import { callGetOnlineCourses, } from '../../../Redux/Slices/OnlineCoursesSlice';
-import { callCampusCourses } from '../../../Redux/Slices/CampusCoursesSlice';
-import { callLevel4Courses } from '../../../Redux/Slices/Level4CoursesSlice';
-
-type CardData = {
-  id: string;
-  title: string;
-  imageSource: {uri: string};
-};
+import {callHomeStudentPortfoliosSlider} from '../../../Redux/Slices/HomeStudentPortfoliosSlider';
+import {
+  type OnlineCoursesType,
+  callGetOnlineCourses,
+} from '../../../Redux/Slices/OnlineCoursesSlice';
+import {
+  type CampusCoursesTypes,
+  callCampusCourses,
+} from '../../../Redux/Slices/CampusCoursesSlice';
+import {
+  type Level4CoursesTypes,
+  callLevel4Courses,
+} from '../../../Redux/Slices/Level4CoursesSlice';
+import {type Record} from '../../../Redux/Slices/OnlineCoursesSlice';
 
 type CardTeamData = {
   id: string;
@@ -45,24 +44,11 @@ type CardTeamData = {
   occupation: string;
 };
 
-type CardPortfoliosData = {
-  id: string;
-  title: string;
-  imageSource: {uri: string};
-};
-
 type CarouselData = {
   id: string;
   title: string;
   imageSource: {uri: string};
 };
-
-const cardData: CardData[] = [
-  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
-  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
-  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
-  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
-];
 
 const carouselData: CarouselData[] = [
   {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
@@ -102,13 +88,6 @@ const cardTeamData: CardTeamData[] = [
   },
 ];
 
-const cardPortfoliosData: CardPortfoliosData[] = [
-  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
-  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
-  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
-  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
-];
-
 const homeScreenContent: HomeScreenType = content.homeScreen;
 
 type Props = {
@@ -122,9 +101,6 @@ const Scroll = styled(ScrollView)`
 
 const HomeScreen = ({navigation}: Props): JSX.Element => {
   const dispatch = useDispatch();
-  const homeSliderData = useSelector(
-    (state: RootState) => state.homeSliderSlice,
-  );
 
   const homeStudentPortfoliosSliderData = useSelector(
     (state: RootState) => state.homeStudentPortfoliosSlider,
@@ -144,18 +120,24 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
 
   useEffect(() => {
     dispatch(callHomeSlider());
-    dispatch(callHomeStudentPortfoliosSlider())
-    dispatch(callGetOnlineCourses())
-    dispatch(callCampusCourses())
-    dispatch(callLevel4Courses())
+    dispatch(callHomeStudentPortfoliosSlider());
+    dispatch(callGetOnlineCourses());
+    dispatch(callCampusCourses());
+    dispatch(callLevel4Courses());
   }, []);
 
-  const handleViewAllPress = (screen: StackScreens) => {
-    navigation.navigate(screen);
+  const handleViewAllPress = (
+    item:
+      | CampusCoursesTypes
+      | Level4CoursesTypes
+      | OnlineCoursesType
+      | undefined,
+  ) => {
+    navigation.navigate('Online Courses', {item});
   };
 
-  const handleCardPress = (screen: StackScreens, courseId:number) => {
-    navigation.navigate(screen,{id:courseId});
+  const handleCardPress = (item: Record) => {
+    navigation.navigate('Program Page', {item});
   };
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -193,7 +175,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
               <Image source={item.imageSource} style={styles.carouselImage} />
             )}
           />
-          <RenderPagination/>
+          <RenderPagination />
           <CardContainer
             fontColor="black"
             fontSize="large"
@@ -203,7 +185,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             buttonVariant="typeD"
             buttonImg
             buttonOnPress={() => {
-              handleViewAllPress('Online Courses');
+              handleViewAllPress(onlineCoursesData.success);
             }}>
             <FlatList
               horizontal
@@ -214,10 +196,10 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
                 <CustomCard
                   variant={'small'}
                   onPress={() => {
-                    handleCardPress('Program Page',item?.id);
+                    handleCardPress(item);
                   }}
                   title={item?.coursetitle}
-                  imageSource={{uri:item?.image}}
+                  imageSource={{uri: item?.image}}
                   courseFee={item?.coursefees?.fees}
                   courseDuration={item?.courselength}
                   courseType={item?.coursetype}
@@ -234,7 +216,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             buttonVariant="typeD"
             buttonImg
             buttonOnPress={() => {
-              handleViewAllPress('Online Courses');
+              handleViewAllPress(level4CoursesData.success);
             }}>
             <FlatList
               horizontal
@@ -243,16 +225,16 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CustomCard
-                variant={'small'}
-                onPress={() => {
-                  handleCardPress('Program Page',item?.id);
-                }}
-                title={item?.coursetitle}
-                imageSource={{uri:item?.image}}
-                courseFee={item?.coursefee}
-                courseDuration={item?.courselength}
-                courseType={item?.coursetype}
-              />
+                  variant={'small'}
+                  onPress={() => {
+                    handleCardPress(item);
+                  }}
+                  title={item?.coursetitle}
+                  imageSource={{uri: item?.image}}
+                  courseFee={item?.coursefee}
+                  courseDuration={item?.courselength}
+                  courseType={item?.coursetype}
+                />
               )}
             />
           </CardContainer>
@@ -265,7 +247,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             buttonVariant="typeD"
             buttonImg
             buttonOnPress={() => {
-              handleViewAllPress('Online Courses');
+              handleViewAllPress(campusCoursesData.success);
             }}>
             <FlatList
               horizontal
@@ -274,16 +256,16 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
                 <CustomCard
-                variant={'small'}
-                onPress={() => {
-                  handleCardPress('Program Page',item?.id);
-                }}
-                title={item?.coursetitle}
-                imageSource={{uri:item?.image}}
-                courseFee={item?.coursefee}
-                courseDuration={item?.courselength}
-                courseType={item?.coursetype}
-              />
+                  variant={'small'}
+                  onPress={() => {
+                    handleCardPress(item);
+                  }}
+                  title={item?.coursetitle}
+                  imageSource={{uri: item?.image}}
+                  courseFee={item?.coursefee}
+                  courseDuration={item?.courselength}
+                  courseType={item?.coursetype}
+                />
               )}
             />
           </CardContainer>
@@ -295,7 +277,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             title={homeScreenContent.meetTheTeam}
             buttonVariant="typeD"
             buttonOnPress={() => {
-              handleViewAllPress('Online Courses');
+              console.log('abc')
             }}>
             <FlatList
               horizontal
@@ -336,15 +318,14 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
             buttonImg
             buttonVariant="typeD"
             buttonOnPress={() => {
-              handleViewAllPress('Online Courses');
+              console.log('abc')
             }}>
             <FlatList
               horizontal
               data={homeStudentPortfoliosSliderData?.success?.document?.records}
               keyExtractor={(item, index) => `${index}`}
               showsHorizontalScrollIndicator={false}
-              renderItem={({item,index}) => 
-(
+              renderItem={({item, index}) => (
                 <CustomCard
                   variant={'large'}
                   onPress={() => {
@@ -353,8 +334,7 @@ const HomeScreen = ({navigation}: Props): JSX.Element => {
                   title={`${index}`}
                   imageSource={{uri: item}}
                 />
-              )
-            }
+              )}
             />
           </CardContainer>
 

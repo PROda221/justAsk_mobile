@@ -1,13 +1,49 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {get} from '../../Api/AxiosConfig'
-type OnlineCoursesType = {
+import {get} from '../../Api/AxiosConfig';
+
+export type Record = {
+    id: number;
+    meta_title: string;
+    meta_keywords: string;
+    meta_description: string;
+    coursetitle: string;
+    slug: string;
+    courseheading: string;
+    coursesummary: string;
+    coursecontent: string;
+    coursehighlights: string;
+    image: string;
+    imagealt: string;
+    courselength?: string;
+    coursetype?: string;
+    courselevel?: string;
+    video?: string;
+    tabs?: {
+      "Qualification Overview"?: string;
+      "Units Covered"?: string; 
+      Recognition?: string;
+      "Entry Requirements"?: string;
+      'Modules Covered'?: string;
+      Reviews?: Array<{
+        point?: string;
+      }>;
+    };
+    coursefees?: {
+      fees: string;
+      offerfees: string;
+      currency_symbol: string;
+      currency: string;
+    };
+};
+export type OnlineCoursesType = {
   status: string;
   code: number;
   message: string;
   document: {
     total_count: number;
     records: Array<{
+      coursefee: string;
       id: number;
       meta_title: string;
       meta_keywords: string;
@@ -25,68 +61,64 @@ type OnlineCoursesType = {
       courselevel: string;
       video: string;
       tabs: {
-        'Modules Covered':string;
-        Reviews:Array<{
-            point:string
+        'Modules Covered': string;
+        Reviews: Array<{
+          point: string;
         }>;
-
       };
       coursefees: {
         fees: string;
-        offerfees: string
-        currency_symbol: string,
-        currency: string
-    }
-     
+        offerfees: string;
+        currency_symbol: string;
+        currency: string;
+      };
     }>;
   };
 };
 
-
-
 type OnlineCoursesByIdType = {
-    status: string;
-    code: number;
-    message: string;
-    document: {
-        id: number;
-        meta_title: string;
-        meta_keywords: string;
-        meta_description: string;
-        coursetitle: string;
-        slug: string;
-        courseheading: string;
-        coursesummary: string;
-        coursecontent: string;
-        coursehighlights: string;
-        image: string;
-        imagealt: string;
-        courselength: string;
-        coursetype: string;
-        courselevel: string;
-        video: string;
-        tabs: {
-          'Modules Covered':string;
-          Reviews:Array<{
-              point:string
-          }>;
-  
-        };
-        coursefees: {
-          fees: string;
-          offerfees: string
-          currency_symbol: string,
-          currency: string
-      }
-       
+  status: string;
+  code: number;
+  message: string;
+  document: {
+    id: number;
+    meta_title: string;
+    meta_keywords: string;
+    meta_description: string;
+    coursetitle: string;
+    slug: string;
+    courseheading: string;
+    coursesummary: string;
+    coursecontent: string;
+    coursehighlights: string;
+    image: string;
+    imagealt: string;
+    courselength: string;
+    coursetype: string;
+    courselevel: string;
+    video: string;
+    tabs: {
+      'Modules Covered': string;
+      Reviews: Array<{
+        point: string;
+      }>;
+    };
+    coursefees: {
+      fees: string;
+      offerfees: string;
+      currency_symbol: string;
+      currency: string;
     };
   };
+};
 
 export const callGetOnlineCourses = createAsyncThunk(
   'callGetOnlineCourses',
   async (data, {rejectWithValue}) => {
     try {
-      const response = await get<OnlineCoursesType>('/onlinecourses/read.php?countrycode=IN');
+      const response = await get<OnlineCoursesType>(
+        '/onlinecourses/read.php?countrycode=IN',
+      );
       if (response.status === 200) {
         return response.data;
       }
@@ -99,20 +131,22 @@ export const callGetOnlineCourses = createAsyncThunk(
 );
 
 export const callGetOnlineCoursesById = createAsyncThunk(
-    'callGetOnlineCoursesById',
-    async (id:number, {rejectWithValue}) => {
-      try {
-        const response = await get<OnlineCoursesByIdType>(`/onlinecourses/read_one.php?id=${id}&countrycode=IN`);
-        if (response.status === 200) {        
-          return response.data;
-        }
-  
-        throw response.data;
-      } catch (err) {
-        return rejectWithValue(err);
+  'callGetOnlineCoursesById',
+  async (id: number, {rejectWithValue}) => {
+    try {
+      const response = await get<OnlineCoursesByIdType>(
+        `/onlinecourses/read_one.php?id=${id}&countrycode=IN`,
+      );
+      if (response.status === 200) {
+        return response.data;
       }
-    },
-  );
+
+      throw response.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  },
+);
 
 const initialState: {
   success: OnlineCoursesType | undefined;
@@ -140,11 +174,11 @@ const onlinecourses = createSlice({
       state.loading = false;
       state.error = null;
     },
-    resetSliderIdResponse(state){
+    resetSliderIdResponse(state) {
       state.loadingById = false;
       state.errorById = undefined;
-      state.successById = undefined
-    }
+      state.successById = undefined;
+    },
   },
 
   extraReducers(builder) {
@@ -174,6 +208,7 @@ const onlinecourses = createSlice({
   },
 });
 
-export const {resetSliderResponse, resetSliderIdResponse} = onlinecourses.actions;
+export const {resetSliderResponse, resetSliderIdResponse} =
+  onlinecourses.actions;
 
 export default onlinecourses.reducer;
