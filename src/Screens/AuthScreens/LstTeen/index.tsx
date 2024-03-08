@@ -1,5 +1,5 @@
 import {View, ScrollView, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Dropdown, Typography} from '../../../Components';
 import Header from '../../../Components/Header';
@@ -49,16 +49,12 @@ const LstTeenScreen = (): JSX.Element => {
     // Handle the selected value here
   };
 
-  const {control, handleSubmit} = useForm<FormData>();
+  const {control} = useForm<FormData>();
 
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
     padding: 0 8px 0 8px;
   `;
-
-  const onSubmit: SubmitHandler<FormData> = data => {
-    console.log('data is :', data);
-  };
 
   const radioData: RadioItem[] = [
     {id: 1, isChecked: false, label: 'Print  Certificate'},

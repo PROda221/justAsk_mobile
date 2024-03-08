@@ -7,11 +7,9 @@ import styled from 'styled-components';
 import {colors} from '../../../DesignTokens/Colors';
 import {
   moderateScale,
-  horizontalScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
 import {MyProfile} from '../../../Assets/Images';
-import {EditProfile} from '../../../Assets/Images';
 
 const LoginScreen = (): JSX.Element => {
   const Scroll = styled(ScrollView)`

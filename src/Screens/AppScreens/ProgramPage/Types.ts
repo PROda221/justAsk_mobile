@@ -5,3 +5,4 @@ export type HtmlData = {
       currency_symbol: string; currency: string;
     };
   } | undefined
+

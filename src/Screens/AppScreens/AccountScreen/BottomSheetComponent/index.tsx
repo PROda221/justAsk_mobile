@@ -29,7 +29,7 @@ export const BottomSheetComponent: React.FC<
 > = props => {
   const {control, handleSubmit} = useForm<FormData>();
   const onSubmit: SubmitHandler<FormData> = data => {
-    // eslint-disable-next-line no-console, no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax
     console.log('data is :', data);
   };
 

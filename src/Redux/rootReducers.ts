@@ -6,13 +6,15 @@ import campusCoursesSlice from './Slices/CampusCoursesSlice';
 import level4CoursesSlice from './Slices/Level4CoursesSlice';
 import loginSlice from './Slices/LoginSlice';
 
+import aboutUsSlice from './Slices/AboutUsSlice';
 const rootReducer = combineReducers({
 	homeSliderSlice,
 	homeStudentPortfoliosSlider,
 	onlineCoursesSlice,
 	campusCoursesSlice,
 	level4CoursesSlice,
-	loginSlice,
+	aboutUsSlice,
+	loginSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
