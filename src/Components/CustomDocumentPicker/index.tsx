@@ -1,34 +1,34 @@
-import React, {useState} from 'react';
-import {TouchableOpacity, Text, StyleSheet, View, Image} from 'react-native';
-import DocumentPicker from 'react-native-document-picker';
+ 
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, Text, StyleSheet, View, Image, type TextStyle} from 'react-native';
+import DocumentPicker, { type DocumentPickerResponse } from 'react-native-document-picker';
 import {Typography} from '..';
 import {colors} from '../../DesignTokens/Colors';
 import {moderateScale} from '../../Functions/StyleScale';
+import { type ViewStyle } from 'react-native';
 
 // Define the type for the props
 type DocumentPickerProps = {
-  buttonStyles?: Record<string, unknown>;
-  buttonTextStyles?: Record<string, unknown>;
-  containerStyles?: Record<string, unknown>;
+  buttonStyles?: ViewStyle;
+  buttonTextStyles?: TextStyle;
+  containerStyles?: ViewStyle;
   onDocumentPick: (result: unknown) => void;
 };
 
-export const CustomDocumentPicker: React.FC<DocumentPickerProps> = ({
+export const CustomDocumentPicker = ({
   buttonStyles,
   buttonTextStyles,
   containerStyles,
   onDocumentPick,
-}) => {
-  const [selectedDocument, setSelectedDocument] = useState<unknown>(null);
+}: DocumentPickerProps) => {
+  const [selectedDocument, setSelectedDocument] = useState<DocumentPickerResponse>();
 
   const pickDocument = async () => {
     try {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
-
-      setSelectedDocument(result);
-      onDocumentPick(result);
+      setSelectedDocument(result[0]);
     } catch (error) {
       if (DocumentPicker.isCancel(error)) {
         console.log('Document picker cancelled');
@@ -38,16 +38,23 @@ export const CustomDocumentPicker: React.FC<DocumentPickerProps> = ({
     }
   };
 
+  useEffect(() => {
+    if(selectedDocument){
+      onDocumentPick(selectedDocument);
+    }
+   
+  }, [selectedDocument])
+
   const removeDocument = () => {
-    setSelectedDocument(null);
-  };
+    setSelectedDocument(undefined);
+  };  
 
   return (
     <View style={[styles.container, containerStyles]}>
       <TouchableOpacity
         onPress={pickDocument}
         style={[styles.button, buttonStyles]}
-        disabled={selectedDocument !== null} // Disable button if a document is already selected
+        disabled={typeof selectedDocument !== "undefined"} // Disable button if a document is already selected
       >
         <Typography
           bgColor={colors.black}

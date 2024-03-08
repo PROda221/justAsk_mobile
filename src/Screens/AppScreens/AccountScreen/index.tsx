@@ -17,7 +17,7 @@ import content from '../../../Assets/Languages/english.json';
 import Header from '../../../Components/Header';
 import {useDispatch, useSelector} from 'react-redux';
 import {type RootState} from '../../../Redux/rootReducers';
-import {callTokenGenerator, resetLoginResponse} from '../../../Redux/Slices/LoginSlice';
+import {callTokenGenerator, resetLoginResponse, setAccessToken} from '../../../Redux/Slices/LoginSlice';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {type ParamListBase} from '@react-navigation/native';
 
@@ -42,6 +42,7 @@ const AccountScreen = ({navigation}: Props): JSX.Element => {
 
   useEffect(() => {
     if (loginSlice.success) {
+      dispatch(setAccessToken(loginSlice.success.document.access_token))
       dispatch(resetLoginResponse())
       navigation.navigate('Home Screen');
     }

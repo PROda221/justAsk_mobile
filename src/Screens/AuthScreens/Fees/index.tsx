@@ -1,5 +1,5 @@
 import {View, StyleSheet, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Typography} from '../../../Components';
@@ -12,19 +12,22 @@ import {colors} from '../../../DesignTokens/Colors';
 import Header from '../../../Components/Header';
 import {CustomDocumentPicker} from '../../../Components';
 import {Dropdown} from '../../../Components';
+import {type DocumentPickerResponse} from 'react-native-document-picker';
+import {useSelector} from 'react-redux';
+import {type RootState} from '../../../Redux/rootReducers';
+import {post} from '../../../Api/AxiosConfig';
+import { type ParamListBase } from '@react-navigation/native';
+import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type DropdownItem = {
   label: string;
   value: string;
 };
 
-type FileInformation = {
-  fileCopyUri: null | string;
-  name: string;
-  size: number;
-  type: string;
-  uri: string;
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase, 'Fees'>;
 };
+
 
 const dropdownOptions: DropdownItem[] = [
   {label: 'Option 1', value: 'option1'},
@@ -32,7 +35,12 @@ const dropdownOptions: DropdownItem[] = [
   {label: 'Option 3', value: 'option3'},
   // Add more options as needed
 ];
-const FeesScreen = (): JSX.Element => {
+const FeesScreen = ({navigation}: Props): JSX.Element => {
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentPickerResponse>();
+
+  const loginSlice = useSelector((state: RootState) => state.loginSlice);
+
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
     padding: 0 8px 0 8px;
@@ -42,8 +50,26 @@ const FeesScreen = (): JSX.Element => {
     console.log('Selected value:', selectedValue);
     // Handle the selected value here
   };
-  const handleDocumentPick = (result: FileInformation[]) => {
-    console.log('Picked document:', result);
+
+  const postDocument = async () => {
+    try {
+      const data = {file: selectedDocument?.uri};
+      const resp = await post('/files/uploadfile.php', data, {
+        headers: {
+          Authorization: `Bearer ${loginSlice.storedAccessToken}`,
+        },
+      });
+      if (resp.status === 200) {
+        console.log('inside??? :', resp.data);
+        navigation.navigate('Home Screen')
+      }
+    } catch (err) {
+      console.log('err is :', err);
+    }
+  };
+
+  const handleDocumentPick = (result: DocumentPickerResponse[]) => {
+    setSelectedDocument(result[0]);
     // Handle the picked document
   };
 
@@ -57,7 +83,6 @@ const FeesScreen = (): JSX.Element => {
               bgColor={colors.black}
               size={'large'}
               fontWeight={'700'}
-            
               textStyle={styles.testContainer}>
               {'Upload Assignments'}
             </Typography>
@@ -66,7 +91,6 @@ const FeesScreen = (): JSX.Element => {
               bgColor={colors.black}
               size={'medium'}
               fontWeight={'400'}
-           
               textStyle={styles.testContainer}>
               {'Dear Sachin,'}
             </Typography>
@@ -74,7 +98,6 @@ const FeesScreen = (): JSX.Element => {
               bgColor={colors.black}
               size={'medium'}
               fontWeight={'400'}
-           
               textStyle={styles.testContainer}>
               {
                 'Please select the module and accordingly upload the associated documents, to check your submission history  and  quiz results please click on the tabs below.'
@@ -123,7 +146,6 @@ Team LST`}
                 </Typography>
               </View>
               <View style={styles.dropdownContainer}>
-
                 <Dropdown
                   items={dropdownOptions}
                   label="Select Course"
@@ -162,24 +184,14 @@ Team LST`}
               <View style={{width: horizontalScale(100)}} />
               <View style={{width: horizontalScale(220)}}>
                 <CustomDocumentPicker
-                  buttonStyles={{
-                    borderColor: colors.lightGrey,
-                    borderRadius: moderateScale(4),
-                    borderWidth: moderateScale(1),
-                    height: verticalScale(35),
-                    width: '100%',
-                    justifyContent: 'center',
-                    marginHorizontal: moderateScale(10),
-                  }}
-                  buttonTextStyles={{color: colors.black, fontFamily: "Arial"}}
-                  containerStyles={{marginBottom: verticalScale(20)}}
+                  buttonStyles={styles.buttonStyles}
+                  buttonTextStyles={styles.buttonTextStyles}
+                  containerStyles={styles.containerStyles}
                   onDocumentPick={handleDocumentPick}
                 />
 
                 <CustomButton
-                  onPress={() => {
-                    console.log('submited');
-                  }}
+                  onPress={postDocument}
                   label={'SUMBIT'}
                   variant="typeA"
                 />
@@ -193,14 +205,47 @@ Team LST`}
 };
 
 const styles = StyleSheet.create({
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: moderateScale(10),
+  },
+  buttonStyles: {
+    borderColor: colors.lightGrey,
+    borderRadius: moderateScale(4),
+    borderWidth: moderateScale(1),
+    height: verticalScale(35),
+    justifyContent: 'center',
+    marginHorizontal: moderateScale(10),
+    width: '100%',
+  },
+  buttonTextStyles: {color: colors.black, fontFamily: 'Arial'},
   container: {
+    borderColor: colors.lightGrey,
     borderRadius: moderateScale(10),
     borderWidth: moderateScale(1),
-    borderColor: colors.lightGrey,
-    marginVertical: moderateScale(10),
     marginHorizontal: moderateScale(6),
-    paddingHorizontal: moderateScale(10),
+    marginVertical: moderateScale(10),
     paddingBottom: moderateScale(10),
+    paddingHorizontal: moderateScale(10),
+  },
+
+  containerStyles: {marginBottom: verticalScale(20)},
+
+  dropdownContainer: {marginLeft: horizontalScale(10)},
+
+  innerBottomContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: horizontalScale(91),
+  },
+
+  noteContainer: {
+    backgroundColor: colors.noteBackground,
+    borderRadius: moderateScale(10),
+    marginTop: verticalScale(20),
+    padding: moderateScale(10),
   },
 
   noteTextStyle: {
@@ -218,29 +263,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
 
-  noteContainer: {
-    backgroundColor: colors.noteBackground,
-    borderRadius: moderateScale(10),
-    padding: moderateScale(10),
-    marginTop: verticalScale(20),
-  },
-
-  bottomContainer: {
-    flexDirection: 'row',
-    marginTop: moderateScale(10),
-    justifyContent: 'center'
-  },
-
-  innerBottomContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: horizontalScale(91),
-    alignItems: 'center'
-  },
-
   textstyles: {textAlign: 'left'},
-
-  dropdownContainer:{marginLeft:horizontalScale(10)}
 });
 
 export default FeesScreen;

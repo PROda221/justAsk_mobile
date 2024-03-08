@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
@@ -37,10 +38,12 @@ export const callTokenGenerator = createAsyncThunk(
 );
 
 const initialState: {
+  storedAccessToken: string;
   success: Login | undefined;
   error: LoginError | undefined;
   loading: boolean;
 } = {
+  storedAccessToken: '',
   success: undefined,
   error: undefined,
   loading: false,
@@ -55,6 +58,9 @@ const loginSlice = createSlice({
       state.loading = false;
       state.error = undefined;
     },
+    setAccessToken(state, action){
+      state.storedAccessToken = action.payload
+    }
   },
 
   extraReducers(builder) {
@@ -72,6 +78,6 @@ const loginSlice = createSlice({
   },
 });
 
-export const {resetLoginResponse} = loginSlice.actions;
+export const {resetLoginResponse, setAccessToken} = loginSlice.actions;
 
 export default loginSlice.reducer;

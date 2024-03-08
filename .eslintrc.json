@@ -26,7 +26,6 @@
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-throw-literal": "off",
     "react-native/no-raw-text": "off",
-    "no-console": "error", // Add this rule to disallow console.log
     "no-restricted-syntax": [
       "error",
       {
