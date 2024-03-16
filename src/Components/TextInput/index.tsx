@@ -6,6 +6,7 @@ import {moderateScale} from '../../Functions/StyleScale';
 import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
 import { type ViewStyle} from 'react-native';
+import { colors } from '../../DesignTokens/Colors';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +58,8 @@ export const TextInput = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <View>
           <StyledTextInput
-            style={viewStyle}
+          placeholderTextColor={colors.black}
+            style={[viewStyle, {backgroundColor: colors.white}]}
             multiline={multiline}
             mode="outlined"
             value={value as string}

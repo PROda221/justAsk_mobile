@@ -30,7 +30,7 @@ const AboutUsScreen = (): JSX.Element => {
 
         <Scroll>
           <View style={styles.container}>
-          <RenderHtml contentWidth={10} source={{html:aboutUsData?.success?.document?.content ?? ''}} />
+          <RenderHtml baseStyle={styles.htmlStyle} contentWidth={10} source={{html:aboutUsData?.success?.document?.content ?? ''}} />
           </View>
         </Scroll>
       </SafeAreaView>
@@ -49,12 +49,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(10),
   },
 
+  htmlStyle: {
+    color: colors.black,
+  },
   safeAreaContainer: {
     backgroundColor: colors.white,
     flex: 1,
   },
-
-
 });
 
 export default AboutUsScreen;

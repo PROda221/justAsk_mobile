@@ -5,8 +5,8 @@ import onlineCoursesSlice from './Slices/OnlineCoursesSlice';
 import campusCoursesSlice from './Slices/CampusCoursesSlice';
 import level4CoursesSlice from './Slices/Level4CoursesSlice';
 import loginSlice from './Slices/LoginSlice';
-
 import aboutUsSlice from './Slices/AboutUsSlice';
+
 const rootReducer = combineReducers({
 	homeSliderSlice,
 	homeStudentPortfoliosSlider,
