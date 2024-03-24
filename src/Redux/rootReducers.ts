@@ -1,8 +1,20 @@
 import {combineReducers} from '@reduxjs/toolkit';
-import counterSlice from './Slices/counterSlice';
+import homeSliderSlice from './Slices/HomeSliderSlice';
+import homeStudentPortfoliosSlider from './Slices/HomeStudentPortfoliosSlider';
+import onlineCoursesSlice from './Slices/OnlineCoursesSlice';
+import campusCoursesSlice from './Slices/CampusCoursesSlice';
+import level4CoursesSlice from './Slices/Level4CoursesSlice';
+import loginSlice from './Slices/LoginSlice';
+import aboutUsSlice from './Slices/AboutUsSlice';
 
 const rootReducer = combineReducers({
-	counterSlice,
+	homeSliderSlice,
+	homeStudentPortfoliosSlider,
+	onlineCoursesSlice,
+	campusCoursesSlice,
+	level4CoursesSlice,
+	aboutUsSlice,
+	loginSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

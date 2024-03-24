@@ -27,6 +27,15 @@ import Review from './Review';
 import Header from '../../../Components/Header';
 import styled from 'styled-components/native';
 import {colors} from '../../../DesignTokens/Colors';
+import {type OnlineCoursesType, type Record} from '../../../Redux/Slices/OnlineCoursesSlice';
+import {useSelector} from 'react-redux';
+import {type RootState} from '../../../Redux/rootReducers';
+import Loader from '../../../Components/Loader/Loader';
+import {type RouteProp} from '@react-navigation/native';
+import {type StackParamList} from '../../../Navigation/types';
+import { type CampusCoursesTypes } from '../../../Redux/Slices/CampusCoursesSlice';
+import { type Level4CoursesTypes } from '../../../Redux/Slices/Level4CoursesSlice';
+import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const programScreenContent: ProgramsPage = content.ProgramScreen;
 
@@ -51,198 +60,258 @@ const EnrollButton = styled(TouchableOpacity)`
   margin-top: 15px;
 `;
 
-type CardData = {
-  id: string;
-  title: string;
-  imageSource: {uri: string};
-};
-
-const cardData: CardData[] = [
-  {id: '1', title: 'Card 1', imageSource: {uri: 'https://picsum.photos/700'}},
-  {id: '2', title: 'Card 2', imageSource: {uri: 'https://picsum.photos/701'}},
-  {id: '3', title: 'Card 3', imageSource: {uri: 'https://picsum.photos/702'}},
-  {id: '4', title: 'Card 4', imageSource: {uri: 'https://picsum.photos/703'}},
-];
-
-const renderContent = (selectedTab: string) => {
+const renderContent = (selectedTab: string, itemData: Record) => {
   switch (selectedTab) {
     case 'CourseOverview':
-      return <CourseOverview />;
+      return (
+        <CourseOverview
+          content={itemData?.coursecontent ? itemData?.coursecontent : ' '}
+          highlights={
+            itemData?.coursehighlights ? itemData?.coursehighlights : ' '
+          }
+        />
+      );
     case 'ModulesCovered':
-      return <ModulesCovered />;
+      return (
+        <ModulesCovered
+          content={
+            itemData?.tabs?.['Modules Covered']
+              ? itemData?.tabs['Modules Covered']
+              : ' '
+          }
+        />
+      );
     case 'Review':
-      return <Review />;
+      return (
+        <Review
+          content={itemData?.tabs?.Reviews ? itemData?.tabs.Reviews : []}
+        />
+      );
     default:
       return null;
   }
 };
 
-const ProgramPage = (): JSX.Element => {
+type PropsType = {
+  navigation: NativeStackNavigationProp<StackParamList, 'Program Page'>;
+  route: RouteProp<StackParamList, 'Program Page'>;
+};
+
+const ProgramPage = ({navigation, route}: PropsType): JSX.Element => {
   const [selectedTab, setSelectedTab] = useState<
     'CourseOverview' | 'ModulesCovered' | 'Review'
   >('CourseOverview');
+  const onlineCoursesData = useSelector(
+    (state: RootState) => state.onlineCoursesSlice,
+  );
+
+  const itemData: Record = route.params.item;
+  const listData: CampusCoursesTypes | Level4CoursesTypes | OnlineCoursesType | undefined = route.params.list;
+
+  // UseEffect(() =>{
+  //   if(onlineCoursesData.successById ?? onlineCoursesData.errorById){
+  //     setInitialLoad(false)
+  //   }
+  // }, [onlineCoursesData.successById, onlineCoursesData.errorById])
+
+  // useEffect(() => {
+  //   dispatch(callGetOnlineCoursesById(route.params.id));
+  //   return () => {
+  //     dispatch(resetSliderIdResponse());
+  //   };
+  // }, []);
 
   return (
     <SafeAreaProvider>
       <SafeAreaViewCompat style={styles.safeAreaContainer}>
-        <Header title={programScreenContent.title} />
-        <Scroll>
-          <View>
-            <Image
-              source={{uri: 'https://picsum.photos/702'}}
-              style={styles.imageCorouselStyle}
+        {onlineCoursesData.loading || onlineCoursesData.loadingById ? (
+          <Loader isLoading={true} />
+        ) : (
+          <>
+            <Header
+              title={
+                itemData.coursetitle
+                  ? itemData.coursetitle
+                  : programScreenContent.title
+              }
             />
-            <EnrollContainer>
-              <View style={styles.enrollContentSpace}>
-                <View style={styles.enrollTextSpace}>
-                  <Typography
-                    textStyle={styles.textLeft}
-                    bgColor={colors.white}
-                    size={'medium'}
-                    fontWeight="700">
-                    {programScreenContent.level}
-                    <Typography
-                      bgColor={colors.white}
-                      size={'medium'}
-                      fontWeight="400">
-                      {' - Beginner'}
-                    </Typography>
-                  </Typography>
-                </View>
-                <View style={styles.enrollTextSpace}>
-                  <Typography
-                    textStyle={styles.textLeft}
-                    bgColor={colors.white}
-                    size={'medium'}
-                    fontWeight="700">
-                    {programScreenContent.duration}
-                    <Typography
-                      bgColor={colors.white}
-                      size={'medium'}
-                      fontWeight="400">
-                      {' - 6 Week'}
-                    </Typography>
-                  </Typography>
-                </View>
-                <View style={styles.enrollTextSpace}>
-                  <Typography
-                    bgColor={colors.white}
-                    textStyle={styles.textLeft}
-                    size={'medium'}
-                    fontWeight="400">
-                    {'Certified Diploma'}
-                  </Typography>
-                </View>
-                <View>
-                  <Typography
-                    bgColor={colors.white}
-                    size={'medium'}
-                    textStyle={styles.textLeft}
-                    fontWeight="400">
-                    {'Course Delivered 100% Online'}
-                  </Typography>
-                </View>
+            <Scroll>
+              <View>
+                <Image
+                  source={{uri: itemData.image}}
+                  style={styles.imageCorouselStyle}
+                />
+                <EnrollContainer>
+                  <View style={styles.enrollContentSpace}>
+                    <View style={styles.enrollTextSpace}>
+                      <Typography
+                        textStyle={styles.textLeft}
+                        bgColor={colors.white}
+                        size={'medium'}
+                        fontWeight="700">
+                        {programScreenContent.level}
+                        <Typography
+                          bgColor={colors.white}
+                          size={'medium'}
+                          fontWeight="400">
+                          {`- ${itemData.courselevel}`}
+                        </Typography>
+                      </Typography>
+                    </View>
+                    <View style={styles.enrollTextSpace}>
+                      <Typography
+                        textStyle={styles.textLeft}
+                        bgColor={colors.white}
+                        size={'medium'}
+                        fontWeight="700">
+                        {programScreenContent.duration}
+                        <Typography
+                          bgColor={colors.white}
+                          size={'medium'}
+                          fontWeight="400">
+                          {`- ${itemData.courselength}`}
+                        </Typography>
+                      </Typography>
+                    </View>
+                    <View style={styles.enrollTextSpace}>
+                      <Typography
+                        bgColor={colors.white}
+                        textStyle={styles.textLeft}
+                        size={'medium'}
+                        fontWeight="400">
+                        {itemData.coursetype}
+                      </Typography>
+                    </View>
+                    <View>
+                      <Typography
+                        bgColor={colors.white}
+                        size={'medium'}
+                        textStyle={styles.textLeft}
+                        fontWeight="400">
+                        {'Course Delivered 100% Online'}
+                      </Typography>
+                    </View>
+                  </View>
+                  {itemData?.coursefees ? (
+                    <View style={styles.priceContainer}>
+                      <Typography
+                        textStyle={styles.textLeft}
+                        bgColor={colors.white}
+                        size={'large'}
+                        fontWeight="700">
+                        {itemData.coursefees.fees}
+                      </Typography>
+                      <EnrollButton>
+                        <Typography
+                          bgColor={colors.black}
+                          size={'medium'}
+                          fontWeight="700"
+                          textStyle={styles.textLeft}>
+                          {programScreenContent.enrollNow}
+                        </Typography>
+                      </EnrollButton>
+                    </View>
+                  ) : null}
+                </EnrollContainer>
               </View>
-              <View style={styles.priceContainer}>
-                <Typography
-                  textStyle={styles.textLeft}
-                  bgColor={colors.white}
-                  size={'large'}
-                  fontWeight="700">
-                  {'₹30,000.00'}
-                </Typography>
-                <EnrollButton>
+              <View>
+                {/* Tab buttons */}
+                <View style={styles.tabContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.tabButton,
+                      selectedTab === 'CourseOverview' && styles.selectedTab,
+                    ]}
+                    onPress={() => {
+                      setSelectedTab('CourseOverview');
+                    }}>
+                    <Typography
+                      bgColor={colors.black}
+                      size={'medium'}
+                      textStyle={styles.textLeft}
+                      fontWeight={
+                        selectedTab === 'CourseOverview' ? '700' : '400'
+                      }>
+                      {programScreenContent.courseOverview}
+                    </Typography>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.tabButton,
+                      selectedTab === 'ModulesCovered' && styles.selectedTab,
+                    ]}
+                    onPress={() => {
+                      setSelectedTab('ModulesCovered');
+                    }}>
+                    <Typography
+                      bgColor={colors.black}
+                      size={'medium'}
+                      textStyle={styles.textLeft}
+                      fontWeight={
+                        selectedTab === 'ModulesCovered' ? '700' : '400'
+                      }>
+                      {programScreenContent.modulesCovered}
+                    </Typography>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.tabButton,
+                      selectedTab === 'Review' && styles.selectedTab,
+                    ]}
+                    onPress={() => {
+                      setSelectedTab('Review');
+                    }}>
+                    <Typography
+                      bgColor={colors.black}
+                      size={'medium'}
+                      textStyle={styles.textLeft}
+                      fontWeight={selectedTab === 'Review' ? '700' : '400'}>
+                      {programScreenContent.review}
+                    </Typography>
+                  </TouchableOpacity>
+                </View>
+                {renderContent(selectedTab, itemData)}
+              </View>
+              <View style={styles.container}>
+                <View style={styles.innerContainer}>
                   <Typography
                     bgColor={colors.black}
-                    size={'medium'}
-                    fontWeight="700"
-                    textStyle={styles.textLeft}>
-                    {programScreenContent.enrollNow}
+                    size="large"
+                    fontWeight="700">
+                    {programScreenContent.moreCourses}
                   </Typography>
-                </EnrollButton>
-              </View>
-            </EnrollContainer>
-          </View>
-          <View>
-            {/* Tab buttons */}
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.tabButton,
-                  selectedTab === 'CourseOverview' && styles.selectedTab,
-                ]}
-                onPress={() => {
-                  setSelectedTab('CourseOverview');
-                }}>
-                <Typography
-                  bgColor={colors.black}
-                  size={'medium'}
-                  textStyle={styles.textLeft}
-                  fontWeight={selectedTab === 'CourseOverview' ? '700' : '400'}>
-                  {programScreenContent.courseOverview}
-                </Typography>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.tabButton,
-                  selectedTab === 'ModulesCovered' && styles.selectedTab,
-                ]}
-                onPress={() => {
-                  setSelectedTab('ModulesCovered');
-                }}>
-                <Typography
-                  bgColor={colors.black}
-                  size={'medium'}
-                  textStyle={styles.textLeft}
-                  fontWeight={selectedTab === 'ModulesCovered' ? '700' : '400'}>
-                  {programScreenContent.modulesCovered}
-                </Typography>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.tabButton,
-                  selectedTab === 'Review' && styles.selectedTab,
-                ]}
-                onPress={() => {
-                  setSelectedTab('Review');
-                }}>
-                <Typography
-                  bgColor={colors.black}
-                  size={'medium'}
-                  textStyle={styles.textLeft}
-                  fontWeight={selectedTab === 'Review' ? '700' : '400'}>
-                  {programScreenContent.review}
-                </Typography>
-              </TouchableOpacity>
-            </View>
-            {renderContent(selectedTab)}
-          </View>
-          <View style={styles.container}>
-            <View style={styles.innerContainer}>
-              <Typography bgColor={colors.black} size="large" fontWeight="700">
-                {programScreenContent.moreCourses}
-              </Typography>
-            </View>
-            <FlatList
-              horizontal
-              data={cardData}
-              keyExtractor={item => item.id}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({item}) => (
-                <CustomCard
-                  variant={'small'}
-                  onPress={() => {
-                    console.log('clicked');
-                  }}
-                  title={item.title}
-                  imageSource={item.imageSource}
+                </View>
+                <FlatList
+                  horizontal
+                  data={listData?.document?.records}
+                  keyExtractor={item => `${item.id}`}
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({item}) => (
+                    <CustomCard
+                      variant={'small'}
+                      onPress={() => {
+                        navigation.push('Program Page', {item, list: listData});
+                      }}
+                      title={item?.coursetitle}
+                      courseDuration={item?.courselength}
+                      courseType={item?.coursetype}
+                      imageSource={{uri: item?.image}}
+                      courseFee={
+                        item.coursefee
+                          ? item.coursefee
+                          : item.coursefees?.fees
+                            ? item.coursefees.fees
+                            : '30000'
+                      }
+                    />
+                  )}
                 />
-              )}
-            />
-          </View>
-        </Scroll>
+              </View>
+            </Scroll>
+          </>
+        )}
       </SafeAreaViewCompat>
     </SafeAreaProvider>
   );
@@ -268,6 +337,7 @@ const styles = StyleSheet.create({
     height: verticalScale(273),
     width: '100%',
   },
+
   innerContainer: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -278,19 +348,24 @@ const styles = StyleSheet.create({
     paddingLeft: horizontalScale(15),
     paddingTop: verticalScale(20),
   },
+
   safeAreaContainer: {flex: 1},
+
   selectedTab: {
     borderBottomWidth: moderateScale(2),
   },
+
   tabButton: {
     alignItems: 'center',
     flex: 1,
     paddingVertical: verticalScale(10),
   },
+
   tabContainer: {
     flexDirection: 'row',
     paddingVertical: verticalScale(16),
   },
+
   textLeft: {
     textAlign: 'left',
   },

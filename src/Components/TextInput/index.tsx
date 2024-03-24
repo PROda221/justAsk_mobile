@@ -5,14 +5,22 @@ import {StyleSheet, View} from 'react-native';
 import {moderateScale} from '../../Functions/StyleScale';
 import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
+import { type ViewStyle} from 'react-native';
+import { colors } from '../../DesignTokens/Colors';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: UseFormReturn<any>['control'];
   name: string;
-  label: string;
+  label?: string;
   secureTextEntry: boolean;
+  labelExists?: boolean;
+  placeholder?: string;
   rules: Record<string, unknown>;
+    // Add any custom styles you want to accept as props
+  viewStyle?:ViewStyle;
+  multiline?:boolean
+  
 };
 
 const StyledTextInput = styled(RPTextInput)`
@@ -23,16 +31,23 @@ const StyledTextInput = styled(RPTextInput)`
 
 export const TextInput = ({
   control,
-  label,
+  labelExists=true,
+  label="",
+  placeholder="",
   name,
   secureTextEntry,
   rules = {},
+  viewStyle={},
+  multiline=false
+
 }: TextInputProps) => {
   const [showPass, setShowPass] = useState<boolean>(false);
 
   const toggleEye = () => {
     setShowPass(value => !value);
   };
+
+  const labelProps = labelExists ? {label} : {placeholder}
 
   return (
     <Controller
@@ -43,12 +58,14 @@ export const TextInput = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <View>
           <StyledTextInput
+          placeholderTextColor={colors.black}
+            style={[viewStyle, {backgroundColor: colors.white}]}
+            multiline={multiline}
             mode="outlined"
             value={value as string}
             outlineStyle={styles.outlineStyle}
             outlineColor={error ? 'red' : 'gray'}
             activeOutlineColor={error ? 'red' : 'black'}
-            label={label}
             onChangeText={onChange}
             secureTextEntry={secureTextEntry && !showPass}
             right={
@@ -60,6 +77,7 @@ export const TextInput = ({
                 )
               ) : null
             }
+            {...labelProps}
           />
           {error && (
             <Typography bgColor="red" size="medium" fontWeight="400">

@@ -1,5 +1,5 @@
 import {View, StyleSheet} from 'react-native';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {Typography} from '../../../Components/Typography';
 import {colors} from '../../../DesignTokens/Colors';
@@ -15,18 +15,38 @@ import {type SubmitHandler, useForm} from 'react-hook-form';
 
 import content from '../../../Assets/Languages/english.json';
 import Header from '../../../Components/Header';
+import {useDispatch, useSelector} from 'react-redux';
+import {type RootState} from '../../../Redux/rootReducers';
+import {callTokenGenerator, resetLoginResponse, setAccessToken} from '../../../Redux/Slices/LoginSlice';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
 
 type FormData = {
   username: string;
   password: string;
 };
 
-const AccountScreen = (): JSX.Element => {
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase, 'Account'>;
+};
+
+const AccountScreen = ({navigation}: Props): JSX.Element => {
   const settingScreenContent: AccountType = content.SettingScreen;
 
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
   const {control, handleSubmit} = useForm<FormData>();
   const snapPoints = useMemo(() => ['65%'], []);
+
+  const dispatch = useDispatch();
+  const loginSlice = useSelector((state: RootState) => state.loginSlice);
+
+  useEffect(() => {
+    if (loginSlice.success) {
+      dispatch(setAccessToken(loginSlice.success.document.access_token))
+      dispatch(resetLoginResponse())
+      navigation.navigate('Home Screen');
+    }
+  }, [loginSlice.success]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const handlePresentModalPress = useCallback(() => {
@@ -37,7 +57,7 @@ const AccountScreen = (): JSX.Element => {
   }, []);
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    console.log('data is :', data);
+    dispatch(callTokenGenerator(data));
   };
 
   return (
@@ -93,6 +113,11 @@ const AccountScreen = (): JSX.Element => {
                 variant={'typeB'}
               />
             </View>
+            {loginSlice.error ? (
+              <Typography bgColor="red" size="medium" fontWeight="400">
+                {loginSlice.error.message}
+              </Typography>
+            ) : null}
           </View>
         </SafeAreaView>
       </SafeAreaProvider>
