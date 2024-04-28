@@ -1,0 +1,58 @@
+{
+  "homeScreen": {
+    "helloNishant": "Hello Nishant",
+    "hello": "hello",
+    "world": "world",
+    "firstcard": "firstcard",
+    "username": "Username",
+    "password": "Password",
+    "onlineCourse": "Online Course",
+    "level4Qualification": "Level 4 Qualifications",
+    "campusCourses": "Campus Courses",
+    "meetTheTeam": "Meet The Team",
+    "ourStudentPortfolios": "Our Student Portfolios",
+    "headerTitle": "Welcome To Lst",
+    "viewAll": "VIEW ALL",
+    "whatOurStudentSay":"What Our students Have To Say...."
+
+  },
+  "onlineCourses": {
+    "title": "Our Online Courses"
+  },
+  "navigation": {
+    "homePage": "Home Page",
+    "onlineCourses": "Online Courses",
+    "levelQualifications": "Level 4 Qualifications",
+    "campusCourses": "Campus Courses",
+    "lstTeen": "LST-Teen",
+    "Fees": "Fees",
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us",
+    "Login": "Login"
+  },
+  "DatialsScreen": {},
+  "ProgramScreen": {
+    "title": "Programs Page",
+    "moreCourses": "More courses that you may like...",
+    "level": "Level",
+    "duration": "Duration",
+    "enrollNow": "Enroll Now",
+    "courseOverview": "Course Overview",
+    "modulesCovered": "Modules Covered",
+    "review": "Review"
+  },
+
+  "SettingScreen": {
+    "loginIntoYourAccount": "Login to your Account",
+    "welcomeToLondonSchool":"Welcome to the London School of Trends. Please login to your account.",
+    "login":"LOGIN",
+    "forgotPassword":"FORGOT PASSWORD?",
+    "username": "Username",
+    "password": "Password",
+    "forgottenPassowrd":"Forgotten Your Password",
+    "enterYourEmail":"Please enter the email address you used to register on the system to identify yourself. If this email address exists in our database an automatic email will be sent to the associated email address.",
+    "submit":"SUBMIT",
+    "loginAccount":"LOGIN YOUR ACCOUNT?",
+    "Email":"Email"
+  }
+}
