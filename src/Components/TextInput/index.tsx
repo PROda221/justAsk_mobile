@@ -5,11 +5,9 @@ import {StyleSheet, View} from 'react-native';
 import {moderateScale} from '../../Functions/StyleScale';
 import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
-import { type ViewStyle} from 'react-native';
-import { colors } from '../../DesignTokens/Colors';
+import {type ViewStyle} from 'react-native';
+import {colors} from '../../DesignTokens/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,31 +18,30 @@ type TextInputProps = {
   labelExists?: boolean;
   placeholder?: string;
   rules: Record<string, unknown>;
-    // Add any custom styles you want to accept as props
-  viewStyle?:ViewStyle;
-  multiline?:boolean
-  leftIcon?:string
-  
+  // Add any custom styles you want to accept as props
+  viewStyle?: ViewStyle;
+  multiline?: boolean;
+  // leftIcon?:string
+  leftIcon?: React.ReactNode;
 };
 
 const StyledTextInput = styled(RPTextInput)`
-  border-radius:15px;
+  border-radius: 15px;
   font-size: 15px;
   font-family: 'Segoe UI';
 `;
 
 export const TextInput = ({
   control,
-  labelExists=true,
-  label="",
-  placeholder="",
+  labelExists = true,
+  label = '',
+  placeholder = '',
   name,
   secureTextEntry,
   rules = {},
-  viewStyle={},
-  multiline=false,
-  leftIcon=''
-
+  viewStyle = {},
+  multiline = false,
+  leftIcon = '',
 }: TextInputProps) => {
   const [showPass, setShowPass] = useState<boolean>(false);
 
@@ -52,7 +49,7 @@ export const TextInput = ({
     setShowPass(value => !value);
   };
 
-  const labelProps = labelExists ? {label} : {placeholder}
+  const labelProps = labelExists ? {label} : {placeholder};
 
   return (
     <Controller
@@ -83,10 +80,8 @@ export const TextInput = ({
               ) : null
             }
             {...labelProps}
-            left={leftIcon ? <MaterialIcons name={leftIcon} color={ colors.black} size={10}/> : null}
-
-
-            />
+            left={leftIcon ? leftIcon : null}
+          />
           {error && (
             <Typography bgColor="red" size="medium" fontWeight="400">
               {error?.message}

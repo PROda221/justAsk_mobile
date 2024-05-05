@@ -62,7 +62,13 @@ const LoginScreen = (): JSX.Element => {
             secureTextEntry={false}
             viewStyle={styles.input}
             rules={{required: 'Username required'}}
-            // LeftIcon="email"
+            leftIcon={
+              <Ionicons
+                name="logo-facebook"
+                size={moderateScale(28)}
+                color={colors.black}
+              />
+            }
           />
 
           <TextInput
@@ -72,7 +78,13 @@ const LoginScreen = (): JSX.Element => {
             secureTextEntry={true}
             viewStyle={styles.input}
             rules={{required: 'Password required'}}
-            // LeftIcon="lock"
+            leftIcon={
+              <Ionicons
+                name="logo-facebook"
+                size={moderateScale(28)}
+                color={colors.black}
+              />
+            }
           />
         </Scroll>
         <View style={styles.terms}>
