@@ -23,6 +23,7 @@ import DropdownArrow from './DropdownArrow.svg'
 import MyProfile from './MyProfile.svg'
 import EditProfile from './EditProfile.svg'
 import   RadioButtonChecked from './RadioButtonChecked.svg'
+import loginImage from './loginImage.svg'
 
 export {
   HomeIcon,
@@ -49,5 +50,6 @@ export {
   DropdownArrow,
   MyProfile,
   EditProfile,
-  RadioButtonChecked
+  RadioButtonChecked,
+  loginImage,
 };

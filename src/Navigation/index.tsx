@@ -4,7 +4,7 @@ import AppNavigation from './AppNavigation';
 import AuthStack from './AuthStack';
 
 const Navigation = (): JSX.Element => {
-	const auth = true;
+	const auth = false;
 	return (
 		<NavigationContainer>
 			{auth ? <AppNavigation /> : <AuthStack />}

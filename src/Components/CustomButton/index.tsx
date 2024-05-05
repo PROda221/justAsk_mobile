@@ -50,7 +50,7 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
         return `
           background-color: ${colors.white};
           color: ${colors.black};
-          border-radius: 4px;
+          border-radius: 16px;
           border: 1px solid  ${colors.black};
           height:52px;
           width:190px;
@@ -74,6 +74,7 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
           height: 22px;
           width: 70px;
         `;
+      
       default:
         return '';
     }

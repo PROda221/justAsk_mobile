@@ -7,6 +7,9 @@ import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
 import { type ViewStyle} from 'react-native';
 import { colors } from '../../DesignTokens/Colors';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,11 +23,12 @@ type TextInputProps = {
     // Add any custom styles you want to accept as props
   viewStyle?:ViewStyle;
   multiline?:boolean
+  leftIcon?:string
   
 };
 
 const StyledTextInput = styled(RPTextInput)`
-  border-radius: 5px;
+  border-radius:15px;
   font-size: 15px;
   font-family: 'Segoe UI';
 `;
@@ -38,7 +42,8 @@ export const TextInput = ({
   secureTextEntry,
   rules = {},
   viewStyle={},
-  multiline=false
+  multiline=false,
+  leftIcon=''
 
 }: TextInputProps) => {
   const [showPass, setShowPass] = useState<boolean>(false);
@@ -58,10 +63,10 @@ export const TextInput = ({
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <View>
           <StyledTextInput
-          placeholderTextColor={colors.black}
+            placeholderTextColor={colors.black}
             style={[viewStyle, {backgroundColor: colors.white}]}
             multiline={multiline}
-            mode="outlined"
+            mode="flat"
             value={value as string}
             outlineStyle={styles.outlineStyle}
             outlineColor={error ? 'red' : 'gray'}
@@ -78,7 +83,10 @@ export const TextInput = ({
               ) : null
             }
             {...labelProps}
-          />
+            left={leftIcon ? <MaterialIcons name={leftIcon} color={ colors.black} size={10}/> : null}
+
+
+            />
           {error && (
             <Typography bgColor="red" size="medium" fontWeight="400">
               {error?.message}
@@ -92,7 +100,7 @@ export const TextInput = ({
 
 const styles = StyleSheet.create({
   outlineStyle: {
-    borderRadius: moderateScale(5),
-    borderWidth: moderateScale(1),
+    borderRadius: moderateScale(15),
+    borderWidth: moderateScale(2),
   },
 });
