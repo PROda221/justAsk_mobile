@@ -7,7 +7,6 @@ import {Controller, type UseFormReturn} from 'react-hook-form';
 import {Typography} from '..';
 import {type ViewStyle} from 'react-native';
 import {colors} from '../../DesignTokens/Colors';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +20,6 @@ type TextInputProps = {
   // Add any custom styles you want to accept as props
   viewStyle?: ViewStyle;
   multiline?: boolean;
-  // leftIcon?:string
   leftIcon?: React.ReactNode;
 };
 
