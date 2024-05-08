@@ -24,6 +24,7 @@ import MyProfile from './MyProfile.svg'
 import EditProfile from './EditProfile.svg'
 import   RadioButtonChecked from './RadioButtonChecked.svg'
 import loginImage from './loginImage.svg'
+import justAskTempLogo from  './justAskTempLogo.svg'
 
 export {
   HomeIcon,
@@ -52,4 +53,5 @@ export {
   EditProfile,
   RadioButtonChecked,
   loginImage,
+  justAskTempLogo
 };

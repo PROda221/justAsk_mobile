@@ -2,23 +2,21 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {Typography} from '../../../Components';
 import styled from 'styled-components';
-import {colors} from '../../../DesignTokens/Colors';
 import {
-  horizontalScale,
   moderateScale,
-  verticalScale,
 } from '../../../Functions/StyleScale';
 import {CustomButton, TextInput} from '../../../Components';
 import {type SubmitHandler, useForm} from 'react-hook-form';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Checkbox} from 'react-native-paper'; // Import Checkbox from react-native-paper
+import { useTheme } from '../../../useContexts/Theme/ThemeContext';
+import { getLoginStyles } from './styles';
 // import  {loginImage}  from '../../../Assets/Images';
 
 type FormData = {
@@ -27,8 +25,11 @@ type FormData = {
 };
 
 const LoginScreen = (): JSX.Element => {
+  const {colors} = useTheme()
   const {control, handleSubmit} = useForm<FormData>();
   const [agreed, setAgreed] = useState<boolean>(false); // State for checkbox
+
+  const styles = getLoginStyles(colors)
 
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
@@ -36,7 +37,6 @@ const LoginScreen = (): JSX.Element => {
   `;
 
   const onSubmit: SubmitHandler<FormData> = data => {
-    // eslint-disable-next-line no-restricted-syntax
     console.log({data});
   };
 
@@ -156,66 +156,5 @@ const LoginScreen = (): JSX.Element => {
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: moderateScale(18),
-    justifyContent: 'center',
-    marginHorizontal: horizontalScale(18),
-    padding: moderateScale(12),
-  },
 
-  buttonView: {
-    justifyContent: 'flex-end',
-    marginHorizontal: horizontalScale(12),
-    marginTop: verticalScale(16),
-  },
-
-  container: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginHorizontal: horizontalScale(12),
-    marginVertical: verticalScale(8),
-  },
-
-  header: {fontSize: 30, textAlign: 'left'},
-
-  input: {marginBottom: verticalScale(10)},
-
-  line: {
-    backgroundColor: colors.grey,
-    flex: 1,
-    height: 1,
-  },
-
-  login: {
-    color: colors.blue,
-  },
-
-  safeAreaContainer: {
-    backgroundColor: colors.black,
-    flex: 1,
-  },
-
-  signUpButton: {
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: moderateScale(12),
-    justifyContent: 'center',
-    width: '100%',
-  },
-
-  terms: {alignItems: 'center', flexDirection: 'row'},
-
-  text: {
-    color: colors.white,
-    marginHorizontal: horizontalScale(8),
-  },
-
-  welcomeText: {
-    marginVertical: verticalScale(16),
-  },
-});
 export default LoginScreen;
