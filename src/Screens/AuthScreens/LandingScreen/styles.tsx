@@ -12,12 +12,38 @@ export type LandingScreenStyles = {
   loginSignUpContainer: ViewStyle;
   textInput: ViewStyle;
   signUpStyle: ViewStyle;
+  loginOptionsContainer: ViewStyle;
+  googleLoginButton: ViewStyle;
+  googleLoginButtonContainer: ViewStyle;
+  loginSignInButton: ViewStyle;
+  loginSigninFontStyle: ViewStyle;
 };
 
 export const getLandingScreenStyles = (colors): LandingScreenStyles =>
   StyleSheet.create<LandingScreenStyles>({
+    googleLoginButton: {
+      backgroundColor: colors.googleButtonColor,
+      height: verticalScale(57),
+      width: horizontalScale(165)
+    },
+    googleLoginButtonContainer: {
+      alignItems: 'center',
+      paddingTop: verticalScale(23)
+    },
+    loginOptionsContainer: {
+      paddingTop: verticalScale(42)
+    },
+    loginSignInButton : {
+      backgroundColor: colors.textInputBackgroundColor,
+      borderRadius: moderateScale(95),
+      height: verticalScale(63.36),
+      width: '100%',
+    },
     loginSignUpContainer: {
       paddingTop: verticalScale(63),
+    },
+    loginSigninFontStyle: {
+      fontSize: moderateScale(18)
     },
     logoView: {
       alignSelf: 'center',
@@ -42,5 +68,5 @@ export const getLandingScreenStyles = (colors): LandingScreenStyles =>
       height: verticalScale(63.36),
       textAlign: 'center',
       width: '100%',
-    },
+    }
   });

@@ -15,11 +15,15 @@ const lightColors = {
   secondary: '#f39c12',
 };
 
+
 const darkColors = {
   primaryBackgroundColor: '#000000',
   textPrimaryColor: '#FFFFFF',
   textInputBackgroundColor: '#232627',
   textInputPlaceholderColor: '#FFFFFF',
+  loginOptionsTextColor: '#ACADB9',
+  googleButtonColor: 'rgba(212, 70, 56, 0.25)',
+  googleButtonTextColor: 'rgba(212, 70, 56, 0.50)',
   buttonBackground: '',
   background: '#1E1E1E',
   text: '#FFFFFF',
