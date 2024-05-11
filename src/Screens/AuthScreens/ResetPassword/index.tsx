@@ -3,18 +3,23 @@ import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {SignUpScreenStyles, getSignUpScreenStyles} from './styles';
+import {ResetPassScreenStyles, getResetPassScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
-import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
+import {ParamListBase} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
 
 const RenderTitle = ({
   styles,
   colors,
 }: {
-  styles: SignUpScreenStyles;
+  styles: ResetPassScreenStyles;
   colors: any;
 }) => (
   <>
@@ -22,81 +27,55 @@ const RenderTitle = ({
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Create Your'}
+      {'Reset Your'}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Account'}
+      {'Password'}
     </Typography>
   </>
 );
 
-const SignUp = (): JSX.Element => {
+const ResetPassword = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
+
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
   `;
 
   const {colors} = useTheme();
 
-  const styles = getSignUpScreenStyles(colors);
+  const styles = getResetPassScreenStyles(colors);
 
-  const renderGoogleLogin = () => (
-    <View style={styles.googleLoginContainer}>
-      <View style={styles.seperator} />
-      <View style={styles.loginOptionsContainer}>
-        <RenderLoginOptions colors={colors} />
-      </View>
-    </View>
-  );
+  const handleNextButton = () => {
+    navigation.navigate('Otp Screen');
+  };
 
   const renderForm = () => (
     <>
       <TextInput
-        name="username"
-        secureTextEntry={false}
+        name="password"
+        secureTextEntry={true}
         control={control}
-        label="Username"
-        placeholder="Username"
-        leftIcon="user"
+        label="Password"
+        placeholder="Password"
+        leftIcon="lock"
       />
       <View style={styles.textInputContainer}>
         <TextInput
-          name="email"
-          secureTextEntry={false}
-          control={control}
-          label="Email"
-          placeholder="Enter Your Email"
-          leftIcon="email"
-        />
-      </View>
-      <View style={styles.textInputContainer}>
-        <TextInput
-          name="password"
+          name="confirmPassword"
           secureTextEntry={true}
           control={control}
-          label="Password"
-          placeholder="Password"
+          label="Confirm Password"
+          placeholder="Confirm Password"
           leftIcon="lock"
         />
       </View>
       <View style={styles.buttonContainer}>
-        <CustomButton label="Register" radius={14} />
+        <CustomButton onPress={handleNextButton} label="Reset" radius={14} />
       </View>
-      <Typography
-        bgColor={colors.loginOptionsTextColor}
-        fontWeight="400"
-        textStyle={styles.alreadyHaveAnAccount}>
-        {'Already Have An Account?'}
-        <Typography
-          bgColor={colors.buttonTextColor}
-          fontWeight="400"
-          textStyle={styles.alreadyHaveAnAccount}>
-          {' Sign In'}
-        </Typography>
-      </Typography>
     </>
   );
 
@@ -112,7 +91,6 @@ const SignUp = (): JSX.Element => {
               <RenderTitle styles={styles} colors={colors} />
             </View>
             <View style={styles.formContainer}>{renderForm()}</View>
-            {renderGoogleLogin()}
           </Scroll>
         </Animated.View>
       </SafeAreaView>
@@ -120,4 +98,4 @@ const SignUp = (): JSX.Element => {
   );
 };
 
-export default SignUp;
+export default ResetPassword;

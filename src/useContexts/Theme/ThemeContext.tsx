@@ -18,6 +18,7 @@ const lightColors = {
 
 const darkColors = {
   primaryBackgroundColor: '#000000',
+  secondaryBackgroundColor: '#232627',
   textPrimaryColor: '#FFFFFF',
   textInputBackgroundColor: '#232627',
   textInputPlaceholderColor: '#C2C3CB',
@@ -27,6 +28,8 @@ const darkColors = {
   googleButtonTextColor: 'rgba(212, 70, 56, 0.50)',
   backButtonContainerColor: '#232627',
   seperatorColor: '#C2C3CB',
+  otpPrimaryColor: '#FFFFFF',
+  otpSecondaryColor: '#C2C3CB',
   background: '#1E1E1E',
   text: '#FFFFFF',
   primary: '#3498db',

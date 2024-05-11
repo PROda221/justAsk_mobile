@@ -1,160 +1,131 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import React, {useState} from 'react';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {Typography} from '../../../Components';
+import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {
-  moderateScale,
-} from '../../../Functions/StyleScale';
-import {CustomButton, TextInput} from '../../../Components';
-import {type SubmitHandler, useForm} from 'react-hook-form';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Checkbox} from 'react-native-paper'; // Import Checkbox from react-native-paper
-import { useTheme } from '../../../useContexts/Theme/ThemeContext';
-import { getLoginStyles } from './styles';
-// import  {loginImage}  from '../../../Assets/Images';
+import {LogInScreenStyles, getLogInScreenStyles} from './styles';
+import {useTheme} from '../../../useContexts/Theme/ThemeContext';
+import Header from '../../../Components/Header';
+import Animated, {FadeInUp} from 'react-native-reanimated';
+import {useForm} from 'react-hook-form';
+import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
+import {ParamListBase} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-type FormData = {
-  email: string;
-  password: string;
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-const LoginScreen = (): JSX.Element => {
-  const {colors} = useTheme()
-  const {control, handleSubmit} = useForm<FormData>();
-  const [agreed, setAgreed] = useState<boolean>(false); // State for checkbox
+const RenderTitle = ({
+  styles,
+  colors,
+}: {
+  styles: LogInScreenStyles;
+  colors: any;
+}) => (
+  <>
+    <Typography
+      bgColor={colors.textPrimaryColor}
+      fontWeight="400"
+      textStyle={styles.title}>
+      {'Login Your'}
+    </Typography>
+    <Typography
+      bgColor={colors.textPrimaryColor}
+      fontWeight="400"
+      textStyle={styles.title}>
+      {'Account'}
+    </Typography>
+  </>
+);
 
-  const styles = getLoginStyles(colors)
-
+const LogIn = ({navigation}: Props): JSX.Element => {
+  const {control, handleSubmit} = useForm();
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
-    padding: 0 12px 0 12px;
   `;
 
-  const onSubmit: SubmitHandler<FormData> = data => {
-    console.log({data});
+  const {colors} = useTheme();
+
+  const styles = getLogInScreenStyles(colors);
+
+  const renderGoogleLogin = () => (
+    <View style={styles.googleLoginContainer}>
+      <View style={styles.seperator} />
+      <View style={styles.loginOptionsContainer}>
+        <RenderLoginOptions colors={colors} />
+      </View>
+    </View>
+  );
+
+  const handleForgotScreen = () => {
+    navigation.navigate('Forgot Password');
   };
+
+  const renderForm = () => (
+    <>
+      <TextInput
+        name="username"
+        secureTextEntry={false}
+        control={control}
+        label="Username"
+        placeholder="Username"
+        leftIcon="user"
+      />
+      <View style={styles.textInputContainer}>
+        <TextInput
+          name="password"
+          secureTextEntry={true}
+          control={control}
+          label="Password"
+          placeholder="Password"
+          leftIcon="lock"
+        />
+      </View>
+      <TouchableOpacity onPress={handleForgotScreen}>
+        <Typography
+          bgColor={colors.buttonTextColor}
+          fontWeight="400"
+          textStyle={styles.forgotPassText}>
+          {'Forget Password?'}
+        </Typography>
+      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <CustomButton label="Login" radius={14} />
+      </View>
+      <Typography
+        bgColor={colors.loginOptionsTextColor}
+        fontWeight="400"
+        textStyle={styles.alreadyHaveAnAccount}>
+        {'Create New Account?'}
+        <Typography
+          bgColor={colors.buttonTextColor}
+          fontWeight="400"
+          textStyle={styles.alreadyHaveAnAccount}>
+          {' Sign Up'}
+        </Typography>
+      </Typography>
+    </>
+  );
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeAreaContainer}>
-        <Scroll>
-          {/* <loginImage width={horizontalScale(72)} height={verticalScale(72)} /> */}
-          <View style={styles.welcomeText}>
-            <Typography
-              bgColor={colors.white}
-              size={'large'}
-              textStyle={styles.header}
-              fontWeight={'800'}>
-              {'Login'}
-            </Typography>
-          </View>
-
-          <TextInput
-            control={control}
-            name={'email'}
-            label={'Email'}
-            secureTextEntry={false}
-            viewStyle={styles.input}
-            rules={{required: 'Username required'}}
-            leftIcon={
-              <Ionicons
-                name="logo-facebook"
-                size={moderateScale(28)}
-                color={colors.black}
-              />
-            }
-          />
-
-          <TextInput
-            control={control}
-            name={'password'}
-            label={'Password'}
-            secureTextEntry={true}
-            viewStyle={styles.input}
-            rules={{required: 'Password required'}}
-            leftIcon={
-              <Ionicons
-                name="logo-facebook"
-                size={moderateScale(28)}
-                color={colors.black}
-              />
-            }
-          />
-        </Scroll>
-        <View style={styles.terms}>
-          <Checkbox.Item
-            label="" // Set label to null to avoid duplication
-            status={agreed ? 'checked' : 'unchecked'}
-            onPress={() => {
-              setAgreed((value: boolean) => !value);
-            }}
-            color={colors.white} // Adjust color as needed
-          />
-          <Text style={styles.text}>
-            {'I agree to all terms and conditions'}
-          </Text>
-        </View>
-
-        <View style={styles.buttonView}>
-          <CustomButton
-            onPress={handleSubmit(onSubmit)}
-            label={'SIGN UP'}
-            variant={'typeB'}
-            viewStyle={styles.signUpButton}
-          />
-        </View>
-
-        <View style={styles.container}>
-          <View style={styles.line} />
-          <Text style={styles.text}>{`OR Connect with`}</Text>
-          <View style={styles.line} />
-        </View>
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.button}>
-            <Ionicons
-              name="logo-facebook"
-              size={moderateScale(28)}
-              color={colors.black}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Ionicons
-              name="logo-google"
-              size={moderateScale(28)}
-              color={colors.black}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.button}>
-            <Ionicons
-              name="logo-apple"
-              size={moderateScale(28)}
-              color={colors.black}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.container}>
-          <Text style={styles.text}>
-            {`Already have an Account?`}
-            <Text
-              style={styles.login}
-              onPress={() => {
-                console.log('login pressed');
-              }}>
-              {` Login`}
-            </Text>
-          </Text>
-        </View>
+        <Animated.View
+          entering={FadeInUp.duration(1000)}
+          style={styles.mainContainer}>
+          <Header />
+          <Scroll>
+            <View style={styles.titleContainer}>
+              <RenderTitle styles={styles} colors={colors} />
+            </View>
+            <View style={styles.formContainer}>{renderForm()}</View>
+            {renderGoogleLogin()}
+          </Scroll>
+        </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
-
-export default LoginScreen;
+export default LogIn;

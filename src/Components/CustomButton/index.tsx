@@ -14,7 +14,7 @@ type CustomButtonProps = {
   onPress?: () => void;
   label: string;
   backArrow?: boolean;
-  viewStyle?: ViewStyle[];
+  viewStyle?: ViewStyle[] | ViewStyle;
   textColor?: string;
   radius: number;
   textStyle?: TextStyle;

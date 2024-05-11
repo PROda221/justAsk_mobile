@@ -1,71 +1,65 @@
-import {StyleSheet} from 'react-native';
-// Import {colors} from '../../../DesignTokens/Colors';
-import {
-  moderateScale,
-  horizontalScale,
-  verticalScale,
-} from '../../../Functions/StyleScale';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {horizontalScale, moderateScale, verticalScale} from '../../../Functions/StyleScale';
 
-export const getLoginStyles = colors =>
-  StyleSheet.create({
-    button: {
-      alignItems: 'center',
-      backgroundColor: colors.white,
-      borderRadius: moderateScale(18),
-      justifyContent: 'center',
-      marginHorizontal: horizontalScale(18),
-      padding: moderateScale(12),
+export type LogInScreenStyles = {
+  title: TextStyle;
+  safeAreaContainer: ViewStyle;
+  titleContainer: ViewStyle;
+  mainContainer: ViewStyle;
+  textInputContainer: ViewStyle;
+  formContainer: ViewStyle;
+  buttonContainer: ViewStyle;
+  alreadyHaveAnAccount: TextStyle;
+  seperator: ViewStyle;
+  googleLoginContainer: ViewStyle;
+  loginOptionsContainer: ViewStyle;
+  forgotPassText: TextStyle;
+};
+
+export const getLogInScreenStyles = (colors): LogInScreenStyles =>
+  StyleSheet.create<LogInScreenStyles>({
+    alreadyHaveAnAccount: {
+      fontSize: moderateScale(16),
+      paddingTop: verticalScale(14)
     },
-
-    buttonView: {
-      justifyContent: 'flex-end',
-      marginHorizontal: horizontalScale(12),
-      marginTop: verticalScale(16),
+    buttonContainer: {
+      paddingTop: verticalScale(18)
     },
-
-    container: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginHorizontal: horizontalScale(12),
-      marginVertical: verticalScale(8),
+    forgotPassText: {
+      color: colors.loginOptionsTextColor,
+      fontSize: moderateScale(14),
+      paddingTop: verticalScale(14),
+      textAlign: 'right'
     },
-
-    header: {fontSize: 30, textAlign: 'left'},
-
-    input: {marginBottom: verticalScale(10)},
-
-    line: {
-      backgroundColor: colors.grey,
+    formContainer: {
+      paddingTop: verticalScale(49)
+    },
+    googleLoginContainer: {
+      paddingTop: verticalScale(35)
+    },
+    loginOptionsContainer: {
+      paddingTop: verticalScale(23)
+    },
+    mainContainer: {
       flex: 1,
-      height: 1,
+      justifyContent: 'center',
+      paddingHorizontal: horizontalScale(18),
     },
-
-    login: {
-      color: colors.blue,
-    },
-
     safeAreaContainer: {
-      backgroundColor: colors.black,
+      backgroundColor: colors.primaryBackgroundColor,
       flex: 1,
     },
-
-    signUpButton: {
-      alignItems: 'center',
-      backgroundColor: colors.white,
-      borderRadius: moderateScale(12),
-      justifyContent: 'center',
-      width: '100%',
+    seperator: {
+      borderBottomColor: colors.seperatorColor,
+      borderBottomWidth: StyleSheet.hairlineWidth,
     },
-
-    terms: {alignItems: 'center', flexDirection: 'row'},
-
-    text: {
-      color: colors.white,
-      marginHorizontal: horizontalScale(8),
+    textInputContainer: { paddingTop: verticalScale(18)},
+    title: {
+      fontFamily: 'Urbanist-SemiBold',
+      fontSize: moderateScale(39),
+      textAlign: 'left',
     },
-
-    welcomeText: {
-      marginVertical: verticalScale(16),
-    },
+    titleContainer: {
+      paddingTop: verticalScale(74)
+    }
   });
