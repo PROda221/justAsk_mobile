@@ -12,10 +12,10 @@ import {
 } from '../../../Functions/StyleScale';
 import {Typography} from '../../../Components';
 import {CustomButton} from '../../../Components';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Animated, {FadeInUp} from 'react-native-reanimated';
+import { RenderLoginOptions } from '../../../Components/RenderLoginOptions';
 
 const logoView = (styles: LandingScreenStyles) => (
   <View style={styles.logoView}>
@@ -26,57 +26,6 @@ const logoView = (styles: LandingScreenStyles) => (
     />
   </View>
 );
-
-const RenderLoginOptions = ({
-  colors,
-  styles,
-}: {
-  colors: any;
-  styles: LandingScreenStyles;
-}) => {
-  const googleSignIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log('userInfo :', userInfo);
-      // SetState({ userInfo });
-    } catch (error) {
-      if (error.code === 'SIGN_IN_CANCELLED') {
-        console.log('a');
-        // User cancelled the login flow
-      } else if (error.code === 'IN_PROGRESS') {
-        console.log('b');
-        // Operation (e.g. sign in) is in progress already
-      } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
-        console.log('c');
-        // Play services not available or outdated
-      } else {
-        console.log('d', error);
-        // Some other error happened
-      }
-    }
-  };
-
-  return (
-    <View style={styles.loginOptionsContainer}>
-      <Typography
-        bgColor={colors.loginOptionsTextColor}
-        fontWeight="400"
-        size="large">
-        {'Continue With Google'}
-      </Typography>
-      <View style={styles.googleLoginButtonContainer}>
-        <CustomButton
-          label="Google"
-          radius={10}
-          textColor={colors.googleButtonTextColor}
-          onPress={googleSignIn}
-          viewStyle={styles.googleLoginButton}
-        />
-      </View>
-    </View>
-  );
-};
 
 const RenderLoginSignUp = ({
   navigation,
@@ -140,7 +89,10 @@ const LandingScreen = ({navigation}: Props) => {
             {'Welcome to JustAsk'}
           </Typography>
           <RenderLoginSignUp navigation={navigation} styles={styles} />
-          <RenderLoginOptions colors={colors} styles={styles} />
+          <View style={styles.loginOptionsContainer}>
+          <RenderLoginOptions colors={colors} />
+          </View>
+          
         </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>

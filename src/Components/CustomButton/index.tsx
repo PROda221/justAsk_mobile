@@ -14,7 +14,7 @@ type CustomButtonProps = {
   onPress?: () => void;
   label: string;
   backArrow?: boolean;
-  viewStyle?: ViewStyle;
+  viewStyle?: ViewStyle[];
   textColor?: string;
   radius: number;
   textStyle?: TextStyle;
@@ -78,7 +78,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       label={props.label}
       style={props.viewStyle}
       radius={props.radius}>
-      <ButtonText textColor={props.textColor ? props.textColor : colors.loginOptionsTextColor} style={props.textStyle}>
+      <ButtonText textColor={props.textColor ? props.textColor : colors.buttonTextColor} style={props.textStyle}>
         {props.label + ' '}
       </ButtonText>
       {props.backArrow && <FrontArrow />}

@@ -1,4 +1,4 @@
-import {StyleSheet, ViewStyle} from 'react-native';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {
   moderateScale,
   horizontalScale,
@@ -10,30 +10,19 @@ export type LandingScreenStyles = {
   mainContainer: ViewStyle;
   logoView: ViewStyle;
   loginSignUpContainer: ViewStyle;
-  textInput: ViewStyle;
+  textInput: ViewStyle | TextStyle;
   signUpStyle: ViewStyle;
-  loginOptionsContainer: ViewStyle;
-  googleLoginButton: ViewStyle;
-  googleLoginButtonContainer: ViewStyle;
   loginSignInButton: ViewStyle;
-  loginSigninFontStyle: ViewStyle;
+  loginSigninFontStyle: TextStyle;
+  loginOptionsContainer: ViewStyle;
 };
 
 export const getLandingScreenStyles = (colors): LandingScreenStyles =>
   StyleSheet.create<LandingScreenStyles>({
-    googleLoginButton: {
-      backgroundColor: colors.googleButtonColor,
-      height: verticalScale(57),
-      width: horizontalScale(165)
-    },
-    googleLoginButtonContainer: {
-      alignItems: 'center',
-      paddingTop: verticalScale(23)
-    },
     loginOptionsContainer: {
-      paddingTop: verticalScale(42)
+      paddingTop: verticalScale(48)
     },
-    loginSignInButton : {
+    loginSignInButton: {
       backgroundColor: colors.textInputBackgroundColor,
       borderRadius: moderateScale(95),
       height: verticalScale(63.36),

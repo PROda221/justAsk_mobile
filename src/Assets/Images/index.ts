@@ -22,9 +22,14 @@ import UserProfile from './UserProfile.svg'
 import DropdownArrow from './DropdownArrow.svg'
 import MyProfile from './MyProfile.svg'
 import EditProfile from './EditProfile.svg'
-import   RadioButtonChecked from './RadioButtonChecked.svg'
+import RadioButtonChecked from './RadioButtonChecked.svg'
 import loginImage from './loginImage.svg'
 import justAskTempLogo from  './justAskTempLogo.svg'
+import Lock from './Lock.svg'
+import Username from './Username.svg'
+import Email from './Email.svg'
+import EyeOff from './EyeOff.svg'
+import EyeOn from './EyeOn.svg'
 
 export {
   HomeIcon,
@@ -53,5 +58,10 @@ export {
   EditProfile,
   RadioButtonChecked,
   loginImage,
-  justAskTempLogo
+  justAskTempLogo,
+  Lock,
+  Email,
+  Username,
+  EyeOff,
+  EyeOn
 };
