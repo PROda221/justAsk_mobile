@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import axios, {type AxiosResponse} from 'axios';
+import { Platform } from 'react-native';
 
 // Set your base URL here
-const baseURL = 'https://www.lst.ac/server/api';
+const baseURL = Platform.OS === 'android' ? 'http://10.0.2.2:8001' : 'http://localhost:8001'
 
 // Create axios instance
 const axiosInstance = axios.create({

@@ -2,30 +2,23 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
+import { Endpoints } from '../../Api/Endpoints';
 
-type Login = {
-  status: string;
-  code: number;
+ type Login = {
+  access_token: string;
   message: string;
-  document: {
-    access_token: string;
-    expires_in: number;
-    token_type: string;
-  };
 };
 
 type LoginError = {
-    status: string;
-    code: number;
-    message: string;
-    document: string;
+  success: string;
+  message: number;
 }
 
 export const callTokenGenerator = createAsyncThunk(
   'callTokenGenerator',
   async (data: {username: string; password: string}, {rejectWithValue}) => {
     try {
-      const response = await post<Login>('/token/generate.php', data);
+      const response = await post<Login>(Endpoints.login, data);
       if (response.status === 200) {
         return response.data;
       }

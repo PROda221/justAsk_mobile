@@ -11,6 +11,7 @@ type TypographyProps = {
   bullets?: boolean;
   bulletSize?: number;
   elipses?: "tail" | "head";
+  onPress?: ()=>void;
   numberOfLines?: number;
 };
 
@@ -59,6 +60,7 @@ export const Typography = (
     style={props.textStyle}
     bgColor={props.bgColor}
     size={props.size}
+    onPress={props.onPress}
     fontWeight={props.fontWeight}>
     {props.children}
   </StyledText>

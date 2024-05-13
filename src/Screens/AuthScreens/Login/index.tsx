@@ -11,6 +11,7 @@ import {useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useLogin} from './CustomHooks/useLogin';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -46,8 +47,32 @@ const LogIn = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
+  const {
+    callLoginApi,
+    resetLoginReducer,
+    loginError,
+    loginLoading,
+    loginSuccess,
+  } = useLogin(navigation, 'HomeScreen');
 
   const styles = getLogInScreenStyles(colors);
+
+  const handleLogin = (data: {username: string; password: string}) => {
+    resetLoginReducer();
+    callLoginApi(data);
+  };
+
+  const renderError = () => (
+    <View>
+      <Typography
+        bgColor={colors.errorTextPrimary}
+        size="medium"
+        fontWeight="400"
+        textStyle={styles.errorStyle}>
+        {loginError?.message}
+      </Typography>
+    </View>
+  );
 
   const renderGoogleLogin = () => (
     <View style={styles.googleLoginContainer}>
@@ -71,6 +96,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
         label="Username"
         placeholder="Username"
         leftIcon="user"
+        rules={{required: 'Username is required'}}
       />
       <View style={styles.textInputContainer}>
         <TextInput
@@ -80,6 +106,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           label="Password"
           placeholder="Password"
           leftIcon="lock"
+          rules={{required: 'Password is required'}}
         />
       </View>
       <TouchableOpacity onPress={handleForgotScreen}>
@@ -90,8 +117,14 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           {'Forget Password?'}
         </Typography>
       </TouchableOpacity>
+      {loginError && renderError()}
       <View style={styles.buttonContainer}>
-        <CustomButton label="Login" radius={14} />
+        <CustomButton
+          loading={true}
+          label="Login"
+          radius={14}
+          onPress={handleSubmit(handleLogin)}
+        />
       </View>
       <Typography
         bgColor={colors.loginOptionsTextColor}
@@ -101,6 +134,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
         <Typography
           bgColor={colors.buttonTextColor}
           fontWeight="400"
+          onPress={() => navigation.navigate('Sign Up')}
           textStyle={styles.alreadyHaveAnAccount}>
           {' Sign Up'}
         </Typography>

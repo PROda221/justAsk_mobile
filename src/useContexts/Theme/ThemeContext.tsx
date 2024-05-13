@@ -31,9 +31,9 @@ const darkColors = {
   otpPrimaryColor: '#FFFFFF',
   otpSecondaryColor: '#C2C3CB',
   background: '#1E1E1E',
-  text: '#FFFFFF',
-  primary: '#3498db',
-  secondary: '#f39c12',
+  errorTextPrimary: 'rgba(212, 70, 56, 1)',
+  errorTextSecondary: '#FFCB45',
+  errorBoundary: '#FFCB45'
 };
 
 const ThemeContext = createContext<ThemeContextType>({

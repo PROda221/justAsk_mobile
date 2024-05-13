@@ -18,6 +18,7 @@ type CustomButtonProps = {
   textColor?: string;
   radius: number;
   textStyle?: TextStyle;
+  loading?: boolean
 };
 
 type StyledButtonType = {
@@ -51,12 +52,14 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
 `;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
+  loading,
   onPress,
   ...props
 }) => {
   const {colors} = useTheme();
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
+   
     transform: [{scale: scale.value}],
   }));
 

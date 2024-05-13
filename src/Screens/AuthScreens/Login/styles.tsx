@@ -14,6 +14,7 @@ export type LogInScreenStyles = {
   googleLoginContainer: ViewStyle;
   loginOptionsContainer: ViewStyle;
   forgotPassText: TextStyle;
+  errorStyle: TextStyle;
 };
 
 export const getLogInScreenStyles = (colors): LogInScreenStyles =>
@@ -24,6 +25,9 @@ export const getLogInScreenStyles = (colors): LogInScreenStyles =>
     },
     buttonContainer: {
       paddingTop: verticalScale(18)
+    },
+    errorStyle: {
+      fontFamily: 'Urbanist-SemiBold'
     },
     forgotPassText: {
       color: colors.loginOptionsTextColor,
