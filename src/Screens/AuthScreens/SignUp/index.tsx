@@ -9,6 +9,14 @@ import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
+import {useSignIn} from './CustomHooks/useSIgnIn';
+import {ParamListBase} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Regex} from '../../../Functions/Regex';
+
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
 
 const RenderTitle = ({
   styles,
@@ -33,8 +41,12 @@ const RenderTitle = ({
   </>
 );
 
-const SignUp = (): JSX.Element => {
+const SignUp = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
+  const {callSignUpApi, resetSignUpReducer, signUpError} = useSignIn(
+    navigation,
+    'Login',
+  );
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
   `;
@@ -42,6 +54,27 @@ const SignUp = (): JSX.Element => {
   const {colors} = useTheme();
 
   const styles = getSignUpScreenStyles(colors);
+
+  const handleSignUp = (data: {
+    username: string;
+    emailId: string;
+    password: string;
+  }) => {
+    resetSignUpReducer();
+    callSignUpApi(data);
+  };
+
+  const renderError = () => (
+    <View>
+      <Typography
+        bgColor={colors.errorTextPrimary}
+        size="medium"
+        fontWeight="400"
+        textStyle={styles.errorStyle}>
+        {signUpError?.message}
+      </Typography>
+    </View>
+  );
 
   const renderGoogleLogin = () => (
     <View style={styles.googleLoginContainer}>
@@ -61,15 +94,23 @@ const SignUp = (): JSX.Element => {
         label="Username"
         placeholder="Username"
         leftIcon="user"
+        rules={{required: 'Username is reqired'}}
       />
       <View style={styles.textInputContainer}>
         <TextInput
-          name="email"
+          name="emailId"
           secureTextEntry={false}
           control={control}
-          label="Email"
+          label="Enter Your Email"
           placeholder="Enter Your Email"
           leftIcon="email"
+          rules={{
+            required: 'Email is reqired',
+            pattern: {
+              value: Regex.emailid,
+              message: 'Invalid Email Enetered',
+            },
+          }}
         />
       </View>
       <View style={styles.textInputContainer}>
@@ -80,10 +121,23 @@ const SignUp = (): JSX.Element => {
           label="Password"
           placeholder="Password"
           leftIcon="lock"
+          rules={{
+            required: 'Password is reqired',
+            pattern: {
+              value: Regex.password,
+              message:
+                'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
+            },
+          }}
         />
       </View>
+      {signUpError && renderError()}
       <View style={styles.buttonContainer}>
-        <CustomButton label="Register" radius={14} />
+        <CustomButton
+          label="Register"
+          radius={14}
+          onPress={handleSubmit(handleSignUp)}
+        />
       </View>
       <Typography
         bgColor={colors.loginOptionsTextColor}
@@ -91,6 +145,7 @@ const SignUp = (): JSX.Element => {
         textStyle={styles.alreadyHaveAnAccount}>
         {'Already Have An Account?'}
         <Typography
+          onPress={() => navigation.navigate('Login')}
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.alreadyHaveAnAccount}>

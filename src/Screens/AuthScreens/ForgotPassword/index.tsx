@@ -10,6 +10,8 @@ import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Regex} from '../../../Functions/Regex';
+import {useSendOtp} from './CustomHooks/useSendOtp';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -46,25 +48,54 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
+  const {callSendOtpApi, resetLoginReducer, sendOtpError} = useSendOtp(
+    navigation,
+    'Otp Screen',
+  );
 
   const styles = getForgotPassScreenStyles(colors);
 
-  const handleNextButton = () => {
-    navigation.navigate('Otp Screen');
+  const handleNextButton = (data: {emailId: string}) => {
+    resetLoginReducer();
+    callSendOtpApi(data);
   };
+
+  const renderError = () => (
+    <View>
+      <Typography
+        bgColor={colors.errorTextPrimary}
+        size="medium"
+        fontWeight="400"
+        textStyle={styles.errorStyle}>
+        {sendOtpError?.message}
+      </Typography>
+    </View>
+  );
 
   const renderForm = () => (
     <>
       <TextInput
-        name="email"
+        name="emailId"
         secureTextEntry={false}
         control={control}
         label="Email Address"
         placeholder="Enter Your Email"
         leftIcon="email"
+        rules={{
+          required: 'Email is reqired',
+          pattern: {
+            value: Regex.emailid,
+            message: 'Invalid Email Enetered',
+          },
+        }}
       />
+      {sendOtpError && renderError()}
       <View style={styles.buttonContainer}>
-        <CustomButton onPress={handleNextButton} label="Next" radius={14} />
+        <CustomButton
+          onPress={handleSubmit(handleNextButton)}
+          label="Next"
+          radius={14}
+        />
       </View>
       <Typography
         bgColor={colors.loginOptionsTextColor}
@@ -72,6 +103,7 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
         textStyle={styles.alreadyHaveAnAccount}>
         {'Create New Account?'}
         <Typography
+          onPress={() => navigation.navigate('Sign Up')}
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.alreadyHaveAnAccount}>

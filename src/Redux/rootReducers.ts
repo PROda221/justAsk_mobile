@@ -6,6 +6,9 @@ import campusCoursesSlice from './Slices/CampusCoursesSlice';
 import level4CoursesSlice from './Slices/Level4CoursesSlice';
 import loginSlice from './Slices/LoginSlice';
 import aboutUsSlice from './Slices/AboutUsSlice';
+import signUpSlice from './Slices/SignUpSlice';
+import sendOtpSlice from './Slices/SendOtpSlice';
+import verifyOtpSlice from './Slices/VerifyOtpSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -14,7 +17,10 @@ const rootReducer = combineReducers({
 	campusCoursesSlice,
 	level4CoursesSlice,
 	aboutUsSlice,
-	loginSlice
+	loginSlice,
+	signUpSlice,
+	sendOtpSlice,
+	verifyOtpSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

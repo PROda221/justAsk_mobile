@@ -10,6 +10,7 @@ import Animated, {FadeInUp} from 'react-native-reanimated';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import OTPTextView from 'react-native-otp-textinput';
+import { useVerifyOtp } from './CustomHooks/useVerifyOtp';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -46,6 +47,7 @@ const OtpScreen = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
+  const {resetVerifyOtpReducer, callVerifyOtpApi, verifyOtpError} = useVerifyOtp()
 
   const styles = getOtpScreenStyles(colors);
 

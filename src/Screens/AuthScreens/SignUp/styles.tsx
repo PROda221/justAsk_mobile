@@ -1,5 +1,9 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {horizontalScale, moderateScale, verticalScale} from '../../../Functions/StyleScale';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../Functions/StyleScale';
 
 export type SignUpScreenStyles = {
   title: TextStyle;
@@ -13,25 +17,29 @@ export type SignUpScreenStyles = {
   seperator: ViewStyle;
   googleLoginContainer: ViewStyle;
   loginOptionsContainer: ViewStyle;
+  errorStyle: TextStyle;
 };
 
 export const getSignUpScreenStyles = (colors): SignUpScreenStyles =>
   StyleSheet.create<SignUpScreenStyles>({
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
-      paddingTop: verticalScale(14)
+      paddingTop: verticalScale(14),
     },
     buttonContainer: {
-      paddingTop: verticalScale(18)
+      paddingTop: verticalScale(18),
+    },
+    errorStyle: {
+      fontFamily: 'Urbanist-SemiBold',
     },
     formContainer: {
-      paddingTop: verticalScale(49)
+      paddingTop: verticalScale(49),
     },
     googleLoginContainer: {
-      paddingTop: verticalScale(35)
+      paddingTop: verticalScale(35),
     },
     loginOptionsContainer: {
-      paddingTop: verticalScale(23)
+      paddingTop: verticalScale(23),
     },
     mainContainer: {
       flex: 1,
@@ -46,13 +54,13 @@ export const getSignUpScreenStyles = (colors): SignUpScreenStyles =>
       borderBottomColor: colors.seperatorColor,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    textInputContainer: { paddingTop: verticalScale(18)},
+    textInputContainer: {paddingTop: verticalScale(18)},
     title: {
       fontFamily: 'Urbanist-SemiBold',
       fontSize: moderateScale(39),
       textAlign: 'left',
     },
     titleContainer: {
-      paddingTop: verticalScale(74)
-    }
+      paddingTop: verticalScale(74),
+    },
   });
