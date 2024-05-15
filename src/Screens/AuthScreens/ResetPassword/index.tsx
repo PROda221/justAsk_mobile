@@ -8,11 +8,14 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
-import {ParamListBase} from '@react-navigation/native';
+import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Regex} from '../../../Functions/Regex';
+import {useResetPass} from './CustomHooks/useResetPass';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
+  route: RouteProp<ParamListBase>;
 };
 
 const RenderTitle = ({
@@ -38,8 +41,10 @@ const RenderTitle = ({
   </>
 );
 
-const ResetPassword = ({navigation}: Props): JSX.Element => {
-  const {control, handleSubmit} = useForm();
+const ResetPassword = ({navigation, route}: Props): JSX.Element => {
+  const {control, handleSubmit, getValues} = useForm();
+  const {callResetPassApi, resetPassError, resetResetPassReducer} =
+    useResetPass(navigation, 'Login');
 
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
@@ -49,9 +54,24 @@ const ResetPassword = ({navigation}: Props): JSX.Element => {
 
   const styles = getResetPassScreenStyles(colors);
 
-  const handleNextButton = () => {
-    navigation.navigate('Otp Screen');
+  const handleNextButton = (data: {
+    password: string;
+    confirmPassword: string;
+  }) => {
+    resetResetPassReducer();
+    callResetPassApi({password: data.password, emailId: route.params?.emailId, otp: route.params?.otp});
   };
+
+  const renderError = () => (
+    <View>
+      <Typography
+        bgColor={colors.errorTextPrimary}
+        size="medium"
+        fontWeight="400">
+        {resetPassError?.message}
+      </Typography>
+    </View>
+  );
 
   const renderForm = () => (
     <>
@@ -62,6 +82,14 @@ const ResetPassword = ({navigation}: Props): JSX.Element => {
         label="Password"
         placeholder="Password"
         leftIcon="lock"
+        rules={{
+          required: 'Password is reqired',
+          pattern: {
+            value: Regex.password,
+            message:
+              'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
+          },
+        }}
       />
       <View style={styles.textInputContainer}>
         <TextInput
@@ -71,10 +99,20 @@ const ResetPassword = ({navigation}: Props): JSX.Element => {
           label="Confirm Password"
           placeholder="Confirm Password"
           leftIcon="lock"
+          rules={{
+            required: 'Confirm Password is reqired',
+            validate: (value: string) =>
+              value === getValues('password') || 'Password does not match',
+          }}
         />
       </View>
+      {resetPassError && renderError()}
       <View style={styles.buttonContainer}>
-        <CustomButton onPress={handleNextButton} label="Reset" radius={14} />
+        <CustomButton
+          onPress={handleSubmit(handleNextButton)}
+          label="Reset"
+          radius={14}
+        />
       </View>
     </>
   );

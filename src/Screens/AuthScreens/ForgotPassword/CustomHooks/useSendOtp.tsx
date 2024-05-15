@@ -6,8 +6,9 @@ import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export const useSendOtp = (
-  navigtion: NativeStackNavigationProp<ParamListBase>,
-  screenName: string,
+  navigtion?: NativeStackNavigationProp<ParamListBase>,
+  screenName?: string,
+  paramsData?: string,
 ) => {
   const sendOtpSlice = useSelector((state: RootState) => state.sendOtpSlice);
   const dispatch = useDispatch();
@@ -16,14 +17,19 @@ export const useSendOtp = (
     dispatch(callSendOtp(data));
   };
 
-  const resetLoginReducer = () => {
+  const resetSendOtpReducer = () => {
     dispatch(resetSendOtpResponse())
   }
 
 
   useEffect(() => {
     if (sendOtpSlice.success) {
-      navigtion.navigate(screenName);
+      if(navigtion && screenName){
+        resetSendOtpReducer()
+        navigtion.navigate?.(screenName, {emailId: paramsData});
+        
+      }
+      
     }
   }, [sendOtpSlice.success]);
 
@@ -35,7 +41,7 @@ export const useSendOtp = (
 
   return {
     callSendOtpApi,
-    resetLoginReducer,
+    resetSendOtpReducer,
     sendOtpLoading: sendOtpSlice.loading,
     sendOtpSuccess: sendOtpSlice.success,
     sendOtpError: sendOtpSlice.error,

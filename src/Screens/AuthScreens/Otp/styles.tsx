@@ -27,6 +27,7 @@ export type OtpScreenStyles = {
   otpTextInputStyle: ViewStyle | TextStyle;
   enterOtpContainer: ViewStyle;
   verifyButtonContainer: ViewStyle;
+  errorStyle: TextStyle;
   
 };
 
@@ -48,6 +49,9 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
     },
     enterOtpContainer: {
       paddingTop: verticalScale(29)
+    },
+    errorStyle: {
+      fontFamily: 'Urbanist-SemiBold',
     },
     forgotPassText: {
       color: colors.loginOptionsTextColor,

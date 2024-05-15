@@ -1,5 +1,5 @@
 import {ScrollView, View} from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
@@ -41,6 +41,7 @@ const RenderTitle = ({
 );
 
 const ForgotPassword = ({navigation}: Props): JSX.Element => {
+  const [email, setEmail] = useState('')
   const {control, handleSubmit} = useForm();
 
   const Scroll = styled(ScrollView)`
@@ -48,15 +49,17 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
-  const {callSendOtpApi, resetLoginReducer, sendOtpError} = useSendOtp(
+  const {callSendOtpApi, resetSendOtpReducer, sendOtpError} = useSendOtp(
     navigation,
     'Otp Screen',
+    email
   );
 
   const styles = getForgotPassScreenStyles(colors);
 
   const handleNextButton = (data: {emailId: string}) => {
-    resetLoginReducer();
+    setEmail(data.emailId)
+    resetSendOtpReducer();
     callSendOtpApi(data);
   };
 
