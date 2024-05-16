@@ -33,7 +33,8 @@ const darkColors = {
   background: '#1E1E1E',
   errorTextPrimary: 'rgba(212, 70, 56, 1)',
   errorTextSecondary: '#FFCB45',
-  errorBoundary: '#FFCB45'
+  errorBoundary: '#FFCB45',
+  selectedGenre: '#FFCB45'
 };
 
 const ThemeContext = createContext<ThemeContextType>({

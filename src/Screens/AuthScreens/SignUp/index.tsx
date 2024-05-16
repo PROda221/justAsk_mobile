@@ -9,10 +9,10 @@ import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
-import {useSignIn} from './CustomHooks/useSIgnIn';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
+import { useCheckUser } from './CustomHooks/useCheckUser';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -43,9 +43,9 @@ const RenderTitle = ({
 
 const SignUp = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
-  const {callSignUpApi, resetSignUpReducer, signUpError} = useSignIn(
+  const {callCheckUserApi, resetCheckUserReducer, checkUserError} = useCheckUser(
     navigation,
-    'Login',
+    'Select Genres',
   );
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
@@ -60,8 +60,8 @@ const SignUp = ({navigation}: Props): JSX.Element => {
     emailId: string;
     password: string;
   }) => {
-    resetSignUpReducer();
-    callSignUpApi(data);
+    resetCheckUserReducer();
+    callCheckUserApi(data)
   };
 
   const renderError = () => (
@@ -71,7 +71,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
         size="medium"
         fontWeight="400"
         textStyle={styles.errorStyle}>
-        {signUpError?.message}
+        {checkUserError?.message}
       </Typography>
     </View>
   );
@@ -131,7 +131,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
           }}
         />
       </View>
-      {signUpError && renderError()}
+      {checkUserError && renderError()}
       <View style={styles.buttonContainer}>
         <CustomButton
           label="Register"

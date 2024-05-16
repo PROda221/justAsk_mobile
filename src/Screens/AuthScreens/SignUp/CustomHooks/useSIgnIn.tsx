@@ -13,9 +13,8 @@ export const useSignIn = (
   const signUpSlice = useSelector((state: RootState) => state.signUpSlice);
   const dispatch = useDispatch();
 
-  const callSignUpApi = (data: {username: string; password: string; emailId: string}) => {
-    const newData = {...data, adviceGenre: ["Psycology", "Financial", "Health & Fitness"]}
-    dispatch(callSignIn(newData));
+  const callSignUpApi = (data: {username: string; password: string; emailId: string, adviceGenre: Array<string>}) => {
+    dispatch(callSignIn(data));
   };
 
   const resetSignUpReducer = () => {
@@ -25,6 +24,7 @@ export const useSignIn = (
 
   useEffect(() => {
     if (signUpSlice.success) {
+      resetSignUpReducer()
       navigtion.navigate(screenName);
     }
   }, [signUpSlice.success]);

@@ -6,6 +6,7 @@ import ForgotPassword from '../../Screens/AuthScreens/ForgotPassword';
 import LandingScreen from '../../Screens/AuthScreens/LandingScreen';
 import OtpScreen from '../../Screens/AuthScreens/Otp';
 import ResetPassword from '../../Screens/AuthScreens/ResetPassword';
+import SelectGenres from '../../Screens/AuthScreens/SelectGenres';
 
 const AuthScreens = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const AuthStack = (): JSX.Element => (
     <AuthScreens.Screen name="LandingScreen" component={LandingScreen} />
     <AuthScreens.Screen name="Login" component={LoginScreen} />
     <AuthScreens.Screen name="Sign Up" component={SignUp} />
+    <AuthScreens.Screen name="Select Genres" component={SelectGenres} />
     <AuthScreens.Screen name="Forgot Password" component={ForgotPassword} />
 	<AuthScreens.Screen name="Otp Screen" component={OtpScreen} />
 	<AuthScreens.Screen name="Reset Password" component={ResetPassword} />
