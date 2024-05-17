@@ -2,13 +2,9 @@ import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
 import {callTokenGenerator, resetLoginResponse} from '../../../../Redux/Slices/LoginSlice';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { storeAccessToken } from '../../../../Functions/EncryptedStorage';
 
-export const useLogin = (
-  navigtion: NativeStackNavigationProp<ParamListBase>,
-  screenName: string,
-) => {
+export const useLogin = () => {
   const loginSlice = useSelector((state: RootState) => state.loginSlice);
   const dispatch = useDispatch();
 
@@ -20,10 +16,14 @@ export const useLogin = (
     dispatch(resetLoginResponse())
   }
 
+  const storeToken = async () => {
+    await storeAccessToken(loginSlice.success?.access_token ? loginSlice.success.access_token : '')
+  }
+
 
   useEffect(() => {
     if (loginSlice.success) {
-      navigtion.navigate(screenName);
+      storeToken()
     }
   }, [loginSlice.success]);
 

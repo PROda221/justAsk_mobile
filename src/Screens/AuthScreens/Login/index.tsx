@@ -51,9 +51,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
     callLoginApi,
     resetLoginReducer,
     loginError,
-    loginLoading,
-    loginSuccess,
-  } = useLogin(navigation, 'HomeScreen');
+  } = useLogin();
 
   const styles = getLogInScreenStyles(colors);
 

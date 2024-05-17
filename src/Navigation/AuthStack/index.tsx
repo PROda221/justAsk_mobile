@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../../Screens/AuthScreens/Login';
 import SignUp from '../../Screens/AuthScreens/SignUp';
 import ForgotPassword from '../../Screens/AuthScreens/ForgotPassword';
@@ -7,25 +6,26 @@ import LandingScreen from '../../Screens/AuthScreens/LandingScreen';
 import OtpScreen from '../../Screens/AuthScreens/Otp';
 import ResetPassword from '../../Screens/AuthScreens/ResetPassword';
 import SelectGenres from '../../Screens/AuthScreens/SelectGenres';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const AuthScreens = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
 
-const AuthStack = (): JSX.Element => (
-  <AuthScreens.Navigator
+const AuthNavigation = (): JSX.Element => (
+  <AuthStack.Navigator
     screenOptions={{
       headerShown: false,
       presentation: 'modal',
       animation: 'fade_from_bottom',
       statusBarColor: 'black',
     }}>
-    <AuthScreens.Screen name="LandingScreen" component={LandingScreen} />
-    <AuthScreens.Screen name="Login" component={LoginScreen} />
-    <AuthScreens.Screen name="Sign Up" component={SignUp} />
-    <AuthScreens.Screen name="Select Genres" component={SelectGenres} />
-    <AuthScreens.Screen name="Forgot Password" component={ForgotPassword} />
-	<AuthScreens.Screen name="Otp Screen" component={OtpScreen} />
-	<AuthScreens.Screen name="Reset Password" component={ResetPassword} />
-  </AuthScreens.Navigator>
+    <AuthStack.Screen name="LandingScreen" component={LandingScreen} />
+    <AuthStack.Screen name="Login" component={LoginScreen} />
+    <AuthStack.Screen name="Sign Up" component={SignUp} />
+    <AuthStack.Screen name="Select Genres" component={SelectGenres} />
+    <AuthStack.Screen name="Forgot Password" component={ForgotPassword} />
+	<AuthStack.Screen name="Otp Screen" component={OtpScreen} />
+	<AuthStack.Screen name="Reset Password" component={ResetPassword} />
+  </AuthStack.Navigator>
 );
 
-export default AuthStack;
+export default AuthNavigation;
