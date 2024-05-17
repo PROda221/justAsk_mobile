@@ -13,7 +13,8 @@ export const colors = {
     noteText: '#B91D1D',
     noteBackground: '#FFD1D1',
     headerBottom:'#C5C5C5',
-    buttonGreen:'#1F9F34'
+    buttonGreen:'#1F9F34',
+    blue:'blue'
 
 
 

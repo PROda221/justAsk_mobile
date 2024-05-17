@@ -6,14 +6,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {type DrawerParamList, type DrawerScreens} from '../../../types';
 import {
   HomeIcon,
-  Bag,
-  AboutUs,
-  CampusCourses,
-  ContactUs,
-  Fees,
-  Login,
-  LstTeen,
-  Shield,
 } from '../../../../Assets/Images';
 import {type SvgProps} from 'react-native-svg';
 import content from '../../../../Assets/Languages/english.json';
@@ -140,79 +132,6 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = ({
               Icon={HomeIcon}
               width={32}
               height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.onlineCourses}
-              onPress={() => {
-                handleDrawerItemClick('Online Courses');
-              }}
-              Icon={Bag}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.levelQualifications}
-              onPress={() => {
-                handleDrawerItemClick('Level 4 Qualifications');
-              }}
-              Icon={Shield}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.campusCourses}
-              onPress={() => {
-                handleDrawerItemClick('Campus Courses');
-              }}
-              Icon={CampusCourses}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.lstTeen}
-              onPress={() => {
-                handleDrawerItemClick('LST-Teen');
-              }}
-              Icon={LstTeen}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.Fees}
-              onPress={() => {
-                handleDrawerItemClick('Fees');
-              }}
-              Icon={Fees}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.aboutUs}
-              onPress={() => {
-                handleDrawerItemClick('About Us');
-              }}
-              Icon={AboutUs}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.contactUs}
-              onPress={() => {
-                handleDrawerItemClick('Contact Us');
-              }}
-              Icon={ContactUs}
-              width={32}
-              height={26}
-            />
-            <CustomDrawerItem
-              label={navigationContent.Login}
-              onPress={() => {
-                handleDrawerItemClick('Login');
-              }}
-              Icon={Login}
-              width={32}
-              height={26}
-              last={true}
             />
           </DrawerContentScrollViewContainer>
         </DrawerContentInnerContainer>

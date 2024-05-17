@@ -31,8 +31,7 @@ import {type OnlineCoursesType, type Record} from '../../../Redux/Slices/OnlineC
 import {useSelector} from 'react-redux';
 import {type RootState} from '../../../Redux/rootReducers';
 import Loader from '../../../Components/Loader/Loader';
-import {type RouteProp} from '@react-navigation/native';
-import {type StackParamList} from '../../../Navigation/types';
+import {ParamListBase, type RouteProp} from '@react-navigation/native';
 import { type CampusCoursesTypes } from '../../../Redux/Slices/CampusCoursesSlice';
 import { type Level4CoursesTypes } from '../../../Redux/Slices/Level4CoursesSlice';
 import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -93,8 +92,8 @@ const renderContent = (selectedTab: string, itemData: Record) => {
 };
 
 type PropsType = {
-  navigation: NativeStackNavigationProp<StackParamList, 'Program Page'>;
-  route: RouteProp<StackParamList, 'Program Page'>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
+  route: RouteProp<ParamListBase>;
 };
 
 const ProgramPage = ({navigation, route}: PropsType): JSX.Element => {

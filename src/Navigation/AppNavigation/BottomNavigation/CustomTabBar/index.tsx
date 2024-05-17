@@ -11,9 +11,7 @@ import {
 } from '@react-navigation/native';
 import {
   Account,
-  Courses,
   Hearts,
-  HomeButtonTab,
   Monetization,
 } from '../../../../Assets/Images';
 import {colors} from '../../../../DesignTokens/Colors';
@@ -37,12 +35,6 @@ const TabBarLabel = styled.Text<{isFocused: boolean}>`
   font-family: 'Segoe UI';
 `;
 
-const CenterHome = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 0 0 0;
-`;
 
 const onPress = (
   navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>,
@@ -63,18 +55,8 @@ const onPress = (
 
 const renderIcon = (routeName: string) => {
   switch (routeName) {
-    case 'Home Screen':
-      return (
-        <CenterHome>
-          <HomeButtonTab width={58} height={58} />
-        </CenterHome>
-      );
-    case 'Courses':
-      return <Courses width={18} height={20} />;
     case 'Fees':
       return <Monetization width={20} height={20} />;
-    case 'About Us':
-      return <Hearts width={20} height={18} />;
     case 'Account':
       return <Account width={20} height={20} />;
     default:
