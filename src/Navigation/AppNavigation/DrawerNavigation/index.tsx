@@ -4,7 +4,6 @@ import AppBottomScreens from '../BottomNavigation';
 import CustomDrawerContent from './CustomDrawerContent';
 import {type DrawerParamList} from '../../types';
 
-
 const AppDrawer = createDrawerNavigator<DrawerParamList>();
 
 const AppDrawerScreens = () => (

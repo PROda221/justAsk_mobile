@@ -91,7 +91,6 @@ Team LST`}
 };
 
 const styles = StyleSheet.create({
-
   container: {
     borderColor: colors.lightGrey,
     borderRadius: moderateScale(10),
