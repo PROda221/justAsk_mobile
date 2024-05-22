@@ -19,7 +19,10 @@ const lightColors = {
 const darkColors = {
   primaryBackgroundColor: '#000000',
   secondaryBackgroundColor: '#232627',
+  appScreenPrimaryBackground: "#292F3F",
+  searchContainer: "rgba(0, 0, 0, 0.25)",
   textPrimaryColor: '#FFFFFF',
+  iconPrimaryColor: '#FFFFFF',
   textInputBackgroundColor: '#232627',
   textInputPlaceholderColor: '#C2C3CB',
   buttonTextColor: '#FFFFFF',
@@ -34,7 +37,11 @@ const darkColors = {
   errorTextPrimary: 'rgba(212, 70, 56, 1)',
   errorTextSecondary: '#FFCB45',
   errorBoundary: '#FFCB45',
-  selectedGenre: '#FFCB45'
+  selectedGenre: '#FFCB45',
+  cellSelectedColor: '#00c853',
+  cellSelectedBorderColor: "#000000",
+  cellUnSelectedColor: '#232627',
+  cellUnSelectedBorderColor: "#FFFFFF"
 };
 
 const ThemeContext = createContext<ThemeContextType>({

@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, ViewStyle} from 'react-native';
 import styled from 'styled-components';
-import {type NavigationProp, useNavigation} from '@react-navigation/native';
+import {type NavigationProp, useNavigation, ParamListBase} from '@react-navigation/native';
 import {HeaderBackArrow} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
@@ -11,6 +11,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import { Router } from 'react-native-actions-sheet';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Container = styled(View)<{drawer?: boolean}>`
   padding: 20px 0 0 0;
@@ -18,13 +20,22 @@ const Container = styled(View)<{drawer?: boolean}>`
 `;
 
 const leftFeatureHandler = (
-  navigation: NavigationProp<ReactNavigation.RootParamList>,
+  navigation: NavigationProp<ReactNavigation.RootParamList> | Router<never> | undefined,
+  onPress: ()=>void
 ): void => {
-  navigation.goBack();
+
+  onPress?.()
+  navigation?.goBack();
 };
 
-const Header = () => {
-  const navigation = useNavigation();
+type Props = {
+  navigation?: Router<"SearchFeature-sheet"> | undefined | NativeStackNavigationProp<ParamListBase>,
+  containerStyle?: ViewStyle,
+  onPress?: ()=> void
+}
+
+const Header = ({navigation, containerStyle, onPress}: Props) => {
+ const headerNavigation =  navigation ? navigation : useNavigation()
   const {colors} = useTheme();
   const styles = getHeaderStyles(colors);
   const scale = useSharedValue(1);
@@ -39,12 +50,12 @@ const Header = () => {
 
   const handlePressOut = () => {
     scale.value = withSpring(1);
-    leftFeatureHandler(navigation);
+    leftFeatureHandler(headerNavigation, onPress);
   };
 
   return (
     <Animated.View style={animatedStyle}>
-      <Container>
+      <Container style={containerStyle}>
         <TouchableOpacity
           style={styles.backButtonContainer}
           onPressIn={handlePressIn}

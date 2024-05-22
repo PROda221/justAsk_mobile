@@ -5,6 +5,7 @@ type RenderSvgProps = {
   Icon: FunctionComponent<SvgProps>;
   width: number;
   height: number;
+  onPress?: ()=>void
 };
 
-export const RenderSvg = ({Icon, width, height}: RenderSvgProps): JSX.Element => <Icon width={width} height={height} />;
+export const RenderSvg = ({Icon, width, height, onPress}: RenderSvgProps): JSX.Element => <Icon onPress={onPress} width={width} height={height} />;

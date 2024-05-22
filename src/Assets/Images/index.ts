@@ -30,6 +30,8 @@ import Username from './Username.svg'
 import Email from './Email.svg'
 import EyeOff from './EyeOff.svg'
 import EyeOn from './EyeOn.svg'
+import Search from './Search.svg'
+import Filter from './Filter.svg'
 
 export {
   HomeIcon,
@@ -63,5 +65,7 @@ export {
   Email,
   Username,
   EyeOff,
-  EyeOn
+  EyeOn,
+  Search,
+  Filter
 };

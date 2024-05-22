@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import axios, {type AxiosResponse} from 'axios';
 import { Platform } from 'react-native';
+import { retrieveAccessToken } from '../Functions/EncryptedStorage';
 
 // Set your base URL here
 const baseURL = Platform.OS === 'android' ? 'http://10.0.2.2:8001' : 'http://localhost:8001'
@@ -13,9 +14,9 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor to include the auth token in each request
 axiosInstance.interceptors.request.use(
-  config => {
+  async config => {
     // Add your authentication logic here, for example:
-    const authToken = 'TFNUQVBQOkxzdEFwaVBhc3M=';
+    const authToken = await retrieveAccessToken();
     if (authToken) {
       config.headers.Authorization = `Bearer ${authToken}`;
     }

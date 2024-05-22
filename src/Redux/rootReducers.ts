@@ -11,6 +11,7 @@ import sendOtpSlice from './Slices/SendOtpSlice';
 import verifyOtpSlice from './Slices/VerifyOtpSlice';
 import resetPassSlice from './Slices/ResetPassSlice';
 import checkUserSlice from './Slices/CheckUserSlice';
+import searchUserSlice from './Slices/SearchUserSlice'
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
 	verifyOtpSlice,
 	resetPassSlice,
 	checkUserSlice,
+	searchUserSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

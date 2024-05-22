@@ -16,7 +16,7 @@ import {
 import {Typography} from '..';
 import {type ViewStyle} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
-import {Username, Email, Lock, EyeOff, EyeOn} from '../../Assets/Images';
+import {Username, Email, Lock, EyeOff, EyeOn, Search} from '../../Assets/Images';
 import {horizontalScale} from '../../Functions/StyleScale';
 
 type TextInputProps = {
@@ -102,6 +102,8 @@ const renderLeftIcon = (
       return <Lock />;
     case 'user':
       return <Username />;
+    case 'search': 
+      return <Search />
     default:
       return null;
   }
@@ -156,7 +158,7 @@ export const TextInput = ({
         <>
           <Container>
             {leftIcon && (
-              <LeftIconContainer error={error} contextStyle={colors}>
+              <LeftIconContainer style={viewStyle} error={error} contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>
             )}
@@ -176,6 +178,7 @@ export const TextInput = ({
             />
             {secureTextEntry && (
               <RightIconContainer
+                style={viewStyle}
                 error={error}
                 contextStyle={colors}
                 activeOpacity={1}
