@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 const allGenres = [
     "Health & Fitness",
     "Relationships",
@@ -27,4 +29,6 @@ const allGenres = [
     "Traveling",
   ];
 
-  export {allGenres}
+  const baseURL = Platform.OS === 'android' ? 'http://10.0.2.2:8001' : 'http://localhost:8001'
+
+  export {allGenres, baseURL}

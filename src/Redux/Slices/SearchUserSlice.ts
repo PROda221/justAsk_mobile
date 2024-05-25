@@ -4,12 +4,18 @@ import {Endpoints} from '../../Api/Endpoints';
 
 type SearchUser = {
   success: string;
-  message: string;
+  data: Array<{
+    username: string;
+    adviceGenre: string[];
+    status: string;
+    profilePic: string;
+  }>;
   limit: number;
   lastId: string;
 };
 
 type SearchUserError = {
+  code: number;
   success: string;
   message: number;
 };
@@ -33,7 +39,12 @@ export const callSearchUser = createAsyncThunk(
 
       throw response.data;
     } catch (err) {
-      return rejectWithValue(err);
+      const serializableError = {
+        message: err.message,
+        success: err.success,
+      }
+
+      return rejectWithValue(serializableError);
     }
   },
 );
@@ -70,11 +81,12 @@ const searchUserSlice = createSlice({
     });
     builder.addCase(callSearchUser.fulfilled, (state, action) => {
       state.loading = false;
-      state.success = action.payload;
+      state.success = {...state.success, ...action.payload};
     });
     builder.addCase(callSearchUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      state.success = undefined;
     });
   },
 });

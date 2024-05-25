@@ -18,7 +18,6 @@ export const callResetPass = createAsyncThunk(
   'callResetPass',
   async (data: {emailId: string; otp: string, password: string}, {rejectWithValue}) => {
     try {
-        console.log('data received ? :', data)
       const response = await post<ResetPass>(Endpoints.forgotPass, data);
       if (response.status === 200) {
         return response.data;

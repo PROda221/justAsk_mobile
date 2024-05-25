@@ -19,7 +19,6 @@ export const useSearch = () => {
     limit?: number;
     lastId?: string;
   }) => {
-    console.log('a');
     dispatch(callSearchUser(data));
   };
 

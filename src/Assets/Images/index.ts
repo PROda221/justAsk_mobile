@@ -32,6 +32,7 @@ import EyeOff from './EyeOff.svg'
 import EyeOn from './EyeOn.svg'
 import Search from './Search.svg'
 import Filter from './Filter.svg'
+import ArrowRight from './ArrowRight.svg'
 
 export {
   HomeIcon,
@@ -67,5 +68,6 @@ export {
   EyeOff,
   EyeOn,
   Search,
-  Filter
+  Filter,
+  ArrowRight
 };

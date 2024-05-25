@@ -14,25 +14,25 @@ interface SelectableAdviceListProps {
 }
 
 const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
-  const router = useSheetRouter('SearchFeature-sheet');
-  
   const {setSearchedGenres, searchedGenres} = useSearch()
-
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(searchedGenres)
+  const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getAdviceListStyles(colors);
 
   const toggleItem = (item: string) => {
-    const updatedSelectedItems = searchedGenres.includes(item)
-      ? searchedGenres.filter(i => i !== item)
-      : [...searchedGenres, item];
+    const updatedSelectedItems = selectedGenres.includes(item)
+      ? selectedGenres.filter(i => i !== item)
+      : [...selectedGenres, item];
 
-    setSearchedGenres(updatedSelectedItems)
+      setSelectedGenres(updatedSelectedItems)
+    // setSearchedGenres(updatedSelectedItems)
   };
 
   return (
     <View style={styles.main}>
       <View style={styles.headerContainer}>
-        <Header containerStyle={styles.headerStyle} navigation={router} />
+        <Header containerStyle={styles.headerStyle} navigation={router} onPress={()=> setSearchedGenres(selectedGenres)} />
 
         <Typography
           bgColor={colors.textPrimaryColor}
@@ -47,7 +47,7 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
             key={index}
             style={[
               styles.cell,
-              searchedGenres.includes(item)
+              selectedGenres.includes(item)
                 ? styles.selected
                 : styles.unselected,
             ]}
@@ -56,7 +56,7 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.icon}>
-              {searchedGenres.includes(item) ? '✔️' : '❌'}
+              {selectedGenres.includes(item) ? '✔️' : '❌'}
             </Typography>
             <Typography
               fontWeight="400"

@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {View} from 'react-native';
 import {TextInput} from '../TextInput';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
@@ -13,8 +13,12 @@ import {useSearch} from '../../Screens/AppScreens/HomeScreen/CustomHooks/useSear
 import {Filter} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
-import {debounce} from 'lodash';
+import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
+import {UserCard} from '../UserCard';
+import {baseURL} from '../../Constants';
+
+let currentGenres: string[];
 
 const SearchScreen = ({
   router,
@@ -25,35 +29,59 @@ const SearchScreen = ({
 
   const allFields = watch('search');
 
-  const {searchedGenres, callSearchUserApi} = useSearch();
+  const {
+    searchedGenres,
+    callSearchUserApi,
+    searchSuccess,
+    resetSearchUserReducer,
+    searchError,
+  } = useSearch();
+  const [userList, setUserList] = useState(searchSuccess?.data || []);
+
+  useEffect(() => {
+    if (searchSuccess?.data.length) {
+      const conctinatedUserList = [...userList, ...searchSuccess.data];
+      setUserList(conctinatedUserList);
+    }
+  }, [searchSuccess?.data]);
 
   const createSearchObj = () => {
     const searchObj = {
       username: getValues('search'),
       genreName: searchedGenres,
       limit: 10,
-      lastId: '',
+      lastId: searchSuccess?.lastId,
     };
     callSearchUserApi(searchObj);
   };
 
-  const handler = useCallback(debounce(createSearchObj, 1000), []);
+  const debouncedCreateSearchObj = useCallback(
+    debounce(createSearchObj, 1000),
+    [searchedGenres],
+  );
 
   useEffect(() => {
-    createSearchObj();
+    currentGenres = [...searchedGenres];
   }, []);
 
   useEffect(() => {
-    handler();
-  }, [allFields]);
-
-  useEffect(() => {
-    if (searchedGenres) {
-      createSearchObj();
+    if (allFields || !isEqual(currentGenres, searchedGenres)) {
+      resetSearchUserReducer();
+      setUserList([]);
+      debouncedCreateSearchObj();
+      currentGenres = [...searchedGenres];
     }
-  }, [searchedGenres]);
+  }, [allFields, searchedGenres]);
 
-  const renderNotFound = text => (
+  const getNoRenderMsg = () => {
+    if (searchError?.message) {
+      return searchError.message;
+    }
+
+    return 'Type a name or select a topic by pressing on the filter icon for results.';
+  };
+
+  const renderNotFound = () => (
     <View style={styles.noSearchContainer}>
       {
         <RenderSvg
@@ -67,9 +95,18 @@ const SearchScreen = ({
         fontWeight="400"
         bgColor={colors.textPrimaryColor}
         textStyle={styles.noSearchText}>
-        {text}
+        {getNoRenderMsg()}
       </Typography>
     </View>
+  );
+
+  const renderItem = ({item}) => (
+    <UserCard
+      username={item.username}
+      skills={item.adviceGenre}
+      status={item.status}
+      image={`${baseURL}/${item.pic}`}
+    />
   );
 
   return (
@@ -82,12 +119,25 @@ const SearchScreen = ({
         label="Search"
         placeholder="Search..."
         leftIcon="search"
+        rightIcon="search"
+        handleRightIconPress={() => router.navigate('AdviceListScreen')}
       />
-      {searchedGenres.length === 0 &&
-        renderNotFound(
-          'Type a name or select a topic by pressing on the filter icon for results.',
-        )}
-      {/* <FlashList /> */}
+      {(!searchedGenres.length && !userList.length) || searchError?.message
+        ? renderNotFound()
+        : null}
+      <View
+        style={{
+          height: userList.length ? verticalScale(500) : verticalScale(30),
+        }}>
+        <FlashList
+          data={userList}
+          renderItem={renderItem}
+          estimatedItemSize={100}
+          onEndReached={() => searchSuccess?.data.length && createSearchObj()}
+          onEndReachedThreshold={0.5}
+        />
+      </View>
+
       {/* <TouchableOpacity onPress={() => router.navigate('AdviceListScreen')}>
         <Typography fontWeight='400' bgColor='black'>
           {"press me"}

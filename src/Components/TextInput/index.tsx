@@ -16,8 +16,17 @@ import {
 import {Typography} from '..';
 import {type ViewStyle} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
-import {Username, Email, Lock, EyeOff, EyeOn, Search} from '../../Assets/Images';
-import {horizontalScale} from '../../Functions/StyleScale';
+import {
+  Username,
+  Email,
+  Lock,
+  EyeOff,
+  EyeOn,
+  Search,
+  Filter,
+} from '../../Assets/Images';
+import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
+import {RenderSvg} from '../RenderSvg';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,18 +40,21 @@ type TextInputProps = {
   // Add any custom styles you want to accept as props
   viewStyle?: ViewStyle;
   multiline?: boolean;
+  handleRightIconPress?:  () => void;
   leftIcon?: 'email' | 'lock' | 'phone' | 'search' | 'user';
+  rightIcon?: 'search';
 };
 
 const StyledTextInput = styled(RPTextInput)<{
   secure: boolean;
+  rightIcon:boolean;
   contextStyle: unknown;
   error: FieldError | undefined;
 }>`
   font-size: 15px;
   height: 65.52px;
-  width: ${props => (props.secure ? '64%' : '82%')};
-  border-radius: ${props => (props.secure ? 0 : '0 12.84px 12.84px 0')};
+  width: ${props => (props.secure || props.rightIcon ? '64%' : '82%')};
+  border-radius: ${props => (props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0')};
   font-family: 'Segoe UI';
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-left-width: 0px;
@@ -102,21 +114,30 @@ const renderLeftIcon = (
       return <Lock />;
     case 'user':
       return <Username />;
-    case 'search': 
-      return <Search />
+    case 'search':
+      return <Search />;
     default:
       return null;
   }
 };
 
-const renderRightIcon = (showPass: boolean | undefined) => {
+const renderEye = (showPass: boolean | undefined) => {
   switch (showPass) {
     case true:
       return <EyeOn />;
     case false:
-      return <EyeOff />
+      return <EyeOff />;
     default:
       return <EyeOff />;
+  }
+};
+
+const renderRightIcon = (rightIcon: 'search') => {
+  switch (rightIcon) {
+    case 'search':
+      return <RenderSvg Icon={Filter} height={verticalScale(45)} width={horizontalScale(45)} />;
+    default:
+      return <View />;
   }
 };
 
@@ -128,7 +149,9 @@ export const TextInput = ({
   rules = {},
   viewStyle = {},
   leftIcon = undefined,
-  multiline = undefined
+  rightIcon = undefined,
+  multiline = undefined,
+  handleRightIconPress
 }: TextInputProps) => {
   const {colors} = useTheme();
 
@@ -158,7 +181,10 @@ export const TextInput = ({
         <>
           <Container>
             {leftIcon && (
-              <LeftIconContainer style={viewStyle} error={error} contextStyle={colors}>
+              <LeftIconContainer
+                style={viewStyle}
+                error={error}
+                contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>
             )}
@@ -171,7 +197,12 @@ export const TextInput = ({
               value={value as string}
               onChangeText={onChange}
               secure={secureTextEntry}
-              secureTextEntry={Boolean(secureTextEntry && (!watchedValues?.showPass || typeof watchedValues?.showPass === "undefined"))}
+              rightIcon={Boolean(rightIcon)}
+              secureTextEntry={Boolean(
+                secureTextEntry &&
+                  (!watchedValues?.showPass ||
+                    typeof watchedValues?.showPass === 'undefined'),
+              )}
               error={error}
               onBlur={handleOnBlur}
               onFocus={handleOnFocus}
@@ -183,7 +214,19 @@ export const TextInput = ({
                 contextStyle={colors}
                 activeOpacity={1}
                 onPress={handleHidePassword}>
-                {renderRightIcon(watchedValues?.showPass)}
+                {leftIcon === 'search'
+                  ? renderRightIcon(leftIcon)
+                  : renderEye(watchedValues?.showPass)}
+              </RightIconContainer>
+            )}
+            {rightIcon && (
+              <RightIconContainer
+                style={viewStyle}
+                error={error}
+                contextStyle={colors}
+                activeOpacity={1}
+                onPress={handleRightIconPress}>
+                {renderRightIcon(rightIcon)}
               </RightIconContainer>
             )}
           </Container>

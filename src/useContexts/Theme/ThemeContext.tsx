@@ -41,7 +41,13 @@ const darkColors = {
   cellSelectedColor: '#00c853',
   cellSelectedBorderColor: "#000000",
   cellUnSelectedColor: '#232627',
-  cellUnSelectedBorderColor: "#FFFFFF"
+  cellUnSelectedBorderColor: "#FFFFFF",
+  cardBackgroundColor: '#232627',
+  cardShadowColor: '#000000',
+  cardGenreCellBgColor: '#f0f0f0',
+  cardGenreCellTextColor: '#292F3F',
+  cardUserStatusStyle: '#B0B0B0'
+
 };
 
 const ThemeContext = createContext<ThemeContextType>({
