@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {TouchableOpacity, Image, View} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getUserCardStyles} from './styles';
 import {Typography} from '../Typography';
@@ -10,12 +10,33 @@ import {
   moderateScale,
   verticalScale,
 } from '../../Functions/StyleScale';
+import {useNavigation} from '@react-navigation/native';
+import {SheetManager} from 'react-native-actions-sheet';
+import { Socket } from 'socket.io-client';
 
-export const UserCard = ({username, skills, status, image}) => {
+
+type Props = {
+  username: string;
+  skills: string[];
+  status: string;
+  image: string;
+  socket: Socket
+}
+
+export const UserCard = ({username, skills, status, image, socket}: Props) => {
   const {colors} = useTheme();
   const styles = getUserCardStyles(colors);
+
+  const navigation = useNavigation();
+
+  const onCardPress = () => {
+    SheetManager.hide('SearchFeature-sheet')
+    navigation.setParams()
+    navigation.navigate('ChatScreen', {username, status, skills, image, socket});
+  };
+
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onCardPress}>
       <View style={styles.imageContainer}>
         <Image source={{uri: image}} style={styles.image} />
       </View>
@@ -33,7 +54,7 @@ export const UserCard = ({username, skills, status, image}) => {
           estimatedItemSize={80}
           data={skills}
           renderItem={({item}) => (
-            <Typography fontWeight="300" textStyle={styles.skill}>
+            <Typography bgColor={colors.textPrimaryColor} fontWeight="300" textStyle={styles.skill}>
               {item}
             </Typography>
           )}
@@ -49,6 +70,6 @@ export const UserCard = ({username, skills, status, image}) => {
         size={moderateScale(20)}
         style={{height: verticalScale(20), paddingRight: horizontalScale(5)}}
       />
-    </View>
+    </TouchableOpacity>
   );
 };

@@ -18,9 +18,7 @@ const App = (): JSX.Element => {
     <Provider store={store}>
       <PaperProvider>
         <ThemeProvider>
-          <SheetProvider>
-            <Navigation />
-          </SheetProvider>
+          <Navigation />
         </ThemeProvider>
       </PaperProvider>
     </Provider>

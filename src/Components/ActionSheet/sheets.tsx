@@ -1,5 +1,6 @@
 import {RouteDefinition, SheetDefinition, registerSheet} from 'react-native-actions-sheet';
 import SearchFeature from '../Search';
+import { Socket } from 'socket.io-client';
  
 registerSheet('SearchFeature-sheet', SearchFeature);
  
@@ -8,6 +9,9 @@ registerSheet('SearchFeature-sheet', SearchFeature);
 declare module 'react-native-actions-sheet' {
   interface Sheets {
     'SearchFeature-sheet': SheetDefinition<{
+      payload: {
+        socket?: Socket
+      },
       routes: {
         'SearchScreen': RouteDefinition;
         // Route B with params.

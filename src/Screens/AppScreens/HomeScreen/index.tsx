@@ -10,15 +10,12 @@ import {
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getHomeScreenStyles} from './styles';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../../Functions/StyleScale';
 import {Typography} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {SheetManager} from 'react-native-actions-sheet';
-
+import {baseURL} from '../../../Constants';
+import {moderateScale, verticalScale} from '../../../Functions/StyleScale';
+import { useGetOnline } from './CustomHooks/useGetOnline';
 
 const messages = [
   {
@@ -71,6 +68,8 @@ const HomeScreen = () => {
   const {colors} = useTheme();
   const styles1 = getHomeScreenStyles(colors);
 
+  const {socket} = useGetOnline()
+
   const renderChatroom = ({item}) => (
     <View style={[styles.chatroomContainer, {backgroundColor: item.color}]}>
       <Text style={styles.chatroomText}>{item.name}</Text>
@@ -91,7 +90,7 @@ const HomeScreen = () => {
   const searchBar = () => (
     <TouchableOpacity
       style={styles1.searchButtonContainer}
-      onPress={() => SheetManager.show('SearchFeature-sheet')}>
+      onPress={() => SheetManager.show('SearchFeature-sheet', {payload: {socket}})}>
       <View style={styles1.searchContainer}>
         <Typography
           fontWeight="400"
@@ -108,7 +107,9 @@ const HomeScreen = () => {
 
   const header = () => (
     <View style={styles1.header}>
-      <View style={styles1.profilePicContainer}></View>
+      <View style={styles1.profilePicContainer}>
+        <Image source={{uri: `${baseURL}/PROda221-.png`}} style={styles.img} />
+      </View>
       <Typography
         bgColor="white"
         fontWeight="400"
@@ -122,7 +123,7 @@ const HomeScreen = () => {
     <View style={styles1.container}>
       {header()}
       {searchBar()}
-      
+
       <FlatList
         data={messages}
         renderItem={renderMessage}
@@ -169,6 +170,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  img: {
+    borderRadius: moderateScale(22),
+    height: verticalScale(45),
+    width: verticalScale(45),
   },
   messageContainer: {
     alignItems: 'center',

@@ -9,5 +9,6 @@ export const Endpoints = {
 
     // App
     search: "/users/search",
+    profile: "/users/getProfile"
 
 }

@@ -47,6 +47,7 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
       backgroundColor: colors.secondaryBackgroundColor,
       borderRadius: moderateScale(23),
       height: verticalScale(45),
+      justifyContent: 'center',
       width: verticalScale(45),
     },
       searchButtonContainer: {

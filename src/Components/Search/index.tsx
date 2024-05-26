@@ -5,7 +5,7 @@ import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getSearchStyles} from './styles';
 import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
-import ActionSheet, {Route, RouteScreenProps} from 'react-native-actions-sheet';
+import ActionSheet, {Route, SheetProps, useSheetRouter} from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
 import {useSearch} from '../../Screens/AppScreens/HomeScreen/CustomHooks/useSearch';
@@ -20,13 +20,11 @@ import {baseURL} from '../../Constants';
 
 let currentGenres: string[];
 
-const SearchScreen = ({
-  router,
-}: RouteScreenProps<'SearchFeature-sheet', 'SearchScreen'>) => {
+const SearchScreen = (props: SheetProps<"SearchFeature-sheet">) => {
+  const router = useSheetRouter("SearchFeature-sheet");
   const {colors} = useTheme();
   const styles = getSearchStyles(colors);
   const {control, getValues, watch} = useForm();
-
   const allFields = watch('search');
 
   const {
@@ -102,6 +100,7 @@ const SearchScreen = ({
 
   const renderItem = ({item}) => (
     <UserCard
+      socket={props.payload?.socket}
       username={item.username}
       skills={item.adviceGenre}
       status={item.status}
