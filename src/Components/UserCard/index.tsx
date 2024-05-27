@@ -13,6 +13,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
 import { Socket } from 'socket.io-client';
+import { baseURL } from '../../Constants';
 
 
 type Props = {
@@ -38,7 +39,8 @@ export const UserCard = ({username, skills, status, image, socket}: Props) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onCardPress}>
       <View style={styles.imageContainer}>
-        <Image source={{uri: image}} style={styles.image} />
+        <Image source={{uri: `${baseURL}/${image}?${Date.now()}`}} style={styles.image} />
+
       </View>
       <View style={styles.infoContainer}>
         <Typography

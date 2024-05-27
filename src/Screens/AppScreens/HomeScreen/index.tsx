@@ -1,220 +1,119 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
-import {useForm} from 'react-hook-form';
 import {SheetManager} from 'react-native-actions-sheet';
 import {baseURL} from '../../../Constants';
-import {moderateScale, verticalScale} from '../../../Functions/StyleScale';
-import { useGetOnline } from './CustomHooks/useGetOnline';
-
-const messages = [
-  {
-    id: '1',
-    name: 'Maciej Kowalski',
-    message: 'maciej.kowalski@email.com',
-    time: '08:43',
-    image: 'https://placekitten.com/100/100',
-  },
-  {
-    id: '2',
-    name: 'Odeusz Piotrowski',
-    message: 'Will do, super, thank you 😊❤️',
-    time: 'Tue',
-    image: 'https://placekitten.com/101/101',
-  },
-  {
-    id: '3',
-    name: 'Bożenka Malina',
-    message: 'Uploaded file.',
-    time: 'Sun',
-    image: 'https://placekitten.com/102/102',
-  },
-  {
-    id: '4',
-    name: 'Maciej Orłowski',
-    message: 'Here is another tutorial, if you...',
-    time: '23 Mar',
-    image: 'https://placekitten.com/103/103',
-  },
-  {
-    id: '5',
-    name: 'Krysia Eurydyka',
-    message: '😆',
-    time: '18 Mar',
-    image: 'https://placekitten.com/104/104',
-  },
-  {
-    id: '6',
-    name: 'MC Bastek',
-    message: '...z domu przez 5 ...',
-    time: '01 Feb',
-    image: 'https://placekitten.com/105/105',
-  },
-];
+import {useGetOnline} from './CustomHooks/useGetOnline';
+import {getAllChats} from '../../../DB/DBFunctions';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
+import {FlashList} from '@shopify/flash-list';
+import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 
 const HomeScreen = () => {
-  const {control, handleSubmit} = useForm();
-
   const {colors} = useTheme();
-  const styles1 = getHomeScreenStyles(colors);
+  const styles = getHomeScreenStyles(colors);
+  const [activeChats, setActiveChats] = useState<_RawRecord[]>([]);
 
-  const {socket} = useGetOnline()
+  useEffect(() => {
+    const fetchAllChatsFromDb = async () => {
+      const allChats = await getAllChats();
+      console.log('all chats are :', allChats);
+      setActiveChats(allChats);
+    };
 
-  const renderChatroom = ({item}) => (
-    <View style={[styles.chatroomContainer, {backgroundColor: item.color}]}>
-      <Text style={styles.chatroomText}>{item.name}</Text>
-    </View>
-  );
+    fetchAllChatsFromDb();
+  }, []);
+
+  const profileSlice = useSelector((state: RootState) => state.profileSlice);
+
+  const {socket} = useGetOnline();
 
   const renderMessage = ({item}) => (
     <View style={styles.messageContainer}>
-      <Image source={{uri: item.image}} style={styles.avatar} />
+      <Image
+        source={{uri: `${baseURL}/${item.profile_pic}?${Date.now()}`}}
+        style={styles.avatar}
+      />
       <View style={styles.messageTextContainer}>
-        <Text style={styles.messageName}>{item.name}</Text>
-        <Text style={styles.messageText}>{item.message}</Text>
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.messageName}>
+          {item.username}
+        </Typography>
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.messageText}>
+          {'item.message'}
+        </Typography>
       </View>
-      <Text style={styles.messageTime}>{item.time}</Text>
+      <Typography
+        bgColor={colors.textPrimaryColor}
+        fontWeight="400"
+        textStyle={styles.messageTime}>
+        {item.created_at}
+      </Typography>
     </View>
   );
 
   const searchBar = () => (
     <TouchableOpacity
-      style={styles1.searchButtonContainer}
-      onPress={() => SheetManager.show('SearchFeature-sheet', {payload: {socket}})}>
-      <View style={styles1.searchContainer}>
+      style={styles.searchButtonContainer}
+      onPress={() =>
+        SheetManager.show('SearchFeature-sheet', {payload: {socket}})
+      }>
+      <View style={styles.searchContainer}>
         <Typography
           fontWeight="400"
           bgColor={colors.textPrimaryColor}
-          textStyle={styles1.searchButtonTextStyle}>
+          textStyle={styles.searchButtonTextStyle}>
           {'Search....'}
         </Typography>
       </View>
-      <View style={styles1.addButton}>
+      <View style={styles.addButton}>
         <Icon name="add" size={20} color={colors.iconPrimaryColor} />
       </View>
     </TouchableOpacity>
   );
 
   const header = () => (
-    <View style={styles1.header}>
-      <View style={styles1.profilePicContainer}>
-        <Image source={{uri: `${baseURL}/PROda221-.png`}} style={styles.img} />
+    <View style={styles.header}>
+      <View style={styles.profilePicContainer}>
+        <Image
+          source={{
+            uri: `${baseURL}/${profileSlice.success?.profilePic}?${new Date()}`,
+          }}
+          style={styles.img}
+        />
       </View>
       <Typography
         bgColor="white"
         fontWeight="400"
-        textStyle={styles1.headerText}>
-        {'Martina Wolna'}
+        textStyle={styles.headerText}>
+        {profileSlice.success?.username}
       </Typography>
     </View>
   );
 
   return (
-    <View style={styles1.container}>
+    <View style={styles.container}>
       {header()}
       {searchBar()}
 
-      <FlatList
-        data={messages}
+      <FlashList
+        data={activeChats}
         renderItem={renderMessage}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.messagesList}
+        estimatedItemSize={200}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  avatar: {
-    borderRadius: 25,
-    height: 50,
-    marginRight: 10,
-    width: 50,
-  },
-  chatroomContainer: {
-    alignItems: 'center',
-    borderRadius: 8,
-    height: 50,
-    justifyContent: 'center',
-    marginRight: 10,
-    width: 120,
-  },
-  chatroomText: {
-    color: '#fff',
-  },
-  chatroomsList: {
-    paddingLeft: 10,
-    paddingVertical: 10,
-  },
-  container: {
-    backgroundColor: '#2C2C2E',
-    flex: 1,
-  },
-  header: {
-    alignItems: 'center',
-    borderBottomColor: '#444',
-    borderBottomWidth: 1,
-    padding: 16,
-  },
-  headerText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  img: {
-    borderRadius: moderateScale(22),
-    height: verticalScale(45),
-    width: verticalScale(45),
-  },
-  messageContainer: {
-    alignItems: 'center',
-    backgroundColor: '#444',
-    borderRadius: 8,
-    flexDirection: 'row',
-    marginBottom: 10,
-    padding: 10,
-  },
-  messageName: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  messageText: {
-    color: '#fff',
-  },
-  messageTextContainer: {
-    flex: 1,
-  },
-  messageTime: {
-    color: '#aaa',
-  },
-  messagesList: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  searchButton: {
-    backgroundColor: '#1E90FF',
-    borderRadius: 8,
-    marginLeft: 8,
-    padding: 10,
-  },
-
-  searchInput: {
-    backgroundColor: '#444',
-    borderRadius: 8,
-    color: '#fff',
-    flex: 1,
-    paddingHorizontal: 12,
-  },
-});
 
 export default HomeScreen;

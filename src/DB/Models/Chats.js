@@ -9,7 +9,8 @@ export default class Chat extends Model {
   };
 
   @field('username') username;
-  @field('chat_id') chatId
+  @field('profile_pic') profilePic;
+  @field('chat_id') chatId;
   @children('messages') messages;
   @readonly @date('created_at') createdAt;
   @readonly @date('updated_at') updatedAt;

@@ -104,7 +104,7 @@ const SearchScreen = (props: SheetProps<"SearchFeature-sheet">) => {
       username={item.username}
       skills={item.adviceGenre}
       status={item.status}
-      image={`${baseURL}/${item.pic}`}
+      image={`${item.pic}`}
     />
   );
 

@@ -1,19 +1,31 @@
-/* eslint-disable no-restricted-syntax */
+ 
 import database from './database';
 import { Q } from '@nozbe/watermelondb';
 
-export async function createNewChat(username, chatId) {
+export async function createNewChat(username, chatId, profilePic) {
   try {
     await database.write(async () => {
       const newChat = await database.collections.get('chats').create(chat => {
         chat.username = username;
         chat.chatId = chatId;
+        chat.profilePic=profilePic
       });
       console.log('New chat created:', newChat);
       return newChat;
     });
   } catch (error) {
     console.error('Error creating chat:', error);
+    throw error;
+  }
+}
+
+export async function getAllChats() {
+  try{
+    const chats = await database.collections.get('chats').query().fetch();
+    const allChats = chats.map((value) => value._raw)
+    return allChats
+  } catch(error){
+    console.error('Error fetching all chat:', error);
     throw error;
   }
 }

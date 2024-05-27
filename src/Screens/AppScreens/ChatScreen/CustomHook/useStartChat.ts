@@ -1,77 +1,55 @@
 import {useEffect, useState} from 'react';
-import io, {Socket} from 'socket.io-client';
-import {baseURL} from '../../../../Constants';
-import {useProfile} from '../../HomeScreen/CustomHooks/useProfile';
-import {retrieveAccessToken} from '../../../../Functions/EncryptedStorage';
+import {Socket} from 'socket.io-client';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../Redux/rootReducers';
+import {
+  checkChatExists,
+  createNewChat,
+  getAllMessagesForChat,
+} from '../../../../DB/DBFunctions';
 
-export const useGetOnline = (username: string) => {
-  const [socket, setSocket] = useState<Socket>();
+export const useStartChat = (socket: Socket, username: string, profilePic: string) => {
+  const [partnerStatus, setPartnerStatus] = useState('offline');
 
-  const {profileSuccess, callGetProfileApi} = useProfile();
+  const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  useEffect(() => {
-    callGetProfileApi();
-  }, []);
-
-  useEffect(() => {
-    if (profileSuccess?.username) {
-      const setupSocket = async () => {
-        const getAccessToken = async () => {
-          const accessToken = await retrieveAccessToken();
-          return accessToken;
-        };
-
-        const savedToken = getAccessToken();
-        const myUsername = profileSuccess?.username;
-
-        console.log('myUsername is :', myUsername);
-
-        const newSocket = io(baseURL, {
-          query: {
-            token: savedToken,
-            userId: myUsername,
-          },
-        });
-
-        newSocket.on('connect', () => {
-          console.log('Connected to socket server'); // Show yoursel,
-        });
-
-        //   NewSocket.on('user status', (userStatus: string) => {
-        //     console.log(`on ${myUsername}... ${username} is? :`, userStatus);
-        //   });
-
-        newSocket.emit('user status', username, {
-          username: myUsername,
-          online: true,
-        });
-
-        newSocket.on('disconnect', () => {
-          console.log('Disconnected from socket server'); // Show yourself offline
-        });
-
-        newSocket.on('chat message', async msg => {
-          // Await addMessageToChat(userId, msg, true);
-          // allMessages = await getAllMessagesForChat(userId);
-          // setMessages(()=>allMessages);
-          // scrollRef.current.scrollToEnd({ animated: true });
-          // addMessageToUser(userId, true, messageInput);
-          // addData({text: messageInput, received: true}, userId)
-          // console.log('a :', msg);
-          // setMessages(prevMessages => [
-          //   ...prevMessages,
-          //   {id: prevMessages.length, text: msg, received: true},
-          // ]);
-        });
-
-        setSocket(newSocket);
-      };
-
-      setupSocket();
+  const fetchMessages = async () => {
+    try {
+      const chatExists = await checkChatExists(username);
+      if (chatExists) {
+        const allMessages = await getAllMessagesForChat(username);
+        console.log('all messages :', allMessages)
+        // setMessages(() => allMessages);
+      } else {
+        await createNewChat(username, username, profilePic);
+      }
+    } catch (err) {
+      console.log('local db error :', err);
     }
-  }, [profileSuccess?.username]);
+  };
+
+  useEffect(() => {
+    console.log('partnerStatus :', partnerStatus);
+  }, [partnerStatus]);
+
+  useEffect(() => {
+    fetchMessages();
+    const connectWithUser = async () => {
+      const myUsername = profileSlice?.success?.username;
+      socket.emit('join', {userId: myUsername, chatPartnerId: username});
+
+      socket.on('statusUpdate', statusUpdate => {
+        const {userId: partnerId, status} = statusUpdate;
+        if (partnerId === username) {
+          setPartnerStatus(status);
+        }
+      });
+    };
+
+    connectWithUser();
+  }, [username]);
 
   return {
-    socket,
+    partnerStatus,
   };
 };

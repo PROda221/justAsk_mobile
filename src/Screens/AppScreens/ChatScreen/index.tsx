@@ -4,6 +4,7 @@ import { Typography } from "../../../Components";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { LogBox } from 'react-native';
+import { useStartChat } from "./CustomHook/useStartChat";
 
 LogBox.ignoreLogs([
     'Non-serializable values were found in the navigation state',
@@ -15,7 +16,8 @@ type Props = {
 }
 
 const ChatScreen = ({navigation, route}: Props) => {
-    console.log('params received are :', route.params)
+    const {username, skills, status, image, socket} = route.params
+    const temp = useStartChat(socket, username, image)
 
     return(
         <View>

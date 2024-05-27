@@ -9,7 +9,7 @@ registerSheet('SearchFeature-sheet', SearchFeature);
 declare module 'react-native-actions-sheet' {
   interface Sheets {
     'SearchFeature-sheet': SheetDefinition<{
-      payload: {
+      payload?: {
         socket?: Socket
       },
       routes: {

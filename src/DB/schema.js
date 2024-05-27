@@ -1,12 +1,13 @@
 import {appSchema, tableSchema} from '@nozbe/watermelondb';
 
 export const mySchema = appSchema({
-  version: 11,
+  version: 2,
   tables: [
     tableSchema({
       name: 'chats',
       columns: [
         {name: 'username', type: 'string'},
+        {name: 'profile_pic', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true, isUnique: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},

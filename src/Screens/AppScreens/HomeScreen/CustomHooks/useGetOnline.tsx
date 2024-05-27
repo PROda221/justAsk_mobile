@@ -13,6 +13,13 @@ export const useGetOnline = () => {
     callGetProfileApi();
   }, []);
 
+  useEffect(() => () => {
+      if (socket) {
+        console.log('disconnect now');
+        socket?.disconnect();
+      }
+    }, [socket]);
+
   useEffect(() => {
     if (profileSuccess?.username) {
       const setupSocket = async () => {
@@ -37,41 +44,14 @@ export const useGetOnline = () => {
           console.log('Connected to socket server'); // Show yoursel,
         });
 
+        newSocket.emit('enterHomeScreen', myUsername);
 
-        // User online status
-        //   NewSocket.on('user status', (userStatus: string) => {
-        //     console.log(`on ${myUsername}... ${username} is? :`, userStatus);
-        //   });
-
-
-        // set your online status
-        // newSocket.emit('user status', username, {
-        //   username: myUsername,
-        //   online: true,
-        // });
-
-        newSocket.on('disconnect', () => {
-          console.log('Disconnected from socket server'); // Show yourself offline
-        });
-
-        newSocket.on('chat message', async msg => {
-          // Await addMessageToChat(userId, msg, true);
-          // allMessages = await getAllMessagesForChat(userId);
-          // setMessages(()=>allMessages);
-          // scrollRef.current.scrollToEnd({ animated: true });
-          // addMessageToUser(userId, true, messageInput);
-          // addData({text: messageInput, received: true}, userId)
-          // console.log('a :', msg);
-          // setMessages(prevMessages => [
-          //   ...prevMessages,
-          //   {id: prevMessages.length, text: msg, received: true},
-          // ]);
-        });
         setSocket(newSocket);
+
+        // Cleanup when leaving the home screen
       };
 
       setupSocket();
-
     }
   }, [profileSuccess?.username]);
 
