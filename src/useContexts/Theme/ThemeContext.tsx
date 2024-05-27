@@ -19,7 +19,7 @@ const lightColors = {
 const darkColors = {
   primaryBackgroundColor: '#000000',
   secondaryBackgroundColor: '#232627',
-  appScreenPrimaryBackground: "#292F3F",
+  appScreenPrimaryBackground: "#272A35",
   searchContainer: "rgba(0, 0, 0, 0.25)",
   textPrimaryColor: '#FFFFFF',
   iconPrimaryColor: '#FFFFFF',

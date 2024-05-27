@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -12,28 +12,47 @@ import {useSelector} from 'react-redux';
 import {RootState} from '../../../Redux/rootReducers';
 import {FlashList} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
+import {formatTimestamp} from '../../../Functions/FormatTime';
+import {ParamListBase, useFocusEffect} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const HomeScreen = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+const HomeScreen = ({navigation}: Props) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   const [activeChats, setActiveChats] = useState<_RawRecord[]>([]);
-
-  useEffect(() => {
-    const fetchAllChatsFromDb = async () => {
-      const allChats = await getAllChats();
-      console.log('all chats are :', allChats);
-      setActiveChats(allChats);
-    };
-
-    fetchAllChatsFromDb();
-  }, []);
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
   const {socket} = useGetOnline();
 
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAllChatsFromDb = async () => {
+        const allChats = await getAllChats();
+        console.log('flashlist data')
+        setActiveChats(allChats);
+      };
+
+      fetchAllChatsFromDb();
+    }, [socket]),
+  );
+
+  const openChatScreen = (item) => {
+    navigation.navigate('ChatScreen', {
+      username: item.username,
+      image: item.profile_pic,
+      socket,
+      status: '',
+      skills: '',
+    });
+  };
+
   const renderMessage = ({item}) => (
-    <View style={styles.messageContainer}>
+    <TouchableOpacity onPress={()=>openChatScreen(item)} style={styles.messageContainer}>
       <Image
         source={{uri: `${baseURL}/${item.profile_pic}?${Date.now()}`}}
         style={styles.avatar}
@@ -49,16 +68,16 @@ const HomeScreen = () => {
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.messageText}>
-          {'item.message'}
+          {item.lastMessage ? item.lastMessage : 'New Chat'}
         </Typography>
       </View>
       <Typography
         bgColor={colors.textPrimaryColor}
         fontWeight="400"
         textStyle={styles.messageTime}>
-        {item.created_at}
+        {item.messageTime ? item.messageTime : formatTimestamp(item.created_at)}
       </Typography>
-    </View>
+    </TouchableOpacity>
   );
 
   const searchBar = () => (

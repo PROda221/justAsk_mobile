@@ -12,17 +12,16 @@ import {
 } from '../../Functions/StyleScale';
 import {useNavigation} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
-import { Socket } from 'socket.io-client';
-import { baseURL } from '../../Constants';
-
+import {Socket} from 'socket.io-client';
+import {baseURL} from '../../Constants';
 
 type Props = {
   username: string;
   skills: string[];
   status: string;
   image: string;
-  socket: Socket
-}
+  socket: Socket;
+};
 
 export const UserCard = ({username, skills, status, image, socket}: Props) => {
   const {colors} = useTheme();
@@ -31,16 +30,23 @@ export const UserCard = ({username, skills, status, image, socket}: Props) => {
   const navigation = useNavigation();
 
   const onCardPress = () => {
-    SheetManager.hide('SearchFeature-sheet')
-    navigation.setParams()
-    navigation.navigate('ChatScreen', {username, status, skills, image, socket});
+    SheetManager.hide('SearchFeature-sheet');
+    navigation.navigate('ChatScreen', {
+      username,
+      status,
+      skills,
+      image,
+      socket,
+    });
   };
 
   return (
     <TouchableOpacity style={styles.card} onPress={onCardPress}>
       <View style={styles.imageContainer}>
-        <Image source={{uri: `${baseURL}/${image}?${Date.now()}`}} style={styles.image} />
-
+        <Image
+          source={{uri: `${baseURL}/${image}?${Date.now()}`}}
+          style={styles.image}
+        />
       </View>
       <View style={styles.infoContainer}>
         <Typography
@@ -56,7 +62,10 @@ export const UserCard = ({username, skills, status, image, socket}: Props) => {
           estimatedItemSize={80}
           data={skills}
           renderItem={({item}) => (
-            <Typography bgColor={colors.textPrimaryColor} fontWeight="300" textStyle={styles.skill}>
+            <Typography
+              bgColor={colors.textPrimaryColor}
+              fontWeight="300"
+              textStyle={styles.skill}>
               {item}
             </Typography>
           )}
