@@ -33,6 +33,7 @@ import EyeOn from './EyeOn.svg'
 import Search from './Search.svg'
 import Filter from './Filter.svg'
 import ArrowRight from './ArrowRight.svg'
+import ChatIcon from './ChatIcon'
 
 export {
   HomeIcon,
@@ -69,5 +70,6 @@ export {
   EyeOn,
   Search,
   Filter,
-  ArrowRight
+  ArrowRight,
+  ChatIcon
 };

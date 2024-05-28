@@ -19,7 +19,7 @@ const lightColors = {
 const darkColors = {
   primaryBackgroundColor: '#000000',
   secondaryBackgroundColor: '#232627',
-  appScreenPrimaryBackground: "#272A35",
+  appScreenPrimaryBackground: "#292F3F",
   searchContainer: "rgba(0, 0, 0, 0.25)",
   textPrimaryColor: '#FFFFFF',
   iconPrimaryColor: '#FFFFFF',
@@ -46,7 +46,9 @@ const darkColors = {
   cardShadowColor: '#000000',
   cardGenreCellBgColor: '#f0f0f0',
   cardGenreCellTextColor: '#292F3F',
-  cardUserStatusStyle: '#B0B0B0'
+  cardUserStatusStyle: '#B0B0B0',
+  sentMsgColor: '#272A35',
+  receivedMsgColor: '#373E4E',
 
 };
 

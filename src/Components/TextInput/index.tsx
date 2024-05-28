@@ -24,6 +24,7 @@ import {
   EyeOn,
   Search,
   Filter,
+  ChatIcon
 } from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
@@ -41,7 +42,7 @@ type TextInputProps = {
   viewStyle?: ViewStyle;
   multiline?: boolean;
   handleRightIconPress?:  () => void;
-  leftIcon?: 'email' | 'lock' | 'phone' | 'search' | 'user';
+  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user';
   rightIcon?: 'search';
 };
 
@@ -105,7 +106,7 @@ const RightIconContainer = styled(TouchableOpacity)<{
 `;
 
 const renderLeftIcon = (
-  leftIcon: 'email' | 'lock' | 'phone' | 'search' | 'user',
+  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user',
 ) => {
   switch (leftIcon) {
     case 'email':
@@ -116,6 +117,8 @@ const renderLeftIcon = (
       return <Username />;
     case 'search':
       return <Search />;
+    case 'chat':
+      return <RenderSvg Icon={ChatIcon} height={verticalScale(25)} width={horizontalScale(25)} />
     default:
       return null;
   }

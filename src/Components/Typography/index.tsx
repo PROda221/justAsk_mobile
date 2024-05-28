@@ -7,7 +7,7 @@ type TypographyProps = {
   bgColor: string;
   size?: 'small' | 'medium' | 'large';
   fontWeight: string;
-  textStyle?: TextStyle;
+  textStyle?: TextStyle[] | TextStyle;
   bullets?: boolean;
   bulletSize?: number;
   elipses?: "tail" | "head";

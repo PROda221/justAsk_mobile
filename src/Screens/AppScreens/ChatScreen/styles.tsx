@@ -7,110 +7,77 @@ import {
 
 export type ChatScreenStyles = {
   container: ViewStyle;
-  profilePicContainer: ViewStyle;
+  profileImage: ImageStyle;
   header: ViewStyle;
+  headerTextContainer: ViewStyle;
   headerText: TextStyle;
-  searchContainer: ViewStyle;
-  addButton: ViewStyle;
-  searchButtonTextStyle: TextStyle;
-  searchButtonContainer: ViewStyle;
+  chatContainer: ViewStyle;
+  dateText: TextStyle;
   messageContainer: ViewStyle;
-  avatar: ImageStyle;
-  messageName: TextStyle;
+  messageContainerRight: ViewStyle;
   messageText: TextStyle;
-  messageTime: TextStyle;
-  messagesList: ViewStyle
-  img: ImageStyle;
-  messageTextContainer: ViewStyle
+  chatTextInput: ViewStyle;
+  inputContainer: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors): ChatScreenStyles =>
   StyleSheet.create<ChatScreenStyles>({
-    container: {
-        flex: 1,
-        backgroundColor: colors.appScreenPrimaryBackground,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        backgroundColor: '#23272A',
-    },
-    profileImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        marginRight: 12,
-    },
-    headerTextContainer: {
-        flex: 1,
-    },
-    headerText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
     chatContainer: {
-        flex: 1,
-        padding: 16,
+    //   flex: 1,
+      paddingTop: verticalScale(35),
+    },
+    chatTextInput: {
+      height: verticalScale(50),
+    },
+    container: {
+      backgroundColor: colors.appScreenPrimaryBackground,
+      flex: 1,
+      paddingHorizontal: horizontalScale(35),
     },
     dateText: {
-        alignSelf: 'center',
-        color: '#888',
-        marginBottom: 8,
+      alignSelf: 'center',
+      fontSize: moderateScale(12),
+      paddingBottom: verticalScale(12),
     },
-    timeText: {
-        alignSelf: 'center',
-        color: '#888',
-        marginTop: 8,
-        marginBottom: 8,
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      paddingTop: verticalScale(21),
     },
-    messageContainer: {
-        backgroundColor: '#40444B',
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 8,
-        alignSelf: 'flex-start',
+    headerText: {
+      fontSize: moderateScale(15),
     },
-    messageContainerRight: {
-        alignSelf: 'flex-end',
-        backgroundColor: '#7289DA',
-    },
-    messageText: {
-        color: '#FFF',
-        fontSize: 14,
-    },
-    emailText: {
-        color: '#00AFF4',
-        fontSize: 14,
-    },
-    thumbIcon: {
-        alignSelf: 'flex-start',
-        marginTop: 4,
+    headerTextContainer: {
+      alignItems: 'flex-end',
+      flex: 1,
     },
     inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 8,
-        backgroundColor: '#23272A',
+      flexDirection: 'row',
+      marginBottom: verticalScale(52),
+      //   AlignItems: 'center',
     },
-    input: {
-        flex: 1,
-        color: '#FFF',
-        paddingHorizontal: 12,
-        backgroundColor: '#40444B',
-        borderRadius: 20,
-        marginRight: 8,
+    messageContainer: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.receivedMsgColor,
+      borderRadius: moderateScale(20),
+      marginBottom: verticalScale(12),
+      padding: moderateScale(12),
     },
-    icon: {
-        marginHorizontal: 4,
+    messageContainerRight: {
+      alignSelf: 'flex-end',
+      backgroundColor: colors.sentMsgColor,
+    },
+    messageText: {
+      fontSize: moderateScale(13),
+      textAlign: 'left',
+    },
+    profileImage: {
+      backgroundColor: colors.primaryBackgroundColor,
+      borderRadius: moderateScale(22),
+      height: verticalScale(42),
+      marginLeft: verticalScale(10),
+      width: horizontalScale(42),
     },
   });
 
-
-
-
-
-StyleSheet.create({
-    
-});
+StyleSheet.create({});
