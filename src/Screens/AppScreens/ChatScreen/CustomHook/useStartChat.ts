@@ -8,45 +8,56 @@ import {
   createNewChat,
   getAllMessagesForChat,
 } from '../../../../DB/DBFunctions';
-import { Model } from '@nozbe/watermelondb';
+import {Model} from '@nozbe/watermelondb';
 
-let allMessages: Model[];
+let allMessages: Model[] = []
 
-export const useStartChat = (socket: Socket, username: string, profilePic: string) => {
+export const useStartChat = (
+  socket: Socket,
+  username: string,
+  profilePic: string,
+) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
-  const [messages, setMessages] = useState<Model[]>([])
+  const [messages, setMessages] = useState<Model[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
   const sendMessages = async (messageInput: string, username: string) => {
     socket.emit('chat message', messageInput, username);
-  }
+  };
 
   const getMessages = async (msg: string, isReceived: boolean) => {
-    await addMessageToChat(username, msg, isReceived);
-    console.log('in sent')
+    try {
+      const newMessage = await addMessageToChat(username, msg, isReceived);
 
-        allMessages = await getAllMessagesForChat(username);
-        setMessages(()=>allMessages);
+      setMessages(prevMessages => [newMessage, ...prevMessages]);
+    } catch (err) {
+      console.log('err on getMessage :', err);
+    }
+  };
 
-        // scrollRef.current.scrollToEnd({ animated: true });
+  const loadMoreMessages = () => {
+    if (hasMore && allMessages.length && messages.length) {
+      const currentLength = messages.length;
+      const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
 
-        // addMessageToUser(userId, true, messageInput);
-        // addData({text: messageInput, received: true}, userId)
+      if (nextBatch.length < 20) {
+        setHasMore(false);
+      }
 
-        // setMessages(prevMessages => [
-        //   ...prevMessages,
-        //   {id: prevMessages.length, text: msg, received: true},
-        // ]);
-  }
+      setMessages(prevMessages => [...prevMessages, ...nextBatch]);
+    }
+  };
 
   const fetchMessages = async () => {
     try {
       const chatExists = await checkChatExists(username);
       if (chatExists) {
-        const allMessages = await getAllMessagesForChat(username);
-        setMessages(allMessages)
-        // setMessages(() => allMessages);
+        allMessages = await getAllMessagesForChat(username, messages.length);
+        if(allMessages.length){
+          setMessages(allMessages?.slice(0, 20));
+        }
       } else {
         await createNewChat(username, username, profilePic);
       }
@@ -56,10 +67,6 @@ export const useStartChat = (socket: Socket, username: string, profilePic: strin
   };
 
   useEffect(() => {
-    console.log('partnerStatus :', partnerStatus);
-  }, [partnerStatus]);
-
-  useEffect(() => {
     fetchMessages();
     const connectWithUser = async () => {
       const myUsername = profileSlice?.success?.username;
@@ -67,16 +74,13 @@ export const useStartChat = (socket: Socket, username: string, profilePic: strin
 
       socket.on('statusUpdate', statusUpdate => {
         const {status} = statusUpdate;
-          setPartnerStatus(status);
-        
+        setPartnerStatus(status);
       });
 
       // Chat with user
-      
-      socket.on('chat message', async msg => {
-        console.log('in receive')
-        getMessages(msg, true)
 
+      socket.on('chat message', async msg => {
+        getMessages(msg, true);
       });
     };
 
@@ -87,6 +91,7 @@ export const useStartChat = (socket: Socket, username: string, profilePic: strin
     partnerStatus,
     messages,
     getMessages,
-    sendMessages
+    sendMessages,
+    loadMoreMessages,
   };
 };

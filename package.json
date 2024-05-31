@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@dr.pogodin/react-native-fs": "^2.26.0",
     "@gorhom/bottom-sheet": "4.6.0",
     "@nozbe/watermelondb": "^0.27.1",
     "@react-native-google-signin/google-signin": "^11.0.1",

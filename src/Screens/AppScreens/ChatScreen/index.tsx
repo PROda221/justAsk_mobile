@@ -1,9 +1,9 @@
 import {Typography} from '../../../Components';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {LogBox} from 'react-native';
+import {LogBox, ViewStyle} from 'react-native';
 import {useStartChat} from './CustomHook/useStartChat';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, Image} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {ChatScreenStyles, getChatScreenStyles} from './styles';
@@ -13,6 +13,12 @@ import {TextInput} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
 import {baseURL} from '../../../Constants';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+} from 'react-native-reanimated';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -28,43 +34,72 @@ const chatHeader = (
   colors: any,
   username: string,
   image: string,
+  animatedStyle: ViewStyle,
+  statusStyle: ViewStyle,
 ) => (
   //   Console.log('hello chat header');
 
   <View style={styles.header}>
     <Header containerStyle={{paddingTop: 0}} />
-    <Image
-      source={{uri: `${baseURL}/${image}?${Date.now()}`}}
-      style={styles.profileImage}
-    />
+    <Image source={{uri: `${baseURL}/${image}`}} style={styles.profileImage} />
     <View style={styles.headerTextContainer}>
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="400"
-        textStyle={styles.headerText}>
-        {username}
-      </Typography>
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="400"
-        textStyle={[styles.headerText, {paddingTop: verticalScale(7)}]}>
-        {'View Profile'}
-      </Typography>
+      <Animated.View style={animatedStyle}>
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.headerText}>
+          {username}
+        </Typography>
+      </Animated.View>
+      <Animated.View style={statusStyle}>
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.headerText}>
+          {'Online'}
+        </Typography>
+      </Animated.View>
     </View>
   </View>
 );
 const ChatScreen = ({navigation, route}: Props) => {
   const {username, skills, status, image, socket} = route.params;
   const {control, getValues, resetField} = useForm();
-  const {getMessages, sendMessages, messages, partnerStatus} = useStartChat(
-    socket,
-    username,
-    image,
-  );
+  const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
+    useStartChat(socket, username, image);
+
+  const [height, setHeight] = useState<number>(verticalScale(50));
+
+  const position = useSharedValue(partnerStatus === 'online' ? 0 : 10);
+  const opacity = useSharedValue(partnerStatus === 'online' ? 1 : 0);
+
   const flashListRef = useRef(null);
 
   const {colors} = useTheme();
   const styles = getChatScreenStyles(colors);
+
+  // Handle animation of online status
+  useEffect(() => {
+    if (partnerStatus === 'online') {
+      // Move the username up first then appear the status
+      position.value = withTiming(0, {duration: 500});
+      opacity.value = withDelay(500, withTiming(1, {duration: 500}));
+    } else {
+      // Fade out the status first then move the username down
+      opacity.value = withTiming(0, {duration: 500}, () => {
+        position.value = withTiming(10, {duration: 500});
+      });
+    }
+  }, [partnerStatus]);
+
+  // Create animation styles of online status
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateY: position.value}],
+  }));
+
+  const statusStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   const sendMessage = async () => {
     if (socket && getValues('chattext')) {
@@ -72,12 +107,6 @@ const ChatScreen = ({navigation, route}: Props) => {
       resetField('chattext');
       getMessages(msg, false);
       sendMessages(msg, username);
-    }
-  };
-
-  const scrollToBottom = () => {
-    if (flashListRef.current) {
-      flashListRef.current.scrollToEnd({animated: true});
     }
   };
 
@@ -99,7 +128,7 @@ const ChatScreen = ({navigation, route}: Props) => {
 
   return (
     <View style={styles.container}>
-      {chatHeader(styles, colors, username, image)}
+      {chatHeader(styles, colors, username, image, animatedStyle, statusStyle)}
 
       <FlashList
         data={messages}
@@ -109,101 +138,30 @@ const ChatScreen = ({navigation, route}: Props) => {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.chatContainer}
         estimatedItemSize={300}
-        onLoad={scrollToBottom}
+        inverted
+        onEndReached={loadMoreMessages}
+        onEndReachedThreshold={0.1}
+        // OnLoad={scrollToBottom}
       />
-
-      {/* <ScrollView style={styles.chatContainer}>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="300"
-          textStyle={styles.dateText}>
-          {'1 FEB 12:00'}
-        </Typography>
-        <View style={styles.messageContainer}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {
-              'I commented on Figma, I want to add some fancy icons. Do you have any icon set?'
-            }
-          </Typography>
-        </View>
-        <View style={[styles.messageContainer, styles.messageContainerRight]}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {' I am in a process of designing some. When do you need them?'}
-          </Typography>
-        </View>
-        <View style={styles.messageContainer}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {' Next month?'}
-          </Typography>
-        </View>
-        <Typography
-          fontWeight="300"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.dateText}>
-          {'08:12'}
-        </Typography>
-        <View style={[styles.messageContainer, styles.messageContainerRight]}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {
-              "I am almost finish. Please give me your email, I will ZIP them and  send you as soon as I'm finish."
-            }
-          </Typography>
-        </View>
-        <View style={[styles.messageContainer, styles.messageContainerRight]}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {' ?'}
-          </Typography>
-        </View>
-        <Typography
-          fontWeight="300"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.dateText}>
-          {' 08:43'}
-        </Typography>
-        <View style={styles.messageContainer}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {' maciej.kowalski@email.com'}
-          </Typography>
-        </View>
-        <View style={[styles.messageContainer, styles.messageContainerRight]}>
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {'👍'}
-          </Typography>
-        </View>
-      </ScrollView> */}
 
       <View style={styles.inputContainer}>
         <TextInput
-          viewStyle={styles.chatTextInput}
+          viewStyle={[
+            styles.chatTextInput,
+            {height: height < verticalScale(50) ? verticalScale(50) : height},
+          ]}
           name="chattext"
           secureTextEntry={false}
           control={control}
           label="Write"
           placeholder="Write..."
           leftIcon="chat"
-          rightIcon="search"
+          rightIcon="chat"
           handleRightIconPress={sendMessage}
+          multiline={true}
+          onContentSizeChange={event => {
+            setHeight(event.nativeEvent.contentSize.height);
+          }}
         />
       </View>
     </View>

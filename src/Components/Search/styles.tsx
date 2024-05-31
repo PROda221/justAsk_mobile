@@ -1,6 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {
-  horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../Functions/StyleScale';

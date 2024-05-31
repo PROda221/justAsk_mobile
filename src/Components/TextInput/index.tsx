@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 // Import {TextInput as RPTextInput} from 'react-native-paper';
 import styled from 'styled-components/native';
 import {
   View,
-  TextInput as RPTextInput,
+  TextInput as RNTextInput,
+  TextInputProps as RNTextInputProps,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
@@ -24,10 +25,15 @@ import {
   EyeOn,
   Search,
   Filter,
-  ChatIcon
+  ChatIcon,
 } from '../../Assets/Images';
-import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,23 +45,24 @@ type TextInputProps = {
   placeholder?: string;
   rules?: Record<string, unknown>;
   // Add any custom styles you want to accept as props
-  viewStyle?: ViewStyle;
+  viewStyle?: ViewStyle | ViewStyle[];
   multiline?: boolean;
-  handleRightIconPress?:  () => void;
+  handleRightIconPress?: () => void;
   leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user';
-  rightIcon?: 'search';
+  rightIcon?: 'search' | 'chat';
 };
 
-const StyledTextInput = styled(RPTextInput)<{
+const StyledTextInput = styled(RNTextInput)<{
   secure: boolean;
-  rightIcon:boolean;
+  rightIcon: boolean;
   contextStyle: unknown;
   error: FieldError | undefined;
 }>`
   font-size: 15px;
   height: 65.52px;
   width: ${props => (props.secure || props.rightIcon ? '64%' : '82%')};
-  border-radius: ${props => (props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0')};
+  border-radius: ${props =>
+    props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0'};
   font-family: 'Segoe UI';
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-left-width: 0px;
@@ -118,7 +125,13 @@ const renderLeftIcon = (
     case 'search':
       return <Search />;
     case 'chat':
-      return <RenderSvg Icon={ChatIcon} height={verticalScale(25)} width={horizontalScale(25)} />
+      return (
+        <RenderSvg
+          Icon={ChatIcon}
+          height={verticalScale(25)}
+          width={horizontalScale(25)}
+        />
+      );
     default:
       return null;
   }
@@ -135,10 +148,20 @@ const renderEye = (showPass: boolean | undefined) => {
   }
 };
 
-const renderRightIcon = (rightIcon: 'search') => {
+const renderRightIcon = (rightIcon: 'search' | 'chat') => {
   switch (rightIcon) {
     case 'search':
-      return <RenderSvg Icon={Filter} height={verticalScale(45)} width={horizontalScale(45)} />;
+      return (
+        <RenderSvg
+          Icon={Filter}
+          height={verticalScale(45)}
+          width={horizontalScale(45)}
+        />
+      );
+    case 'chat':
+      return (
+        <AntDesign name="enter" size={moderateScale(25)} color={'white'} />
+      );
     default:
       return <View />;
   }
@@ -154,8 +177,9 @@ export const TextInput = ({
   leftIcon = undefined,
   rightIcon = undefined,
   multiline = undefined,
-  handleRightIconPress
-}: TextInputProps) => {
+  handleRightIconPress,
+  ...props
+}: TextInputProps & RNTextInputProps) => {
   const {colors} = useTheme();
 
   const handleOnFocus = () => {
@@ -192,6 +216,8 @@ export const TextInput = ({
               </LeftIconContainer>
             )}
             <StyledTextInput
+              {...props}
+              keyboardType="numbers-and-punctuation"
               placeholder={watchedValues?.isFocussed ? '' : placeholder}
               placeholderTextColor={colors.textInputPlaceholderColor}
               style={viewStyle}

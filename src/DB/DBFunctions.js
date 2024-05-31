@@ -35,7 +35,7 @@ export async function getAllMessagesForChat(chatId) {
     const chat = await database.get('chats').query(Q.where('chat_id', chatId)).fetch();
     const messages = await database.collections
       .get('messages')
-      .query(Q.where('chat_id', chat[0].id))
+      .query(Q.where('chat_id', chat[0].id), Q.sortBy('created_at', Q.desc))
       .fetch();
     return messages;
   } catch (error) {
@@ -55,29 +55,23 @@ export async function checkChatExists(chatId) {
 }
 
   export async function addMessageToChat(chatId, text, isReceived) {
-    console.log('text is :', text)
-    console.log('isReceived is :', isReceived)
     try {
+      let newMessage
       await database.write(async () => {
         const chat = await database.get('chats').query(Q.where('chat_id', chatId)).fetch();
         console.log('chat is :', chat)
         if (chat.length > 0) { // Check if chat exists
-          const newMessage = await database.get('messages').create(record => {
+           newMessage = await database.get('messages').create(record => {
             record.chat.set(chat[0]);
             record.text = text;
             record.received = isReceived;
           });
-          console.log('Message added to chat:', chatId);
-          console.log('New message:', newMessage);
-     
         }else{
           console.error('Chat not found:', chatId);
         }
- 
           
-          
-        
       });
+      return newMessage;
     } catch (error) {
       console.error('Error adding message to chat:', error);
       throw error;

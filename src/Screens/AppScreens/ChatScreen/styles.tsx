@@ -23,7 +23,7 @@ export type ChatScreenStyles = {
 export const getChatScreenStyles = (colors): ChatScreenStyles =>
   StyleSheet.create<ChatScreenStyles>({
     chatContainer: {
-    //   flex: 1,
+    //   Flex: 1,
       paddingTop: verticalScale(35),
     },
     chatTextInput: {
@@ -46,15 +46,19 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     },
     headerText: {
       fontSize: moderateScale(15),
+      paddingLeft: horizontalScale(10),
+      textAlignVertical: 'center'
     },
     headerTextContainer: {
-      alignItems: 'flex-end',
+      alignItems: 'flex-start',
       flex: 1,
+      // JustifyContent: 'center',
     },
     inputContainer: {
+      alignSelf: 'center',
       flexDirection: 'row',
+      justifyContent: 'center',
       marginBottom: verticalScale(52),
-      //   AlignItems: 'center',
     },
     messageContainer: {
       alignSelf: 'flex-start',
@@ -74,9 +78,9 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,
       borderRadius: moderateScale(22),
-      height: verticalScale(42),
+      height: verticalScale(45),
       marginLeft: verticalScale(10),
-      width: horizontalScale(42),
+      width: horizontalScale(45),
     },
   });
 
