@@ -54,16 +54,16 @@ export async function checkChatExists(chatId) {
   }
 }
 
-  export async function addMessageToChat(chatId, text, isReceived) {
+  export async function addMessageToChat(chatId, text, isReceived, type) {
     try {
       let newMessage
       await database.write(async () => {
         const chat = await database.get('chats').query(Q.where('chat_id', chatId)).fetch();
-        console.log('chat is :', chat)
         if (chat.length > 0) { // Check if chat exists
            newMessage = await database.get('messages').create(record => {
             record.chat.set(chat[0]);
             record.text = text;
+            record.type = type;
             record.received = isReceived;
           });
         }else{

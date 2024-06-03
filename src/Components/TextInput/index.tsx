@@ -34,6 +34,7 @@ import {
 } from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +49,8 @@ type TextInputProps = {
   viewStyle?: ViewStyle | ViewStyle[];
   multiline?: boolean;
   handleRightIconPress?: () => void;
-  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user';
+  handleLeftIconPress?: () => void;
+  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary';
   rightIcon?: 'search' | 'chat';
 };
 
@@ -78,7 +80,7 @@ const Container = styled(View)`
   flex-direction: row;
 `;
 
-const LeftIconContainer = styled(View)<{
+const LeftIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
 }>`
@@ -113,7 +115,7 @@ const RightIconContainer = styled(TouchableOpacity)<{
 `;
 
 const renderLeftIcon = (
-  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user',
+  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary',
 ) => {
   switch (leftIcon) {
     case 'email':
@@ -132,6 +134,9 @@ const renderLeftIcon = (
           width={horizontalScale(25)}
         />
       );
+    case 'gallary': 
+       return <Entypo name='folder-images' size={moderateScale(25)} color={'white'}/>
+
     default:
       return null;
   }
@@ -178,6 +183,7 @@ export const TextInput = ({
   rightIcon = undefined,
   multiline = undefined,
   handleRightIconPress,
+  handleLeftIconPress,
   ...props
 }: TextInputProps & RNTextInputProps) => {
   const {colors} = useTheme();
@@ -211,6 +217,8 @@ export const TextInput = ({
               <LeftIconContainer
                 style={viewStyle}
                 error={error}
+                disabled={!handleLeftIconPress}
+                onPress={handleLeftIconPress}
                 contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>

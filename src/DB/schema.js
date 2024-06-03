@@ -20,6 +20,7 @@ export const mySchema = appSchema({
       columns: [
         {name: 'is_received', type: 'boolean'},
         {name: 'text', type: 'string'},
+        {name: 'type', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},

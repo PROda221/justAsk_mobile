@@ -19,6 +19,13 @@ import Animated, {
   withTiming,
   withDelay,
 } from 'react-native-reanimated';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import { Image as Compress } from 'react-native-compressor';
+import RNFetchBlob from 'rn-fetch-blob';
+
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -27,6 +34,15 @@ LogBox.ignoreLogs([
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<ParamListBase>;
+};
+
+const convertToBase64 = async (uri: string) => {
+  try{
+    let base64Data = await RNFetchBlob.fs.readFile(uri, 'base64')
+    return base64Data
+  }catch(err){
+    console.error('Error converting image to base64: ', err);
+  }
 };
 
 const chatHeader = (
@@ -105,8 +121,28 @@ const ChatScreen = ({navigation, route}: Props) => {
     if (socket && getValues('chattext')) {
       const msg = getValues('chattext');
       resetField('chattext');
-      getMessages(msg, false);
-      sendMessages(msg, username);
+      getMessages(msg, false, 'message');
+      sendMessages(msg, username, 'message');
+    }
+  };
+
+  const handleImageSelection = async () => {
+    const options: ImageLibraryOptions = {
+      mediaType: 'photo',
+      quality: 0.5,
+      // includeBase64: true
+    };
+
+    try {
+      const result = await launchImageLibrary(options);
+      const fileName = result.assets[0].fileName;
+      const uri = result.assets[0].uri;
+      const compressedResult = await Compress.compress(`${uri}`);
+      let base64Data = await convertToBase64(compressedResult)
+      getMessages({fileName, uri}, false, 'image');
+      sendMessages({fileName, base64Data}, username, 'image');
+    } catch (err) {
+      console.log('err at image selection :', err);
     }
   };
 
@@ -117,12 +153,19 @@ const ChatScreen = ({navigation, route}: Props) => {
         styles.messageContainer,
         item.received ? {} : styles.messageContainerRight,
       ]}>
-      <Typography
-        fontWeight="300"
-        bgColor={colors.textPrimaryColor}
-        textStyle={styles.messageText}>
-        {item.text}
-      </Typography>
+      {item.type === 'message' && (
+        <Typography
+          fontWeight="300"
+          bgColor={colors.textPrimaryColor}
+          textStyle={styles.messageText}>
+          {item.text}
+        </Typography>
+      )}
+      {item.type === 'image' && (
+        <Image source={{uri: `${item.text}`}} 
+        style={styles.imageChat} 
+        />
+      )}
     </View>
   );
 
@@ -155,9 +198,10 @@ const ChatScreen = ({navigation, route}: Props) => {
           control={control}
           label="Write"
           placeholder="Write..."
-          leftIcon="chat"
+          leftIcon="gallary"
           rightIcon="chat"
           handleRightIconPress={sendMessage}
+          handleLeftIconPress={handleImageSelection}
           multiline={true}
           onContentSizeChange={event => {
             setHeight(event.nativeEvent.contentSize.height);

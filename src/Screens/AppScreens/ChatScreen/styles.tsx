@@ -18,6 +18,7 @@ export type ChatScreenStyles = {
   messageText: TextStyle;
   chatTextInput: ViewStyle;
   inputContainer: ViewStyle;
+  imageChat: ImageStyle
 };
 
 export const getChatScreenStyles = (colors): ChatScreenStyles =>
@@ -74,6 +75,10 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     messageText: {
       fontSize: moderateScale(13),
       textAlign: 'left',
+    },
+    imageChat: {
+      width: horizontalScale(250),
+      height: verticalScale(250)
     },
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,

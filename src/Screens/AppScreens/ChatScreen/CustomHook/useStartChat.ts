@@ -9,8 +9,11 @@ import {
   getAllMessagesForChat,
 } from '../../../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
+import { Alert } from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob';
 
-let allMessages: Model[] = []
+let allMessages: Model[] = [];
+const DOWNLOAD_DIR = RNFetchBlob.fs.dirs.DownloadDir;
 
 export const useStartChat = (
   socket: Socket,
@@ -23,13 +26,31 @@ export const useStartChat = (
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  const sendMessages = async (messageInput: string, username: string) => {
-    socket.emit('chat message', messageInput, username);
+  const sendMessages = async (
+    messageInput: string | object,
+    username: string,
+    type: string = 'message',
+  ) => {
+    socket.emit('chat message', messageInput, username, type);
   };
 
-  const getMessages = async (msg: string, isReceived: boolean) => {
+  const getMessages = async (
+    msg: string | object,
+    isReceived: boolean,
+    type: string = 'message',
+  ) => {
     try {
-      const newMessage = await addMessageToChat(username, msg, isReceived);
+      let newMessage;
+      if (typeof msg == 'object') {
+        newMessage = await addMessageToChat(
+          username,
+          msg.uri,
+          isReceived,
+          type,
+        );
+      } else {
+        newMessage = await addMessageToChat(username, msg, isReceived, type);
+      }
 
       setMessages(prevMessages => [newMessage, ...prevMessages]);
     } catch (err) {
@@ -55,7 +76,7 @@ export const useStartChat = (
       const chatExists = await checkChatExists(username);
       if (chatExists) {
         allMessages = await getAllMessagesForChat(username, messages.length);
-        if(allMessages.length){
+        if (allMessages.length) {
           setMessages(allMessages?.slice(0, 20));
         }
       } else {
@@ -63,6 +84,18 @@ export const useStartChat = (
       }
     } catch (err) {
       console.log('local db error :', err);
+    }
+  };
+
+  const saveBase64Image = async ({base64Data, fileName}) => {
+    const imagePath = `${DOWNLOAD_DIR}/${fileName}`;
+    try {
+      await RNFetchBlob.fs.writeFile(imagePath, base64Data, 'base64');
+      return imagePath;
+    } catch (error) {
+      console.error('Error saving image:', error);
+      Alert.alert('Error', 'Failed to save the image.');
+      return null;
     }
   };
 
@@ -79,8 +112,15 @@ export const useStartChat = (
 
       // Chat with user
 
-      socket.on('chat message', async msg => {
-        getMessages(msg, true);
+      socket.on('chat message', async (msg, type) => {
+        if(type === 'image'){
+          let imageUri = await saveBase64Image(msg)
+          console.log('imageUri? :', imageUri)
+          let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName}
+          getMessages(computedImg, true, type);
+        }else{
+          getMessages(msg, true, type);
+        }
       });
     };
 
