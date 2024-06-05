@@ -7,9 +7,10 @@ import {AppState} from 'react-native';
 import { getAllChats } from '../../../../DB/DBFunctions';
 import { _RawRecord } from '@nozbe/watermelondb/RawRecord';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSocket } from '../../../../useContexts/SocketContext';
 
 export const useGetOnline = () => {
-  const [socket, setSocket] = useState<Socket>();
+  const { socket } = useSocket();
   const [activeChats, setActiveChats] = useState<_RawRecord[]>([]);
   const appState = useRef(AppState.currentState);
 
@@ -21,71 +22,67 @@ export const useGetOnline = () => {
     setActiveChats(allChats);
   };
 
-  const setupSocket = async () => {
-    const getAccessToken = async () => {
-      const accessToken = await retrieveAccessToken();
-      return accessToken;
-    };
+  // const setupSocket = async () => {
+    // const getAccessToken = async () => {
+    //   const accessToken = await retrieveAccessToken();
+    //   return accessToken;
+    // };
 
-    const savedToken = getAccessToken();
-    const myUsername = profileSuccess?.username;
+    // const savedToken = getAccessToken();
+    // const myUsername = profileSuccess?.username;
 
-    const newSocket = io(baseURL, {
-      query: {
-        token: savedToken,
-        userId: myUsername,
-      },
-    });
+    // const newSocket = io(baseURL, {
+    //   query: {
+    //     token: savedToken,
+    //     userId: myUsername,
+    //   },
+    // });
 
-    newSocket.on('connect', () => {
-      console.log('Connected to socket server'); // Show yoursel,
-    });
+    // newSocket.on('connect', () => {
+    //   console.log('Connected to socket server'); // Show yoursel,
+    // });
 
-    setSocket(newSocket);
+    // setSocket(newSocket);
 
     // Cleanup when leaving the home screen
-  };
+  // };
 
   useFocusEffect(
     useCallback(() => {
       fetchAllChatsFromDb();
-    }, [socket]),
+    }, []),
   );
 
   useEffect(() => {
     callGetProfileApi();
+  }, [])
+
+  useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('forground')
         socket?.emit('statusUpdate', profileSuccess?.username, 'online');
         fetchAllChatsFromDb()
       } else {
-        console.log('background')
         appState.current = nextAppState;
         socket?.emit('statusUpdate', profileSuccess?.username, 'offline');
       }
     });
 
     return () => {
-      if (socket) {
-        console.log('disconnect now');
-        socket?.disconnect();
-      }
       subscription.remove();
     };
-  }, [socket]);
+  }, [socket, profileSuccess?.username]);
 
-  useEffect(() => {
-    if (profileSuccess?.username) {
-      setupSocket();
-    }
-  }, [profileSuccess?.username]);
+  // useEffect(() => {
+  //   if (profileSuccess?.username) {
+  //     setupSocket();
+  //   }
+  // }, [profileSuccess?.username]);
 
   return {
-    socket,
     activeChats
   };
 };

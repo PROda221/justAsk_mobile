@@ -11,12 +11,12 @@ import {
 import {Model} from '@nozbe/watermelondb';
 import {Alert, AppState} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
+import { useSocket } from '../../../../useContexts/SocketContext';
 
 let allMessages: Model[] = [];
 const DOWNLOAD_DIR = RNFetchBlob.fs.dirs.DownloadDir;
 
 export const useStartChat = (
-  socket: Socket,
   username: string,
   profilePic: string,
 ) => {
@@ -24,6 +24,7 @@ export const useStartChat = (
   const [messages, setMessages] = useState<Model[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const appState = useRef(AppState.currentState);
+  const { socket } = useSocket();
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -32,7 +33,7 @@ export const useStartChat = (
     username: string,
     type: string = 'message',
   ) => {
-    socket.emit(
+    socket?.emit(
       'chat message',
       messageInput,
       profileSlice.success?.username,
@@ -123,6 +124,8 @@ export const useStartChat = (
     });
     return () => {
       subscription.remove();
+      socket?.off('statusUpdate')
+      socket?.off('chat message')
     };
   }, []);
   
@@ -131,16 +134,16 @@ export const useStartChat = (
     fetchMessages();
     const connectWithUser = async () => {
       const myUsername = profileSlice?.success?.username;
-      socket.emit('join', {userId: myUsername, chatPartnerId: username});
+      socket?.emit('join', {userId: myUsername, chatPartnerId: username});
 
-      socket.on('statusUpdate', statusUpdate => {
+      socket?.on('statusUpdate', statusUpdate => {
         const {status} = statusUpdate;
         setPartnerStatus(status);
       });
 
       // Chat with user
 
-      socket.on('chat message', async (msg, type) => {
+      socket?.on('chat message', async (msg, type) => {
         if (type === 'image') {
           let imageUri = await saveBase64Image(msg);
           console.log('imageUri? :', imageUri);

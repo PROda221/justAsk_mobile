@@ -100,7 +100,6 @@ const SearchScreen = (props: SheetProps<"SearchFeature-sheet">) => {
 
   const renderItem = ({item}) => (
     <UserCard
-      socket={props.payload?.socket}
       username={item.username}
       skills={item.adviceGenre}
       status={item.status}

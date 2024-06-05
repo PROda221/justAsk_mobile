@@ -20,10 +20,9 @@ type Props = {
   skills: string[];
   status: string;
   image: string;
-  socket: Socket;
 };
 
-export const UserCard = ({username, skills, status, image, socket}: Props) => {
+export const UserCard = ({username, skills, status, image}: Props) => {
   const {colors} = useTheme();
   const styles = getUserCardStyles(colors);
 
@@ -36,7 +35,6 @@ export const UserCard = ({username, skills, status, image, socket}: Props) => {
       status,
       skills,
       image,
-      socket,
     });
   };
 

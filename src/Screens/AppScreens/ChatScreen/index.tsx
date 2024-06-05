@@ -79,10 +79,10 @@ const chatHeader = (
   </View>
 );
 const ChatScreen = ({navigation, route}: Props) => {
-  const {username, skills, status, image, socket} = route.params;
+  const {username, skills, status, image} = route.params;
   const {control, getValues, resetField} = useForm();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-    useStartChat(socket, username, image);
+    useStartChat(username, image);
 
   const [height, setHeight] = useState<number>(verticalScale(50));
 
@@ -118,7 +118,7 @@ const ChatScreen = ({navigation, route}: Props) => {
   }));
 
   const sendMessage = async () => {
-    if (socket && getValues('chattext')) {
+    if (getValues('chattext')) {
       const msg = getValues('chattext');
       resetField('chattext');
       getMessages(msg, false, 'message');

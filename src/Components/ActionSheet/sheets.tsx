@@ -9,9 +9,6 @@ registerSheet('SearchFeature-sheet', SearchFeature);
 declare module 'react-native-actions-sheet' {
   interface Sheets {
     'SearchFeature-sheet': SheetDefinition<{
-      payload?: {
-        socket?: Socket
-      },
       routes: {
         'SearchScreen': RouteDefinition;
         // Route B with params.

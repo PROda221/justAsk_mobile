@@ -28,13 +28,12 @@ const HomeScreen = ({navigation}: Props) => {
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  const {socket, activeChats} = useGetOnline();
+  const {activeChats} = useGetOnline();
 
   const openChatScreen = (item) => {
     navigation.navigate('ChatScreen', {
       username: item.username,
       image: item.profile_pic,
-      socket,
       status: '',
       skills: '',
     });
@@ -73,7 +72,7 @@ const HomeScreen = ({navigation}: Props) => {
     <TouchableOpacity
       style={styles.searchButtonContainer}
       onPress={() =>
-        SheetManager.show('SearchFeature-sheet', {payload: {socket}})
+        SheetManager.show('SearchFeature-sheet')
       }>
       <View style={styles.searchContainer}>
         <Typography
