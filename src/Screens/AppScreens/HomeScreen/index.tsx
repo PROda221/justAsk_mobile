@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -13,8 +13,9 @@ import {RootState} from '../../../Redux/rootReducers';
 import {FlashList} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {formatTimestamp} from '../../../Functions/FormatTime';
-import {ParamListBase, useFocusEffect} from '@react-navigation/native';
+import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNotifications } from './CustomHooks/useNotifications';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -23,23 +24,11 @@ type Props = {
 const HomeScreen = ({navigation}: Props) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
-  const [activeChats, setActiveChats] = useState<_RawRecord[]>([]);
+  useNotifications()
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  const {socket} = useGetOnline();
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchAllChatsFromDb = async () => {
-        const allChats = await getAllChats();
-        console.log('flashlist data')
-        setActiveChats(allChats);
-      };
-
-      fetchAllChatsFromDb();
-    }, [socket]),
-  );
+  const {socket, activeChats} = useGetOnline();
 
   const openChatScreen = (item) => {
     navigation.navigate('ChatScreen', {

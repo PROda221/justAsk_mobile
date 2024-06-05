@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Socket} from 'socket.io-client';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
@@ -9,7 +9,7 @@ import {
   getAllMessagesForChat,
 } from '../../../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
-import { Alert } from 'react-native';
+import {Alert, AppState} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 
 let allMessages: Model[] = [];
@@ -23,6 +23,7 @@ export const useStartChat = (
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const appState = useRef(AppState.currentState);
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -31,7 +32,13 @@ export const useStartChat = (
     username: string,
     type: string = 'message',
   ) => {
-    socket.emit('chat message', messageInput, username, type);
+    socket.emit(
+      'chat message',
+      messageInput,
+      profileSlice.success?.username,
+      username,
+      type,
+    );
   };
 
   const getMessages = async (
@@ -75,12 +82,12 @@ export const useStartChat = (
     try {
       const chatExists = await checkChatExists(username);
       if (chatExists) {
-        allMessages = await getAllMessagesForChat(username, messages.length);
+        allMessages = await getAllMessagesForChat(username);
         if (allMessages.length) {
           setMessages(allMessages?.slice(0, 20));
         }
       } else {
-        await createNewChat(username, username, profilePic);
+        await createNewChat(username, profilePic);
       }
     } catch (err) {
       console.log('local db error :', err);
@@ -99,6 +106,27 @@ export const useStartChat = (
     }
   };
 
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('forground')
+        fetchMessages()
+      } else {
+        console.log('background')
+        appState.current = nextAppState;
+        // socket?.emit('statusUpdate', profileSuccess?.username, 'offline');
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+  
+
   useEffect(() => {
     fetchMessages();
     const connectWithUser = async () => {
@@ -113,12 +141,12 @@ export const useStartChat = (
       // Chat with user
 
       socket.on('chat message', async (msg, type) => {
-        if(type === 'image'){
-          let imageUri = await saveBase64Image(msg)
-          console.log('imageUri? :', imageUri)
-          let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName}
+        if (type === 'image') {
+          let imageUri = await saveBase64Image(msg);
+          console.log('imageUri? :', imageUri);
+          let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName};
           getMessages(computedImg, true, type);
-        }else{
+        } else {
           getMessages(msg, true, type);
         }
       });
