@@ -39,7 +39,7 @@ export async function getAllMessagesForChat(chatId) {
       .get('messages')
       .query(Q.where('chat_id', chat[0].id), Q.sortBy('created_at', Q.desc))
       .fetch();
-    return messages;
+    return {allStoredMsgs: messages, chatId: chat[0].id};
   } catch (error) {
     console.error('Error fetching messages for chat:', error);
     throw error;

@@ -1,5 +1,4 @@
 import {useEffect, useRef, useState} from 'react';
-import {Socket} from 'socket.io-client';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
 import {
@@ -9,22 +8,23 @@ import {
   getAllMessagesForChat,
 } from '../../../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
-import {Alert, AppState} from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob';
-import { useSocket } from '../../../../useContexts/SocketContext';
+import {AppState} from 'react-native';
+import {useSocket} from '../../../../useContexts/SocketContext';
 
 let allMessages: Model[] = [];
-const DOWNLOAD_DIR = RNFetchBlob.fs.dirs.DownloadDir;
 
 export const useStartChat = (
   username: string,
   profilePic: string,
+  newMessage: any,
 ) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
+  const [chatId, setChatId] = useState<string>('')
   const [hasMore, setHasMore] = useState<boolean>(true);
   const appState = useRef(AppState.currentState);
-  const { socket } = useSocket();
+  const {socket} = useSocket();
+
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -83,7 +83,9 @@ export const useStartChat = (
     try {
       const chatExists = await checkChatExists(username);
       if (chatExists) {
-        allMessages = await getAllMessagesForChat(username);
+        const {allStoredMsgs, chatId} = await getAllMessagesForChat(username);
+        allMessages = allStoredMsgs
+        setChatId(chatId)
         if (allMessages.length) {
           setMessages(allMessages?.slice(0, 20));
         }
@@ -95,40 +97,30 @@ export const useStartChat = (
     }
   };
 
-  const saveBase64Image = async ({base64Data, fileName}) => {
-    const imagePath = `${DOWNLOAD_DIR}/${fileName}`;
-    try {
-      await RNFetchBlob.fs.writeFile(imagePath, base64Data, 'base64');
-      return imagePath;
-    } catch (error) {
-      console.error('Error saving image:', error);
-      Alert.alert('Error', 'Failed to save the image.');
-      return null;
-    }
-  };
-
-
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('forground')
-        fetchMessages()
+        console.log('forground');
+        fetchMessages();
       } else {
-        console.log('background')
+        console.log('background');
         appState.current = nextAppState;
-        // socket?.emit('statusUpdate', profileSuccess?.username, 'offline');
       }
     });
     return () => {
       subscription.remove();
-      socket?.off('statusUpdate')
-      socket?.off('chat message')
+      socket?.off('statusUpdate');
     };
   }, []);
-  
+
+  useEffect(() => {
+    if (newMessage && newMessage._raw.chat_id === chatId) {
+      setMessages(prevMessages => [newMessage, ...prevMessages]);
+    }
+  }, [newMessage]);
 
   useEffect(() => {
     fetchMessages();
@@ -139,19 +131,6 @@ export const useStartChat = (
       socket?.on('statusUpdate', statusUpdate => {
         const {status} = statusUpdate;
         setPartnerStatus(status);
-      });
-
-      // Chat with user
-
-      socket?.on('chat message', async (msg, type) => {
-        if (type === 'image') {
-          let imageUri = await saveBase64Image(msg);
-          console.log('imageUri? :', imageUri);
-          let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName};
-          getMessages(computedImg, true, type);
-        } else {
-          getMessages(msg, true, type);
-        }
       });
     };
 

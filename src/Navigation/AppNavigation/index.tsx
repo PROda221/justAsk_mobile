@@ -1,7 +1,7 @@
 import * as React from 'react';
-import HomeScreen from '../../Screens/AppScreens/HomeScreen';
+import EnhancedHomeScreen from '../../Screens/AppScreens/HomeScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ChatScreen from '../../Screens/AppScreens/ChatScreen';
+import EnhancedChatScreen from '../../Screens/AppScreens/ChatScreen';
 import {SheetProvider} from 'react-native-actions-sheet';
 import {SocketProvider} from '../../useContexts/SocketContext';
 import {baseURL} from '../../Constants';
@@ -18,8 +18,8 @@ const AppNavigation = () => (
           animation: 'fade_from_bottom',
           statusBarColor: 'black',
         }}>
-        <AppStack.Screen name="Home" component={HomeScreen} />
-        <AppStack.Screen name="ChatScreen" component={ChatScreen} />
+        <AppStack.Screen name="Home" component={EnhancedHomeScreen} />
+        <AppStack.Screen name="ChatScreen" component={EnhancedChatScreen} />
       </AppStack.Navigator>
     </SheetProvider>
   </SocketProvider>

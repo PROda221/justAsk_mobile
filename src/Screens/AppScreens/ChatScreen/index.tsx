@@ -23,9 +23,9 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { Image as Compress } from 'react-native-compressor';
-import RNFetchBlob from 'rn-fetch-blob';
-
+import {Image as Compress} from 'react-native-compressor';
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import { useSocket } from '../../../useContexts/SocketContext';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -37,10 +37,10 @@ type Props = {
 };
 
 const convertToBase64 = async (uri: string) => {
-  try{
-    let base64Data = await RNFetchBlob.fs.readFile(uri, 'base64')
-    return base64Data
-  }catch(err){
+  try {
+    let base64Data = await ReactNativeBlobUtil.fs.readFile(uri, 'base64');
+    return base64Data;
+  } catch (err) {
     console.error('Error converting image to base64: ', err);
   }
 };
@@ -80,9 +80,14 @@ const chatHeader = (
 );
 const ChatScreen = ({navigation, route}: Props) => {
   const {username, skills, status, image} = route.params;
-  const {control, getValues, resetField} = useForm();
+
+  const {newMessage} = useSocket()
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-    useStartChat(username, image);
+  useStartChat(username, image, newMessage);
+
+  const {control, getValues, resetField} = useForm();
+
+
 
   const [height, setHeight] = useState<number>(verticalScale(50));
 
@@ -135,10 +140,10 @@ const ChatScreen = ({navigation, route}: Props) => {
 
     try {
       const result = await launchImageLibrary(options);
-      const fileName = result.assets[0].fileName;
-      const uri = result.assets[0].uri;
+      const fileName = result.assets?.[0].fileName;
+      const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
-      let base64Data = await convertToBase64(compressedResult)
+      let base64Data = await convertToBase64(compressedResult);
       getMessages({fileName, uri}, false, 'image');
       sendMessages({fileName, base64Data}, username, 'image');
     } catch (err) {
@@ -162,9 +167,7 @@ const ChatScreen = ({navigation, route}: Props) => {
         </Typography>
       )}
       {item.type === 'image' && (
-        <Image source={{uri: `${item.text}`}} 
-        style={styles.imageChat} 
-        />
+        <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
       )}
     </View>
   );

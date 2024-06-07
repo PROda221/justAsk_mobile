@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -6,31 +6,37 @@ import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
 import {SheetManager} from 'react-native-actions-sheet';
 import {baseURL} from '../../../Constants';
-import {useGetOnline} from './CustomHooks/useGetOnline';
-import {getAllChats} from '../../../DB/DBFunctions';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../Redux/rootReducers';
-import {FlashList} from '@shopify/flash-list';
+import {FlashList, ListRenderItem} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { useNotifications } from './CustomHooks/useNotifications';
+import {useNotifications} from './CustomHooks/useNotifications';
+import {withObservables} from '@nozbe/watermelondb/react';
+import database from '../../../DB/database';
+import {Model} from '@nozbe/watermelondb';
+
+type HomeScreenProps = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+  activeChats: Model[];
+};
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
 
-const HomeScreen = ({navigation}: Props) => {
+const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
-  useNotifications()
+  useNotifications();
+
+  // const {activeChats} = useSocket()
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  const {activeChats} = useGetOnline();
-
-  const openChatScreen = (item) => {
+  const openChatScreen = item => {
     navigation.navigate('ChatScreen', {
       username: item.username,
       image: item.profile_pic,
@@ -39,41 +45,45 @@ const HomeScreen = ({navigation}: Props) => {
     });
   };
 
-  const renderMessage = ({item}) => (
-    <TouchableOpacity onPress={()=>openChatScreen(item)} style={styles.messageContainer}>
-      <Image
-        source={{uri: `${baseURL}/${item.profile_pic}?${Date.now()}`}}
-        style={styles.avatar}
-      />
-      <View style={styles.messageTextContainer}>
+  const renderMessage: ListRenderItem<Model> = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => openChatScreen(item._raw)}
+        style={styles.messageContainer}>
+        <Image
+          source={{uri: `${baseURL}/${item._raw.profile_pic}?${Date.now()}`}}
+          style={styles.avatar}
+        />
+        <View style={styles.messageTextContainer}>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.messageName}>
+            {item._raw.username}
+          </Typography>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.messageText}>
+            {item._raw.lastMessage ? item._raw.lastMessage : 'New Chat'}
+          </Typography>
+        </View>
         <Typography
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
-          textStyle={styles.messageName}>
-          {item.username}
+          textStyle={styles.messageTime}>
+          {item._raw.messageTime
+            ? item._raw.messageTime
+            : formatTimestamp(item._raw.created_at)}
         </Typography>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.messageText}>
-          {item.lastMessage ? item.lastMessage : 'New Chat'}
-        </Typography>
-      </View>
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="400"
-        textStyle={styles.messageTime}>
-        {item.messageTime ? item.messageTime : formatTimestamp(item.created_at)}
-      </Typography>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
-      onPress={() =>
-        SheetManager.show('SearchFeature-sheet')
-      }>
+      onPress={() => SheetManager.show('SearchFeature-sheet')}>
       <View style={styles.searchContainer}>
         <Typography
           fontWeight="400"
@@ -123,4 +133,8 @@ const HomeScreen = ({navigation}: Props) => {
   );
 };
 
-export default HomeScreen;
+const enhance = withObservables([], ({navigation}: Props) => ({
+  activeChats: database.collections.get('chats').query(), // shortcut syntax for `comment: comment.observe()`
+}));
+const EnhancedHomeScreen = enhance(HomeScreen);
+export default EnhancedHomeScreen;
