@@ -7,7 +7,6 @@ import {PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './useContexts/Theme/ThemeContext.tsx';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import './Components/ActionSheet/sheets.tsx';
-import {SheetProvider} from 'react-native-actions-sheet';
 
 const App = (): JSX.Element => {
   useEffect(() => {
