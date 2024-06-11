@@ -44,6 +44,7 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
       flexDirection: 'row',
       justifyContent: 'center',
       paddingTop: verticalScale(21),
+      paddingBottom: verticalScale(10),
     },
     headerText: {
       fontSize: moderateScale(15),

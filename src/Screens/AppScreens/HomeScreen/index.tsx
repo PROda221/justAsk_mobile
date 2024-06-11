@@ -40,8 +40,8 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
     navigation.navigate('ChatScreen', {
       username: item.username,
       image: item.profile_pic,
-      status: '',
-      skills: '',
+      status: item.status,
+      skills: item.skills,
     });
   };
 

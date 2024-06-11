@@ -8,6 +8,8 @@ export const mySchema = appSchema({
       columns: [
         {name: 'username', type: 'string'},
         {name: 'profile_pic', type: 'string'},
+        {name: 'status', type: 'string'},
+        {name: 'skills', type: 'string'},
         {name: 'last_message', type: 'string'},
         {name: 'message_time', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true, isUnique: true},

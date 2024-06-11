@@ -4,7 +4,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {LogBox, ViewStyle} from 'react-native';
 import {useStartChat} from './CustomHook/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Image} from 'react-native';
+import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {ChatScreenStyles, getChatScreenStyles} from './styles';
 import {verticalScale} from '../../../Functions/StyleScale';
@@ -25,7 +25,7 @@ import {
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import { useSocket } from '../../../useContexts/SocketContext';
+import {useSocket} from '../../../useContexts/SocketContext';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -52,12 +52,18 @@ const chatHeader = (
   image: string,
   animatedStyle: ViewStyle,
   statusStyle: ViewStyle,
+  openUserProfle: () => void,
 ) => (
   //   Console.log('hello chat header');
 
   <View style={styles.header}>
     <Header containerStyle={{paddingTop: 0}} />
-    <Image source={{uri: `${baseURL}/${image}`}} style={styles.profileImage} />
+    <TouchableOpacity onPress={openUserProfle}>
+      <Image
+        source={{uri: `${baseURL}/${image}`}}
+        style={styles.profileImage}
+      />
+    </TouchableOpacity>
     <View style={styles.headerTextContainer}>
       <Animated.View style={animatedStyle}>
         <Typography
@@ -81,13 +87,11 @@ const chatHeader = (
 const ChatScreen = ({navigation, route}: Props) => {
   const {username, skills, status, image} = route.params;
 
-  const {newMessage} = useSocket()
+  const {newMessage} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-  useStartChat(username, image, newMessage);
+    useStartChat(username, image, newMessage, skills, status);
 
   const {control, getValues, resetField} = useForm();
-
-
 
   const [height, setHeight] = useState<number>(verticalScale(50));
 
@@ -172,9 +176,21 @@ const ChatScreen = ({navigation, route}: Props) => {
     </View>
   );
 
+  const openUserProfle = () => {
+    navigation.navigate('UserProfile', {username, skills, status, image});
+  };
+
   return (
     <View style={styles.container}>
-      {chatHeader(styles, colors, username, image, animatedStyle, statusStyle)}
+      {chatHeader(
+        styles,
+        colors,
+        username,
+        image,
+        animatedStyle,
+        statusStyle,
+        openUserProfle,
+      )}
 
       <FlashList
         data={messages}

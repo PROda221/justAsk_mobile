@@ -17,6 +17,8 @@ export const useStartChat = (
   username: string,
   profilePic: string,
   newMessage: any,
+  skills: Array<string>,
+  status: string
 ) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
@@ -90,7 +92,7 @@ export const useStartChat = (
           setMessages(allMessages?.slice(0, 20));
         }
       } else {
-        await createNewChat(username, profilePic);
+        await createNewChat(username, profilePic, status, skills);
       }
     } catch (err) {
       console.log('local db error :', err);

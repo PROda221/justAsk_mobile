@@ -5,6 +5,7 @@ import ChatScreen from '../../Screens/AppScreens/ChatScreen';
 import {SheetProvider} from 'react-native-actions-sheet';
 import {SocketProvider} from '../../useContexts/SocketContext';
 import {baseURL} from '../../Constants';
+import UserProfile from '../../Screens/AppScreens/ProfileScreen';
 
 const AppStack = createNativeStackNavigator();
 
@@ -20,6 +21,8 @@ const AppNavigation = () => (
         }}>
         <AppStack.Screen name="Home" component={EnhancedHomeScreen} />
         <AppStack.Screen name="ChatScreen" component={ChatScreen} />
+        <AppStack.Screen name="UserProfile" component={UserProfile} />
+        <AppStack.Screen name="UserFeedback" component={ChatScreen} />
       </AppStack.Navigator>
     </SheetProvider>
   </SocketProvider>
