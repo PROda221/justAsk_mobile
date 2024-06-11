@@ -7,8 +7,13 @@ import {PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './useContexts/Theme/ThemeContext.tsx';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import './Components/ActionSheet/sheets.tsx';
+import Constants from 'expo-constants';
+import { registerRootComponent } from 'expo';
+
+
 
 const App = (): JSX.Element => {
+  console.log(Constants.systemFonts);
   useEffect(() => {
     GoogleSignin.configure();
   }, []);
@@ -23,5 +28,8 @@ const App = (): JSX.Element => {
     </Provider>
   );
 };
+
+registerRootComponent(App);
+
 
 export default App;
