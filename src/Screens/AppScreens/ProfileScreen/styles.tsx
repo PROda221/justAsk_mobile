@@ -6,74 +6,80 @@ import {
 } from '../../../Functions/StyleScale';
 
 export type UserProfileStyles = {
-    container: ViewStyle
+  gradientContainer: ViewStyle;
+  container: ViewStyle;
+  imageContainer: ViewStyle;
+  profileImage: ImageStyle;
+  nameText: TextStyle;
+  statusText: TextStyle;
+  skill: TextStyle;
+  skillContainer: ViewStyle;
+  feedbackButtonStyle: ViewStyle;
+  feedbackButtonContainer: ViewStyle;
+  blockIconStyle: ViewStyle;
+  headerContainer: ViewStyle;
 };
 
 export const getUserProfileStyles = (colors): UserProfileStyles =>
   StyleSheet.create<UserProfileStyles>({
+    headerContainer: {justifyContent: 'space-between', flexDirection: 'row'},
+    blockIconStyle: {
+      paddingTop: verticalScale(25),
+    },
+    feedbackButtonContainer: {
+      paddingTop: verticalScale(20),
+      width: horizontalScale(200),
+    },
+    feedbackButtonStyle: {
+      backgroundColor: colors.textInputBackgroundColor,
+      borderRadius: moderateScale(95),
+      height: verticalScale(63.36),
+      width: '100%',
+    },
+    gradientContainer: {
+      flex: 1,
+      paddingHorizontal: horizontalScale(25),
+    },
+    skillContainer: {
+      paddingTop: verticalScale(15),
+      maxHeight: verticalScale(50),
+    },
+    skill: {
+      backgroundColor: colors.cardGenreCellBgColor,
+      borderRadius: moderateScale(10),
+      color: colors.cardGenreCellTextColor,
+      fontSize: moderateScale(12),
+      marginBottom: verticalScale(2),
+      marginRight: horizontalScale(2),
+      paddingHorizontal: horizontalScale(10),
+      paddingVertical: verticalScale(2),
+    },
+    imageContainer: {
+      width: horizontalScale(165),
+      height: verticalScale(165),
+      borderRadius: moderateScale(83),
+      borderWidth: moderateScale(2),
+      borderColor: colors.profileRing,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     container: {
-        flex: 1,
-        backgroundColor: colors.appScreenPrimaryBackground,
-        paddingTop: verticalScale(70)
-      },
+      flex: 1,
+      paddingTop: verticalScale(70),
+      alignItems: 'center',
+    },
 
-      time: {
-        fontSize: 16,
-      },
-      icons: {
-        flexDirection: 'row',
-      },
-      icon: {
-        width: horizontalScale(45),
-        height: verticalScale(45),
-        marginLeft: 5,
-      },
-      profileContainer: {
-        alignItems: 'center',
-        padding: 20,
-      },
-      profileImage: {
-        width: horizontalScale(100),
-        height: verticalScale(100),
-        borderRadius: moderateScale(50),
-      },
-      name: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginVertical: 10,
-      },
-      jobTitle: {
-        fontSize: 18,
-        color: 'gray',
-      },
-      location: {
-        fontSize: 16,
-        color: 'gray',
-        marginBottom: 10,
-      },
-      statsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginVertical: 20,
-      },
-      stat: {
-        fontSize: 16,
-        color: 'gray',
-      },
-      buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-      },
-      button: {
-        backgroundColor: '#007bff',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-      },
-      buttonText: {
-        color: '#fff',
-        fontSize: 16,
-      },
+    profileImage: {
+      width: horizontalScale(155),
+      height: verticalScale(155),
+      borderRadius: moderateScale(78),
+    },
+    nameText: {
+      fontSize: moderateScale(18),
+      paddingTop: verticalScale(8),
+    },
+    statusText: {
+      fontSize: moderateScale(13),
+      paddingTop: verticalScale(11),
+    },
   });

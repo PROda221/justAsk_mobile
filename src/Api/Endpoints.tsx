@@ -10,6 +10,7 @@ export const Endpoints = {
     // App
     search: "/users/search",
     profile: "/users/getProfile",
-    deviceToken: '/users/notificationToken'
+    deviceToken: '/users/notificationToken',
+    userProfile: '/users/profile',
 
 }

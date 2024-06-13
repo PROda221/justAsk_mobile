@@ -14,6 +14,7 @@ import checkUserSlice from './Slices/CheckUserSlice';
 import searchUserSlice from './Slices/SearchUserSlice';
 import profileSlice from './Slices/ProfileSlice';
 import notificationsSlice from './Slices/NotificationsSlice';
+import userProfileSlice from './Slices/UserProfileSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
 	checkUserSlice,
 	searchUserSlice,
 	profileSlice,
-	notificationsSlice
+	notificationsSlice,
+	userProfileSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

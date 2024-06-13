@@ -49,6 +49,8 @@ const darkColors = {
   cardUserStatusStyle: '#B0B0B0',
   sentMsgColor: '#272A35',
   receivedMsgColor: '#373E4E',
+  profileRing: '#242760',
+  blockIconColor: '#fff'
 
 };
 

@@ -1,13 +1,15 @@
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
 
-export async function createNewChat(username, profilePic) {
+export async function createNewChat(username, profilePic,status, skills) {
   try {
     await database.write(async () => {
       const newChat = await database.collections.get('chats').create(chat => {
         chat.username = username;
         chat.chatId = username;
         chat.profilePic = profilePic;
+        chat.status = status;
+        chat.skills = JSON.stringify(skills)
       });
       console.log('New chat created:', newChat);
       return newChat;
