@@ -24,6 +24,7 @@ export const useSignIn = (
 
   useEffect(() => {
     if (signUpSlice.success) {
+      console.log('success in signin :', signUpSlice.success)
       resetSignUpReducer()
       navigtion.navigate(screenName);
     }

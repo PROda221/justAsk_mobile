@@ -24,7 +24,7 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
   StyleSheet.create<UserProfileStyles>({
     headerContainer: {justifyContent: 'space-between', flexDirection: 'row'},
     blockIconStyle: {
-      paddingTop: verticalScale(25),
+      marginTop: verticalScale(25),
     },
     feedbackButtonContainer: {
       paddingTop: verticalScale(20),
@@ -53,6 +53,7 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
       marginRight: horizontalScale(2),
       paddingHorizontal: horizontalScale(10),
       paddingVertical: verticalScale(2),
+      alignSelf: 'center'
     },
     imageContainer: {
       width: horizontalScale(165),
@@ -76,10 +77,8 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
     },
     nameText: {
       fontSize: moderateScale(18),
-      paddingTop: verticalScale(8),
     },
     statusText: {
       fontSize: moderateScale(13),
-      paddingTop: verticalScale(11),
     },
   });

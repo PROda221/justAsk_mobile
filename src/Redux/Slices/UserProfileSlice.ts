@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import {get} from '../../Api/AxiosConfig';
+import {post} from '../../Api/AxiosConfig';
 import { Endpoints } from '../../Api/Endpoints';
 
 type UserDetails = {
     username: string;
     adviceGenre: string[];
     averageRating: Array<{_id: string; averageStars: number}>
+    status: string;
+    profilePic: string;
 }
 
  type UserProfile = {
-  username: string;
-  userDetails: UserDetails
+  response: {userDetails: UserDetails, success: boolean}
+  success: boolean;
 };
 
 type UserProfileError = {
@@ -22,9 +24,9 @@ type UserProfileError = {
 
 export const callGetUserProfile = createAsyncThunk(
   'callGetUserProfile',
-  async (_, {rejectWithValue}) => {
+  async (data: {username:string}, {rejectWithValue}) => {
     try {
-      const response = await get<UserProfile>(Endpoints.userProfile);
+      const response = await post<UserProfile>(Endpoints.userProfile, data);
       if (response.status === 200) {
         return response.data;
       }

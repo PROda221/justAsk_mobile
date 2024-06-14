@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Image, FlatList} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getUserProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
@@ -11,8 +11,15 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {StarRatingDisplay} from 'react-native-star-rating-widget';
 import Header from '../../../Components/Header';
-import {moderateScale} from '../../../Functions/StyleScale';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../Functions/StyleScale';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {useUserProfile} from './CustomHooks/useUserProfile';
+import {Skeleton} from 'moti/skeleton';
+import Gallery from 'react-native-awesome-gallery';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -21,75 +28,134 @@ type UserProfileProps = {
 
 const UserProfile = ({navigation, route}: UserProfileProps) => {
   const {image, username, status, skills} = route.params;
+  const {
+    userProfileSuccess,
+    callGetUserProfileApi,
+    resetUserProfileReducer,
+    userProfileLoading,
+  } = useUserProfile(username);
 
   const {colors} = useTheme();
   const styles = getUserProfileStyles(colors);
 
+  useEffect(() => {
+    callGetUserProfileApi();
+  }, []);
+
+  const computeData = () => {
+    if (userProfileSuccess?.adviceGenre) {
+      return userProfileSuccess?.adviceGenre;
+    } else if (typeof skills === 'string') {
+      return JSON.parse(skills);
+    } else {
+      return skills;
+    }
+  };
+
   const renderSkills = ({item}) => {
     return (
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="300"
-        textStyle={styles.skill}>
-        {item}
-      </Typography>
+      <Skeleton colorMode="light">
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="300"
+          textStyle={styles.skill}>
+          {item}
+        </Typography>
+      </Skeleton>
     );
   };
 
   return (
-    <LinearGradient
-      colors={['#868F96', '#596164']}
-      style={styles.gradientContainer}>
-      <View style={styles.headerContainer}>
-        <Header />
-        <Entypo
-          name="block"
-          size={moderateScale(30)}
-          style={styles.blockIconStyle}
-          color={colors.blockIconColor}
-        />
-      </View>
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{uri: `${baseURL}/${image}?${new Date()}`}}
-            style={styles.profileImage}
-          />
+    <Skeleton.Group show={false}>
+      <LinearGradient
+        colors={['#868F96', '#596164']}
+        style={styles.gradientContainer}>
+        <View style={styles.headerContainer}>
+          <Header onPress={resetUserProfileReducer} />
+          <View style={styles.blockIconStyle}>
+            <Skeleton colorMode="light">
+              <Entypo
+                name="block"
+                size={moderateScale(30)}
+                color={colors.blockIconColor}
+              />
+            </Skeleton>
+          </View>
         </View>
-        <Typography
-          fontWeight="400"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.nameText}>
-          {username}
-        </Typography>
-        <Typography
-          fontWeight="400"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.statusText}>
-          {status}
-        </Typography>
 
-        <View style={styles.skillContainer}>
-          <FlashList
-            estimatedItemSize={80}
-            data={typeof skills === 'string' ? JSON.parse(skills) : skills}
-            renderItem={renderSkills}
-            keyExtractor={item => item}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        <StarRatingDisplay rating={5} />
+        <View style={styles.container}>
+          <Skeleton
+            colorMode="light"
+            height={verticalScale(165)}
+            width={horizontalScale(165)}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: `${baseURL}/${userProfileSuccess?.profilePic || image}?${new Date()}`,
+                }}
+                style={styles.profileImage}
+              />
+            </View>
+          </Skeleton>
 
-        <View style={styles.feedbackButtonContainer}>
-          <CustomButton
-            label="Give Feedback"
-            radius={95}
-            viewStyle={styles.feedbackButtonStyle}
-          />
+          <View style={{paddingTop: verticalScale(8)}}>
+            <Skeleton colorMode="light">
+              <Typography
+                fontWeight="400"
+                bgColor={colors.textPrimaryColor}
+                textStyle={styles.nameText}>
+                {userProfileSuccess?.username || username}
+              </Typography>
+            </Skeleton>
+          </View>
+
+          <View style={{paddingTop: verticalScale(11)}}>
+            <Skeleton colorMode="light">
+              <Typography
+                fontWeight="400"
+                bgColor={colors.textPrimaryColor}
+                textStyle={styles.statusText}>
+                {userProfileSuccess?.status || status}
+              </Typography>
+            </Skeleton>
+          </View>
+
+          <View style={styles.skillContainer}>
+            <FlashList
+              ListEmptyComponent={<View />}
+              estimatedItemSize={80}
+              data={computeData()}
+              renderItem={renderSkills}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+
+          {userProfileSuccess && userProfileSuccess.averageRating.length > 0 ? (
+            <StarRatingDisplay
+              rating={userProfileSuccess?.averageRating[0].averageStars}
+            />
+          ) : (
+            <Typography
+              textStyle={styles.statusText}
+              bgColor={colors.textPrimaryColor}
+              fontWeight="400">
+              Be the first to rate!
+            </Typography>
+          )}
+
+          <View style={styles.feedbackButtonContainer}>
+            <Skeleton colorMode="light">
+              <CustomButton
+                label="Give Feedback"
+                radius={95}
+                viewStyle={styles.feedbackButtonStyle}
+              />
+            </Skeleton>
+          </View>
         </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+    </Skeleton.Group>
   );
 };
 
