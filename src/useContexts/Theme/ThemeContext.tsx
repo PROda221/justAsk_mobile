@@ -50,7 +50,9 @@ const darkColors = {
   sentMsgColor: '#272A35',
   receivedMsgColor: '#373E4E',
   profileRing: '#242760',
-  blockIconColor: '#fff'
+  blockIconColor: '#fff',
+  commentBoxColor: '#fff',
+  starColor: '#ffe234'
 
 };
 

@@ -1,8 +1,9 @@
 import {RouteDefinition, SheetDefinition, registerSheet} from 'react-native-actions-sheet';
 import SearchFeature from '../Search';
-import { Socket } from 'socket.io-client';
+import ViewImage from '../ViewImage';
  
 registerSheet('SearchFeature-sheet', SearchFeature);
+registerSheet('ViewProfileImage-sheet', ViewImage);
  
 // We extend some of the types here to give us great intellisense
 // across the app for all registered sheets.
@@ -13,6 +14,11 @@ declare module 'react-native-actions-sheet' {
         'SearchScreen': RouteDefinition;
         // Route B with params.
         'AdviceListScreen': RouteDefinition;
+      }
+    }>
+    'ViewProfileImage-sheet': SheetDefinition<{
+      payload?: {
+        imageUrl: string
       }
     }>
   }

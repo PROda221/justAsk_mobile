@@ -80,6 +80,14 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
     );
   };
 
+  const openFullImage = () => {
+    SheetManager.show('ViewProfileImage-sheet', {
+      payload: {
+        imageUrl: `${baseURL}/${profileSlice.success?.profilePic}`,
+      },
+    });
+  };
+
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
@@ -100,14 +108,14 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
 
   const header = () => (
     <View style={styles.header}>
-      <View style={styles.profilePicContainer}>
+      <TouchableOpacity style={styles.profilePicContainer} onPress={openFullImage}>
         <Image
           source={{
             uri: `${baseURL}/${profileSlice.success?.profilePic}?${new Date()}`,
           }}
           style={styles.img}
         />
-      </View>
+      </TouchableOpacity>
       <Typography
         bgColor="white"
         fontWeight="400"

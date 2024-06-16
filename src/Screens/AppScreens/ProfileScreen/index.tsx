@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Image, FlatList} from 'react-native';
+import {View, Image, FlatList, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getUserProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
@@ -19,7 +19,7 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useUserProfile} from './CustomHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
-import Gallery from 'react-native-awesome-gallery';
+import {SheetManager} from 'react-native-actions-sheet';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -41,6 +41,22 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   useEffect(() => {
     callGetUserProfileApi();
   }, []);
+
+  const openFullImage = () => {
+    SheetManager.show('ViewProfileImage-sheet', {
+      payload: {
+        imageUrl: `${baseURL}/${userProfileSuccess?.profilePic || image}?${new Date()}`,
+      },
+    });
+  };
+
+  const openFeedback = () => {
+    navigation.navigate('UserFeedback');
+  };
+
+  const handleBlock = () => {
+    console.log('handle your block state here :');
+  };
 
   const computeData = () => {
     if (userProfileSuccess?.adviceGenre) {
@@ -66,7 +82,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   };
 
   return (
-    <Skeleton.Group show={false}>
+    <Skeleton.Group show={userProfileLoading}>
       <LinearGradient
         colors={['#868F96', '#596164']}
         style={styles.gradientContainer}>
@@ -78,6 +94,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
                 name="block"
                 size={moderateScale(30)}
                 color={colors.blockIconColor}
+                onPress={handleBlock}
               />
             </Skeleton>
           </View>
@@ -88,14 +105,16 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
             colorMode="light"
             height={verticalScale(165)}
             width={horizontalScale(165)}>
-            <View style={styles.imageContainer}>
+            <TouchableOpacity
+              onPress={openFullImage}
+              style={styles.imageContainer}>
               <Image
                 source={{
                   uri: `${baseURL}/${userProfileSuccess?.profilePic || image}?${new Date()}`,
                 }}
                 style={styles.profileImage}
               />
-            </View>
+            </TouchableOpacity>
           </Skeleton>
 
           <View style={{paddingTop: verticalScale(8)}}>
@@ -121,9 +140,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
           </View>
 
           <View style={styles.skillContainer}>
-            <FlashList
-              ListEmptyComponent={<View />}
-              estimatedItemSize={80}
+            <FlatList
               data={computeData()}
               renderItem={renderSkills}
               horizontal
@@ -147,6 +164,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
           <View style={styles.feedbackButtonContainer}>
             <Skeleton colorMode="light">
               <CustomButton
+                onPress={openFeedback}
                 label="Give Feedback"
                 radius={95}
                 viewStyle={styles.feedbackButtonStyle}
