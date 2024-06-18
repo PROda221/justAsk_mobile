@@ -1,23 +1,47 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, TextInput, Image, FlatList} from 'react-native';
-import StarRating from 'react-native-star-rating-widget';
+import StarRating, {StarRatingDisplay} from 'react-native-star-rating-widget';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {getFeedbackScreenStyles} from './styles';
+import {FeedbackScreenStyles, getFeedbackScreenStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import LinearGradient from 'react-native-linear-gradient';
-import {FlashList} from '@shopify/flash-list';
+import {FlashList, ListRenderItem} from '@shopify/flash-list';
 import {baseURL} from '../../../Constants';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {horizontalScale, moderateScale} from '../../../Functions/StyleScale';
+import {moderateScale} from '../../../Functions/StyleScale';
+import Header from '../../../Components/Header';
+import {useUserProfile} from '../ProfileScreen/CustomHooks/useUserProfile';
+import {useYourComment} from './CustomHook/useYourComment';
+import {useAllComments} from './CustomHook/useAllComments.';
+import {Comment} from '../../../Redux/Slices/FeedbackSlice';
+import {EmptyState} from '../../../Assets/Images';
+import {useAddComments} from './CustomHook/useAddComment';
+import { GiveFeedback } from './GiveFeedback';
+
 
 const FeedbackPage = () => {
-  const [rating, setRating] = useState(0);
-
   const {colors} = useTheme();
+  const {userProfileSuccess} = useUserProfile();
+
+  const {callGetYourCommentApi, resetYourCommenReducer} =
+    useYourComment(userProfileSuccess?.username);
+
+  const {callAllCommentsApi, allCommentsSuccess, resetAllCommentsReducer} =
+    useAllComments(userProfileSuccess?.username);
+
+  const {resetaddCommenetReducer} = useAddComments();
+
+  useEffect(() => {
+    callGetYourCommentApi();
+    callAllCommentsApi();
+  }, []);
+
   const styles = getFeedbackScreenStyles(colors);
 
-  const submitFeedback = () => {
-    console.log('handle here');
+  const resetFeedbackReducers = () => {
+    resetYourCommenReducer();
+    resetAllCommentsReducer();
+    resetaddCommenetReducer();
   };
 
   const renderSkills = ({item}) => {
@@ -31,13 +55,13 @@ const FeedbackPage = () => {
     );
   };
 
-  const profileInfo = () => {
+  const profileInfo = useCallback(() => {
     return (
       <>
         <View style={styles.profileContainer}>
           <Image
             source={{
-              uri: `${baseURL}/PROda221-.png`,
+              uri: `${baseURL}/${userProfileSuccess?.profilePic || ''}`,
             }}
             style={styles.profileImage}
           />
@@ -46,21 +70,17 @@ const FeedbackPage = () => {
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.nameText}>
-              {'PROda221'}
+              {userProfileSuccess?.username}
             </Typography>
             <Typography
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.statusText}>
-              {'THERE IS NO TOMORROW'}
+              {userProfileSuccess?.status}
             </Typography>
             <View style={styles.skillContainer}>
               <FlatList
-                data={[
-                  'Health',
-                  'Wealth',
-                  'Family Health Health Health Health Health',
-                ]}
+                data={userProfileSuccess?.adviceGenre}
                 renderItem={renderSkills}
                 // estimatedItemSize={153}
                 horizontal
@@ -69,64 +89,49 @@ const FeedbackPage = () => {
             </View>
           </View>
         </View>
-        {giveFeedback()}
-        <Typography
-          fontWeight="400"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.commentsHeading}>
-          {'Comments'}
-        </Typography>
       </>
     );
-  };
+  }, []);
 
-  const giveFeedback = () => {
+  const noCommentComponent = () => {
     return (
-      <View style={styles.card}>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Image source={EmptyState} style={styles.emptyStateImageStyle} />
         <Typography
-          bgColor={colors.textPrimaryColor}
+          bgColor="white"
           fontWeight="400"
-          textStyle={styles.giveFeedbackText}>
-          Give your feedback
+          textStyle={styles.noCommentsText}>
+          {`${userProfileSuccess?.username} has no comments yet...`}
         </Typography>
-        <StarRating
-          rating={rating}
-          onChange={setRating}
-          enableHalfStar={false}
-          style={styles.giveFeedbackStarsStyle}
-        />
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.giveFeedbackText}>
-          Add a comment
-        </Typography>
-        <View style={styles.commentContainer}>
-          <TextInput
-            style={styles.commentBox}
-            placeholder="If you have any additional feedback, please type it in here..."
-            multiline
-            placeholderTextColor={colors.textInputPlaceholderColor}
-            numberOfLines={4}
-          />
-        </View>
-        <CustomButton
-          onPress={submitFeedback}
-          label="Give Feedback"
-          radius={95}
-          viewStyle={styles.submitButtonStyle}
-        />
       </View>
     );
   };
 
-  const renderItem = ({item}) => {
+  const listHeaderComponent = () => (
+    <>
+      {profileInfo()}
+      <GiveFeedback
+        styles={styles}
+        colors={colors}
+        username={userProfileSuccess?.username}
+      />
+
+      <Typography
+        fontWeight="400"
+        bgColor={colors.textPrimaryColor}
+        textStyle={styles.commentsHeading}>
+        {'Comments'}
+      </Typography>
+    </>
+  );
+
+  const renderItem: ListRenderItem<Comment> = ({item}) => {
     return (
       <View style={styles.commentCard}>
         <View style={styles.mainHeader}>
           <Image
             source={{
-              uri: `${baseURL}/PROda221-.png`,
+              uri: `${baseURL}/${item.commentUserId}-.png`,
             }}
             style={styles.commentUserAvatar}
           />
@@ -137,7 +142,7 @@ const FeedbackPage = () => {
                 bgColor={colors.textPrimaryColor}
                 fontWeight="400"
                 textStyle={styles.usernameText}>
-                PROda221
+                {item.commentUserId}
               </Typography>
               <Typography
                 bgColor={colors.textInputPlaceholderColor}
@@ -152,7 +157,7 @@ const FeedbackPage = () => {
                 bgColor={colors.textPrimaryColor}
                 fontWeight="400"
                 textStyle={styles.starText}>
-                x4
+                {`x${item.rating}`}
               </Typography>
               <Entypo
                 name="star"
@@ -167,15 +172,7 @@ const FeedbackPage = () => {
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.commentText}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
+          {item.content}
         </Typography>
       </View>
     );
@@ -184,9 +181,10 @@ const FeedbackPage = () => {
   const renderComments = () => {
     return (
       <FlashList
-        ListHeaderComponent={profileInfo}
+        ListEmptyComponent={noCommentComponent}
+        ListHeaderComponent={listHeaderComponent}
         estimatedItemSize={300}
-        data={[1, 2, 3, 4]}
+        data={allCommentsSuccess?.data}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
       />
@@ -197,6 +195,9 @@ const FeedbackPage = () => {
     <LinearGradient
       colors={['#868F96', '#596164']}
       style={styles.gradientContainer}>
+      <View style={styles.backButtonContainer}>
+        <Header onPress={resetFeedbackReducers} />
+      </View>
       {renderComments()}
     </LinearGradient>
   );

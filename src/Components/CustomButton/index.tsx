@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import {Text, TextStyle, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {FrontArrow} from '../../Assets/Images';
 import {type ViewStyle} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
@@ -18,7 +23,7 @@ type CustomButtonProps = {
   textColor?: string;
   radius: number;
   textStyle?: TextStyle;
-  loading?: boolean
+  loading?: boolean;
 };
 
 type StyledButtonType = {
@@ -40,7 +45,7 @@ const Button = styled(TouchableOpacity)<StyledButtonType>`
   width: '100%';
   background-color: #1b1e20;
   height: 65px;
-  border-radius: ${(props)=>`${props.radius}px`};
+  border-radius: ${props => `${props.radius}px`};
 `;
 
 const ButtonText = styled(Text)<StyledButtonTextType>`
@@ -59,7 +64,6 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   const {colors} = useTheme();
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
-   
     transform: [{scale: scale.value}],
   }));
 
@@ -74,18 +78,27 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
   return (
     <Animated.View style={animatedStyle}>
-    <Button
-      activeOpacity={1}
-      onPressIn={handlePressIn}
-      onPressOut={() => handlePressOut(onPress)}
-      label={props.label}
-      style={props.viewStyle}
-      radius={props.radius}>
-      <ButtonText textColor={props.textColor ? props.textColor : colors.buttonTextColor} style={props.textStyle}>
-        {props.label + ' '}
-      </ButtonText>
-      {props.backArrow && <FrontArrow />}
-    </Button>
+      <Button
+        activeOpacity={1}
+        onPressIn={handlePressIn}
+        onPressOut={() => handlePressOut(onPress)}
+        label={props.label}
+        style={props.viewStyle}
+        radius={props.radius}>
+        {loading ? (
+          <ActivityIndicator size='large' color={colors.buttonLoader} />
+        ) : (
+          <ButtonText
+            textColor={
+              props.textColor ? props.textColor : colors.buttonTextColor
+            }
+            style={props.textStyle}>
+            {props.label + ' '}
+          </ButtonText>
+        )}
+
+        {props.backArrow && <FrontArrow />}
+      </Button>
     </Animated.View>
   );
 };

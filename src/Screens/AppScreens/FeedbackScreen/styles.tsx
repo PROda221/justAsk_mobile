@@ -29,7 +29,10 @@ export type FeedbackScreenStyles = {
   profileNameStatusContainer: ViewStyle;
   profileContainer: ViewStyle;
   timeText: TextStyle;
-  commentsHeading: TextStyle
+  commentsHeading: TextStyle;
+  backButtonContainer: ViewStyle
+  noCommentsText: TextStyle;
+  emptyStateImageStyle: ImageStyle
 };
 
 export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
@@ -170,6 +173,16 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       fontSize: moderateScale(25),
       textAlign: 'left',
     },
+    backButtonContainer: {
+      paddingBottom: verticalScale(10)
+    },
+    noCommentsText: {
+      fontSize: moderateScale(18),
+    },
+    emptyStateImageStyle: {
+      width: moderateScale(150),
+      height: moderateScale(150),
+    }
   });
 
 StyleSheet.create({});

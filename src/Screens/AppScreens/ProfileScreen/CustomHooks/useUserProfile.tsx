@@ -6,7 +6,7 @@ import {
 } from '../../../../Redux/Slices/UserProfileSlice';
 import {useEffect} from 'react';
 
-export const useUserProfile = (username: string) => {
+export const useUserProfile = (username?: string) => {
   const dispatch = useDispatch();
   const userProfileSlice = useSelector(
     (state: RootState) => state.userProfileSlice,

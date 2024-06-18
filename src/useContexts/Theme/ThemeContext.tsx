@@ -52,7 +52,8 @@ const darkColors = {
   profileRing: '#242760',
   blockIconColor: '#fff',
   commentBoxColor: '#fff',
-  starColor: '#ffe234'
+  starColor: '#ffe234',
+  buttonLoader: "#FFCB45"
 
 };
 

@@ -12,5 +12,8 @@ export const Endpoints = {
     profile: "/users/getProfile",
     deviceToken: '/users/notificationToken',
     userProfile: '/users/profile',
+    getYourComment: '/users/feedback/getyourcomment',
+    addCommenet: '/users/feedback/add',
+    gtAllComments: '/users/feedback'
 
 }
