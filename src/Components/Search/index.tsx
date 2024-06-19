@@ -5,7 +5,11 @@ import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getSearchStyles} from './styles';
 import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
-import ActionSheet, {Route, SheetProps, useSheetRouter} from 'react-native-actions-sheet';
+import ActionSheet, {
+  Route,
+  SheetProps,
+  useSheetRouter,
+} from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
 import {useSearch} from '../../Screens/AppScreens/HomeScreen/CustomHooks/useSearch';
@@ -16,12 +20,11 @@ import {RenderSvg} from '../RenderSvg';
 import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import {UserCard} from '../UserCard';
-import {baseURL} from '../../Constants';
 
 let currentGenres: string[];
 
-const SearchScreen = (props: SheetProps<"SearchFeature-sheet">) => {
-  const router = useSheetRouter("SearchFeature-sheet");
+const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
+  const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getSearchStyles(colors);
   const {control, getValues, watch} = useForm();

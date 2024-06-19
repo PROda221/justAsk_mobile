@@ -30,9 +30,10 @@ export type FeedbackScreenStyles = {
   profileContainer: ViewStyle;
   timeText: TextStyle;
   commentsHeading: TextStyle;
-  backButtonContainer: ViewStyle
+  backButtonContainer: ViewStyle;
   noCommentsText: TextStyle;
-  emptyStateImageStyle: ImageStyle
+  emptyStateImageStyle: ImageStyle;
+  loadMoreContainer: ViewStyle;
 };
 
 export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
@@ -94,7 +95,6 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       width: horizontalScale(35),
       height: verticalScale(35),
       borderRadius: moderateScale(18),
-      marginLeft: horizontalScale(10),
     },
     usernameText: {
       fontSize: moderateScale(12),
@@ -114,7 +114,6 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     },
     commentStarContainer: {
       flexDirection: 'row',
-      paddingRight: horizontalScale(10),
     },
     commentText: {
       textAlign: 'justify',
@@ -144,6 +143,7 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     },
     skillContainer: {
       // paddingTop: verticalScale(15),
+
       maxHeight: verticalScale(50),
     },
     skill: {
@@ -165,7 +165,6 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     profileContainer: {
       flexDirection: 'row',
       paddingVertical: moderateScale(10),
-      flex: 1,
     },
     commentsHeading: {
       paddingTop: verticalScale(10),
@@ -174,7 +173,7 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       textAlign: 'left',
     },
     backButtonContainer: {
-      paddingBottom: verticalScale(10)
+      paddingBottom: verticalScale(10),
     },
     noCommentsText: {
       fontSize: moderateScale(18),
@@ -182,7 +181,11 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     emptyStateImageStyle: {
       width: moderateScale(150),
       height: moderateScale(150),
-    }
+    },
+    loadMoreContainer: {
+      alignItems: 'center',
+      paddingTop: verticalScale(10),
+    },
   });
 
 StyleSheet.create({});

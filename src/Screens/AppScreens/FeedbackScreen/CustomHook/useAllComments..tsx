@@ -1,6 +1,9 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
-import { resetAllCommentsData, callAllComments } from '../../../../Redux/Slices/FeedbackSlice';
+import {
+  resetAllCommentsData,
+  callAllComments,
+} from '../../../../Redux/Slices/FeedbackSlice';
 import {useEffect} from 'react';
 
 export const useAllComments = (username?: string) => {
@@ -9,8 +12,12 @@ export const useAllComments = (username?: string) => {
     (state: RootState) => state.feedbackSlice.allComments,
   );
 
-  const callAllCommentsApi = () => {
-    dispatch(callAllComments({username}));
+  const callAllCommentsApi = (
+    limit: number,
+    lastId: string,
+    username?: string,
+  ) => {
+    dispatch(callAllComments({username, limit, lastId}));
   };
 
   const resetAllCommentsReducer = () => {

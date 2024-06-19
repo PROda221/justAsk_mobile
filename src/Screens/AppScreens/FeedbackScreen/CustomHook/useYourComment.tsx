@@ -1,6 +1,9 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
-import { resetYourCommentData, callYourComment } from '../../../../Redux/Slices/FeedbackSlice';
+import {
+  resetYourCommentData,
+  callYourComment,
+} from '../../../../Redux/Slices/FeedbackSlice';
 import {useEffect} from 'react';
 
 export const useYourComment = (username?: string) => {
@@ -19,13 +22,13 @@ export const useYourComment = (username?: string) => {
 
   useEffect(() => {
     if (getYourCommentSlice.success) {
-      console.log('success is :', getYourCommentSlice.success);
+      console.log('success your comment :', getYourCommentSlice.success);
     }
   }, [getYourCommentSlice.success]);
 
   useEffect(() => {
     if (getYourCommentSlice.error) {
-      console.log('error in searchUser :', getYourCommentSlice.error);
+      console.log('error your comment :', getYourCommentSlice.error);
     }
   }, [getYourCommentSlice.error]);
 

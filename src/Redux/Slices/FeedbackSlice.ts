@@ -107,7 +107,7 @@ export const callAddComment = createAsyncThunk(
 
 export const callAllComments = createAsyncThunk(
   'callAllComments',
-  async (data: {username: string}, {rejectWithValue}) => {
+  async (data: {username: string, limit: number, lastId: string}, {rejectWithValue}) => {
     try {
       const response = await post<AllCommentsSuccess>(
         Endpoints.gtAllComments,
@@ -190,6 +190,7 @@ const feedbackSlice = createSlice({
     builder.addCase(callYourComment.fulfilled, (state, action) => {
       state.getYourComment.loading = false;
       state.getYourComment.success = action.payload;
+      state.getYourComment.error = undefined
     });
     builder.addCase(callYourComment.rejected, (state, action) => {
       state.getYourComment.loading = false;

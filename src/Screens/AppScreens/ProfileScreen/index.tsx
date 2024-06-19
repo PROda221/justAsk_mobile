@@ -150,6 +150,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
 
           {userProfileSuccess && userProfileSuccess.averageRating.length > 0 ? (
             <StarRatingDisplay
+              enableHalfStar={false}
               rating={userProfileSuccess?.averageRating[0].averageStars}
             />
           ) : (

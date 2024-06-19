@@ -17,13 +17,13 @@ export const GiveFeedback = ({styles, colors, username}: GiveFeedbackProps) => {
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState(true);
 
-  const {getYourCommentSuccess} = useYourComment();
+  const {getYourCommentSuccess, getYourCommentLoading} =
+    useYourComment(username);
 
   useEffect(() => {
-    if (getYourCommentSuccess?.yourComment) {
+    if (getYourCommentSuccess?.success) {
       setRating(getYourCommentSuccess?.yourComment?.rating);
       setComment(getYourCommentSuccess?.yourComment?.content);
-      console.log('getYourCommentSuccess :', getYourCommentSuccess)
       setEditComment(false);
     }
   }, [getYourCommentSuccess]);
@@ -95,7 +95,7 @@ export const GiveFeedback = ({styles, colors, username}: GiveFeedbackProps) => {
         onPress={handleSubmit}
         label={editComment ? 'Give Feedback' : 'Update Feedback'}
         radius={95}
-        loading={addCommenetLoading}
+        loading={addCommenetLoading || getYourCommentLoading}
         viewStyle={styles.submitButtonStyle}
       />
     </View>
