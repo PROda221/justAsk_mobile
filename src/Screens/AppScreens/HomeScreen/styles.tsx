@@ -19,9 +19,10 @@ export type HomeScreenStyles = {
   messageName: TextStyle;
   messageText: TextStyle;
   messageTime: TextStyle;
-  messagesList: ViewStyle
+  messagesList: ViewStyle;
   img: ImageStyle;
-  messageTextContainer: ViewStyle
+  messageTextContainer: ViewStyle;
+  profileUsernameContainer: ViewStyle;
 };
 
 export const getHomeScreenStyles = (colors): HomeScreenStyles =>
@@ -49,6 +50,7 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
     header: {
       alignItems: 'center',
       flexDirection: 'row',
+      justifyContent: 'space-between',
       marginTop: verticalScale(30),
     },
     headerText: {
@@ -79,12 +81,12 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
       opacity: 0.5,
       textAlign: 'left',
     },
-    messageTextContainer: {flex :1},
+    messageTextContainer: {flex: 1},
     messageTime: {
       fontSize: moderateScale(15),
     },
     messagesList: {
-      padding: moderateScale(10)
+      padding: moderateScale(10),
     },
     profilePicContainer: {
       backgroundColor: colors.secondaryBackgroundColor,
@@ -113,4 +115,5 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
       padding: 8,
       width: horizontalScale(305),
     },
+    profileUsernameContainer: {flexDirection: 'row', alignItems: 'center'},
   });

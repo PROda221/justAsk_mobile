@@ -7,6 +7,7 @@ import {SocketProvider} from '../../useContexts/SocketContext';
 import {baseURL} from '../../Constants';
 import UserProfile from '../../Screens/AppScreens/ProfileScreen';
 import FeedbackScreen from '../../Screens/AppScreens/FeedbackScreen';
+import SettingsScreen from '../../Screens/AppScreens/SettingsScreen';
 
 const AppStack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ const AppNavigation = () => (
         <AppStack.Screen name="ChatScreen" component={ChatScreen} />
         <AppStack.Screen name="UserProfile" component={UserProfile} />
         <AppStack.Screen name="UserFeedback" component={FeedbackScreen} />
+        <AppStack.Screen name="Settings" component={SettingsScreen} />
       </AppStack.Navigator>
     </SheetProvider>
   </SocketProvider>

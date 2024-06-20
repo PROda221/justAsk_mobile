@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
 import {SheetManager} from 'react-native-actions-sheet';
@@ -17,6 +18,7 @@ import {useNotifications} from './CustomHooks/useNotifications';
 import {withObservables} from '@nozbe/watermelondb/react';
 import database from '../../../DB/database';
 import {Model} from '@nozbe/watermelondb';
+import {moderateScale} from '../../../Functions/StyleScale';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -31,8 +33,6 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
-
-  // const {activeChats} = useSocket()
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -88,6 +88,10 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
     });
   };
 
+  const openSettings = () => {
+    navigation.navigate('Settings');
+  };
+
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
@@ -108,20 +112,30 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
 
   const header = () => (
     <View style={styles.header}>
-      <TouchableOpacity style={styles.profilePicContainer} onPress={openFullImage}>
-        <Image
-          source={{
-            uri: `${baseURL}/${profileSlice.success?.profilePic}?${new Date()}`,
-          }}
-          style={styles.img}
-        />
-      </TouchableOpacity>
-      <Typography
-        bgColor="white"
-        fontWeight="400"
-        textStyle={styles.headerText}>
-        {profileSlice.success?.username}
-      </Typography>
+      <View style={styles.profileUsernameContainer}>
+        <TouchableOpacity
+          style={styles.profilePicContainer}
+          onPress={openFullImage}>
+          <Image
+            source={{
+              uri: `${baseURL}/${profileSlice.success?.profilePic}?${new Date()}`,
+            }}
+            style={styles.img}
+          />
+        </TouchableOpacity>
+        <Typography
+          bgColor="white"
+          fontWeight="400"
+          textStyle={styles.headerText}>
+          {profileSlice.success?.username}
+        </Typography>
+      </View>
+      <Fontisto
+        name="player-settings"
+        size={moderateScale(20)}
+        color={colors.settingsIcons}
+        onPress={openSettings}
+      />
     </View>
   );
 

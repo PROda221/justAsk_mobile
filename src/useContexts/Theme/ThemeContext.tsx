@@ -1,11 +1,17 @@
 // ThemeContext.tsx
-import React, { createContext, useState, useContext, type ReactNode, type FC  } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  type ReactNode,
+  type FC,
+} from 'react';
 
 type ThemeContextType = {
   theme: string;
   colors: Record<string, string>;
   toggleTheme: () => void;
-}
+};
 
 const lightColors = {
   buttonBackground: 'FFFFFF',
@@ -15,12 +21,11 @@ const lightColors = {
   secondary: '#f39c12',
 };
 
-
 const darkColors = {
   primaryBackgroundColor: '#000000',
   secondaryBackgroundColor: '#232627',
-  appScreenPrimaryBackground: "#292F3F",
-  searchContainer: "rgba(0, 0, 0, 0.25)",
+  appScreenPrimaryBackground: '#292F3F',
+  searchContainer: 'rgba(0, 0, 0, 0.25)',
   textPrimaryColor: '#FFFFFF',
   iconPrimaryColor: '#FFFFFF',
   textInputBackgroundColor: '#232627',
@@ -39,9 +44,9 @@ const darkColors = {
   errorBoundary: '#FFCB45',
   selectedGenre: '#FFCB45',
   cellSelectedColor: '#00c853',
-  cellSelectedBorderColor: "#000000",
+  cellSelectedBorderColor: '#000000',
   cellUnSelectedColor: '#232627',
-  cellUnSelectedBorderColor: "#FFFFFF",
+  cellUnSelectedBorderColor: '#FFFFFF',
   cardBackgroundColor: '#232627',
   cardShadowColor: '#000000',
   cardGenreCellBgColor: '#f0f0f0',
@@ -53,17 +58,23 @@ const darkColors = {
   blockIconColor: '#fff',
   commentBoxColor: '#fff',
   starColor: '#ffe234',
-  buttonLoader: "#FFCB45"
-
+  buttonLoader: '#FFCB45',
+  settingsIcons: '#f0f0f0',
+  settingsSeperator: '#333',
+  settingsIconColor: '#FFFFFF',
+  settingsLogoutColor: 'rgba(212, 70, 56, 1)',
+  settingsDeleteColor: 'rgba(212, 70, 56, 1)',
 };
 
 const ThemeContext = createContext<ThemeContextType>({
-    theme: 'light',
-    colors: lightColors,
-    toggleTheme() {},
+  theme: 'light',
+  colors: lightColors,
+  toggleTheme() {},
 });
 
-export const ThemeProvider:  FC<{ children: ReactNode }> = ({ children  }): JSX.Element => {
+export const ThemeProvider: FC<{children: ReactNode}> = ({
+  children,
+}): JSX.Element => {
   const [theme, setTheme] = useState('dark');
 
   const toggleTheme = () => {
@@ -73,7 +84,7 @@ export const ThemeProvider:  FC<{ children: ReactNode }> = ({ children  }): JSX.
   const colors = theme === 'light' ? lightColors : darkColors;
 
   return (
-    <ThemeContext.Provider value={{ theme, colors, toggleTheme }}>
+    <ThemeContext.Provider value={{theme, colors, toggleTheme}}>
       {children}
     </ThemeContext.Provider>
   );

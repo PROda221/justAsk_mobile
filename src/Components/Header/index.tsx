@@ -1,7 +1,11 @@
 import React from 'react';
 import {View, TouchableOpacity, ViewStyle} from 'react-native';
 import styled from 'styled-components';
-import {type NavigationProp, useNavigation, ParamListBase} from '@react-navigation/native';
+import {
+  type NavigationProp,
+  useNavigation,
+  ParamListBase,
+} from '@react-navigation/native';
 import {HeaderBackArrow} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
@@ -11,8 +15,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { Router } from 'react-native-actions-sheet';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {Router} from 'react-native-actions-sheet';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Container = styled(View)<{drawer?: boolean}>`
   padding: 20px 0 0 0;
@@ -20,22 +24,27 @@ const Container = styled(View)<{drawer?: boolean}>`
 `;
 
 const leftFeatureHandler = (
-  navigation: NavigationProp<ReactNavigation.RootParamList> | Router<never> | undefined,
-  onPress: ()=>void
+  navigation:
+    | NavigationProp<ReactNavigation.RootParamList>
+    | Router<never>
+    | undefined,
+  onPress: () => void,
 ): void => {
-
-  onPress?.()
+  onPress?.();
   navigation?.goBack();
 };
 
 type Props = {
-  navigation?: Router<"SearchFeature-sheet"> | undefined | NativeStackNavigationProp<ParamListBase>,
-  containerStyle?: ViewStyle,
-  onPress?: ()=> void
-}
+  navigation?:
+    | Router<'SearchFeature-sheet'>
+    | undefined
+    | NativeStackNavigationProp<ParamListBase>;
+  containerStyle?: ViewStyle;
+  onPress?: () => void;
+};
 
 const Header = ({navigation, containerStyle, onPress}: Props) => {
- const headerNavigation =  navigation ? navigation : useNavigation()
+  const headerNavigation = navigation ? navigation : useNavigation();
   const {colors} = useTheme();
   const styles = getHeaderStyles(colors);
   const scale = useSharedValue(1);

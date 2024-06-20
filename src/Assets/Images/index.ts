@@ -35,6 +35,7 @@ import Filter from './Filter.svg'
 import ArrowRight from './ArrowRight.svg'
 import ChatIcon from './ChatIcon.svg'
 import EmptyState from './EmptyState.png'
+import ProfileEdit from './ProfileEdit.svg'
 
 export {
   HomeIcon,
@@ -73,5 +74,6 @@ export {
   Filter,
   ArrowRight,
   ChatIcon,
-  EmptyState
+  EmptyState,
+  ProfileEdit
 };
