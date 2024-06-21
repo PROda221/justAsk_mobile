@@ -1,10 +1,11 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../Redux/rootReducers';
-import {
-  resetAllCommentsData,
-  callAllComments,
-} from '../../../../Redux/Slices/FeedbackSlice';
+
 import {useEffect} from 'react';
+import {RootState} from '../../Redux/rootReducers';
+import {
+  callAllComments,
+  resetAllCommentsData,
+} from '../../Redux/Slices/FeedbackSlice';
 
 export const useAllComments = (username?: string) => {
   const dispatch = useDispatch();

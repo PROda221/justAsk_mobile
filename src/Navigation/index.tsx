@@ -3,19 +3,15 @@ import React, {useEffect} from 'react';
 import AppNavigation from './AppNavigation';
 import AuthNavigation from './AuthStack';
 import {retrieveAccessToken} from '../Functions/EncryptedStorage';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../Redux/rootReducers';
-import {setLoginTrue} from '../Redux/Slices/IsLogInSlice';
+import {useIsLogin} from '../CustomHooks/AuthHooks/useIsLogin';
 
 const Navigation = (): JSX.Element => {
-  const islogInSlice = useSelector((state: RootState) => state.isLoginSlice);
-
-  const dispatch = useDispatch();
+  const {isLogedIn, userLogedIn} = useIsLogin();
 
   const getAuth = async () => {
     const token = await retrieveAccessToken();
     if (token) {
-      dispatch(setLoginTrue());
+      userLogedIn();
     }
   };
 
@@ -25,7 +21,7 @@ const Navigation = (): JSX.Element => {
 
   return (
     <NavigationContainer>
-      {islogInSlice.isLogin ? <AppNavigation /> : <AuthNavigation />}
+      {isLogedIn ? <AppNavigation /> : <AuthNavigation />}
     </NavigationContainer>
   );
 };

@@ -1,11 +1,12 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../Redux/rootReducers';
-import {
-  resetAddCommenetData,
-  callAddComment,
-} from '../../../../Redux/Slices/FeedbackSlice';
+
 import {useEffect} from 'react';
 import {useYourComment} from './useYourComment';
+import {RootState} from '../../Redux/rootReducers';
+import {
+  callAddComment,
+  resetAddCommenetData,
+} from '../../Redux/Slices/FeedbackSlice';
 
 export const useAddComments = (
   username?: string,

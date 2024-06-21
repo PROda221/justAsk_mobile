@@ -14,14 +14,16 @@ import {
   verticalScale,
 } from '../../../Functions/StyleScale';
 import Header from '../../../Components/Header';
-import {useUserProfile} from '../ProfileScreen/CustomHooks/useUserProfile';
-import {useYourComment} from './CustomHook/useYourComment';
-import {useAllComments} from './CustomHook/useAllComments.';
+import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
+
 import {Comment} from '../../../Redux/Slices/FeedbackSlice';
 import {EmptyState} from '../../../Assets/Images';
-import {useAddComments} from './CustomHook/useAddComment';
+
 import {GiveFeedback} from './GiveFeedback';
 import {Skeleton} from 'moti/skeleton';
+import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
+import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
+import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
 
 const FeedbackPage = () => {
   const {colors} = useTheme();

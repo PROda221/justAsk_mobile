@@ -3,7 +3,7 @@ import {
   addMessageToChat,
   checkChatExists,
   createNewChat,
-} from '../../../../DB/DBFunctions';
+} from '../../DB/DBFunctions';
 import {Alert} from 'react-native';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {Socket} from 'socket.io-client';

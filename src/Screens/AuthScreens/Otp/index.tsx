@@ -10,8 +10,8 @@ import Animated, {FadeInUp} from 'react-native-reanimated';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import OTPTextView from 'react-native-otp-textinput';
-import {useVerifyOtp} from './CustomHooks/useVerifyOtp';
-import { useSendOtp } from '../ForgotPassword/CustomHooks/useSendOtp';
+import {useVerifyOtp} from '../../../CustomHooks/AuthHooks/useVerifyOtp';
+import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -55,7 +55,7 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   const {resetVerifyOtpReducer, callVerifyOtpApi, verifyOtpError} =
     useVerifyOtp(navigation, 'Reset Password', route.params?.emailId);
 
-  const {callSendOtpApi} = useSendOtp()
+  const {callSendOtpApi, resetSendOtpReducer} = useSendOtp();
 
   const styles = getOtpScreenStyles(colors);
 
@@ -64,8 +64,8 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   };
 
   const handleSendOtp = () => {
-    callSendOtpApi({emailId: route.params?.emailId})
-  }
+    callSendOtpApi({emailId: route.params?.emailId});
+  };
 
   const handleVerifyOtp = () => {
     if (otpValue?.length === 4) {
@@ -130,7 +130,7 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
         <CustomButton onPress={handleVerifyOtp} label="Verify" radius={14} />
       </View>
       <View style={styles.sendAgainButtonContainer}>
-        <CustomButton label="Send Again" radius={14} onPress={handleSendOtp}/>
+        <CustomButton label="Send Again" radius={14} onPress={handleSendOtp} />
       </View>
     </View>
   );
@@ -141,7 +141,7 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
         <Animated.View
           entering={FadeInUp.duration(1000)}
           style={styles.mainContainer}>
-          <Header />
+          <Header onPress={resetSendOtpReducer} />
           <Scroll>
             <View style={styles.otpView}>{renderOtp()}</View>
           </Scroll>

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Image, TouchableOpacity, Alert} from 'react-native';
 import {Typography} from '../../../Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useProfile} from '../HomeScreen/CustomHooks/useProfile';
+import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {baseURL} from '../../../Constants';
 import {getSettingsScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
@@ -17,9 +17,9 @@ import Header from '../../../Components/Header';
 import {resetAccessToken} from '../../../Functions/EncryptedStorage';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useDispatch} from 'react-redux';
-import {setLoginFalse} from '../../../Redux/Slices/IsLogInSlice';
-import {useLogin} from '../../AuthScreens/Login/CustomHooks/useLogin';
+import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
+import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
+import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -30,8 +30,14 @@ const SettingsScreen = ({navigation}: PropsType) => {
   const {colors} = useTheme();
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
+  const {callSendOtpApi, sendOtpSuccess} = useSendOtp();
+  const {userLogedOut} = useIsLogin();
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (sendOtpSuccess?.success) {
+      navigation.navigate('Otp Screen', {emailId: profileSuccess?.emailId});
+    }
+  }, [sendOtpSuccess]);
 
   const handleListOnPress = () => {
     console.log('abc');
@@ -40,7 +46,11 @@ const SettingsScreen = ({navigation}: PropsType) => {
   const logout = async () => {
     await resetAccessToken();
     resetLoginReducer();
-    dispatch(setLoginFalse());
+    userLogedOut();
+  };
+
+  const handleChangePass = () => {
+    callSendOtpApi({emailId: profileSuccess?.emailId || 'emailId'});
   };
 
   const handleLogout = () => {
@@ -62,7 +72,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
       name: 'Change Password',
       iconName: 'account-circle',
       iconColor: colors.settingsIconColor,
-      onPress: handleListOnPress,
+      onPress: handleChangePass,
     },
     {
       name: 'Blocked List',

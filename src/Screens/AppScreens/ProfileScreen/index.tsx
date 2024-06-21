@@ -17,7 +17,7 @@ import {
   verticalScale,
 } from '../../../Functions/StyleScale';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useUserProfile} from './CustomHooks/useUserProfile';
+import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
 

@@ -12,7 +12,7 @@ import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
-import { useCheckUser } from './CustomHooks/useCheckUser';
+import {useCheckUser} from '../../../CustomHooks/AuthHooks/useCheckUser';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -43,10 +43,8 @@ const RenderTitle = ({
 
 const SignUp = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
-  const {callCheckUserApi, resetCheckUserReducer, checkUserError} = useCheckUser(
-    navigation,
-    'Select Genres',
-  );
+  const {callCheckUserApi, resetCheckUserReducer, checkUserError} =
+    useCheckUser(navigation, 'Select Genres');
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
   `;
@@ -61,7 +59,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
     password: string;
   }) => {
     resetCheckUserReducer();
-    callCheckUserApi(data)
+    callCheckUserApi(data);
   };
 
   const renderError = () => (

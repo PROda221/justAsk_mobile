@@ -11,7 +11,7 @@ import {useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useLogin} from './CustomHooks/useLogin';
+import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;

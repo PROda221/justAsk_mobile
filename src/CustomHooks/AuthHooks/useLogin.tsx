@@ -1,14 +1,15 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../Redux/rootReducers';
+import {RootState} from '../../Redux/rootReducers';
 import {
   callTokenGenerator,
   resetLoginResponse,
-} from '../../../../Redux/Slices/LoginSlice';
-import {storeAccessToken} from '../../../../Functions/EncryptedStorage';
-import {setLoginTrue} from '../../../../Redux/Slices/IsLogInSlice';
+} from '../../Redux/Slices/LoginSlice';
+import {storeAccessToken} from '../../Functions/EncryptedStorage';
+import {useIsLogin} from './useIsLogin';
 
 export const useLogin = () => {
+  const {userLogedIn} = useIsLogin();
   const loginSlice = useSelector((state: RootState) => state.loginSlice);
   const dispatch = useDispatch();
 
@@ -28,7 +29,7 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (loginSlice.success) {
-      dispatch(setLoginTrue());
+      userLogedIn();
       storeToken();
     }
   }, [loginSlice.success]);

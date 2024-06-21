@@ -7,15 +7,16 @@ import {getAdviceListStyles} from './AdviceListStyle';
 import {Typography} from '../Typography';
 import Header from '../Header';
 import {allGenres} from '../../Constants';
-import { useSearch } from '../../Screens/AppScreens/HomeScreen/CustomHooks/useSearch';
+import {useSearch} from '../../CustomHooks/AppHooks/useSearch';
 
 interface SelectableAdviceListProps {
   items: string[];
 }
 
 const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
-  const {setSearchedGenres, searchedGenres} = useSearch()
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(searchedGenres)
+  const {setSearchedGenres, searchedGenres} = useSearch();
+  const [selectedGenres, setSelectedGenres] =
+    useState<string[]>(searchedGenres);
   const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getAdviceListStyles(colors);
@@ -25,14 +26,18 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
       ? selectedGenres.filter(i => i !== item)
       : [...selectedGenres, item];
 
-      setSelectedGenres(updatedSelectedItems)
+    setSelectedGenres(updatedSelectedItems);
     // setSearchedGenres(updatedSelectedItems)
   };
 
   return (
     <View style={styles.main}>
       <View style={styles.headerContainer}>
-        <Header containerStyle={styles.headerStyle} navigation={router} onPress={()=> setSearchedGenres(selectedGenres)} />
+        <Header
+          containerStyle={styles.headerStyle}
+          navigation={router}
+          onPress={() => setSearchedGenres(selectedGenres)}
+        />
 
         <Typography
           bgColor={colors.textPrimaryColor}

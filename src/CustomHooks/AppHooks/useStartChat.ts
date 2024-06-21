@@ -1,15 +1,15 @@
 import {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../../Redux/rootReducers';
+import {RootState} from '../../Redux/rootReducers';
 import {
   addMessageToChat,
   checkChatExists,
   createNewChat,
   getAllMessagesForChat,
-} from '../../../../DB/DBFunctions';
+} from '../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
 import {AppState} from 'react-native';
-import {useSocket} from '../../../../useContexts/SocketContext';
+import {useSocket} from '../../useContexts/SocketContext';
 
 let allMessages: Model[] = [];
 

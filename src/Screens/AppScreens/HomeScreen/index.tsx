@@ -14,7 +14,7 @@ import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNotifications} from './CustomHooks/useNotifications';
+import {useNotifications} from '../../../CustomHooks/AppHooks/useNotifications';
 import {withObservables} from '@nozbe/watermelondb/react';
 import database from '../../../DB/database';
 import {Model} from '@nozbe/watermelondb';

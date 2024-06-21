@@ -1,9 +1,9 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import io, {Socket} from 'socket.io-client';
 import {retrieveAccessToken} from '../Functions/EncryptedStorage';
-import {useGetOnline} from '../Screens/AppScreens/HomeScreen/CustomHooks/useGetOnline';
+import {useGetOnline} from '../CustomHooks/AppHooks/useGetOnline';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
-import {useGetMessage} from '../Screens/AppScreens/ChatScreen/CustomHook/useGetMessage';
+import {useGetMessage} from '../CustomHooks/AppHooks/useGetMessage';
 
 // Define the context type
 interface SocketContextType {

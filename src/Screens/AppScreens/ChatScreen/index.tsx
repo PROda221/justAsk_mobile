@@ -2,7 +2,7 @@ import {Typography} from '../../../Components';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {LogBox, ViewStyle} from 'react-native';
-import {useStartChat} from './CustomHook/useStartChat';
+import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';

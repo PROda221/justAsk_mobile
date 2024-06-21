@@ -3,8 +3,8 @@ import StarRating, {StarRatingDisplay} from 'react-native-star-rating-widget';
 import {TextInput, View} from 'react-native';
 import {CustomButton, Typography} from '../../../Components';
 import {FeedbackScreenStyles} from './styles';
-import {useYourComment} from './CustomHook/useYourComment';
-import {useAddComments} from './CustomHook/useAddComment';
+import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
+import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
 
 type GiveFeedbackProps = {
   styles: FeedbackScreenStyles;

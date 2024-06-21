@@ -1,9 +1,9 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../../Redux/rootReducers';
+import {RootState} from '../../Redux/rootReducers';
 import {
   callGetUserProfile,
   resetUserProfileResponse,
-} from '../../../../Redux/Slices/UserProfileSlice';
+} from '../../Redux/Slices/UserProfileSlice';
 import {useEffect} from 'react';
 
 export const useUserProfile = (username?: string) => {

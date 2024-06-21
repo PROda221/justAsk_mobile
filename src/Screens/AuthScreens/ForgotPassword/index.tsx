@@ -1,5 +1,5 @@
 import {ScrollView, View} from 'react-native';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
@@ -11,7 +11,7 @@ import {useForm} from 'react-hook-form';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
-import {useSendOtp} from './CustomHooks/useSendOtp';
+import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -41,7 +41,7 @@ const RenderTitle = ({
 );
 
 const ForgotPassword = ({navigation}: Props): JSX.Element => {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
   const {control, handleSubmit} = useForm();
 
   const Scroll = styled(ScrollView)`
@@ -52,13 +52,13 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
   const {callSendOtpApi, resetSendOtpReducer, sendOtpError} = useSendOtp(
     navigation,
     'Otp Screen',
-    email
+    email,
   );
 
   const styles = getForgotPassScreenStyles(colors);
 
   const handleNextButton = (data: {emailId: string}) => {
-    setEmail(data.emailId)
+    setEmail(data.emailId);
     resetSendOtpReducer();
     callSendOtpApi(data);
   };

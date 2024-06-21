@@ -2,12 +2,11 @@ import React, {useEffect} from 'react';
 import messaging from '@react-native-firebase/messaging';
 import {PermissionsAndroid, Platform} from 'react-native';
 import {Alert} from 'react-native';
-import { sendDeviceToken } from '../../../../Redux/Slices/NotificationsSlice';
-import { useDispatch } from 'react-redux';
+import {sendDeviceToken} from '../../Redux/Slices/NotificationsSlice';
+import {useDispatch} from 'react-redux';
 
 export const useNotifications = () => {
-
-  let dispatch = useDispatch()
+  let dispatch = useDispatch();
 
   useEffect(() => {
     if (Platform.OS == 'ios') {
@@ -22,10 +21,10 @@ export const useNotifications = () => {
     return unsubscribe;
   }, []);
 
-  const getToken = async () =>{
+  const getToken = async () => {
     const fcmToken = await messaging().getToken();
-    return fcmToken
-  }
+    return fcmToken;
+  };
 
   const requestUserPermissionIos = async () => {
     const authStatus = await messaging().requestPermission();
@@ -44,8 +43,8 @@ export const useNotifications = () => {
         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        let fcmToken = await getToken()
-        dispatch(sendDeviceToken({deviceToken: fcmToken}))
+        let fcmToken = await getToken();
+        dispatch(sendDeviceToken({deviceToken: fcmToken}));
       } else {
         console.log('Notifications permission denied');
       }

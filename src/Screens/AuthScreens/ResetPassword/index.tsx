@@ -11,7 +11,9 @@ import {useForm} from 'react-hook-form';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
-import {useResetPass} from './CustomHooks/useResetPass';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
+import {useResetPass} from '../../../CustomHooks/AuthHooks/useResetPass';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -43,8 +45,9 @@ const RenderTitle = ({
 
 const ResetPassword = ({navigation, route}: Props): JSX.Element => {
   const {control, handleSubmit, getValues} = useForm();
+  const {isLogin} = useSelector((state: RootState) => state.isLoginSlice);
   const {callResetPassApi, resetPassError, resetResetPassReducer} =
-    useResetPass(navigation, 'Login');
+    useResetPass(navigation, isLogin ? 'Settings' : 'Login');
 
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
@@ -59,7 +62,11 @@ const ResetPassword = ({navigation, route}: Props): JSX.Element => {
     confirmPassword: string;
   }) => {
     resetResetPassReducer();
-    callResetPassApi({password: data.password, emailId: route.params?.emailId, otp: route.params?.otp});
+    callResetPassApi({
+      password: data.password,
+      emailId: route.params?.emailId,
+      otp: route.params?.otp,
+    });
   };
 
   const renderError = () => (

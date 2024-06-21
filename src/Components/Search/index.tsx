@@ -12,7 +12,6 @@ import ActionSheet, {
 } from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
-import {useSearch} from '../../Screens/AppScreens/HomeScreen/CustomHooks/useSearch';
 
 import {Filter} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
@@ -20,6 +19,7 @@ import {RenderSvg} from '../RenderSvg';
 import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import {UserCard} from '../UserCard';
+import {useSearch} from '../../CustomHooks/AppHooks/useSearch';
 
 let currentGenres: string[];
 

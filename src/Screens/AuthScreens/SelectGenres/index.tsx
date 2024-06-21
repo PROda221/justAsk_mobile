@@ -7,18 +7,18 @@ import {SelectGenresScreenStyles, getSelectGenresScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {useSignIn} from '../SignUp/CustomHooks/useSIgnIn';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import { allGenres } from '../../../Constants';
+import {allGenres} from '../../../Constants';
 import GenreSelector from './GenreSelector';
+import {useSignIn} from '../../../CustomHooks/AuthHooks/useSIgnIn';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<ParamListBase>;
 };
 
-let adviceGenre: Array<string> = ['', '', '']
+let adviceGenre: Array<string> = ['', '', ''];
 
 const RenderTitle = ({
   styles,
@@ -50,8 +50,7 @@ const RenderTitle = ({
 );
 
 const SelectGenres = ({navigation, route}: Props): JSX.Element => {
-
-  const {emailId, password, username} = route.params?.data
+  const {emailId, password, username} = route.params?.data;
   const {callSignUpApi, resetSignUpReducer, signUpError} = useSignIn(
     navigation,
     'Login',
@@ -70,8 +69,8 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
   };
 
   const handleSelectedValues = (value: Array<string>) => {
-    adviceGenre = value
-  }
+    adviceGenre = value;
+  };
 
   const renderError = () => (
     <View>
@@ -87,14 +86,13 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
 
   const renderList = () => (
     <>
-    <GenreSelector getSelectedValues={handleSelectedValues} genres={allGenres} />
-    {signUpError && renderError()}
-    <View style={styles.buttonContainer}>
-        <CustomButton
-          label="Sign Up"
-          radius={14}
-          onPress={handleSignUp}
-        />
+      <GenreSelector
+        getSelectedValues={handleSelectedValues}
+        genres={allGenres}
+      />
+      {signUpError && renderError()}
+      <View style={styles.buttonContainer}>
+        <CustomButton label="Sign Up" radius={14} onPress={handleSignUp} />
       </View>
     </>
   );
