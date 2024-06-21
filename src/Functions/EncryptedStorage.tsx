@@ -13,23 +13,31 @@ export const storeAccessToken = async (token: string): Promise<void> => {
   }
 };
 
+export const resetAccessToken = async (): Promise<void> => {
+  try {
+    await Keychain.resetGenericPassword();
+    console.log('Access token reset successfully');
+  } catch (error) {
+    console.error('Could not reset access token', error);
+  }
+};
+
 /**
  * Retrieves the access token from the keychain.
  * @returns The access token if it exists, or null if it does not.
  */
 export const retrieveAccessToken = async (): Promise<string | null> => {
-    try {
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials) {
-        console.log('Access token retrieved successfully');
-        return credentials.password;
-      }
- 
-        console.log('No access token found');
-        return null;
-      
-    } catch (error) {
-      console.error('Could not retrieve access token', error);
-      return null;
+  try {
+    const credentials = await Keychain.getGenericPassword();
+    if (credentials) {
+      console.log('Access token retrieved successfully');
+      return credentials.password;
     }
-  };
+
+    console.log('No access token found');
+    return null;
+  } catch (error) {
+    console.error('Could not retrieve access token', error);
+    return null;
+  }
+};

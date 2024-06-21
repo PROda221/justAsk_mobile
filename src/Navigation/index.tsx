@@ -1,21 +1,22 @@
 import {NavigationContainer} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import AppNavigation from './AppNavigation';
 import AuthNavigation from './AuthStack';
 import {retrieveAccessToken} from '../Functions/EncryptedStorage';
-import { useLogin } from '../Screens/AuthScreens/Login/CustomHooks/useLogin';
-
-
-
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../Redux/rootReducers';
+import {setLoginTrue} from '../Redux/Slices/IsLogInSlice';
 
 const Navigation = (): JSX.Element => {
-  const {loginSuccess} = useLogin()
-  const [auth, setAuth] =
-    useState<string | null>();
+  const islogInSlice = useSelector((state: RootState) => state.isLoginSlice);
+
+  const dispatch = useDispatch();
 
   const getAuth = async () => {
     const token = await retrieveAccessToken();
-    setAuth(token);
+    if (token) {
+      dispatch(setLoginTrue());
+    }
   };
 
   useEffect(() => {
@@ -24,9 +25,7 @@ const Navigation = (): JSX.Element => {
 
   return (
     <NavigationContainer>
-	
-      {loginSuccess?.access_token || auth ? <AppNavigation /> : <AuthNavigation />}
-
+      {islogInSlice.isLogin ? <AppNavigation /> : <AuthNavigation />}
     </NavigationContainer>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
+import {View, Image, TouchableOpacity, Alert} from 'react-native';
 import {Typography} from '../../../Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useProfile} from '../HomeScreen/CustomHooks/useProfile';
@@ -14,37 +14,79 @@ import {
   verticalScale,
 } from '../../../Functions/StyleScale';
 import Header from '../../../Components/Header';
+import {resetAccessToken} from '../../../Functions/EncryptedStorage';
+import {ParamListBase} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useDispatch} from 'react-redux';
+import {setLoginFalse} from '../../../Redux/Slices/IsLogInSlice';
+import {useLogin} from '../../AuthScreens/Login/CustomHooks/useLogin';
 
-const SettingsScreen = () => {
+type PropsType = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+const SettingsScreen = ({navigation}: PropsType) => {
   const {profileSuccess} = useProfile();
   const {colors} = useTheme();
   const styles = getSettingsScreenStyles(colors);
+  const {resetLoginReducer} = useLogin();
+
+  const dispatch = useDispatch();
+
+  const handleListOnPress = () => {
+    console.log('abc');
+  };
+
+  const logout = async () => {
+    await resetAccessToken();
+    resetLoginReducer();
+    dispatch(setLoginFalse());
+  };
+
+  const handleLogout = () => {
+    Alert.alert('Log out', 'Are you sure to logout?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: logout,
+        style: 'cancel',
+      },
+    ]);
+  };
 
   const listData = [
     {
       name: 'Change Password',
       iconName: 'account-circle',
       iconColor: colors.settingsIconColor,
+      onPress: handleListOnPress,
     },
     {
       name: 'Blocked List',
       iconName: 'chat',
       iconColor: colors.settingsIconColor,
+      onPress: handleListOnPress,
     },
     {
       name: 'Invite a friend',
       iconName: 'person-add',
       iconColor: colors.settingsIconColor,
+      onPress: handleListOnPress,
     },
     {
       name: 'Delete Account',
       iconName: 'delete-forever',
       iconColor: colors.settingsDeleteColor,
+      onPress: handleListOnPress,
     },
     {
       name: 'Log out',
       iconName: 'logout',
       iconColor: colors.settingsLogoutColor,
+      onPress: handleLogout,
     },
   ];
 
@@ -95,7 +137,10 @@ const SettingsScreen = () => {
 
       {listData.map((value, index) => {
         return (
-          <TouchableOpacity style={styles.menuItem} key={index}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            key={index}
+            onPress={value.onPress}>
             <Icon
               name={value.iconName}
               size={moderateScale(24)}

@@ -1,8 +1,12 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../../Redux/rootReducers';
-import {callTokenGenerator, resetLoginResponse} from '../../../../Redux/Slices/LoginSlice';
-import { storeAccessToken } from '../../../../Functions/EncryptedStorage';
+import {
+  callTokenGenerator,
+  resetLoginResponse,
+} from '../../../../Redux/Slices/LoginSlice';
+import {storeAccessToken} from '../../../../Functions/EncryptedStorage';
+import {setLoginTrue} from '../../../../Redux/Slices/IsLogInSlice';
 
 export const useLogin = () => {
   const loginSlice = useSelector((state: RootState) => state.loginSlice);
@@ -13,25 +17,27 @@ export const useLogin = () => {
   };
 
   const resetLoginReducer = () => {
-    dispatch(resetLoginResponse())
-  }
+    dispatch(resetLoginResponse());
+  };
 
   const storeToken = async () => {
-    await storeAccessToken(loginSlice.success?.access_token ? loginSlice.success.access_token : '')
-  }
-
+    await storeAccessToken(
+      loginSlice.success?.access_token ? loginSlice.success.access_token : '',
+    );
+  };
 
   useEffect(() => {
     if (loginSlice.success) {
-      storeToken()
+      dispatch(setLoginTrue());
+      storeToken();
     }
   }, [loginSlice.success]);
 
   useEffect(() => {
-    if(loginSlice.error){
-        console.log('error in login :', loginSlice.error)
+    if (loginSlice.error) {
+      console.log('error in login :', loginSlice.error);
     }
-  }, [loginSlice.error])
+  }, [loginSlice.error]);
 
   return {
     callLoginApi,

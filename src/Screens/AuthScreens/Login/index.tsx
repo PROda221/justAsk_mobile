@@ -47,11 +47,8 @@ const LogIn = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
-  const {
-    callLoginApi,
-    resetLoginReducer,
-    loginError,
-  } = useLogin();
+  const {callLoginApi, resetLoginReducer, loginError, loginLoading} =
+    useLogin();
 
   const styles = getLogInScreenStyles(colors);
 
@@ -118,7 +115,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
       {loginError && renderError()}
       <View style={styles.buttonContainer}>
         <CustomButton
-          loading={true}
+          loading={loginLoading}
           label="Login"
           radius={14}
           onPress={handleSubmit(handleLogin)}
