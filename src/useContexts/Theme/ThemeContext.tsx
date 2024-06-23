@@ -64,6 +64,7 @@ const darkColors = {
   settingsIconColor: '#FFFFFF',
   settingsLogoutColor: 'rgba(212, 70, 56, 1)',
   settingsDeleteColor: 'rgba(212, 70, 56, 1)',
+  editProfileButtonBgColor: '#FFFFFF',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

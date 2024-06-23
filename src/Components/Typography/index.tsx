@@ -1,7 +1,7 @@
 import React, {type ReactNode} from 'react';
 import styled from 'styled-components/native';
 import {Text} from 'react-native-paper';
-import { type TextStyle} from 'react-native';
+import {View, type TextStyle} from 'react-native';
 
 type TypographyProps = {
   bgColor: string;
@@ -10,9 +10,10 @@ type TypographyProps = {
   textStyle?: TextStyle[] | TextStyle;
   bullets?: boolean;
   bulletSize?: number;
-  elipses?: "tail" | "head";
-  onPress?: ()=>void;
+  elipses?: 'tail' | 'head';
+  onPress?: () => void;
   numberOfLines?: number;
+  component?: () => JSX.Element;
 };
 
 type StyledTextType = {
@@ -53,15 +54,18 @@ const StyledText = styled(Text)<StyledTextType>`
 export const Typography = (
   props: TypographyProps & Readonly<{children?: ReactNode}>,
 ): JSX.Element => (
-  <StyledText
-    {...props.numberOfLines && {numberOfLines: props.numberOfLines}}
-    numberOfLines={props.numberOfLines}
-    ellipsizeMode={props.elipses}
-    style={props.textStyle}
-    bgColor={props.bgColor}
-    size={props.size}
-    onPress={props.onPress}
-    fontWeight={props.fontWeight}>
-    {props.children}
-  </StyledText>
+  <View style={{flexDirection: 'row'}}>
+    <StyledText
+      {...(props.numberOfLines && {numberOfLines: props.numberOfLines})}
+      numberOfLines={props.numberOfLines}
+      ellipsizeMode={props.elipses}
+      style={props.textStyle}
+      bgColor={props.bgColor}
+      size={props.size}
+      onPress={props.onPress}
+      fontWeight={props.fontWeight}>
+      {props.children}
+    </StyledText>
+    {props.component?.()}
+  </View>
 );

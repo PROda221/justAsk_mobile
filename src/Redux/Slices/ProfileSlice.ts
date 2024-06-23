@@ -10,6 +10,8 @@ import { Endpoints } from '../../Api/Endpoints';
   status: string;
   profilePic: string;
   message: string;
+  adviceGenre: string[];
+  averageRating: Array<{_id: string; averageStars: number}>
 };
 
 type ProfileError = {

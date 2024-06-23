@@ -43,6 +43,15 @@ const SettingsScreen = ({navigation}: PropsType) => {
     console.log('abc');
   };
 
+  const openEditProfile = () => {
+    navigation.navigate('EditProfile', {
+      image: profileSuccess?.profilePic,
+      status: profileSuccess?.status,
+      username: profileSuccess?.username,
+      skills: profileSuccess?.adviceGenre,
+    });
+  };
+
   const logout = async () => {
     await resetAccessToken();
     resetLoginReducer();
@@ -112,7 +121,9 @@ const SettingsScreen = ({navigation}: PropsType) => {
         </Typography>
       </View>
 
-      <View style={styles.profileContainer}>
+      <TouchableOpacity
+        onPress={openEditProfile}
+        style={styles.profileContainer}>
         <Image
           source={{
             uri: `${baseURL}/${profileSuccess?.profilePic}?${new Date()}`,
@@ -143,7 +154,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
             {profileSuccess?.status}
           </Typography>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {listData.map((value, index) => {
         return (
