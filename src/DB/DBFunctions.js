@@ -1,7 +1,62 @@
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
 
-export async function createNewChat(username, profilePic,status, skills) {
+export const updateOrCreateUser = async (
+  username,
+  profilePic,
+  status,
+  skills,
+  emailId,
+  averageRating,
+) => {
+  try{
+    await database.write(async () => {
+      let user = await database.collections
+        .get('users')
+        .query(Q.where('username', username))
+        .fetch();
+  
+      if (user.length > 0) {
+        // User exists, update the user
+        user = user[0];
+        await user.update(u => {
+          u.username = username;
+          u.profilePic = profilePic;
+          u.skills = skills;
+          u.status = JSON.stringify(skills);
+          u.emailId = emailId;
+          u.averageRating = averageRating
+        });
+      } else {
+        // User does not exist, create a new user
+        createNewUser(username, profilePic, status, skills);
+      }
+    });
+  } catch(err){
+    console.log('error updating user:', err)
+  }
+  
+};
+
+export async function createNewUser(username, profilePic, status, skills) {
+  try {
+    await database.write(async () => {
+      const newUser = await database.collections.get('users').create(user => {
+        user.username = username;
+        user.userId = username;
+        user.profilePic = profilePic;
+        user.status = status;
+        user.skills = JSON.stringify(skills);
+      });
+      return newUser;
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+}
+
+export async function createNewChat(username, profilePic, status, skills) {
   try {
     await database.write(async () => {
       const newChat = await database.collections.get('chats').create(chat => {
@@ -9,7 +64,7 @@ export async function createNewChat(username, profilePic,status, skills) {
         chat.chatId = username;
         chat.profilePic = profilePic;
         chat.status = status;
-        chat.skills = JSON.stringify(skills)
+        chat.skills = JSON.stringify(skills);
       });
       console.log('New chat created:', newChat);
       return newChat;

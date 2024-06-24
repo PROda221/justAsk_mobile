@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import RNFetchBlob from 'react-native-blob-util';
 import {Endpoints} from '../../Api/Endpoints';
-import {baseURL} from '../../Constants';
 import {post} from '../../Api/AxiosConfig';
 
 type ProfileUpload = {
@@ -33,7 +31,7 @@ export const callProfileUpload = createAsyncThunk(
         formData.append('status', data.status);
       }
 
-      const response = await post(Endpoints.profileUpload, formData, {
+      const response = await post<ProfileUpload>(Endpoints.profileUpload, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

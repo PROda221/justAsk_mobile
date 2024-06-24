@@ -4,6 +4,20 @@ export const mySchema = appSchema({
   version: 1,
   tables: [
     tableSchema({
+      name: 'users',
+      columns: [
+        {name: 'username', type: 'string'},
+        {name: 'status', type: 'string'},
+        {name: 'profile_pic', type: 'string'},
+        {name: 'skills', type: 'string'},
+        {name: 'emailId', type: 'string'},
+        {name: 'average_rating', type: 'string'},
+        {name: 'user_id', type: 'string', isIndexed: true},
+        {name: 'created_at', type: 'number'},
+        {name: 'updated_at', type: 'number'},
+      ],
+    }),
+    tableSchema({
       name: 'chats',
       columns: [
         {name: 'username', type: 'string'},

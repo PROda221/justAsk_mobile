@@ -29,6 +29,7 @@ const allGenres = [
     "Traveling",
   ];
 
-  const baseURL = Platform.OS === 'android' ? 'http://10.0.2.2:8001' : 'http://localhost:8001'
+  // const baseURL = Platform.OS === 'android' ? 'http://10.0.2.2:8001' : 'http://localhost:8001'
+  const baseURL = "https://justask-backend.onrender.com"
 
   export {allGenres, baseURL}

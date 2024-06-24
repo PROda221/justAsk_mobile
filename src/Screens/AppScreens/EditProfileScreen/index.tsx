@@ -15,12 +15,11 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
-import Entypo from 'react-native-vector-icons/Entypo';
-import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useProfileUpload} from '../../../CustomHooks/AppHooks/useProfileUpload';
+import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -40,12 +39,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   });
   const {image = '', username = '', status = '', skills = []} = route.params;
 
-  const {
-    userProfileSuccess,
-    callGetUserProfileApi,
-    resetUserProfileReducer,
-    userProfileLoading,
-  } = useUserProfile(username);
+  const {profileLoading, profileSuccess} = useProfile();
 
   const {callProfileUploadApi, profileUploadLoading, profileUploadSuccess} =
     useProfileUpload();
@@ -54,11 +48,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   const styles = getEditProfileStyles(colors);
 
   useEffect(() => {
-    callGetUserProfileApi();
-  }, []);
-
-  useEffect(() => {
-    if (profileUploadSuccess?.success) {
+    if (profileUploadSuccess) {
       setEditProfile(false);
     }
   }, [profileUploadSuccess]);
@@ -100,13 +90,9 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     setEditProfile(false);
   };
 
-  const handleBlock = () => {
-    console.log('handle your block state here :');
-  };
-
   const computeData = () => {
-    if (userProfileSuccess?.adviceGenre) {
-      return userProfileSuccess?.adviceGenre;
+    if (profileSuccess?.adviceGenre) {
+      return profileSuccess?.adviceGenre;
     } else if (typeof skills === 'string') {
       return JSON.parse(skills);
     } else {
@@ -140,22 +126,12 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   };
 
   return (
-    <Skeleton.Group show={userProfileLoading}>
+    <Skeleton.Group show={profileLoading}>
       <LinearGradient
         colors={['#868F96', '#596164']}
         style={styles.gradientContainer}>
         <View style={styles.headerContainer}>
-          <Header onPress={resetUserProfileReducer} />
-          <View style={styles.blockIconStyle}>
-            <Skeleton colorMode="light">
-              <Entypo
-                name="block"
-                size={moderateScale(30)}
-                color={colors.blockIconColor}
-                onPress={handleBlock}
-              />
-            </Skeleton>
-          </View>
+          <Header />
         </View>
 
         <View style={styles.container}>
@@ -166,7 +142,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `${newProfileValues.profileImg ?? `${baseURL}/${userProfileSuccess?.profilePic ?? image}?${Date.now()}`}`,
+                  uri: `${newProfileValues.profileImg ?? `${baseURL}/${profileSuccess?.profilePic ?? image}?${Date.now()}`}`,
                 }}
                 style={styles.profileImage}
               />
@@ -190,7 +166,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                 fontWeight="400"
                 bgColor={colors.textPrimaryColor}
                 textStyle={styles.nameText}>
-                {userProfileSuccess?.username || username}
+                {profileSuccess?.username || username}
               </Typography>
             </Skeleton>
           </View>
@@ -211,8 +187,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                   },
                 ]}
                 component={editProfile ? statusEditComponent : undefined}>
-                {newProfileValues.status ??
-                  (userProfileSuccess?.status || status)}
+                {newProfileValues.status ?? (profileSuccess?.status || status)}
               </Typography>
             </Skeleton>
           </View>
@@ -226,10 +201,10 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             />
           </View>
 
-          {userProfileSuccess && userProfileSuccess.averageRating.length > 0 ? (
+          {profileSuccess && profileSuccess.averageRating.length > 0 ? (
             <StarRatingDisplay
               enableHalfStar={false}
-              rating={userProfileSuccess?.averageRating[0].averageStars}
+              rating={profileSuccess?.averageRating[0].averageStars}
             />
           ) : (
             <StarRatingDisplay enableHalfStar={false} rating={0} />

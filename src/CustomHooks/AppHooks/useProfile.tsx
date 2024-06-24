@@ -5,6 +5,7 @@ import {
   resetProfileResponse,
 } from '../../Redux/Slices/ProfileSlice';
 import {useEffect} from 'react';
+import {updateOrCreateUser} from '../../DB/DBFunctions';
 
 export const useProfile = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,22 @@ export const useProfile = () => {
   useEffect(() => {
     if (profileSlice.success) {
       console.log('success is :', profileSlice.success);
+      const {
+        username,
+        adviceGenre,
+        status,
+        profilePic,
+        emailId,
+        averageRating,
+      } = profileSlice.success;
+      updateOrCreateUser(
+        username,
+        profilePic,
+        status,
+        adviceGenre,
+        emailId,
+        averageRating,
+      );
     }
   }, [profileSlice.success]);
 

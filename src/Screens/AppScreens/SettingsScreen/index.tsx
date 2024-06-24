@@ -84,6 +84,12 @@ const SettingsScreen = ({navigation}: PropsType) => {
       onPress: handleChangePass,
     },
     {
+      name: 'My Feedback Page',
+      iconName: 'wechat',
+      iconColor: colors.settingsIconColor,
+      onPress: handleListOnPress,
+    },
+    {
       name: 'Blocked List',
       iconName: 'chat',
       iconColor: colors.settingsIconColor,
