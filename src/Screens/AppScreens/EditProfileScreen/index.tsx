@@ -20,6 +20,7 @@ import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useProfileUpload} from '../../../CustomHooks/AppHooks/useProfileUpload';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -46,12 +47,21 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     userProfileLoading,
   } = useUserProfile(username);
 
+  const {callProfileUploadApi, profileUploadLoading, profileUploadSuccess} =
+    useProfileUpload();
+
   const {colors} = useTheme();
   const styles = getEditProfileStyles(colors);
 
   useEffect(() => {
     callGetUserProfileApi();
   }, []);
+
+  useEffect(() => {
+    if (profileUploadSuccess?.success) {
+      setEditProfile(false);
+    }
+  }, [profileUploadSuccess]);
 
   const changeProfileImg = async () => {
     let filePath = await SheetManager.show('AddProfileImage-sheet');
@@ -64,6 +74,16 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     let status = await SheetManager.show('AddUserStatus-sheet');
     if (status) {
       setNewProfileValues(prev => ({...prev, status}));
+    }
+  };
+
+  const saveHandler = () => {
+    if (newProfileValues.profileImg || newProfileValues.status) {
+      let data = {
+        filePath: newProfileValues.profileImg,
+        status: newProfileValues.status,
+      };
+      callProfileUploadApi(data);
     }
   };
 
@@ -146,7 +166,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `${newProfileValues.profileImg ?? `${baseURL}/${userProfileSuccess?.profilePic ?? image}`}`,
+                  uri: `${newProfileValues.profileImg ?? `${baseURL}/${userProfileSuccess?.profilePic ?? image}?${Date.now()}`}`,
                 }}
                 style={styles.profileImage}
               />
@@ -216,6 +236,18 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
           )}
 
           <View style={styles.feedbackButtonContainer}>
+            {editProfile && (
+              <Skeleton colorMode="light">
+                <CustomButton
+                  onPress={saveHandler}
+                  label={'Save'}
+                  loading={profileUploadLoading}
+                  radius={95}
+                  viewStyle={styles.feedbackSaveButtonStyle}
+                />
+              </Skeleton>
+            )}
+
             <Skeleton colorMode="light">
               <CustomButton
                 onPress={editProfileHandler}

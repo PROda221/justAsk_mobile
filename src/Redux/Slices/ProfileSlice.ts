@@ -15,7 +15,7 @@ import { Endpoints } from '../../Api/Endpoints';
 };
 
 type ProfileError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

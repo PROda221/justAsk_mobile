@@ -6,12 +6,12 @@ import { Endpoints } from '../../Api/Endpoints';
 
 
 type CheckUser = {
-  success: string;
+  success: boolean;
   message: string;  
 }
 
 type CheckUserError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

@@ -17,12 +17,14 @@ function AddProfileImage({payload}: SheetProps<'AddProfileImage-sheet'>) {
   const openGalary = async () => {
     try {
       let res = await ImagePicker.openPicker({
-        path: 'my-file-path.jpg',
+        path: 'my-file-path.png',
         width: 600,
         height: 600,
         cropping: true,
       });
-      const compressedResult = await Compress.compress(`${res.path}`);
+      const compressedResult = await Compress.compress(`${res.path}`, {
+        output: 'png',
+      });
       SheetManager.hide('AddProfileImage-sheet', {
         payload: `${compressedResult}`,
       });
@@ -34,12 +36,14 @@ function AddProfileImage({payload}: SheetProps<'AddProfileImage-sheet'>) {
   const openCamera = async () => {
     try {
       let res = await ImagePicker.openCamera({
-        path: 'my-file-path.jpg',
+        path: 'my-file-path.png',
         width: 600,
         height: 600,
         cropping: true,
       });
-      const compressedResult = await Compress.compress(`${res.path}`);
+      const compressedResult = await Compress.compress(`${res.path}`, {
+        output: 'png',
+      });
       SheetManager.hide('AddProfileImage-sheet', {
         payload: `${compressedResult}`,
       });

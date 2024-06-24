@@ -2,18 +2,18 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
-import { Endpoints } from '../../Api/Endpoints';
+import {Endpoints} from '../../Api/Endpoints';
 
- type SendOtp = {
-  success: string;
+type SendOtp = {
+  success: boolean;
   message: string;
   otp: string;
 };
 
 type SendOtpError = {
-  success: string;
+  success: boolean;
   message: number;
-}
+};
 
 export const callSendOtp = createAsyncThunk(
   'callSendOtp',

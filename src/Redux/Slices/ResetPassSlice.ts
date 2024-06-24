@@ -5,12 +5,12 @@ import {post} from '../../Api/AxiosConfig';
 import { Endpoints } from '../../Api/Endpoints';
 
  type ResetPass = {
-  success: string;
+  success: boolean;
   message: string;
 };
 
 type ResetPassError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

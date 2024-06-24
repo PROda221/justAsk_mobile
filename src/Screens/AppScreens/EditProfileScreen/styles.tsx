@@ -22,6 +22,7 @@ export type EditProfileStyles = {
   statusTextInput: ViewStyle & TextStyle;
   editStatusButton: ViewStyle;
   statusEditStyle: ViewStyle;
+  feedbackSaveButtonStyle: ViewStyle;
 };
 
 export const getEditProfileStyles = (colors): EditProfileStyles =>
@@ -51,6 +52,13 @@ export const getEditProfileStyles = (colors): EditProfileStyles =>
       borderRadius: moderateScale(95),
       height: verticalScale(63.36),
       width: '100%',
+    },
+    feedbackSaveButtonStyle: {
+      backgroundColor: colors.textInputBackgroundColor,
+      borderRadius: moderateScale(95),
+      height: verticalScale(63.36),
+      width: '100%',
+      marginBottom: verticalScale(10),
     },
     gradientContainer: {
       flex: 1,

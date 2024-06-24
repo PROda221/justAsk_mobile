@@ -18,7 +18,7 @@ type UserDetails = {
 };
 
 type UserProfileError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

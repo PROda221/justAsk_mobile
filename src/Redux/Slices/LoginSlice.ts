@@ -10,7 +10,7 @@ import { Endpoints } from '../../Api/Endpoints';
 };
 
 type LoginError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

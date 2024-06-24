@@ -3,7 +3,7 @@ import {post} from '../../Api/AxiosConfig';
 import {Endpoints} from '../../Api/Endpoints';
 
 type SearchUser = {
-  success: string;
+  success: boolean;
   data: Array<{
     username: string;
     adviceGenre: string[];
@@ -16,7 +16,7 @@ type SearchUser = {
 
 type SearchUserError = {
   code: number;
-  success: string;
+  success: boolean;
   message: number;
 };
 

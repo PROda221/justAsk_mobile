@@ -17,6 +17,7 @@ import notificationsSlice from './Slices/NotificationsSlice';
 import userProfileSlice from './Slices/UserProfileSlice';
 import feedbackSlice from './Slices/FeedbackSlice';
 import isLoginSlice from './Slices/IsLogInSlice';
+import profileUpload from './Slices/ProfileUpload';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
 	userProfileSlice,
 	feedbackSlice,
 	isLoginSlice,
+	profileUpload
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

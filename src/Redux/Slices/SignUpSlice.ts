@@ -10,7 +10,7 @@ import { Endpoints } from '../../Api/Endpoints';
 };
 
 type SignUpError = {
-  success: string;
+  success: boolean;
   message: number;
 }
 

@@ -2,17 +2,17 @@
 /* eslint-disable @typescript-eslint/no-throw-literal */
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
-import { Endpoints } from '../../Api/Endpoints';
+import {Endpoints} from '../../Api/Endpoints';
 
- type VerifyOtp = {
-  success: string;
+type VerifyOtp = {
+  success: boolean;
   message: string;
 };
 
 type VerifyOtpError = {
-  success: string;
+  success: boolean;
   message: number;
-}
+};
 
 export const callVerifyOtp = createAsyncThunk(
   'callVerifyOtp',
