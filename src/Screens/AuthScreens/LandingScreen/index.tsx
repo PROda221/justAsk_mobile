@@ -15,7 +15,7 @@ import {CustomButton} from '../../../Components';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import { RenderLoginOptions } from '../../../Components/RenderLoginOptions';
+import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 
 const logoView = (styles: LandingScreenStyles) => (
   <View style={styles.logoView}>
@@ -82,17 +82,18 @@ const LandingScreen = ({navigation}: Props) => {
           style={styles.mainContainer}
           entering={FadeInUp.duration(1000)}>
           {logoView(styles)}
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="600"
-            textStyle={{fontSize: moderateScale(40)}}>
-            {'Welcome to JustAsk'}
-          </Typography>
+          <View style={styles.headerTextContainer}>
+            <Typography
+              bgColor={colors.textPrimaryColor}
+              fontWeight="600"
+              textStyle={styles.headingText}>
+              {'Welcome to JustAsk'}
+            </Typography>
+          </View>
           <RenderLoginSignUp navigation={navigation} styles={styles} />
           <View style={styles.loginOptionsContainer}>
-          <RenderLoginOptions colors={colors} />
+            <RenderLoginOptions colors={colors} />
           </View>
-          
         </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>

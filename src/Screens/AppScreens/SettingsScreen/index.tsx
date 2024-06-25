@@ -40,7 +40,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
   }, [sendOtpSuccess]);
 
   const handleListOnPress = () => {
-    console.log('abc');
+    navigation.navigate('MyFeedback');
   };
 
   const openEditProfile = () => {

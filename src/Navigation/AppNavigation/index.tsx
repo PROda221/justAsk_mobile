@@ -11,6 +11,7 @@ import SettingsScreen from '../../Screens/AppScreens/SettingsScreen';
 import OtpScreen from '../../Screens/AuthScreens/Otp';
 import ResetPassword from '../../Screens/AuthScreens/ResetPassword';
 import EditProfileScreen from '../../Screens/AppScreens/EditProfileScreen';
+import MyFeedbackPage from '../../Screens/AppScreens/MyFeedbackScreen';
 
 const AppStack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ const AppNavigation = () => (
         <AppStack.Screen name="EditProfile" component={EditProfileScreen} />
         <AppStack.Screen name="Otp Screen" component={OtpScreen} />
         <AppStack.Screen name="Reset Password" component={ResetPassword} />
+        <AppStack.Screen name="MyFeedback" component={MyFeedbackPage} />
       </AppStack.Navigator>
     </SheetProvider>
   </SocketProvider>

@@ -15,12 +15,15 @@ export type LandingScreenStyles = {
   loginSignInButton: ViewStyle;
   loginSigninFontStyle: TextStyle;
   loginOptionsContainer: ViewStyle;
+  headingText: TextStyle;
+  headerTextContainer: ViewStyle;
 };
 
 export const getLandingScreenStyles = (colors): LandingScreenStyles =>
   StyleSheet.create<LandingScreenStyles>({
     loginOptionsContainer: {
-      paddingTop: verticalScale(48)
+      alignItems: 'center',
+      paddingTop: verticalScale(48),
     },
     loginSignInButton: {
       backgroundColor: colors.textInputBackgroundColor,
@@ -32,7 +35,7 @@ export const getLandingScreenStyles = (colors): LandingScreenStyles =>
       paddingTop: verticalScale(63),
     },
     loginSigninFontStyle: {
-      fontSize: moderateScale(18)
+      fontSize: moderateScale(18),
     },
     logoView: {
       alignSelf: 'center',
@@ -57,5 +60,11 @@ export const getLandingScreenStyles = (colors): LandingScreenStyles =>
       height: verticalScale(63.36),
       textAlign: 'center',
       width: '100%',
-    }
+    },
+    headingText: {
+      fontSize: moderateScale(40),
+      textAlign: 'center',
+      alignSelf: 'center',
+    },
+    headerTextContainer: {alignItems: 'center'},
   });

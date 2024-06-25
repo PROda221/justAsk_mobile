@@ -5,7 +5,7 @@ import {
   verticalScale,
 } from '../../../Functions/StyleScale';
 
-export type FeedbackScreenStyles = {
+export type MyFeedbackStyles = {
   gradientContainer: ViewStyle;
   giveFeedbackText: TextStyle;
   giveFeedbackStarsStyle: ViewStyle;
@@ -36,8 +36,8 @@ export type FeedbackScreenStyles = {
   loadMoreContainer: ViewStyle;
 };
 
-export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
-  StyleSheet.create<FeedbackScreenStyles>({
+export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
+  StyleSheet.create<MyFeedbackStyles>({
     gradientContainer: {
       flex: 1,
       paddingHorizontal: horizontalScale(16),

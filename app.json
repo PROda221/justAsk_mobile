@@ -1,4 +1,11 @@
 {
   "name": "just_ask",
-  "displayName": "just_ask"
+  "displayName": "just_ask",
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "1113e7f8-54a1-49de-a628-a38ba3e0134e"
+      }
+    }
+  }
 }
