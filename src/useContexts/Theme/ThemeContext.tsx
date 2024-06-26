@@ -65,6 +65,18 @@ const darkColors = {
   settingsLogoutColor: 'rgba(212, 70, 56, 1)',
   settingsDeleteColor: 'rgba(212, 70, 56, 1)',
   editProfileButtonBgColor: '#FFFFFF',
+  toastSuccessBgColor: '#6FCF97',
+  toastSuccessTitleColor: '#0F552C',
+  toastSuccessTextColor: '#135E32',
+  toastSuccessIconColor: '#0F552C',
+  toastErrorBgColor: '#EB5757',
+  toastErrorTitleColor: '#530C0C',
+  toastErrorTextColor: '#7C2424',
+  toastErrorIconColor: '#530C0C',
+  toastInfoBgColor: '#F2C94C',
+  toastInfoTitleColor: '#6E5404',
+  toastInfoTextColor: '#866912',
+  toastInfoIconColor: '#6E5404',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

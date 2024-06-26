@@ -12,7 +12,7 @@ type SendOtp = {
 
 type SendOtpError = {
   success: boolean;
-  message: number;
+  message: string;
 };
 
 export const callSendOtp = createAsyncThunk(

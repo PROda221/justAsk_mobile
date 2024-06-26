@@ -35,6 +35,7 @@ import {
 import {RenderSvg} from '../RenderSvg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type TextInputProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +54,11 @@ type TextInputProps = {
   leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary';
   rightIcon?: 'search' | 'chat';
 };
+
+const ErrorView = styled(View)`
+  flex-direction: row;
+  padding-top: 10px;
+`;
 
 const StyledTextInput = styled(RNTextInput)<{
   secure: boolean;
@@ -134,8 +140,10 @@ const renderLeftIcon = (
           width={horizontalScale(25)}
         />
       );
-    case 'gallary': 
-       return <Entypo name='folder-images' size={moderateScale(25)} color={'white'}/>
+    case 'gallary':
+      return (
+        <Entypo name="folder-images" size={moderateScale(25)} color={'white'} />
+      );
 
     default:
       return null;
@@ -268,13 +276,20 @@ export const TextInput = ({
             )}
           </Container>
           {error && (
-            <Typography
-              bgColor={colors.errorTextSecondary}
-              size="medium"
-              fontWeight="400"
-              textStyle={styles.errorStyle}>
-              {error?.message}
-            </Typography>
+            <ErrorView>
+              <Icon
+                name="info-outline"
+                size={moderateScale(20)}
+                color={colors.errorTextSecondary}
+              />
+              <Typography
+                bgColor={colors.errorTextSecondary}
+                size="medium"
+                fontWeight="400"
+                textStyle={styles.errorStyle}>
+                {error?.message}
+              </Typography>
+            </ErrorView>
           )}
         </>
       )}

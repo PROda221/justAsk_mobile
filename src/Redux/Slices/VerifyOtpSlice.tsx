@@ -11,7 +11,7 @@ type VerifyOtp = {
 
 type VerifyOtpError = {
   success: boolean;
-  message: number;
+  message: string;
 };
 
 export const callVerifyOtp = createAsyncThunk(

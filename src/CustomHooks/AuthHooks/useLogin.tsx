@@ -7,6 +7,7 @@ import {
 } from '../../Redux/Slices/LoginSlice';
 import {storeAccessToken} from '../../Functions/EncryptedStorage';
 import {useIsLogin} from './useIsLogin';
+import Toast from 'react-native-toast-message';
 
 export const useLogin = () => {
   const {userLogedIn} = useIsLogin();
@@ -36,7 +37,12 @@ export const useLogin = () => {
 
   useEffect(() => {
     if (loginSlice.error) {
-      console.log('error in login :', loginSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: loginSlice.error?.message ?? '',
+        visibilityTime: 5000,
+      });
     }
   }, [loginSlice.error]);
 

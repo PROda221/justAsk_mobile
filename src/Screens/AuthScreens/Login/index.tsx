@@ -12,6 +12,7 @@ import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
+import content from '../../../Assets/Languages/english.json';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -29,13 +30,13 @@ const RenderTitle = ({
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Login Your'}
+      {content.LoginScreen.loginTitle1}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Account'}
+      {content.LoginScreen.loginTitle2}
     </Typography>
   </>
 );
@@ -47,8 +48,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
-  const {callLoginApi, resetLoginReducer, loginError, loginLoading} =
-    useLogin();
+  const {callLoginApi, resetLoginReducer, loginLoading} = useLogin();
 
   const styles = getLogInScreenStyles(colors);
 
@@ -56,18 +56,6 @@ const LogIn = ({navigation}: Props): JSX.Element => {
     resetLoginReducer();
     callLoginApi(data);
   };
-
-  const renderError = () => (
-    <View>
-      <Typography
-        bgColor={colors.errorTextPrimary}
-        size="medium"
-        fontWeight="400"
-        textStyle={styles.errorStyle}>
-        {loginError?.message}
-      </Typography>
-    </View>
-  );
 
   const renderGoogleLogin = () => (
     <View style={styles.googleLoginContainer}>
@@ -91,7 +79,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
         label="Username"
         placeholder="Username"
         leftIcon="user"
-        rules={{required: 'Username is required'}}
+        rules={{required: content.LoginScreen.usernameMissing}}
       />
       <View style={styles.textInputContainer}>
         <TextInput
@@ -101,7 +89,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           label="Password"
           placeholder="Password"
           leftIcon="lock"
-          rules={{required: 'Password is required'}}
+          rules={{required: content.LoginScreen.passwordMissing}}
         />
       </View>
       <TouchableOpacity onPress={handleForgotScreen}>
@@ -109,10 +97,9 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.forgotPassText}>
-          {'Forget Password?'}
+          {content.LoginScreen.forgotPassword}
         </Typography>
       </TouchableOpacity>
-      {loginError && renderError()}
       <View style={styles.buttonContainer}>
         <CustomButton
           loading={loginLoading}
@@ -121,19 +108,21 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           onPress={handleSubmit(handleLogin)}
         />
       </View>
-      <Typography
-        bgColor={colors.loginOptionsTextColor}
-        fontWeight="400"
-        textStyle={styles.alreadyHaveAnAccount}>
-        {'Create New Account?'}
+      <View style={styles.newAccountTextContainer}>
+        <Typography
+          bgColor={colors.loginOptionsTextColor}
+          fontWeight="400"
+          textStyle={styles.alreadyHaveAnAccount}>
+          {content.LoginScreen.createNewAccount}
+        </Typography>
         <Typography
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           onPress={() => navigation.navigate('Sign Up')}
           textStyle={styles.alreadyHaveAnAccount}>
-          {' Sign Up'}
+          {content.LoginScreen.signUp}
         </Typography>
-      </Typography>
+      </View>
     </>
   );
 
@@ -143,7 +132,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
         <Animated.View
           entering={FadeInUp.duration(1000)}
           style={styles.mainContainer}>
-          <Header />
+          <Header onPress={resetLoginReducer} />
           <Scroll>
             <View style={styles.titleContainer}>
               <RenderTitle styles={styles} colors={colors} />

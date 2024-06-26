@@ -11,7 +11,7 @@ import { Endpoints } from '../../Api/Endpoints';
 
 type NotificationError = {
   success: boolean;
-  message: number;
+  message: string;
 }
 
 export const sendDeviceToken = createAsyncThunk(

@@ -1,19 +1,12 @@
 {
-  "homeScreen": {
-    "helloNishant": "Hello Nishant",
-    "hello": "hello",
-    "world": "world",
-    "firstcard": "firstcard",
-    "username": "Username",
-    "password": "Password",
-    "onlineCourse": "Online Course",
-    "level4Qualification": "Level 4 Qualifications",
-    "campusCourses": "Campus Courses",
-    "meetTheTeam": "Meet The Team",
-    "ourStudentPortfolios": "Our Student Portfolios",
-    "headerTitle": "Welcome To Lst",
-    "viewAll": "VIEW ALL",
-    "whatOurStudentSay":"What Our students Have To Say...."
+  "LoginScreen": {
+    "forgotPassword":"Forgot Password?",
+    "createNewAccount": "Create New Account?",
+    "signUp": " Sign Up",
+    "loginTitle1": "Login Your",
+    "loginTitle2": "Account",
+    "usernameMissing": "Please enter your username",
+    "passwordMissing": "Please enter your password"
 
   },
   "onlineCourses": {

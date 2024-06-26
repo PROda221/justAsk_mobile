@@ -1,5 +1,9 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {horizontalScale, moderateScale, verticalScale} from '../../../Functions/StyleScale';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../Functions/StyleScale';
 
 export type LogInScreenStyles = {
   title: TextStyle;
@@ -15,34 +19,38 @@ export type LogInScreenStyles = {
   loginOptionsContainer: ViewStyle;
   forgotPassText: TextStyle;
   errorStyle: TextStyle;
+  newAccountTextContainer: ViewStyle;
 };
 
 export const getLogInScreenStyles = (colors): LogInScreenStyles =>
   StyleSheet.create<LogInScreenStyles>({
+    newAccountTextContainer: {flexDirection: 'row'},
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
-      paddingTop: verticalScale(14)
+      paddingTop: verticalScale(14),
+      textAlignVertical: 'center',
+      textAlign: 'center',
     },
     buttonContainer: {
-      paddingTop: verticalScale(18)
+      paddingTop: verticalScale(18),
     },
     errorStyle: {
-      fontFamily: 'Urbanist-SemiBold'
+      fontFamily: 'Urbanist-SemiBold',
     },
     forgotPassText: {
       color: colors.loginOptionsTextColor,
       fontSize: moderateScale(14),
       paddingTop: verticalScale(14),
-      textAlign: 'right'
+      textAlign: 'right',
     },
     formContainer: {
-      paddingTop: verticalScale(49)
+      paddingTop: verticalScale(49),
     },
     googleLoginContainer: {
-      paddingTop: verticalScale(35)
+      paddingTop: verticalScale(35),
     },
     loginOptionsContainer: {
-      paddingTop: verticalScale(23)
+      paddingTop: verticalScale(23),
     },
     mainContainer: {
       flex: 1,
@@ -57,13 +65,13 @@ export const getLogInScreenStyles = (colors): LogInScreenStyles =>
       borderBottomColor: colors.seperatorColor,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    textInputContainer: { paddingTop: verticalScale(18)},
+    textInputContainer: {paddingTop: verticalScale(18)},
     title: {
       fontFamily: 'Urbanist-SemiBold',
       fontSize: moderateScale(39),
       textAlign: 'left',
     },
     titleContainer: {
-      paddingTop: verticalScale(74)
-    }
+      paddingTop: verticalScale(74),
+    },
   });

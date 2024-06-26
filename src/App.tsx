@@ -1,4 +1,4 @@
-import 'react-native-reanimated'
+import 'react-native-reanimated';
 import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
 import Navigation from './Navigation';
@@ -7,7 +7,9 @@ import store from './Redux/store.ts';
 import {PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './useContexts/Theme/ThemeContext.tsx';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import Toast from 'react-native-toast-message';
 import './Components/ActionSheet/sheets.tsx';
+import {toastConfig} from './Components/CustomToast/index.tsx';
 
 const App = (): JSX.Element => {
   useEffect(() => {
@@ -19,6 +21,7 @@ const App = (): JSX.Element => {
       <PaperProvider>
         <ThemeProvider>
           <Navigation />
+          <Toast config={toastConfig} />
         </ThemeProvider>
       </PaperProvider>
     </Provider>

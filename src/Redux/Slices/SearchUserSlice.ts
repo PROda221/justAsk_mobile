@@ -17,7 +17,7 @@ type SearchUser = {
 type SearchUserError = {
   code: number;
   success: boolean;
-  message: number;
+  message: string;
 };
 
 export const callSearchUser = createAsyncThunk(

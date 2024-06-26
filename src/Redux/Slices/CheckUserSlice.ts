@@ -12,7 +12,7 @@ type CheckUser = {
 
 type CheckUserError = {
   success: boolean;
-  message: number;
+  message: string;
 }
 
 export const callCheckUser = createAsyncThunk(

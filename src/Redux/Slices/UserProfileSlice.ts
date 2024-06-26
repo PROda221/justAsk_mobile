@@ -19,7 +19,7 @@ type UserDetails = {
 
 type UserProfileError = {
   success: boolean;
-  message: number;
+  message: string;
 }
 
 export const callGetUserProfile = createAsyncThunk(
