@@ -5,11 +5,7 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {LandingScreenStyles, getLandingScreenStyles} from './styles';
 import {RenderSvg} from '../../../Components/RenderSvg';
 import {justAskTempLogo} from '../../../Assets/Images';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../../Functions/StyleScale';
+import {horizontalScale, verticalScale} from '../../../Functions/StyleScale';
 import {Typography} from '../../../Components';
 import {CustomButton} from '../../../Components';
 import {ParamListBase} from '@react-navigation/native';

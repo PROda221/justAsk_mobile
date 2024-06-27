@@ -11,11 +11,9 @@ import {
   addMessageToChat,
   createNewChat,
 } from './src/DB/DBFunctions';
-import notifee, {
-  EventType,
-} from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 
-// notifee.onBackgroundEvent(async ({detail, type}) => {
+// Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
 //   console.log('notification in notifee :', detail.notification);
   
@@ -27,7 +25,7 @@ import notifee, {
 // });
 
 const displayNotification = async (notifeeData) => {
-  const channelId = await notifee.createChannel({
+  await notifee.createChannel({
     id: 'test',
     name: 'test',
   });
@@ -46,9 +44,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       }
       await addMessageToChat(senderUsername, message, true, type);
     }
-    console.log('Message handled in the background!', remoteMessage);
   } catch (err) {
-    console.log('local db error :', err);
+    throw new Error('local db error :', err);
   }
 });
 

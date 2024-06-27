@@ -4,8 +4,9 @@ import {StyleSheet, View} from 'react-native';
 import {CustomButton} from '../CustomButton';
 import {Typography} from '../Typography';
 import {verticalScale, horizontalScale} from '../../Functions/StyleScale';
+import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
-export const RenderLoginOptions = ({colors}: {colors: any}) => {
+export const RenderLoginOptions = ({colors}: {colors: DarkColors}) => {
   const googleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();

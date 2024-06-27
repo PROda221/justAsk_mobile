@@ -36,9 +36,9 @@ import {RenderSvg} from '../RenderSvg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
 type TextInputProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: UseFormReturn<any>['control'];
   name: string;
   label?: string;
@@ -63,7 +63,7 @@ const ErrorView = styled(View)`
 const StyledTextInput = styled(RNTextInput)<{
   secure: boolean;
   rightIcon: boolean;
-  contextStyle: unknown;
+  contextStyle: DarkColors;
   error: FieldError | undefined;
 }>`
   font-size: 15px;

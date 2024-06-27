@@ -6,10 +6,11 @@ import React, {
   type ReactNode,
   type FC,
 } from 'react';
+import {type DarkColors} from './ThemeType';
 
 type ThemeContextType = {
   theme: string;
-  colors: Record<string, string>;
+  colors: DarkColors;
   toggleTheme: () => void;
 };
 
@@ -21,7 +22,7 @@ const lightColors = {
   secondary: '#f39c12',
 };
 
-const darkColors = {
+const darkColors: DarkColors = {
   primaryBackgroundColor: '#000000',
   secondaryBackgroundColor: '#232627',
   appScreenPrimaryBackground: '#292F3F',
@@ -81,7 +82,7 @@ const darkColors = {
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'light',
-  colors: lightColors,
+  colors: darkColors,
   toggleTheme() {},
 });
 
@@ -94,7 +95,7 @@ export const ThemeProvider: FC<{children: ReactNode}> = ({
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
-  const colors = theme === 'light' ? lightColors : darkColors;
+  const colors = theme === 'light' ? darkColors : darkColors;
 
   return (
     <ThemeContext.Provider value={{theme, colors, toggleTheme}}>

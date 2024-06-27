@@ -7,12 +7,13 @@ import {LogInScreenStyles, getLogInScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {useForm} from 'react-hook-form';
+import {FieldValues, useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
 import content from '../../../Assets/Languages/english.json';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -23,7 +24,7 @@ const RenderTitle = ({
   colors,
 }: {
   styles: LogInScreenStyles;
-  colors: any;
+  colors: DarkColors;
 }) => (
   <>
     <Typography
@@ -52,9 +53,9 @@ const LogIn = ({navigation}: Props): JSX.Element => {
 
   const styles = getLogInScreenStyles(colors);
 
-  const handleLogin = (data: {username: string; password: string}) => {
+  const handleLogin = (data: FieldValues) => {
     resetLoginReducer();
-    callLoginApi(data);
+    callLoginApi({username: data.username, password: data.password});
   };
 
   const renderGoogleLogin = () => (
