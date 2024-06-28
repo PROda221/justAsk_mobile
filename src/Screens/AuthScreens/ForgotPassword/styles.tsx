@@ -1,9 +1,10 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {StyleSheet, type TextStyle, type ViewStyle} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type ForgotPassScreenStyles = {
   title: TextStyle;
@@ -20,13 +21,20 @@ export type ForgotPassScreenStyles = {
   loginOptionsContainer: ViewStyle;
   forgotPassText: TextStyle;
   errorStyle: TextStyle;
+  alreadyHaveAnAccountContainer: ViewStyle;
 };
 
-export const getForgotPassScreenStyles = (colors): ForgotPassScreenStyles =>
+export const getForgotPassScreenStyles = (
+  colors: DarkColors,
+): ForgotPassScreenStyles =>
   StyleSheet.create<ForgotPassScreenStyles>({
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
       paddingTop: verticalScale(14),
+    },
+    alreadyHaveAnAccountContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
     },
     buttonContainer: {
       paddingTop: verticalScale(18),

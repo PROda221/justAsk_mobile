@@ -1,5 +1,5 @@
 import {ScrollView, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
@@ -14,6 +14,8 @@ import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
 import content from '../../../Assets/Languages/english.json';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import ErrorBox from '../../../Components/ErrorBox';
+import {useIsFocused} from '@react-navigation/native';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -48,8 +50,17 @@ const LogIn = ({navigation}: Props): JSX.Element => {
     flex-grow: 1;
   `;
 
+  const isFocused = useIsFocused();
   const {colors} = useTheme();
-  const {callLoginApi, resetLoginReducer, loginLoading} = useLogin();
+
+  useEffect(() => {
+    if (!isFocused) {
+      resetLoginReducer();
+    }
+  }, [isFocused]);
+
+  const {callLoginApi, resetLoginReducer, loginLoading, loginError} =
+    useLogin();
 
   const styles = getLogInScreenStyles(colors);
 
@@ -104,6 +115,12 @@ const LogIn = ({navigation}: Props): JSX.Element => {
           {content.LoginScreen.forgotPassword}
         </Typography>
       </TouchableOpacity>
+      {loginError && (
+        <ErrorBox
+          title={`${content.LoginScreen.errorBoxTitle}`}
+          message={loginError.message}
+        />
+      )}
       <View style={styles.buttonContainer}>
         <CustomButton
           loading={loginLoading}

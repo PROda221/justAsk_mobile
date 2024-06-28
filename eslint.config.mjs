@@ -47,6 +47,7 @@ export default [{
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-call": "off",
+        "capitalized-comments": "off",
         "@typescript-eslint/no-throw-literal": "off",
         "react-native/no-raw-text": "off",
 

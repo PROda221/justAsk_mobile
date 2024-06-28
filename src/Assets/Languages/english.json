@@ -7,7 +7,8 @@
     "loginTitle2": "Account",
     "usernameMissing": "Please enter your username",
     "passwordMissing": "Please enter your password",
-    "continueWithGoogle": "Continue with Google"
+    "continueWithGoogle": "Continue with Google",
+    "errorBoxTitle": "Error"
   },
   "LandingScreen": {
     "welcometoJustAsk": "Welcome to JustAsk"
@@ -32,6 +33,16 @@
     "title2": "Expertise",
     "subtitle": "Select some topics on which you can advice people!"
 
+  },
+  "ForgotPasswordScreen": {
+    "title1": "Forget Password",
+    "title2": "We will use email address to reset your password",
+    "invalidEmail": "Whoops! That email doesn’t look right. Please check and try again.",
+    "emailMissing": "Please enter your email.",
+    "enterEmail": "Enter Your Email",
+    "createNewAccount": "Create New Account?",
+    "signUp": " Sign Up",
+    "nextButton": "Next"
   },
   "onlineCourses": {
     "title": "Our Online Courses"

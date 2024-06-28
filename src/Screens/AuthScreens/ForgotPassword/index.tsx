@@ -3,15 +3,17 @@ import React, {useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {ForgotPassScreenStyles, getForgotPassScreenStyles} from './styles';
+import {type ForgotPassScreenStyles, getForgotPassScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {useForm} from 'react-hook-form';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type FieldValues, type SubmitHandler, useForm} from 'react-hook-form';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
 import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import content from '../../../Assets/Languages/english.json';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -22,20 +24,20 @@ const RenderTitle = ({
   colors,
 }: {
   styles: ForgotPassScreenStyles;
-  colors: any;
+  colors: DarkColors;
 }) => (
   <>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Forget Password'}
+      {content.ForgotPasswordScreen.title1}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.subTitle}>
-      {'We will use email address to reset your password'}
+      {content.ForgotPasswordScreen.title2}
     </Typography>
   </>
 );
@@ -57,10 +59,10 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
 
   const styles = getForgotPassScreenStyles(colors);
 
-  const handleNextButton = (data: {emailId: string}) => {
-    setEmail(data.emailId);
+  const handleNextButton: SubmitHandler<FieldValues> = (data: FieldValues) => {
+    setEmail(data.emailId as string);
     resetSendOtpReducer();
-    callSendOtpApi(data);
+    callSendOtpApi(data as {emailId: string});
   };
 
   const renderError = () => (
@@ -82,13 +84,13 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
         secureTextEntry={false}
         control={control}
         label="Email Address"
-        placeholder="Enter Your Email"
+        placeholder={`${content.ForgotPasswordScreen.enterEmail}`}
         leftIcon="email"
         rules={{
-          required: 'Email is reqired',
+          required: content.ForgotPasswordScreen.emailMissing,
           pattern: {
             value: Regex.emailid,
-            message: 'Invalid Email Enetered',
+            message: `${content.ForgotPasswordScreen.invalidEmail}`,
           },
         }}
       />
@@ -96,23 +98,25 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
       <View style={styles.buttonContainer}>
         <CustomButton
           onPress={handleSubmit(handleNextButton)}
-          label="Next"
+          label={`${content.ForgotPasswordScreen.nextButton}`}
           radius={14}
         />
       </View>
-      <Typography
-        bgColor={colors.loginOptionsTextColor}
-        fontWeight="400"
-        textStyle={styles.alreadyHaveAnAccount}>
-        {'Create New Account?'}
+      <View style={styles.alreadyHaveAnAccountContainer}>
+        <Typography
+          bgColor={colors.loginOptionsTextColor}
+          fontWeight="400"
+          textStyle={styles.alreadyHaveAnAccount}>
+          {content.ForgotPasswordScreen.createNewAccount}
+        </Typography>
         <Typography
           onPress={() => navigation.navigate('Sign Up')}
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.alreadyHaveAnAccount}>
-          {' Sign Up'}
+          {content.ForgotPasswordScreen.signUp}
         </Typography>
-      </Typography>
+      </View>
     </>
   );
 
