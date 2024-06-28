@@ -3,16 +3,16 @@ import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {ResetPassScreenStyles, getResetPassScreenStyles} from './styles';
+import {type ResetPassScreenStyles, getResetPassScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {useForm} from 'react-hook-form';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase, type RouteProp} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../Redux/rootReducers';
+import {type RootState} from '../../../Redux/rootReducers';
 import {useResetPass} from '../../../CustomHooks/AuthHooks/useResetPass';
 
 type Props = {

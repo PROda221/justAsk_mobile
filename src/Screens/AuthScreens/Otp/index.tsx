@@ -3,12 +3,12 @@ import React, {useRef, useState} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {OtpScreenStyles, getOtpScreenStyles} from './styles';
+import {type OtpScreenStyles, getOtpScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase, type RouteProp} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import OTPTextView from 'react-native-otp-textinput';
 import {useVerifyOtp} from '../../../CustomHooks/AuthHooks/useVerifyOtp';
 import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
@@ -41,7 +41,7 @@ const RenderTitle = ({
   </>
 );
 
-let otpValue: Array<string> | undefined = [];
+let otpValue: string[] | undefined = [];
 
 const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   const [otpLengthError, setOtpLengthError] = useState(false);
