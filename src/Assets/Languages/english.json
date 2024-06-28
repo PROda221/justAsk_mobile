@@ -6,7 +6,31 @@
     "loginTitle1": "Login Your",
     "loginTitle2": "Account",
     "usernameMissing": "Please enter your username",
-    "passwordMissing": "Please enter your password"
+    "passwordMissing": "Please enter your password",
+    "continueWithGoogle": "Continue with Google"
+  },
+  "LandingScreen": {
+    "welcometoJustAsk": "Welcome to JustAsk"
+  },
+  "SignInScreen": {
+    "title1": "Create Your",
+    "title2": "Account",
+    "usernameMissing": "Please enter your username.",
+    "passwordMissing": "Please enter your password.",
+    "emailMissing": "Please enter your email.",
+    "invalidEmail": "Whoops! That email doesn’t look right. Please check and try again.",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "passwordRequirement": "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+    "alreadyAccount": "Already Have An Account?",
+    "signIn": " Sign In",
+    "errorBoxTitle": "Error"
+  },
+  "SelectGenres": {
+    "title1": "Select Your",
+    "title2": "Expertise",
+    "subtitle": "Select some topics on which you can advice people!"
 
   },
   "onlineCourses": {

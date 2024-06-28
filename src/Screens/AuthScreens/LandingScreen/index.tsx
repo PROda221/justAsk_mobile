@@ -2,16 +2,17 @@ import React from 'react';
 import {View} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {LandingScreenStyles, getLandingScreenStyles} from './styles';
+import {type LandingScreenStyles, getLandingScreenStyles} from './styles';
 import {RenderSvg} from '../../../Components/RenderSvg';
 import {justAskTempLogo} from '../../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../../Functions/StyleScale';
 import {Typography} from '../../../Components';
 import {CustomButton} from '../../../Components';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
+import content from '../../../Assets/Languages/english.json';
 
 const logoView = (styles: LandingScreenStyles) => (
   <View style={styles.logoView}>
@@ -83,7 +84,7 @@ const LandingScreen = ({navigation}: Props) => {
               bgColor={colors.textPrimaryColor}
               fontWeight="600"
               textStyle={styles.headingText}>
-              {'Welcome to JustAsk'}
+              {content.LandingScreen.welcometoJustAsk}
             </Typography>
           </View>
           <RenderLoginSignUp navigation={navigation} styles={styles} />

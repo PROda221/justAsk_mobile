@@ -78,6 +78,14 @@ const darkColors: DarkColors = {
   toastInfoTitleColor: '#6E5404',
   toastInfoTextColor: '#866912',
   toastInfoIconColor: '#6E5404',
+  infoBoxBgColor: '#F2C94C',
+  infoBoxBorderColor: '#F2C94C',
+  infoBoxTextColor: '#333',
+  infoBoxIconColor: '#6E5404',
+  errorBoxBgColor: '#EB5757',
+  errorBoxBorderColor: '#EB5757',
+  errorBoxTextColor: '#333',
+  errorBoxIconColor: '#530C0C',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

@@ -4,14 +4,14 @@ import {StyleSheet, View} from 'react-native';
 import {CustomButton} from '../CustomButton';
 import {Typography} from '../Typography';
 import {verticalScale, horizontalScale} from '../../Functions/StyleScale';
-import {DarkColors} from '../../useContexts/Theme/ThemeType';
+import {type DarkColors} from '../../useContexts/Theme/ThemeType';
+import content from '../../Assets/Languages/english.json';
 
 export const RenderLoginOptions = ({colors}: {colors: DarkColors}) => {
   const googleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('userInfo :', userInfo);
       // SetState({ userInfo });
     } catch (error) {
       if (error.code === 'SIGN_IN_CANCELLED') {
@@ -31,12 +31,12 @@ export const RenderLoginOptions = ({colors}: {colors: DarkColors}) => {
   };
 
   return (
-    <View>
+    <View style={styles.googleLoginContainer}>
       <Typography
         bgColor={colors.loginOptionsTextColor}
         fontWeight="400"
         size="large">
-        {'Continue With Google'}
+        {content.LoginScreen.continueWithGoogle}
       </Typography>
       <View style={styles.googleLoginButtonContainer}>
         <CustomButton
@@ -60,7 +60,9 @@ const styles = StyleSheet.create({
     width: horizontalScale(165),
   },
   googleLoginButtonContainer: {
-    alignItems: 'center',
     paddingTop: verticalScale(23),
+  },
+  googleLoginContainer: {
+    alignItems: 'center',
   },
 });

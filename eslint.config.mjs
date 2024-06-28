@@ -50,11 +50,6 @@ export default [{
         "@typescript-eslint/no-throw-literal": "off",
         "react-native/no-raw-text": "off",
 
-        "no-restricted-syntax": ["error", {
-            selector: "CallExpression[callee.object.name='console'][callee.property.name=/^(log|warn|error|info|trace)$/]",
-            message: "Unexpected console statement.",
-        }],
-
         "react/jsx-filename-extension": [1, {
             extensions: [".ts", ".tsx", ".js", ".jsx"],
         }],

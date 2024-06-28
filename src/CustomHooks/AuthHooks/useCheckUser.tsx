@@ -1,9 +1,9 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootState} from '../../Redux/rootReducers';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type RootState} from '../../Redux/rootReducers';
 import {
   callCheckUser,
   resetCheckUserResponse,
@@ -42,7 +42,7 @@ export const useCheckUser = (
 
   useEffect(() => {
     if (checkUserSlice.error) {
-      console.log('error in login :', checkUserSlice.error);
+      console.log('error in checkUser :', checkUserSlice.error.message);
     }
   }, [checkUserSlice.error]);
 

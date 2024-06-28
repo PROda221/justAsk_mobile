@@ -3,56 +3,71 @@ import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {SelectGenresScreenStyles, getSelectGenresScreenStyles} from './styles';
+import {
+  type SelectGenresScreenStyles,
+  getSelectGenresScreenStyles,
+} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase, type RouteProp} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {allGenres} from '../../../Constants';
 import GenreSelector from './GenreSelector';
 import {useSignIn} from '../../../CustomHooks/AuthHooks/useSIgnIn';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import content from '../../../Assets/Languages/english.json';
 
+type Params = {
+  params: {
+    data: {
+      emailId: string;
+      password: string;
+      username: string;
+    };
+  };
+};
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
+  route: RouteProp<Params>;
 };
 
-let adviceGenre: Array<string> = ['', '', ''];
+let adviceGenre: string[] = ['', '', ''];
 
 const RenderTitle = ({
   styles,
   colors,
 }: {
   styles: SelectGenresScreenStyles;
-  colors: any;
+  colors: DarkColors;
 }) => (
   <>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Select Your'}
+      {content.SelectGenres.title1}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Expertise'}
+      {content.SelectGenres.title2}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.subTitle}>
-      {'Select some topics on which you can advice people!'}
+      {content.SelectGenres.subtitle}
     </Typography>
   </>
 );
 
 const SelectGenres = ({navigation, route}: Props): JSX.Element => {
-  const {emailId, password, username} = route.params?.data;
-  const {callSignUpApi, resetSignUpReducer, signUpError} = useSignIn(
+  const {emailId, password, username} = route.params.data;
+  const {callSignUpApi, signUpError, signUpLoading} = useSignIn(
     navigation,
+    'LandingScreen',
     'Login',
   );
   const Scroll = styled(ScrollView)`
@@ -64,11 +79,10 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
   const styles = getSelectGenresScreenStyles(colors);
 
   const handleSignUp = () => {
-    resetSignUpReducer();
     callSignUpApi({emailId, password, username, adviceGenre});
   };
 
-  const handleSelectedValues = (value: Array<string>) => {
+  const handleSelectedValues = (value: string[]) => {
     adviceGenre = value;
   };
 
@@ -92,7 +106,12 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
       />
       {signUpError && renderError()}
       <View style={styles.buttonContainer}>
-        <CustomButton label="Sign Up" radius={14} onPress={handleSignUp} />
+        <CustomButton
+          loading={signUpLoading}
+          label="Sign Up"
+          radius={14}
+          onPress={handleSignUp}
+        />
       </View>
     </>
   );

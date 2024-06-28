@@ -3,17 +3,25 @@ import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {SignUpScreenStyles, getSignUpScreenStyles} from './styles';
+import {type SignUpScreenStyles, getSignUpScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {useForm} from 'react-hook-form';
+import {type FieldValues, type SubmitHandler, useForm} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Regex} from '../../../Functions/Regex';
 import {useCheckUser} from '../../../CustomHooks/AuthHooks/useCheckUser';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import content from '../../../Assets/Languages/english.json';
+import ErrorBox from '../../../Components/ErrorBox';
 
+type FormDataType = {
+  username: string;
+  emailId: string;
+  password: string;
+};
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
 };
@@ -23,28 +31,32 @@ const RenderTitle = ({
   colors,
 }: {
   styles: SignUpScreenStyles;
-  colors: any;
+  colors: DarkColors;
 }) => (
   <>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Create Your'}
+      {content.SignInScreen.title1}
     </Typography>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Account'}
+      {content.SignInScreen.title2}
     </Typography>
   </>
 );
 
 const SignUp = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
-  const {callCheckUserApi, resetCheckUserReducer, checkUserError} =
-    useCheckUser(navigation, 'Select Genres');
+  const {
+    callCheckUserApi,
+    resetCheckUserReducer,
+    checkUserError,
+    checkUserLoading,
+  } = useCheckUser(navigation, 'Select Genres');
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
   `;
@@ -53,26 +65,9 @@ const SignUp = ({navigation}: Props): JSX.Element => {
 
   const styles = getSignUpScreenStyles(colors);
 
-  const handleSignUp = (data: {
-    username: string;
-    emailId: string;
-    password: string;
-  }) => {
-    resetCheckUserReducer();
-    callCheckUserApi(data);
+  const handleSignUp: SubmitHandler<FieldValues> = data => {
+    callCheckUserApi(data as FormDataType);
   };
-
-  const renderError = () => (
-    <View>
-      <Typography
-        bgColor={colors.errorTextPrimary}
-        size="medium"
-        fontWeight="400"
-        textStyle={styles.errorStyle}>
-        {checkUserError?.message}
-      </Typography>
-    </View>
-  );
 
   const renderGoogleLogin = () => (
     <View style={styles.googleLoginContainer}>
@@ -89,24 +84,24 @@ const SignUp = ({navigation}: Props): JSX.Element => {
         name="username"
         secureTextEntry={false}
         control={control}
-        label="Username"
-        placeholder="Username"
+        label={`${content.SignInScreen.username}`}
+        placeholder={`${content.SignInScreen.username}`}
         leftIcon="user"
-        rules={{required: 'Username is reqired'}}
+        rules={{required: content.SignInScreen.usernameMissing}}
       />
       <View style={styles.textInputContainer}>
         <TextInput
           name="emailId"
           secureTextEntry={false}
           control={control}
-          label="Enter Your Email"
-          placeholder="Enter Your Email"
+          label={content.SignInScreen.email}
+          placeholder={content.SignInScreen.email}
           leftIcon="email"
           rules={{
-            required: 'Email is reqired',
+            required: content.SignInScreen.emailMissing,
             pattern: {
               value: Regex.emailid,
-              message: 'Invalid Email Enetered',
+              message: `${content.SignInScreen.invalidEmail}`,
             },
           }}
         />
@@ -116,40 +111,47 @@ const SignUp = ({navigation}: Props): JSX.Element => {
           name="password"
           secureTextEntry={true}
           control={control}
-          label="Password"
-          placeholder="Password"
+          label={content.SettingScreen.password}
+          placeholder={content.SettingScreen.password}
           leftIcon="lock"
           rules={{
-            required: 'Password is reqired',
+            required: content.SignInScreen.passwordMissing,
             pattern: {
               value: Regex.password,
-              message:
-                'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
+              message: `${content.SignInScreen.passwordRequirement}`,
             },
           }}
         />
       </View>
-      {checkUserError && renderError()}
+      {checkUserError && (
+        <ErrorBox
+          title={`${content.SignInScreen.errorBoxTitle}`}
+          message={checkUserError.message}
+        />
+      )}
       <View style={styles.buttonContainer}>
         <CustomButton
+          loading={checkUserLoading}
           label="Register"
           radius={14}
           onPress={handleSubmit(handleSignUp)}
         />
       </View>
-      <Typography
-        bgColor={colors.loginOptionsTextColor}
-        fontWeight="400"
-        textStyle={styles.alreadyHaveAnAccount}>
-        {'Already Have An Account?'}
+      <View style={styles.alreadyHaveAnAccountContainer}>
+        <Typography
+          bgColor={colors.loginOptionsTextColor}
+          fontWeight="400"
+          textStyle={styles.alreadyHaveAnAccount}>
+          {content.SignInScreen.alreadyAccount}
+        </Typography>
         <Typography
           onPress={() => navigation.navigate('Login')}
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.alreadyHaveAnAccount}>
-          {' Sign In'}
+          {content.SignInScreen.signIn}
         </Typography>
-      </Typography>
+      </View>
     </>
   );
 
@@ -159,7 +161,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
         <Animated.View
           entering={FadeInUp.duration(1000)}
           style={styles.mainContainer}>
-          <Header />
+          <Header onPress={resetCheckUserReducer} />
           <Scroll>
             <View style={styles.titleContainer}>
               <RenderTitle styles={styles} colors={colors} />

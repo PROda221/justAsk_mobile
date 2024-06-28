@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../Redux/rootReducers';
+import {type RootState} from '../../Redux/rootReducers';
 import {
   callTokenGenerator,
   resetLoginResponse,
@@ -22,17 +22,19 @@ export const useLogin = () => {
     dispatch(resetLoginResponse());
   };
 
-  const storeToken = async () => {
-    await storeAccessToken(
-      loginSlice.success?.access_token ? loginSlice.success.access_token : '',
-    );
-  };
-
   useEffect(() => {
-    if (loginSlice.success) {
-      userLogedIn();
-      storeToken();
-    }
+    const storeTokenAsync = async () => {
+      if (loginSlice.success) {
+        userLogedIn();
+        await storeAccessToken(
+          loginSlice.success?.access_token
+            ? loginSlice.success.access_token
+            : '',
+        );
+      }
+    };
+
+    void storeTokenAsync();
   }, [loginSlice.success]);
 
   useEffect(() => {

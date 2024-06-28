@@ -1,9 +1,10 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {StyleSheet, type TextStyle, type ViewStyle} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type LogInScreenStyles = {
   title: TextStyle;
@@ -22,14 +23,13 @@ export type LogInScreenStyles = {
   newAccountTextContainer: ViewStyle;
 };
 
-export const getLogInScreenStyles = (colors): LogInScreenStyles =>
+export const getLogInScreenStyles = (colors: DarkColors): LogInScreenStyles =>
   StyleSheet.create<LogInScreenStyles>({
-    newAccountTextContainer: {flexDirection: 'row'},
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
       paddingTop: verticalScale(14),
-      textAlignVertical: 'center',
       textAlign: 'center',
+      textAlignVertical: 'center',
     },
     buttonContainer: {
       paddingTop: verticalScale(18),
@@ -57,6 +57,7 @@ export const getLogInScreenStyles = (colors): LogInScreenStyles =>
       justifyContent: 'center',
       paddingHorizontal: horizontalScale(18),
     },
+    newAccountTextContainer: {flexDirection: 'row'},
     safeAreaContainer: {
       backgroundColor: colors.primaryBackgroundColor,
       flex: 1,

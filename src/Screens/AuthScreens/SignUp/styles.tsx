@@ -1,9 +1,10 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {StyleSheet, type TextStyle, type ViewStyle} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type SignUpScreenStyles = {
   title: TextStyle;
@@ -18,13 +19,18 @@ export type SignUpScreenStyles = {
   googleLoginContainer: ViewStyle;
   loginOptionsContainer: ViewStyle;
   errorStyle: TextStyle;
+  alreadyHaveAnAccountContainer: ViewStyle;
 };
 
-export const getSignUpScreenStyles = (colors): SignUpScreenStyles =>
+export const getSignUpScreenStyles = (colors: DarkColors): SignUpScreenStyles =>
   StyleSheet.create<SignUpScreenStyles>({
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
       paddingTop: verticalScale(14),
+    },
+    alreadyHaveAnAccountContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
     },
     buttonContainer: {
       paddingTop: verticalScale(18),

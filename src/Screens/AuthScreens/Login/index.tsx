@@ -3,17 +3,17 @@ import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {LogInScreenStyles, getLogInScreenStyles} from './styles';
+import {type LogInScreenStyles, getLogInScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Header from '../../../Components/Header';
 import Animated, {FadeInUp} from 'react-native-reanimated';
-import {FieldValues, useForm} from 'react-hook-form';
+import {type FieldValues, useForm, type SubmitHandler} from 'react-hook-form';
 import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
 import content from '../../../Assets/Languages/english.json';
-import {DarkColors} from '../../../useContexts/Theme/ThemeType';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -53,9 +53,12 @@ const LogIn = ({navigation}: Props): JSX.Element => {
 
   const styles = getLogInScreenStyles(colors);
 
-  const handleLogin = (data: FieldValues) => {
+  const handleLogin: SubmitHandler<FieldValues> = (data: FieldValues) => {
     resetLoginReducer();
-    callLoginApi({username: data.username, password: data.password});
+    callLoginApi({
+      username: data.username as string,
+      password: data.password as string,
+    });
   };
 
   const renderGoogleLogin = () => (

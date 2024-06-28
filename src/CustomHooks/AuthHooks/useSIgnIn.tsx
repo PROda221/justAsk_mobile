@@ -1,13 +1,15 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootState} from '../../Redux/rootReducers';
+import {CommonActions, type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type RootState} from '../../Redux/rootReducers';
 import {callSignIn, resetSignUpResponse} from '../../Redux/Slices/SignUpSlice';
+import Toast from 'react-native-toast-message';
 
 export const useSignIn = (
-  navigtion: NativeStackNavigationProp<ParamListBase>,
+  navigation: NativeStackNavigationProp<ParamListBase>,
+  popToScreen: string,
   screenName: string,
 ) => {
   const signUpSlice = useSelector((state: RootState) => state.signUpSlice);
@@ -17,7 +19,7 @@ export const useSignIn = (
     username: string;
     password: string;
     emailId: string;
-    adviceGenre: Array<string>;
+    adviceGenre: string[];
   }) => {
     dispatch(callSignIn(data));
   };
@@ -28,15 +30,31 @@ export const useSignIn = (
 
   useEffect(() => {
     if (signUpSlice.success) {
-      console.log('success in signin :', signUpSlice.success);
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: signUpSlice.success.message,
+        visibilityTime: 5000,
+      });
       resetSignUpReducer();
-      navigtion.navigate(screenName);
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{name: popToScreen}, {name: screenName}],
+        }),
+      );
     }
   }, [signUpSlice.success]);
 
   useEffect(() => {
     if (signUpSlice.error) {
-      console.log('error in login :', signUpSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: signUpSlice.error.message,
+        visibilityTime: 5000,
+      });
+      resetSignUpReducer();
     }
   }, [signUpSlice.error]);
 
