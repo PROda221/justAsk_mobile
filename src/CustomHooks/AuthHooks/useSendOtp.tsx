@@ -1,13 +1,14 @@
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootState} from '../../Redux/rootReducers';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type RootState} from '../../Redux/rootReducers';
 import {
   callSendOtp,
   resetSendOtpResponse,
 } from '../../Redux/Slices/SendOtpSlice';
+import Toast from 'react-native-toast-message';
 
 export const useSendOtp = (
   navigtion?: NativeStackNavigationProp<ParamListBase>,
@@ -30,6 +31,12 @@ export const useSendOtp = (
       if (navigtion && screenName) {
         resetSendOtpReducer();
         navigtion.navigate?.(screenName, {emailId: paramsData});
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: sendOtpSlice.success.message,
+          visibilityTime: 5000,
+        });
       }
     }
   }, [sendOtpSlice.success]);

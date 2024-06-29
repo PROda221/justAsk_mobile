@@ -44,6 +44,13 @@
     "signUp": " Sign Up",
     "nextButton": "Next"
   },
+  "OtpScreen": {
+    "title": "Verify Email",
+    "subTitle": "We Have Sent Code To Your Email Address",
+    "invalidOtpLength": "OTP not complete. Please enter a 4 digit code to proceed.",
+    "invalidOtp": "Invalid OTP"
+
+  },
   "onlineCourses": {
     "title": "Our Online Courses"
   },

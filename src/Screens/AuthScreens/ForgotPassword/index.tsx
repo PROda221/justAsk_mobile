@@ -14,6 +14,7 @@ import {Regex} from '../../../Functions/Regex';
 import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import content from '../../../Assets/Languages/english.json';
+import ErrorBox from '../../../Components/ErrorBox';
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -51,11 +52,8 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
-  const {callSendOtpApi, resetSendOtpReducer, sendOtpError} = useSendOtp(
-    navigation,
-    'Otp Screen',
-    email,
-  );
+  const {callSendOtpApi, resetSendOtpReducer, sendOtpError, sendOtpLoading} =
+    useSendOtp(navigation, 'Otp Screen', email);
 
   const styles = getForgotPassScreenStyles(colors);
 
@@ -65,17 +63,10 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
     callSendOtpApi(data as {emailId: string});
   };
 
-  const renderError = () => (
-    <View>
-      <Typography
-        bgColor={colors.errorTextPrimary}
-        size="medium"
-        fontWeight="400"
-        textStyle={styles.errorStyle}>
-        {sendOtpError?.message}
-      </Typography>
-    </View>
-  );
+  const handleSignUpNavigation = () => {
+    resetSendOtpReducer();
+    navigation.goBack();
+  };
 
   const renderForm = () => (
     <>
@@ -94,9 +85,12 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
           },
         }}
       />
-      {sendOtpError && renderError()}
+      {sendOtpError && (
+        <ErrorBox title="Error" message={sendOtpError.message} />
+      )}
       <View style={styles.buttonContainer}>
         <CustomButton
+          loading={sendOtpLoading}
           onPress={handleSubmit(handleNextButton)}
           label={`${content.ForgotPasswordScreen.nextButton}`}
           radius={14}
@@ -110,7 +104,7 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
           {content.ForgotPasswordScreen.createNewAccount}
         </Typography>
         <Typography
-          onPress={() => navigation.navigate('Sign Up')}
+          onPress={handleSignUpNavigation}
           bgColor={colors.buttonTextColor}
           fontWeight="400"
           textStyle={styles.alreadyHaveAnAccount}>
@@ -126,7 +120,7 @@ const ForgotPassword = ({navigation}: Props): JSX.Element => {
         <Animated.View
           entering={FadeInUp.duration(1000)}
           style={styles.mainContainer}>
-          <Header />
+          <Header onPress={resetSendOtpReducer} />
           <Scroll>
             <View style={styles.titleContainer}>
               <RenderTitle styles={styles} colors={colors} />

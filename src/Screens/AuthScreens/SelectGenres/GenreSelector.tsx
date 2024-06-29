@@ -5,12 +5,12 @@ import {getGenreSelectorStyles} from './GenreSelectorStyle';
 import {Typography} from '../../../Components';
 
 type Props = {
-  genres: Array<string>;
-  getSelectedValues: (genre: Array<string>) => void;
+  genres: string[];
+  getSelectedValues: (genre: string[]) => void;
 };
 
 const GenreSelector = ({genres, getSelectedValues}: Props) => {
-  const [selectedGenres, setSelectedGenres] = useState<Array<string>>([]);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const {colors} = useTheme();
   const styles = getGenreSelectorStyles(colors);

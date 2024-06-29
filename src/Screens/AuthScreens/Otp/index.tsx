@@ -1,5 +1,5 @@
 import {ScrollView, View} from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Typography} from '../../../Components';
 import styled from 'styled-components';
@@ -12,10 +12,18 @@ import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import OTPTextView from 'react-native-otp-textinput';
 import {useVerifyOtp} from '../../../CustomHooks/AuthHooks/useVerifyOtp';
 import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import content from '../../../Assets/Languages/english.json';
+import Toast from 'react-native-toast-message';
 
+type Params = {
+  params: {
+    emailId: string;
+  };
+};
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
+  route: RouteProp<Params>;
 };
 
 const RenderTitle = ({
@@ -23,20 +31,20 @@ const RenderTitle = ({
   colors,
 }: {
   styles: OtpScreenStyles;
-  colors: any;
+  colors: DarkColors;
 }) => (
   <>
     <Typography
       bgColor={colors.textPrimaryColor}
       fontWeight="400"
       textStyle={styles.title}>
-      {'Verify Email'}
+      {content.OtpScreen.title}
     </Typography>
     <Typography
       bgColor={colors.loginOptionsTextColor}
       fontWeight="400"
       textStyle={styles.subTitle}>
-      {'We Have Sent Code To Your Email Address'}
+      {content.OtpScreen.subTitle}
     </Typography>
   </>
 );
@@ -44,7 +52,6 @@ const RenderTitle = ({
 let otpValue: string[] | undefined = [];
 
 const OtpScreen = ({navigation, route}: Props): JSX.Element => {
-  const [otpLengthError, setOtpLengthError] = useState(false);
   const otpInput = useRef<OTPTextView>(null);
 
   const Scroll = styled(ScrollView)`
@@ -52,10 +59,10 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   `;
 
   const {colors} = useTheme();
-  const {resetVerifyOtpReducer, callVerifyOtpApi, verifyOtpError} =
+  const {resetVerifyOtpReducer, callVerifyOtpApi, verifyOtpLoading} =
     useVerifyOtp(navigation, 'Reset Password', route.params?.emailId);
 
-  const {callSendOtpApi, resetSendOtpReducer} = useSendOtp();
+  const {callSendOtpApi, resetSendOtpReducer, sendOtpLoading} = useSendOtp();
 
   const styles = getOtpScreenStyles(colors);
 
@@ -64,46 +71,26 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   };
 
   const handleSendOtp = () => {
+    resetVerifyOtpReducer();
     callSendOtpApi({emailId: route.params?.emailId});
   };
 
   const handleVerifyOtp = () => {
     if (otpValue?.length === 4) {
-      setOtpLengthError(false);
       resetVerifyOtpReducer();
       callVerifyOtpApi({
         emailId: route.params?.emailId,
         otp: otpValue.join(''),
       });
     } else {
-      setOtpLengthError(true);
+      Toast.show({
+        type: 'info',
+        text1: `${content.OtpScreen.invalidOtp}`,
+        text2: `${content.OtpScreen.invalidOtpLength}`,
+        visibilityTime: 3000,
+      });
     }
   };
-
-  const computeErrorMsg = () => {
-    if (otpLengthError) {
-      return 'Enter a 4 digit otp';
-    }
-
-    if (verifyOtpError?.message) {
-      otpValue = [];
-      return verifyOtpError?.message;
-    }
-
-    return '';
-  };
-
-  const renderError = () => (
-    <View>
-      <Typography
-        bgColor={colors.errorTextPrimary}
-        size="medium"
-        fontWeight="400"
-        textStyle={styles.errorStyle}>
-        {computeErrorMsg()}
-      </Typography>
-    </View>
-  );
 
   const renderOtp = () => (
     <View style={styles.otpContainer}>
@@ -125,12 +112,21 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
           offTintColor={colors.otpSecondaryColor}
         />
       </View>
-      {renderError()}
       <View style={styles.verifyButtonContainer}>
-        <CustomButton onPress={handleVerifyOtp} label="Verify" radius={14} />
+        <CustomButton
+          loading={verifyOtpLoading}
+          onPress={handleVerifyOtp}
+          label="Verify"
+          radius={14}
+        />
       </View>
       <View style={styles.sendAgainButtonContainer}>
-        <CustomButton label="Send Again" radius={14} onPress={handleSendOtp} />
+        <CustomButton
+          loading={sendOtpLoading}
+          label="Send Again"
+          radius={14}
+          onPress={handleSendOtp}
+        />
       </View>
     </View>
   );

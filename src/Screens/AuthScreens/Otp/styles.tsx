@@ -1,9 +1,10 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {StyleSheet, type TextStyle, type ViewStyle} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type OtpScreenStyles = {
   title: TextStyle;
@@ -28,10 +29,9 @@ export type OtpScreenStyles = {
   enterOtpContainer: ViewStyle;
   verifyButtonContainer: ViewStyle;
   errorStyle: TextStyle;
-  
 };
 
-export const getOtpScreenStyles = (colors): OtpScreenStyles =>
+export const getOtpScreenStyles = (colors: DarkColors): OtpScreenStyles =>
   StyleSheet.create<OtpScreenStyles>({
     alreadyHaveAnAccount: {
       fontSize: moderateScale(16),
@@ -41,14 +41,14 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
       paddingTop: verticalScale(18),
     },
     emailTextContainer: {
-       paddingTop: verticalScale(30)
+      paddingTop: verticalScale(30),
     },
     emailTextStyle: {
       fontFamily: 'Urbanist-SemiBold',
-      fontSize: moderateScale(15)
+      fontSize: moderateScale(15),
     },
     enterOtpContainer: {
-      paddingTop: verticalScale(29)
+      paddingTop: verticalScale(29),
     },
     errorStyle: {
       fontFamily: 'Urbanist-SemiBold',
@@ -75,7 +75,7 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
     },
     otpContainer: {
       paddingHorizontal: horizontalScale(18),
-      paddingTop: verticalScale(40)
+      paddingTop: verticalScale(40),
     },
     otpTextInputStyle: {
       borderBottomWidth: moderateScale(2),
@@ -85,7 +85,7 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
       fontFamily: 'Urbanist-Regular',
       fontSize: moderateScale(30),
       height: verticalScale(60),
-      width: horizontalScale(60)
+      width: horizontalScale(60),
     },
     otpView: {
       backgroundColor: colors.primaryBackgroundColor,
@@ -98,7 +98,7 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
       flex: 1,
     },
     sendAgainButtonContainer: {
-      paddingTop: verticalScale(12)
+      paddingTop: verticalScale(12),
     },
     seperator: {
       borderBottomColor: colors.seperatorColor,
@@ -120,6 +120,6 @@ export const getOtpScreenStyles = (colors): OtpScreenStyles =>
       paddingTop: verticalScale(74),
     },
     verifyButtonContainer: {
-      paddingTop: verticalScale(45)
-    }
+      paddingTop: verticalScale(45),
+    },
   });
