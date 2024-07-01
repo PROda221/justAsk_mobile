@@ -1,5 +1,5 @@
 import {ScrollView, View} from 'react-native';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, Typography} from '../../../Components';
 import styled from 'styled-components';
@@ -62,9 +62,22 @@ const OtpScreen = ({navigation, route}: Props): JSX.Element => {
   const {resetVerifyOtpReducer, callVerifyOtpApi, verifyOtpLoading} =
     useVerifyOtp(navigation, 'Reset Password', route.params?.emailId);
 
-  const {callSendOtpApi, resetSendOtpReducer, sendOtpLoading} = useSendOtp();
+  const {callSendOtpApi, resetSendOtpReducer, sendOtpLoading, sendOtpError} =
+    useSendOtp();
 
   const styles = getOtpScreenStyles(colors);
+
+  useEffect(() => {
+    if (sendOtpError) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: sendOtpError.message,
+        visibilityTime: 5000,
+      });
+      resetSendOtpReducer();
+    }
+  }, [sendOtpError]);
 
   const getText = (value: string) => {
     otpValue = otpInput.current?.getOTPTextChucks(value.length, 1, value);

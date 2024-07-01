@@ -48,7 +48,24 @@
     "title": "Verify Email",
     "subTitle": "We Have Sent Code To Your Email Address",
     "invalidOtpLength": "OTP not complete. Please enter a 4 digit code to proceed.",
-    "invalidOtp": "Invalid OTP"
+    "invalidOtp": "Invalid OTP",
+    "otpVerified": "Verified"
+  },
+  "ResetPassScreen": {
+    "title1": "Reset Your",
+    "title2": "Password",
+    "alertTitle": "Exiting Resetiing Password",
+    "alertMessage": "Are You Sure You Want to Leave?",
+    "cancel": "Cancel",
+    "agree": "Yes",
+    "passwordMissing": "Please enter your password.",
+    "passwordRequirement": "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
+    "confirmPass": "Confirm Password",
+    "confirmPassMissing": "Please enter your password again.",
+    "password": "Password",
+    "passwordMismatch": "Password does not match",
+    "resetPass": "Reset Password"
+
 
   },
   "onlineCourses": {

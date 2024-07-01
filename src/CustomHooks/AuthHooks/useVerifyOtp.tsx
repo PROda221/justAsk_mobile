@@ -8,6 +8,7 @@ import {
 import {type ParamListBase} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
+import content from '../../Assets/Languages/english.json';
 
 let otpValue = '';
 
@@ -34,11 +35,12 @@ export const useVerifyOtp = (
     if (verifyOtpSlice.success) {
       Toast.show({
         type: 'success',
-        text1: 'Verified',
+        text1: `${content.OtpScreen.otpVerified}`,
         text2: verifyOtpSlice.success?.message,
         visibilityTime: 3000,
       });
       navigtion.navigate(screenName, {emailId, otp: otpValue});
+      resetVerifyOtpReducer();
     }
   }, [verifyOtpSlice.success]);
 
@@ -46,7 +48,7 @@ export const useVerifyOtp = (
     if (verifyOtpSlice.error) {
       Toast.show({
         type: 'error',
-        text1: 'Invalid OTP',
+        text1: content.OtpScreen.invalidOtp,
         text2: verifyOtpSlice.error?.message,
         visibilityTime: 3000,
       });

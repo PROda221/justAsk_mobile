@@ -41,11 +41,17 @@ export const useSendOtp = (
     }
   }, [sendOtpSlice.success]);
 
-  useEffect(() => {
-    if (sendOtpSlice.error) {
-      console.log('error in login :', sendOtpSlice.error);
-    }
-  }, [sendOtpSlice.error]);
+  // useEffect(() => {
+  //   if (sendOtpSlice.error) {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: 'Error',
+  //       text2: sendOtpSlice.error.message,
+  //       visibilityTime: 5000,
+  //     });
+  //     resetSendOtpReducer();
+  //   }
+  // }, [sendOtpSlice.error]);
 
   return {
     callSendOtpApi,

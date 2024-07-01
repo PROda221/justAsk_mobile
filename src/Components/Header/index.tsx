@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, TouchableOpacity, ViewStyle} from 'react-native';
+import {View, TouchableOpacity, type ViewStyle} from 'react-native';
 import styled from 'styled-components';
 import {
   type NavigationProp,
   useNavigation,
-  ParamListBase,
+  type ParamListBase,
 } from '@react-navigation/native';
 import {HeaderBackArrow} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
@@ -15,8 +15,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import {Router} from 'react-native-actions-sheet';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type Router} from 'react-native-actions-sheet';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Container = styled(View)<{drawer?: boolean}>`
   padding: 20px 0 0 0;
@@ -26,12 +26,15 @@ const Container = styled(View)<{drawer?: boolean}>`
 const leftFeatureHandler = (
   navigation:
     | NavigationProp<ReactNavigation.RootParamList>
-    | Router<never>
+    | Router
     | undefined,
   onPress: () => void,
+  dontGoBack?: boolean,
 ): void => {
   onPress?.();
-  navigation?.goBack();
+  if (!dontGoBack) {
+    navigation?.goBack();
+  }
 };
 
 type Props = {
@@ -41,9 +44,10 @@ type Props = {
     | NativeStackNavigationProp<ParamListBase>;
   containerStyle?: ViewStyle;
   onPress?: () => void;
+  dontGoBack?: boolean;
 };
 
-const Header = ({navigation, containerStyle, onPress}: Props) => {
+const Header = ({navigation, containerStyle, onPress, dontGoBack}: Props) => {
   const headerNavigation = navigation ? navigation : useNavigation();
   const {colors} = useTheme();
   const styles = getHeaderStyles(colors);
@@ -59,7 +63,7 @@ const Header = ({navigation, containerStyle, onPress}: Props) => {
 
   const handlePressOut = () => {
     scale.value = withSpring(1);
-    leftFeatureHandler(headerNavigation, onPress);
+    leftFeatureHandler(headerNavigation, onPress, dontGoBack);
   };
 
   return (
