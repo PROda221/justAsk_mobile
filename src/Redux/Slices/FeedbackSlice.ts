@@ -46,8 +46,8 @@ type AverageRating = {
 type AllCommentsSuccess = {
   success: boolean;
   limit: number;
-  data: Array<Comment>;
-  averageRating: Array<AverageRating>;
+  data: Comment[];
+  averageRating: AverageRating[];
   lastId: string;
 };
 

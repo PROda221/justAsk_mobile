@@ -89,7 +89,7 @@ const LandingScreen = ({navigation}: Props) => {
           </View>
           <RenderLoginSignUp navigation={navigation} styles={styles} />
           <View style={styles.loginOptionsContainer}>
-            <RenderLoginOptions colors={colors} />
+            <RenderLoginOptions colors={colors} navigation={navigation} />
           </View>
         </Animated.View>
       </SafeAreaView>

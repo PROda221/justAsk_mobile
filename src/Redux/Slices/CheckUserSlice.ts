@@ -15,6 +15,23 @@ type CheckUserError = {
   message: string;
 }
 
+export const callCheckUsername = createAsyncThunk(
+  'callCheckUsername',
+  async (data: {username: string}, {rejectWithValue}) => {
+    try {
+      const response = await post<CheckUser>(Endpoints.checkUsername, data);
+      if (response.status === 200) {
+        return response.data;
+      }
+
+      throw response.data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  },
+);
+
+
 export const callCheckUser = createAsyncThunk(
   'callCheckUser',
   async (data: {username: string; password: string; emailId: string}, {rejectWithValue}) => {
@@ -32,13 +49,31 @@ export const callCheckUser = createAsyncThunk(
 );
 
 const initialState: {
-  success: CheckUser | undefined;
-  error: CheckUserError | undefined;
-  loading: boolean;
+  checkUser: {
+    success: CheckUser | undefined;
+    error: CheckUserError | undefined;
+    loading: boolean;
+  };
+
+  checkUsername: {
+    success: CheckUser | undefined;
+    error: CheckUserError | undefined;
+    loading: boolean;
+  };
+ 
 } = {
-  success: undefined,
-  error: undefined,
-  loading: false,
+  checkUser: {
+    success: undefined,
+    error: undefined,
+    loading: false,
+  },
+
+  checkUsername: {
+    success: undefined,
+    error: undefined,
+    loading: false,
+  },
+ 
 };
 
 const checkUserSlice = createSlice({
@@ -46,27 +81,43 @@ const checkUserSlice = createSlice({
   initialState,
   reducers: {
     resetCheckUserResponse(state) {
-      state.success = undefined;
-      state.loading = false;
-      state.error = undefined;
+      state.checkUser.success = undefined;
+      state.checkUser.loading = false;
+      state.checkUser.error = undefined;
+    },
+    resetCheckUsernameResponse(state) {
+      state.checkUsername.success = undefined;
+      state.checkUsername.loading = false;
+      state.checkUsername.error = undefined;
     }
   },
 
   extraReducers(builder) {
     builder.addCase(callCheckUser.pending, state => {
-      state.loading = true;
+      state.checkUser.loading = true;
     });
     builder.addCase(callCheckUser.fulfilled, (state, action) => {
-      state.loading = false;
-      state.success = action.payload;
+      state.checkUser.loading = false;
+      state.checkUser.success = action.payload;
     });
     builder.addCase(callCheckUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.checkUser.loading = false;
+      state.checkUser.error = action.payload;
+    });
+    builder.addCase(callCheckUsername.pending, state => {
+      state.checkUsername.loading = true;
+    });
+    builder.addCase(callCheckUsername.fulfilled, (state, action) => {
+      state.checkUsername.loading = false;
+      state.checkUsername.success = action.payload;
+    });
+    builder.addCase(callCheckUsername.rejected, (state, action) => {
+      state.checkUsername.loading = false;
+      state.checkUsername.error = action.payload;
     });
   },
 });
 
-export const {resetCheckUserResponse} = checkUserSlice.actions;
+export const {resetCheckUserResponse, resetCheckUsernameResponse} = checkUserSlice.actions;
 
 export default checkUserSlice.reducer;

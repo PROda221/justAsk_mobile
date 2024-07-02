@@ -18,6 +18,7 @@ import userProfileSlice from './Slices/UserProfileSlice';
 import feedbackSlice from './Slices/FeedbackSlice';
 import isLoginSlice from './Slices/IsLogInSlice';
 import profileUpload from './Slices/ProfileUpload';
+import googleLoginSlice from './Slices/GoogleLoginSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -38,7 +39,8 @@ const rootReducer = combineReducers({
 	userProfileSlice,
 	feedbackSlice,
 	isLoginSlice,
-	profileUpload
+	profileUpload,
+	googleLoginSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

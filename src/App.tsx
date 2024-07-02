@@ -13,7 +13,10 @@ import {toastConfig} from './Components/CustomToast/index.tsx';
 
 const App = (): JSX.Element => {
   useEffect(() => {
-    GoogleSignin.configure();
+    GoogleSignin.configure({
+      webClientId:
+        '796482409066-7v3dplea2tcuj7sdivnlfskr5aib89dc.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+    });
   }, []);
 
   return (

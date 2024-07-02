@@ -15,11 +15,13 @@ import {
 } from '../../../Functions/StyleScale';
 import Header from '../../../Components/Header';
 import {resetAccessToken} from '../../../Functions/EncryptedStorage';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
 import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
+import {useGoogleLogin} from '../../../CustomHooks/AuthHooks/useGoogleLogin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -30,6 +32,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
   const {colors} = useTheme();
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
+  const {resetGoogleLoginReducer} = useGoogleLogin();
   const {callSendOtpApi, sendOtpSuccess} = useSendOtp();
   const {userLogedOut} = useIsLogin();
 
@@ -55,6 +58,8 @@ const SettingsScreen = ({navigation}: PropsType) => {
   const logout = async () => {
     await resetAccessToken();
     resetLoginReducer();
+    resetGoogleLoginReducer();
+    await GoogleSignin.signOut();
     userLogedOut();
   };
 
@@ -162,26 +167,24 @@ const SettingsScreen = ({navigation}: PropsType) => {
         </View>
       </TouchableOpacity>
 
-      {listData.map((value, index) => {
-        return (
-          <TouchableOpacity
-            style={styles.menuItem}
-            key={index}
-            onPress={value.onPress}>
-            <Icon
-              name={value.iconName}
-              size={moderateScale(24)}
-              color={value.iconColor}
-            />
-            <Typography
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400"
-              textStyle={styles.menuText}>
-              {value.name}
-            </Typography>
-          </TouchableOpacity>
-        );
-      })}
+      {listData.map((value, index) => (
+        <TouchableOpacity
+          style={styles.menuItem}
+          key={index}
+          onPress={value.onPress}>
+          <Icon
+            name={value.iconName}
+            size={moderateScale(24)}
+            color={value.iconColor}
+          />
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.menuText}>
+            {value.name}
+          </Typography>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };

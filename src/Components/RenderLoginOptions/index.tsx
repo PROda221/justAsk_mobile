@@ -1,4 +1,5 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {CustomButton} from '../CustomButton';
@@ -6,13 +7,25 @@ import {Typography} from '../Typography';
 import {verticalScale, horizontalScale} from '../../Functions/StyleScale';
 import {type DarkColors} from '../../useContexts/Theme/ThemeType';
 import content from '../../Assets/Languages/english.json';
+import {useGoogleLogin} from '../../CustomHooks/AuthHooks/useGoogleLogin';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-export const RenderLoginOptions = ({colors}: {colors: DarkColors}) => {
+type Props = {
+  colors: DarkColors;
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+export const RenderLoginOptions = ({colors, navigation}: Props) => {
+  const {callGoogleLoginApi, googleLoginLoading} = useGoogleLogin(navigation);
   const googleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      // SetState({ userInfo });
+      const {idToken} = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
+      const token = await auth().currentUser?.getIdToken();
+      callGoogleLoginApi({idToken: token ?? ''});
     } catch (error) {
       if (error.code === 'SIGN_IN_CANCELLED') {
         console.log('a');
@@ -40,6 +53,7 @@ export const RenderLoginOptions = ({colors}: {colors: DarkColors}) => {
       </Typography>
       <View style={styles.googleLoginButtonContainer}>
         <CustomButton
+          loading={googleLoginLoading}
           label="Google"
           radius={10}
           textColor={colors.googleButtonTextColor}

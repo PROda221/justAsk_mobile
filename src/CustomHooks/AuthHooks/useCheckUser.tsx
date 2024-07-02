@@ -16,7 +16,7 @@ export const useCheckUser = (
   screenName: string,
 ) => {
   const checkUserSlice = useSelector(
-    (state: RootState) => state.checkUserSlice,
+    (state: RootState) => state.checkUserSlice.checkUser,
   );
   const dispatch = useDispatch();
 

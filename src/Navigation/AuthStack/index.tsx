@@ -6,7 +6,8 @@ import LandingScreen from '../../Screens/AuthScreens/LandingScreen';
 import OtpScreen from '../../Screens/AuthScreens/Otp';
 import ResetPassword from '../../Screens/AuthScreens/ResetPassword';
 import SelectGenres from '../../Screens/AuthScreens/SelectGenres';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SetUsername from '../../Screens/AuthScreens/SetUsername';
 
 const AuthStack = createNativeStackNavigator();
 
@@ -21,10 +22,17 @@ const AuthNavigation = (): JSX.Element => (
     <AuthStack.Screen name="LandingScreen" component={LandingScreen} />
     <AuthStack.Screen name="Login" component={LoginScreen} />
     <AuthStack.Screen name="Sign Up" component={SignUp} />
-    <AuthStack.Screen name="Select Genres" component={SelectGenres} />
+    <AuthStack.Screen
+      name="Select Genres"
+      component={SelectGenres as React.FC}
+    />
     <AuthStack.Screen name="Forgot Password" component={ForgotPassword} />
-	<AuthStack.Screen name="Otp Screen" component={OtpScreen} />
-	<AuthStack.Screen name="Reset Password" component={ResetPassword} />
+    <AuthStack.Screen name="Otp Screen" component={OtpScreen as React.FC} />
+    <AuthStack.Screen
+      name="Reset Password"
+      component={ResetPassword as React.FC}
+    />
+    <AuthStack.Screen name="Set Username" component={SetUsername as React.FC} />
   </AuthStack.Navigator>
 );
 

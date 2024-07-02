@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../Redux/rootReducers';
+import {type RootState} from '../../Redux/rootReducers';
 import {setLoginTrue, setLoginFalse} from '../../Redux/Slices/IsLogInSlice';
 
 export const useIsLogin = () => {

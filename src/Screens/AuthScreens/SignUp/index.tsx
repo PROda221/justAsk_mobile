@@ -73,7 +73,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
     <View style={styles.googleLoginContainer}>
       <View style={styles.seperator} />
       <View style={styles.loginOptionsContainer}>
-        <RenderLoginOptions colors={colors} />
+        <RenderLoginOptions colors={colors} navigation={navigation} />
       </View>
     </View>
   );

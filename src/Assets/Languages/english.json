@@ -44,6 +44,14 @@
     "signUp": " Sign Up",
     "nextButton": "Next"
   },
+  "SetUsernameScreen": {
+    "title1": "Set Username",
+    "title2": "Please enter a username for your account.",
+    "invalidEmail": "Whoops! That email doesn’t look right. Please check and try again.",
+    "usernameMissing": "Please enter your username.",
+    "enterUsername": "Enter Your Username",
+    "nextButton": "Next"
+  },
   "OtpScreen": {
     "title": "Verify Email",
     "subTitle": "We Have Sent Code To Your Email Address",
