@@ -12,7 +12,6 @@ import Header from '../../../Components/Header';
 import {TextInput} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
-import {baseURL} from '../../../Constants';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
