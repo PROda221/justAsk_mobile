@@ -22,6 +22,7 @@ import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
 import {useGoogleLogin} from '../../../CustomHooks/AuthHooks/useGoogleLogin';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -137,7 +138,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
         style={styles.profileContainer}>
         <Image
           source={{
-            uri: `${baseURL}/${profileSuccess?.profilePic}?${new Date()}`,
+            uri: getProfilePic(profileSuccess?.profilePic),
           }}
           style={styles.profilePic}
         />

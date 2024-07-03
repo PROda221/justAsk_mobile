@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../Redux/rootReducers';
+import {type RootState} from '../../Redux/rootReducers';
 import {
   callGetProfile,
   resetProfileResponse,
@@ -21,7 +21,6 @@ export const useProfile = () => {
 
   useEffect(() => {
     if (profileSlice.success) {
-      console.log('success is :', profileSlice.success);
       const {
         username,
         adviceGenre,
@@ -30,14 +29,19 @@ export const useProfile = () => {
         emailId,
         averageRating,
       } = profileSlice.success;
-      updateOrCreateUser(
-        username,
-        profilePic,
-        status,
-        adviceGenre,
-        emailId,
-        averageRating,
-      );
+
+      const storeUser = async () => {
+        await updateOrCreateUser(
+          username,
+          profilePic,
+          status,
+          adviceGenre,
+          emailId,
+          averageRating,
+        );
+      };
+
+      void storeUser();
     }
   }, [profileSlice.success]);
 

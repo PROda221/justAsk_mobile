@@ -5,7 +5,6 @@ import {getMyFeedbackStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import LinearGradient from 'react-native-linear-gradient';
 import {FlashList, ListRenderItem} from '@shopify/flash-list';
-import {baseURL} from '../../../Constants';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
   horizontalScale,
@@ -20,6 +19,7 @@ import {EmptyState} from '../../../Assets/Images';
 import {Skeleton} from 'moti/skeleton';
 import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 const MyFeedbackPage = () => {
   const {colors} = useTheme();
@@ -84,7 +84,7 @@ const MyFeedbackPage = () => {
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: `${baseURL}/${profileSuccess?.profilePic || ''}`,
+            uri: getProfilePic(profileSuccess?.profilePic),
           }}
           style={styles.profileImage}
         />
@@ -210,7 +210,7 @@ const MyFeedbackPage = () => {
                 radius={moderateScale(18)}>
                 <Image
                   source={{
-                    uri: `${baseURL}/${item.commentUserId}-.png`,
+                    uri: getProfilePic(item.commentUserPic),
                   }}
                   style={styles.commentUserAvatar}
                 />

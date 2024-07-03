@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, TextInput, Image, FlatList} from 'react-native';
-import StarRating, {StarRatingDisplay} from 'react-native-star-rating-widget';
+import {View, Image, FlatList} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {FeedbackScreenStyles, getFeedbackScreenStyles} from './styles';
+import {getFeedbackScreenStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import LinearGradient from 'react-native-linear-gradient';
-import {FlashList, ListRenderItem} from '@shopify/flash-list';
+import {FlashList, type ListRenderItem} from '@shopify/flash-list';
 import {baseURL} from '../../../Constants';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
@@ -16,7 +15,7 @@ import {
 import Header from '../../../Components/Header';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 
-import {Comment} from '../../../Redux/Slices/FeedbackSlice';
+import {type Comment} from '../../../Redux/Slices/FeedbackSlice';
 import {EmptyState} from '../../../Assets/Images';
 
 import {GiveFeedback} from './GiveFeedback';
@@ -24,6 +23,7 @@ import {Skeleton} from 'moti/skeleton';
 import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
 import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
 import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 const FeedbackPage = () => {
   const {colors} = useTheme();
@@ -81,23 +81,21 @@ const FeedbackPage = () => {
     getAllComments();
   };
 
-  const renderSkills = ({item}) => {
-    return (
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="300"
-        textStyle={styles.skill}>
-        {item}
-      </Typography>
-    );
-  };
+  const renderSkills = ({item}) => (
+    <Typography
+      bgColor={colors.textPrimaryColor}
+      fontWeight="300"
+      textStyle={styles.skill}>
+      {item}
+    </Typography>
+  );
 
-  const profileInfo = useCallback(() => {
-    return (
+  const profileInfo = useCallback(
+    () => (
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: `${baseURL}/${userProfileSuccess?.profilePic || ''}`,
+            uri: getProfilePic(userProfileSuccess?.profilePic),
           }}
           style={styles.profileImage}
         />
@@ -125,61 +123,60 @@ const FeedbackPage = () => {
           </View>
         </View>
       </View>
-    );
-  }, []);
+    ),
+    [],
+  );
 
-  const noCommentComponent = () => {
-    return (
-      <>
-        {allCommentsLoading ? (
-          <Skeleton.Group show={allCommentsLoading}>
-            <View style={styles.commentCard}>
-              <View style={styles.mainHeader}>
-                <View style={{marginLeft: horizontalScale(10)}}>
-                  <Skeleton
-                    colorMode="light"
-                    width={horizontalScale(35)}
-                    height={verticalScale(35)}
-                    radius={moderateScale(18)}></Skeleton>
-                </View>
+  const noCommentComponent = () => (
+    <>
+      {allCommentsLoading ? (
+        <Skeleton.Group show={allCommentsLoading}>
+          <View style={styles.commentCard}>
+            <View style={styles.mainHeader}>
+              <View style={{marginLeft: horizontalScale(10)}}>
+                <Skeleton
+                  colorMode="light"
+                  width={horizontalScale(35)}
+                  height={verticalScale(35)}
+                  radius={moderateScale(18)}></Skeleton>
+              </View>
 
-                <View style={styles.commentHeaderContainer}>
+              <View style={styles.commentHeaderContainer}>
+                <Skeleton
+                  colorMode="light"
+                  height={verticalScale(20)}
+                  width={'70%'}></Skeleton>
+
+                <View style={{paddingLeft: horizontalScale(10)}}>
                   <Skeleton
                     colorMode="light"
                     height={verticalScale(20)}
-                    width={'70%'}></Skeleton>
-
-                  <View style={{paddingLeft: horizontalScale(10)}}>
-                    <Skeleton
-                      colorMode="light"
-                      height={verticalScale(20)}
-                      width={'35%'}></Skeleton>
-                  </View>
+                    width={'35%'}></Skeleton>
                 </View>
               </View>
-
-              <View style={{padding: moderateScale(10)}}>
-                <Skeleton
-                  colorMode="light"
-                  height={verticalScale(50)}
-                  width={'100%'}></Skeleton>
-              </View>
             </View>
-          </Skeleton.Group>
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Image source={EmptyState} style={styles.emptyStateImageStyle} />
-            <Typography
-              bgColor="white"
-              fontWeight="400"
-              textStyle={styles.noCommentsText}>
-              {`${userProfileSuccess?.username} has no comments yet...`}
-            </Typography>
+
+            <View style={{padding: moderateScale(10)}}>
+              <Skeleton
+                colorMode="light"
+                height={verticalScale(50)}
+                width={'100%'}></Skeleton>
+            </View>
           </View>
-        )}
-      </>
-    );
-  };
+        </Skeleton.Group>
+      ) : (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Image source={EmptyState} style={styles.emptyStateImageStyle} />
+          <Typography
+            bgColor="white"
+            fontWeight="400"
+            textStyle={styles.noCommentsText}>
+            {`${userProfileSuccess?.username} has no comments yet...`}
+          </Typography>
+        </View>
+      )}
+    </>
+  );
 
   const listHeaderComponent = () => (
     <>
@@ -199,126 +196,119 @@ const FeedbackPage = () => {
     </>
   );
 
-  const loadMoreComponent = () => {
-    return (
-      <View style={styles.loadMoreContainer}>
-        {allCommentsSuccess?.data && allCommentsSuccess?.data.length > 10 ? (
-          <CustomButton
-            onPress={handleLoadMore}
-            label={'Load More'}
-            radius={95}
-            loading={false}
-            viewStyle={styles.submitButtonStyle}
-          />
-        ) : null}
-      </View>
-    );
-  };
-
-  const renderItem: ListRenderItem<Comment> = ({item}) => {
-    return (
-      <Skeleton.Group show={allCommentsLoading}>
-        <View style={styles.commentCard}>
-          <View style={styles.mainHeader}>
-            <View style={{marginLeft: horizontalScale(10)}}>
-              <Skeleton
-                colorMode="light"
-                width={horizontalScale(35)}
-                height={verticalScale(35)}
-                radius={moderateScale(18)}>
-                <Image
-                  source={{
-                    uri: `${baseURL}/${item.commentUserId}-.png`,
-                  }}
-                  style={styles.commentUserAvatar}
-                />
-              </Skeleton>
-            </View>
-
-            <View style={styles.commentHeaderContainer}>
-              <Skeleton
-                colorMode="light"
-                height={verticalScale(20)}
-                width={'70%'}>
-                <View style={{flexDirection: 'row'}}>
-                  <Typography
-                    bgColor={colors.textPrimaryColor}
-                    fontWeight="400"
-                    textStyle={styles.usernameText}>
-                    {item.commentUserId}
-                  </Typography>
-                  <Typography
-                    bgColor={colors.textInputPlaceholderColor}
-                    fontWeight="400"
-                    textStyle={styles.timeText}>
-                    18 mins ago
-                  </Typography>
-                </View>
-              </Skeleton>
-
-              <View style={{paddingLeft: horizontalScale(10)}}>
-                <Skeleton
-                  colorMode="light"
-                  height={verticalScale(20)}
-                  width={'35%'}>
-                  <View style={styles.commentStarContainer}>
-                    <Typography
-                      bgColor={colors.textPrimaryColor}
-                      fontWeight="400"
-                      textStyle={styles.starText}>
-                      {`x${item.rating}`}
-                    </Typography>
-                    <Entypo
-                      name="star"
-                      size={moderateScale(12)}
-                      color={colors.starColor}
-                    />
-                  </View>
-                </Skeleton>
-              </View>
-            </View>
+  const loadMoreComponent = () => (
+    <View style={styles.loadMoreContainer}>
+      {allCommentsSuccess?.data && allCommentsSuccess?.data.length > 10 ? (
+        <CustomButton
+          onPress={handleLoadMore}
+          label={'Load More'}
+          radius={95}
+          loading={false}
+          viewStyle={styles.submitButtonStyle}
+        />
+      ) : null}
+    </View>
+  );
+  const renderItem: ListRenderItem<Comment> = ({item}) => (
+    <Skeleton.Group show={allCommentsLoading}>
+      <View style={styles.commentCard}>
+        <View style={styles.mainHeader}>
+          <View style={{marginLeft: horizontalScale(10)}}>
+            <Skeleton
+              colorMode="light"
+              width={horizontalScale(35)}
+              height={verticalScale(35)}
+              radius={moderateScale(18)}>
+              <Image
+                source={{
+                  uri: getProfilePic(item.commentUserPic),
+                }}
+                style={styles.commentUserAvatar}
+              />
+            </Skeleton>
           </View>
 
-          {allCommentsLoading ? (
-            <View style={{padding: moderateScale(10)}}>
-              <Skeleton
-                colorMode="light"
-                height={verticalScale(50)}
-                width={'100%'}>
+          <View style={styles.commentHeaderContainer}>
+            <Skeleton
+              colorMode="light"
+              height={verticalScale(20)}
+              width={'70%'}>
+              <View style={{flexDirection: 'row'}}>
                 <Typography
                   bgColor={colors.textPrimaryColor}
                   fontWeight="400"
-                  textStyle={styles.commentText}>
-                  {item.content}
+                  textStyle={styles.usernameText}>
+                  {item.commentUserId}
                 </Typography>
+                <Typography
+                  bgColor={colors.textInputPlaceholderColor}
+                  fontWeight="400"
+                  textStyle={styles.timeText}>
+                  18 mins ago
+                </Typography>
+              </View>
+            </Skeleton>
+
+            <View style={{paddingLeft: horizontalScale(10)}}>
+              <Skeleton
+                colorMode="light"
+                height={verticalScale(20)}
+                width={'35%'}>
+                <View style={styles.commentStarContainer}>
+                  <Typography
+                    bgColor={colors.textPrimaryColor}
+                    fontWeight="400"
+                    textStyle={styles.starText}>
+                    {`x${item.rating}`}
+                  </Typography>
+                  <Entypo
+                    name="star"
+                    size={moderateScale(12)}
+                    color={colors.starColor}
+                  />
+                </View>
               </Skeleton>
             </View>
-          ) : (
-            <Typography
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400"
-              textStyle={styles.commentText}>
-              {item.content}
-            </Typography>
-          )}
+          </View>
         </View>
-      </Skeleton.Group>
-    );
-  };
 
-  const renderComments = () => {
-    return (
-      <FlashList
-        ListEmptyComponent={noCommentComponent}
-        // ListHeaderComponent={listHeaderComponent}
-        ListFooterComponent={loadMoreComponent}
-        estimatedItemSize={300}
-        data={commentList}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-    );
-  };
+        {allCommentsLoading ? (
+          <View style={{padding: moderateScale(10)}}>
+            <Skeleton
+              colorMode="light"
+              height={verticalScale(50)}
+              width={'100%'}>
+              <Typography
+                bgColor={colors.textPrimaryColor}
+                fontWeight="400"
+                textStyle={styles.commentText}>
+                {item.content}
+              </Typography>
+            </Skeleton>
+          </View>
+        ) : (
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.commentText}>
+            {item.content}
+          </Typography>
+        )}
+      </View>
+    </Skeleton.Group>
+  );
+
+  const renderComments = () => (
+    <FlashList
+      ListEmptyComponent={noCommentComponent}
+      // ListHeaderComponent={listHeaderComponent}
+      ListFooterComponent={loadMoreComponent}
+      estimatedItemSize={300}
+      data={commentList}
+      renderItem={renderItem}
+      showsVerticalScrollIndicator={false}
+    />
+  );
 
   return (
     <LinearGradient

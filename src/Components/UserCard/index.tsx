@@ -12,8 +12,7 @@ import {
 } from '../../Functions/StyleScale';
 import {useNavigation} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
-import {Socket} from 'socket.io-client';
-import {baseURL} from '../../Constants';
+import {getProfilePic} from '../../Functions/GetProfilePic';
 
 type Props = {
   username: string;
@@ -41,10 +40,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onCardPress}>
       <View style={styles.imageContainer}>
-        <Image
-          source={{uri: `${baseURL}/${image}?${Date.now()}`}}
-          style={styles.image}
-        />
+        <Image source={{uri: getProfilePic(image)}} style={styles.image} />
       </View>
       <View style={styles.infoContainer}>
         <Typography

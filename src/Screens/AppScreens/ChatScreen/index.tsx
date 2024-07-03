@@ -1,12 +1,12 @@
 import {Typography} from '../../../Components';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {LogBox, ViewStyle} from 'react-native';
+import {type ParamListBase, type RouteProp} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {LogBox, type ViewStyle} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {ChatScreenStyles, getChatScreenStyles} from './styles';
+import {type ChatScreenStyles, getChatScreenStyles} from './styles';
 import {verticalScale} from '../../../Functions/StyleScale';
 import Header from '../../../Components/Header';
 import {TextInput} from '../../../Components';
@@ -20,12 +20,14 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 import {
-  ImageLibraryOptions,
+  type ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {useSocket} from '../../../useContexts/SocketContext';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -38,7 +40,7 @@ type Props = {
 
 const convertToBase64 = async (uri: string) => {
   try {
-    let base64Data = await ReactNativeBlobUtil.fs.readFile(uri, 'base64');
+    const base64Data = await ReactNativeBlobUtil.fs.readFile(uri, 'base64');
     return base64Data;
   } catch (err) {
     console.error('Error converting image to base64: ', err);
@@ -47,7 +49,7 @@ const convertToBase64 = async (uri: string) => {
 
 const chatHeader = (
   styles: ChatScreenStyles,
-  colors: any,
+  colors: DarkColors,
   username: string,
   image: string,
   animatedStyle: ViewStyle,
@@ -59,10 +61,7 @@ const chatHeader = (
   <View style={styles.header}>
     <Header containerStyle={{paddingTop: 0}} />
     <TouchableOpacity onPress={openUserProfle}>
-      <Image
-        source={{uri: `${baseURL}/${image}`}}
-        style={styles.profileImage}
-      />
+      <Image source={{uri: getProfilePic(image)}} style={styles.profileImage} />
     </TouchableOpacity>
     <View style={styles.headerTextContainer}>
       <Animated.View style={animatedStyle}>
@@ -147,7 +146,7 @@ const ChatScreen = ({navigation, route}: Props) => {
       const fileName = result.assets?.[0].fileName;
       const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
-      let base64Data = await convertToBase64(compressedResult);
+      const base64Data = await convertToBase64(compressedResult);
       getMessages({fileName, uri}, false, 'image');
       sendMessages({fileName, base64Data}, username, 'image');
     } catch (err) {
@@ -155,7 +154,11 @@ const ChatScreen = ({navigation, route}: Props) => {
     }
   };
 
-  const renderMessageList = ({item}) => (
+  const renderMessageList = ({
+    item,
+  }: {
+    item: {received: boolean; text: string; type: 'message' | 'image'};
+  }) => (
     // Console.log('hello render message')
     <View
       style={[

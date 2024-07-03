@@ -36,6 +36,7 @@ import ArrowRight from './ArrowRight.svg'
 import ChatIcon from './ChatIcon.svg'
 import EmptyState from './EmptyState.png'
 import ProfileEdit from './ProfileEdit.svg'
+import ProfilePic from './ProfilePic.png'
 
 export {
   HomeIcon,
@@ -75,5 +76,6 @@ export {
   ArrowRight,
   ChatIcon,
   EmptyState,
-  ProfileEdit
+  ProfileEdit,
+  ProfilePic
 };

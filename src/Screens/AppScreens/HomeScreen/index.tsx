@@ -7,18 +7,18 @@ import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
 import {SheetManager} from 'react-native-actions-sheet';
 import {baseURL} from '../../../Constants';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../Redux/rootReducers';
-import {FlashList, ListRenderItem} from '@shopify/flash-list';
+import {FlashList, type ListRenderItem} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {formatTimestamp} from '../../../Functions/FormatTime';
-import {ParamListBase} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNotifications} from '../../../CustomHooks/AppHooks/useNotifications';
 import {withObservables} from '@nozbe/watermelondb/react';
 import database from '../../../DB/database';
-import {Model} from '@nozbe/watermelondb';
+import {type Model} from '@nozbe/watermelondb';
 import {moderateScale} from '../../../Functions/StyleScale';
+import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -34,7 +34,7 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
   const styles = getHomeScreenStyles(colors);
   useNotifications();
 
-  const profileSlice = useSelector((state: RootState) => state.profileSlice);
+  const {profileSuccess} = useProfile();
 
   const openChatScreen = item => {
     navigation.navigate('ChatScreen', {
@@ -45,45 +45,43 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
     });
   };
 
-  const renderMessage: ListRenderItem<Model> = ({item}) => {
-    return (
-      <TouchableOpacity
-        onPress={() => openChatScreen(item._raw)}
-        style={styles.messageContainer}>
-        <Image
-          source={{uri: `${baseURL}/${item._raw.profile_pic}?${Date.now()}`}}
-          style={styles.avatar}
-        />
-        <View style={styles.messageTextContainer}>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.messageName}>
-            {item._raw.username}
-          </Typography>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.messageText}>
-            {item._raw.lastMessage ? item._raw.lastMessage : 'New Chat'}
-          </Typography>
-        </View>
+  const renderMessage: ListRenderItem<Model> = ({item}) => (
+    <TouchableOpacity
+      onPress={() => openChatScreen(item._raw)}
+      style={styles.messageContainer}>
+      <Image
+        source={{uri: getProfilePic(item._raw.profile_pic)}}
+        style={styles.avatar}
+      />
+      <View style={styles.messageTextContainer}>
         <Typography
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
-          textStyle={styles.messageTime}>
-          {item._raw.messageTime
-            ? item._raw.messageTime
-            : formatTimestamp(item._raw.created_at)}
+          textStyle={styles.messageName}>
+          {item._raw.username}
         </Typography>
-      </TouchableOpacity>
-    );
-  };
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.messageText}>
+          {item._raw.lastMessage ? item._raw.lastMessage : 'New Chat'}
+        </Typography>
+      </View>
+      <Typography
+        bgColor={colors.textPrimaryColor}
+        fontWeight="400"
+        textStyle={styles.messageTime}>
+        {item._raw.messageTime
+          ? item._raw.messageTime
+          : formatTimestamp(item._raw.created_at)}
+      </Typography>
+    </TouchableOpacity>
+  );
 
   const openFullImage = () => {
-    SheetManager.show('ViewProfileImage-sheet', {
+    void SheetManager.show('ViewProfileImage-sheet', {
       payload: {
-        imageUrl: `${baseURL}/${profileSlice.success?.profilePic}`,
+        imageUrl: getProfilePic(profileSuccess?.profilePic),
       },
     });
   };
@@ -95,7 +93,7 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
-      onPress={() => SheetManager.show('SearchFeature-sheet')}>
+      onPress={async () => SheetManager.show('SearchFeature-sheet')}>
       <View style={styles.searchContainer}>
         <Typography
           fontWeight="400"
@@ -118,7 +116,7 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
           onPress={openFullImage}>
           <Image
             source={{
-              uri: `${baseURL}/${profileSlice.success?.profilePic}?${new Date()}`,
+              uri: getProfilePic(profileSuccess?.profilePic),
             }}
             style={styles.img}
           />
@@ -127,7 +125,7 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
           bgColor="white"
           fontWeight="400"
           textStyle={styles.headerText}>
-          {profileSlice.success?.username}
+          {profileSuccess?.username}
         </Typography>
       </View>
       <Fontisto

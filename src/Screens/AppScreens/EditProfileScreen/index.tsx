@@ -3,7 +3,6 @@ import {View, Image, FlatList, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getEditProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
-import {baseURL} from '../../../Constants';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -20,6 +19,7 @@ import {SheetManager} from 'react-native-actions-sheet';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useProfileUpload} from '../../../CustomHooks/AppHooks/useProfileUpload';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -142,7 +142,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `${newProfileValues.profileImg ?? `${baseURL}/${profileSuccess?.profilePic ?? image}?${Date.now()}`}`,
+                  uri: `${newProfileValues.profileImg ?? getProfilePic(profileSuccess?.profilePic ?? image)}`,
                 }}
                 style={styles.profileImage}
               />

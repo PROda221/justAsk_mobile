@@ -1,6 +1,24 @@
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
 
+export async function createNewUser(username, profilePic, status, skills) {
+  try {
+    await database.write(async () => {
+      const newUser = await database.collections.get('users').create(user => {
+        user.username = username;
+        user.userId = username;
+        user.profilePic = profilePic;
+        user.status = status;
+        user.skills = JSON.stringify(skills);
+      });
+      return newUser;
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+}
+
 export const updateOrCreateUser = async (
   username,
   profilePic,
@@ -37,24 +55,6 @@ export const updateOrCreateUser = async (
   }
   
 };
-
-export async function createNewUser(username, profilePic, status, skills) {
-  try {
-    await database.write(async () => {
-      const newUser = await database.collections.get('users').create(user => {
-        user.username = username;
-        user.userId = username;
-        user.profilePic = profilePic;
-        user.status = status;
-        user.skills = JSON.stringify(skills);
-      });
-      return newUser;
-    });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    throw error;
-  }
-}
 
 export async function createNewChat(username, profilePic, status, skills) {
   try {

@@ -1,9 +1,15 @@
-import {ImageStyle, StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {
+  type ImageStyle,
+  StyleSheet,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type HomeScreenStyles = {
   container: ViewStyle;
@@ -25,7 +31,7 @@ export type HomeScreenStyles = {
   profileUsernameContainer: ViewStyle;
 };
 
-export const getHomeScreenStyles = (colors): HomeScreenStyles =>
+export const getHomeScreenStyles = (colors: DarkColors): HomeScreenStyles =>
   StyleSheet.create<HomeScreenStyles>({
     addButton: {
       alignItems: 'center',
@@ -95,6 +101,7 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
       justifyContent: 'center',
       width: verticalScale(45),
     },
+    profileUsernameContainer: {alignItems: 'center', flexDirection: 'row'},
     searchButtonContainer: {
       flexDirection: 'row',
       paddingTop: verticalScale(14),
@@ -115,5 +122,4 @@ export const getHomeScreenStyles = (colors): HomeScreenStyles =>
       padding: 8,
       width: horizontalScale(305),
     },
-    profileUsernameContainer: {flexDirection: 'row', alignItems: 'center'},
   });

@@ -1,10 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {View, Image, FlatList, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getUserProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
-import {baseURL} from '../../../Constants';
-import {FlashList} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -20,6 +18,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -45,7 +44,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   const openFullImage = () => {
     SheetManager.show('ViewProfileImage-sheet', {
       payload: {
-        imageUrl: `${baseURL}/${userProfileSuccess?.profilePic || image}?${new Date()}`,
+        imageUrl: getProfilePic(userProfileSuccess?.profilePic || image),
       },
     });
   };
@@ -110,7 +109,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
               style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `${baseURL}/${userProfileSuccess?.profilePic || image}?${new Date()}`,
+                  uri: getProfilePic(userProfileSuccess?.profilePic || image),
                 }}
                 style={styles.profileImage}
               />
