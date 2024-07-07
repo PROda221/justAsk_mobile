@@ -27,6 +27,7 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {SheetManager} from 'react-native-actions-sheet';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -44,6 +45,10 @@ const convertToBase64 = async (uri: string) => {
   } catch (err) {
     console.error('Error converting image to base64: ', err);
   }
+};
+
+const openImage = (imageUrl: string) => {
+  SheetManager.show('ViewProfileImage-sheet', {payload: {imageUrl}});
 };
 
 const chatHeader = (
@@ -173,7 +178,9 @@ const ChatScreen = ({navigation, route}: Props) => {
         </Typography>
       )}
       {item.type === 'image' && (
-        <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
+        <TouchableOpacity onPress={() => openImage(item.text)}>
+          <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
+        </TouchableOpacity>
       )}
     </View>
   );

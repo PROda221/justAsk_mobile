@@ -31,6 +31,7 @@ type ActiveChatsType = {
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
+  activeChats: Model[];
 };
 
 const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
@@ -53,38 +54,38 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
     item,
   }: {
     item: ActiveChatsType;
-  }) => (
-    <TouchableOpacity
-      onPress={() => openChatScreen(item)}
-      style={styles.messageContainer}>
-      <Image
-        source={{uri: getProfilePic(item._raw['profile_pic'])}}
-        style={styles.avatar}
-      />
-      <View style={styles.messageTextContainer}>
+  }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => openChatScreen(item)}
+        style={styles.messageContainer}>
+        <Image
+          source={{uri: getProfilePic(item._raw['profile_pic'])}}
+          style={styles.avatar}
+        />
+        <View style={styles.messageTextContainer}>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.messageName}>
+            {item._raw['username']}
+          </Typography>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.messageText}>
+            {item._raw['last_message'] ? item._raw['last_message'] : 'New Chat'}
+          </Typography>
+        </View>
         <Typography
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
-          textStyle={styles.messageName}>
-          {item._raw['username']}
+          textStyle={styles.messageTime}>
+          {formatTimestamp(item._raw['updated_at'])}
         </Typography>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.messageText}>
-          {item._raw['lastMessage'] ? item._raw['lastMessage'] : 'New Chat'}
-        </Typography>
-      </View>
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="400"
-        textStyle={styles.messageTime}>
-        {item._raw['messageTime']
-          ? item._raw['messageTime']
-          : formatTimestamp(item._raw['created_at'])}
-      </Typography>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const openFullImage = () => {
     void SheetManager.show('ViewProfileImage-sheet', {
@@ -161,8 +162,11 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
   );
 };
 
-const enhance = withObservables([], ({navigation}: Props) => ({
-  activeChats: database.collections.get('chats').query(), // shortcut syntax for `comment: comment.observe()`
+const enhance = withObservables(['activeChats'], ({navigation}: Props) => ({
+  activeChats: database
+    .get('chats')
+    .query()
+    .observeWithColumns(['last_message', 'message_time']),
 }));
 const EnhancedHomeScreen = enhance(HomeScreen);
 export default EnhancedHomeScreen;

@@ -27,13 +27,13 @@ export const updateOrCreateUser = async (
   emailId,
   averageRating,
 ) => {
-  try{
+  try {
     await database.write(async () => {
       let user = await database.collections
         .get('users')
         .query(Q.where('username', username))
         .fetch();
-  
+
       if (user.length > 0) {
         // User exists, update the user
         user = user[0];
@@ -43,17 +43,16 @@ export const updateOrCreateUser = async (
           u.skills = skills;
           u.status = JSON.stringify(skills);
           u.emailId = emailId;
-          u.averageRating = averageRating
+          u.averageRating = averageRating;
         });
       } else {
         // User does not exist, create a new user
         createNewUser(username, profilePic, status, skills);
       }
     });
-  } catch(err){
-    console.log('error updating user:', err)
+  } catch (err) {
+    console.log('error updating user:', err);
   }
-  
 };
 
 export async function createNewChat(username, profilePic, status, skills) {
@@ -116,9 +115,21 @@ export async function checkChatExists(chatId) {
   }
 }
 
+export async function updateChatMsg(chat, lastMessage) {
+  try {
+    await chat[0].update((chat) => {
+      chat.lastMessage = lastMessage
+      chat.messageTime = new Date();
+    });
+  } catch (error) {
+    console.error('Error updating chat message:', error);
+  }
+}
+
 export async function addMessageToChat(chatId, text, isReceived, type) {
   try {
     let newMessage;
+    let lastMessage = type === 'image' ? 'Image' : text;
     await database.write(async () => {
       const chat = await database
         .get('chats')
@@ -126,6 +137,7 @@ export async function addMessageToChat(chatId, text, isReceived, type) {
         .fetch();
       if (chat.length > 0) {
         // Check if chat exists
+        await updateChatMsg(chat, lastMessage);
         newMessage = await database.get('messages').create(record => {
           record.chat.set(chat[0]);
           record.text = text;
