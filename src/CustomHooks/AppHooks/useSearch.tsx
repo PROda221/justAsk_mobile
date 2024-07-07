@@ -4,6 +4,8 @@ import {
   callSearchUser,
   setSearchedGenre,
   resetSearchUserResponse,
+  setSearchResults,
+  SearchData,
 } from '../../Redux/Slices/SearchUserSlice';
 import {useEffect} from 'react';
 
@@ -30,6 +32,10 @@ export const useSearch = () => {
     dispatch(setSearchedGenre(value));
   };
 
+  const setSearchedResults = (value: SearchData[]) => {
+    dispatch(setSearchResults(value));
+  };
+
   useEffect(() => {
     if (searchUserSlice.success) {
       console.log('success is :', searchUserSlice.success);
@@ -44,7 +50,9 @@ export const useSearch = () => {
 
   return {
     searchedGenres: searchUserSlice.searchedGenres,
+    searchedResults: searchUserSlice.searchResults,
     setSearchedGenres,
+    setSearchedResults,
     callSearchUserApi,
     resetSearchUserReducer,
     searchSuccess: searchUserSlice.success,

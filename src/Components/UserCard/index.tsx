@@ -5,14 +5,11 @@ import {getUserCardStyles} from './styles';
 import {Typography} from '../Typography';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {
-  horizontalScale,
-  moderateScale,
-  verticalScale,
-} from '../../Functions/StyleScale';
-import {useNavigation} from '@react-navigation/native';
+import {moderateScale} from '../../Functions/StyleScale';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../Functions/GetProfilePic';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type Props = {
   username: string;
@@ -25,7 +22,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
   const {colors} = useTheme();
   const styles = getUserCardStyles(colors);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const onCardPress = () => {
     SheetManager.hide('SearchFeature-sheet');
@@ -71,9 +68,9 @@ export const UserCard = ({username, skills, status, image}: Props) => {
 
       <AntDesign
         name="arrowright"
-        color={'white'}
+        color={colors.iconPrimaryColor}
         size={moderateScale(20)}
-        style={{height: verticalScale(20), paddingRight: horizontalScale(5)}}
+        style={styles.selectButton}
       />
     </TouchableOpacity>
   );

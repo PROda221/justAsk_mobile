@@ -6,7 +6,6 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
 import {SheetManager} from 'react-native-actions-sheet';
-import {baseURL} from '../../../Constants';
 import {FlashList, type ListRenderItem} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {formatTimestamp} from '../../../Functions/FormatTime';
@@ -19,10 +18,15 @@ import {type Model} from '@nozbe/watermelondb';
 import {moderateScale} from '../../../Functions/StyleScale';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import content from '../../../Assets/Languages/english.json';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   activeChats: Model[];
+};
+
+type ActiveChatsType = {
+  _raw: _RawRecord;
 };
 
 type Props = {
@@ -36,21 +40,25 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
 
   const {profileSuccess} = useProfile();
 
-  const openChatScreen = item => {
+  const openChatScreen = (item: ActiveChatsType) => {
     navigation.navigate('ChatScreen', {
-      username: item.username,
-      image: item.profile_pic,
-      status: item.status,
-      skills: item.skills,
+      username: item._raw['username'],
+      image: item._raw['profile_pic'],
+      status: item._raw['status'],
+      skills: item._raw['skills'],
     });
   };
 
-  const renderMessage: ListRenderItem<Model> = ({item}) => (
+  const renderMessage: ListRenderItem<Model> = ({
+    item,
+  }: {
+    item: ActiveChatsType;
+  }) => (
     <TouchableOpacity
-      onPress={() => openChatScreen(item._raw)}
+      onPress={() => openChatScreen(item)}
       style={styles.messageContainer}>
       <Image
-        source={{uri: getProfilePic(item._raw.profile_pic)}}
+        source={{uri: getProfilePic(item._raw['profile_pic'])}}
         style={styles.avatar}
       />
       <View style={styles.messageTextContainer}>
@@ -58,22 +66,22 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.messageName}>
-          {item._raw.username}
+          {item._raw['username']}
         </Typography>
         <Typography
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.messageText}>
-          {item._raw.lastMessage ? item._raw.lastMessage : 'New Chat'}
+          {item._raw['lastMessage'] ? item._raw['lastMessage'] : 'New Chat'}
         </Typography>
       </View>
       <Typography
         bgColor={colors.textPrimaryColor}
         fontWeight="400"
         textStyle={styles.messageTime}>
-        {item._raw.messageTime
-          ? item._raw.messageTime
-          : formatTimestamp(item._raw.created_at)}
+        {item._raw['messageTime']
+          ? item._raw['messageTime']
+          : formatTimestamp(item._raw['created_at'])}
       </Typography>
     </TouchableOpacity>
   );
@@ -99,7 +107,7 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
           fontWeight="400"
           bgColor={colors.textPrimaryColor}
           textStyle={styles.searchButtonTextStyle}>
-          {'Search....'}
+          {content.HomeScreen.searchPlaceholder}
         </Typography>
       </View>
       <View style={styles.addButton}>

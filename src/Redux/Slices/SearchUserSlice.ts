@@ -2,14 +2,16 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
 import {Endpoints} from '../../Api/Endpoints';
 
+export type SearchData = {
+  username: string;
+  adviceGenre: string[];
+  status: string;
+  profilePic: string;
+}
+
 type SearchUser = {
   success: boolean;
-  data: Array<{
-    username: string;
-    adviceGenre: string[];
-    status: string;
-    profilePic: string;
-  }>;
+  data: SearchData[];
   limit: number;
   lastId: string;
 };
@@ -42,7 +44,7 @@ export const callSearchUser = createAsyncThunk(
       const serializableError = {
         message: err.message,
         success: err.success,
-      }
+      };
 
       return rejectWithValue(serializableError);
     }
@@ -53,8 +55,10 @@ const initialState: {
   success: SearchUser | undefined;
   error: SearchUserError | undefined;
   searchedGenres: string[];
+  searchResults: SearchData[];
   loading: boolean;
 } = {
+  searchResults: [],
   searchedGenres: [],
   success: undefined,
   error: undefined,
@@ -67,6 +71,9 @@ const searchUserSlice = createSlice({
   reducers: {
     setSearchedGenre(state, action) {
       state.searchedGenres = action.payload;
+    },
+    setSearchResults(state, action) {
+      state.searchResults = action.payload;
     },
     resetSearchUserResponse(state) {
       state.success = undefined;
@@ -91,7 +98,7 @@ const searchUserSlice = createSlice({
   },
 });
 
-export const {resetSearchUserResponse, setSearchedGenre} =
+export const {resetSearchUserResponse, setSearchedGenre, setSearchResults} =
   searchUserSlice.actions;
 
 export default searchUserSlice.reducer;

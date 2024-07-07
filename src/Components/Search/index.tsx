@@ -7,7 +7,7 @@ import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
 import ActionSheet, {
   Route,
-  SheetProps,
+  useSheetRef,
   useSheetRouter,
 } from 'react-native-actions-sheet';
 
@@ -20,28 +20,35 @@ import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import {UserCard} from '../UserCard';
 import {useSearch} from '../../CustomHooks/AppHooks/useSearch';
+import content from '../../Assets/Languages/english.json';
 
 let currentGenres: string[];
 
-const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
+const SearchScreen = () => {
   const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getSearchStyles(colors);
   const {control, getValues, watch} = useForm();
   const allFields = watch('search');
+  const ref = useSheetRef('SearchFeature-sheet');
 
   const {
     searchedGenres,
+    searchedResults,
+    setSearchedResults,
     callSearchUserApi,
     searchSuccess,
     resetSearchUserReducer,
     searchError,
   } = useSearch();
-  const [userList, setUserList] = useState(searchSuccess?.data || []);
+  const [userList, setUserList] = useState(
+    searchedResults.length ? searchedResults : [],
+  );
 
   useEffect(() => {
     if (searchSuccess?.data.length) {
       const conctinatedUserList = [...userList, ...searchSuccess.data];
+      setSearchedResults(conctinatedUserList);
       setUserList(conctinatedUserList);
     }
   }, [searchSuccess?.data]);
@@ -79,7 +86,7 @@ const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
       return searchError.message;
     }
 
-    return 'Type a name or select a topic by pressing on the filter icon for results.';
+    return content.SearchFeature.EmptyListMsg;
   };
 
   const renderNotFound = () => (
@@ -89,7 +96,7 @@ const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
           Icon={Filter}
           height={verticalScale(100)}
           width={horizontalScale(100)}
-          onPress={() => router.navigate('AdviceListScreen')}
+          onPress={() => router?.navigate('AdviceListScreen')}
         />
       }
       <Typography
@@ -121,7 +128,7 @@ const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
         placeholder="Search..."
         leftIcon="search"
         rightIcon="search"
-        handleRightIconPress={() => router.navigate('AdviceListScreen')}
+        handleRightIconPress={() => router?.navigate('AdviceListScreen')}
       />
       {(!searchedGenres.length && !userList.length) || searchError?.message
         ? renderNotFound()
@@ -138,12 +145,6 @@ const SearchScreen = (props: SheetProps<'SearchFeature-sheet'>) => {
           onEndReachedThreshold={0.5}
         />
       </View>
-
-      {/* <TouchableOpacity onPress={() => router.navigate('AdviceListScreen')}>
-        <Typography fontWeight='400' bgColor='black'>
-          {"press me"}
-        </Typography>
-      </TouchableOpacity> */}
     </View>
   );
 };

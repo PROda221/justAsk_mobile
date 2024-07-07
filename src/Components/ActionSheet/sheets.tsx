@@ -4,7 +4,7 @@ import {
   registerSheet,
 } from 'react-native-actions-sheet';
 import SearchFeature from '../Search';
-import ViewImage from '../ViewImage';
+import ViewImage from './ViewImage';
 import {AddProfileImage, AddUserStatus} from './UserEditProfileBottomSheet';
 
 registerSheet('SearchFeature-sheet', SearchFeature);

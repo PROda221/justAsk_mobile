@@ -1,4 +1,4 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import {ImageStyle, StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {
   horizontalScale,
   moderateScale,
@@ -7,13 +7,14 @@ import {
 
 export type UserCardStyles = {
   card: ViewStyle;
-  image: ViewStyle;
+  image: ImageStyle;
   username: TextStyle;
   infoContainer: ViewStyle;
   status: TextStyle;
   skillsContainer: ViewStyle;
   skill: TextStyle;
   imageContainer: ViewStyle;
+  selectButton: ViewStyle;
 };
 
 export const getUserCardStyles = (colors): UserCardStyles =>
@@ -31,9 +32,10 @@ export const getUserCardStyles = (colors): UserCardStyles =>
       shadowRadius: moderateScale(10),
     },
     image: {
-      borderRadius: moderateScale(50),
-      height: verticalScale(100),
-      width: horizontalScale(100),
+      alignSelf: 'center',
+      borderRadius: moderateScale(40),
+      height: verticalScale(80),
+      width: horizontalScale(80),
     },
     imageContainer: {
       justifyContent: 'center',
@@ -71,4 +73,5 @@ export const getUserCardStyles = (colors): UserCardStyles =>
       marginBottom: verticalScale(5),
       textAlign: 'left',
     },
+    selectButton: {height: verticalScale(20), paddingRight: horizontalScale(5)},
   });

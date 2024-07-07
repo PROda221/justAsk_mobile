@@ -73,8 +73,12 @@
     "password": "Password",
     "passwordMismatch": "Password does not match",
     "resetPass": "Reset Password"
-
-
+  },
+  "HomeScreen": {
+    "searchPlaceholder": "Search...."
+  },
+  "SearchFeature": {
+    "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results."
   },
   "onlineCourses": {
     "title": "Our Online Courses"
