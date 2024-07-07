@@ -60,7 +60,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   const computeData = () => {
     if (userProfileSuccess?.adviceGenre) {
       return userProfileSuccess?.adviceGenre;
-    } else if (typeof skills === 'string') {
+    } else if (typeof skills === 'string' && skills.length) {
       return JSON.parse(skills);
     } else {
       return skills;

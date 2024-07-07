@@ -5,6 +5,7 @@ import {
   resetUserProfileResponse,
 } from '../../Redux/Slices/UserProfileSlice';
 import {useEffect} from 'react';
+import {updateChatData} from '../../DB/DBFunctions';
 
 export const useUserProfile = (username?: string) => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const useUserProfile = (username?: string) => {
 
   useEffect(() => {
     if (userProfileSlice.success) {
+      updateChatData(userProfileSlice.success.response.userDetails);
       console.log('success is :', userProfileSlice.success);
     }
   }, [userProfileSlice.success]);

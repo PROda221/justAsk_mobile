@@ -126,6 +126,31 @@ export async function updateChatMsg(chat, lastMessage) {
   }
 }
 
+export async function updateChatData(chatData) {
+  try{
+    await database.write(async () => {
+      const chat = await database.collections
+      .get('chats')
+      .query(Q.where('chat_id', chatData.username))
+      .fetch();
+
+      if(chat.length){
+        await chat[0].update((chat) => {
+          chat.username = chatData.username;
+          chat.profilePic = chatData.profilePic;
+          chat.status = chatData.status;
+          chat.skills = JSON.stringify(chatData.adviceGenre);
+        })
+      }else{
+        console.log('chat dosent exist')
+      }
+    }) 
+
+  }catch(err){
+    console.log('chat update data error', err)
+  }
+}
+
 export async function addMessageToChat(chatId, text, isReceived, type) {
   try {
     let newMessage;
