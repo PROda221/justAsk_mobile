@@ -4,7 +4,7 @@ import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {LogBox, type ViewStyle} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {type ChatScreenStyles, getChatScreenStyles} from './styles';
 import {verticalScale} from '../../../Functions/StyleScale';
@@ -28,6 +28,7 @@ import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {SheetManager} from 'react-native-actions-sheet';
+import {Image} from 'expo-image';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',

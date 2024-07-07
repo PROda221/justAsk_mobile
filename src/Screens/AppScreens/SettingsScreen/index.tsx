@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import {View, Image, TouchableOpacity, Alert} from 'react-native';
+import {View, TouchableOpacity, Alert} from 'react-native';
+import {Image} from 'expo-image';
 import {Typography} from '../../../Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
-import {baseURL} from '../../../Constants';
 import {getSettingsScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {RenderSvg} from '../../../Components/RenderSvg';

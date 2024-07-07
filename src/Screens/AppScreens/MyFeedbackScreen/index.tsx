@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Image, FlatList} from 'react-native';
+import {View, FlatList} from 'react-native';
+import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getMyFeedbackStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';

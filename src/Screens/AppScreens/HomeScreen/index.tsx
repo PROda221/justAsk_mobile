@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
+import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -166,7 +167,7 @@ const enhance = withObservables(['activeChats'], ({navigation}: Props) => ({
   activeChats: database
     .get('chats')
     .query()
-    .observeWithColumns(['last_message', 'message_time']),
+    .observeWithColumns(['last_message', 'message_time', 'profile_pic']),
 }));
 const EnhancedHomeScreen = enhance(HomeScreen);
 export default EnhancedHomeScreen;

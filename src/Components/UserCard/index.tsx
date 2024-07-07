@@ -1,5 +1,6 @@
 import React from 'react';
-import {TouchableOpacity, Image, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
+import {Image} from 'expo-image';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getUserCardStyles} from './styles';
 import {Typography} from '../Typography';

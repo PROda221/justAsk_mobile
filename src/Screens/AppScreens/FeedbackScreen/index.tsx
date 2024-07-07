@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Image, FlatList} from 'react-native';
+import {View, FlatList} from 'react-native';
+import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getFeedbackScreenStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import LinearGradient from 'react-native-linear-gradient';
 import {FlashList, type ListRenderItem} from '@shopify/flash-list';
-import {baseURL} from '../../../Constants';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {
   horizontalScale,

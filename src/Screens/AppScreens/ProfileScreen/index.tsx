@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
-import {View, Image, FlatList, TouchableOpacity} from 'react-native';
+import {View, FlatList, TouchableOpacity} from 'react-native';
+import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getUserProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
