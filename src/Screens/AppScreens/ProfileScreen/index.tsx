@@ -20,6 +20,7 @@ import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -34,6 +35,9 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
     resetUserProfileReducer,
     userProfileLoading,
   } = useUserProfile(username);
+  const {imageColors} = useImageColors(
+    getProfilePic(userProfileSuccess?.profilePic || image),
+  );
 
   const {colors} = useTheme();
   const styles = getUserProfileStyles(colors);
@@ -84,7 +88,12 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   return (
     <Skeleton.Group show={userProfileLoading}>
       <LinearGradient
-        colors={['#868F96', '#596164']}
+        colors={[
+          imageColors?.primary ?? '#000',
+          imageColors?.secondary ?? '#000',
+        ]}
+        locations={[0.0, 0.6]}
+        useAngle
         style={styles.gradientContainer}>
         <View style={styles.headerContainer}>
           <Header onPress={resetUserProfileReducer} />

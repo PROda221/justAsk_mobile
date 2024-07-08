@@ -21,6 +21,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useProfileUpload} from '../../../CustomHooks/AppHooks/useProfileUpload';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -41,6 +42,10 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   const {image = '', username = '', status = '', skills = []} = route.params;
 
   const {profileLoading, profileSuccess} = useProfile();
+  const {imageColors} = useImageColors(
+    getProfilePic(profileSuccess?.profilePic),
+    newProfileValues.profileImg,
+  );
 
   const {callProfileUploadApi, profileUploadLoading, profileUploadSuccess} =
     useProfileUpload();
@@ -126,10 +131,23 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     );
   };
 
+  const openFullImage = () => {
+    SheetManager.show('ViewProfileImage-sheet', {
+      payload: {
+        imageUrl: getProfilePic(profileSuccess?.profilePic || image),
+      },
+    });
+  };
+
   return (
     <Skeleton.Group show={profileLoading}>
       <LinearGradient
-        colors={['#868F96', '#596164']}
+        colors={[
+          imageColors?.primary ?? '#000',
+          imageColors?.secondary ?? '#000',
+        ]}
+        locations={[0.0, 0.6]}
+        useAngle
         style={styles.gradientContainer}>
         <View style={styles.headerContainer}>
           <Header />
@@ -140,7 +158,9 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             colorMode="light"
             height={verticalScale(165)}
             width={horizontalScale(165)}>
-            <View style={styles.imageContainer}>
+            <TouchableOpacity
+              onPress={openFullImage}
+              style={styles.imageContainer}>
               <Image
                 source={{
                   uri: `${newProfileValues.profileImg ?? getProfilePic(profileSuccess?.profilePic ?? image)}`,
@@ -158,7 +178,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                   />
                 </TouchableOpacity>
               )}
-            </View>
+            </TouchableOpacity>
           </Skeleton>
 
           <View style={{paddingTop: verticalScale(8)}}>
