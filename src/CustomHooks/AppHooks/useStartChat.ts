@@ -92,7 +92,7 @@ export const useStartChat = (
           setMessages(allMessages?.slice(0, 20));
         }
       } else {
-        await createNewChat(username, profilePic, status, skills);
+        await createNewChat(username, profilePic, status, skills, profileSlice.success?.username);
       }
     } catch (err) {
       console.log('local db error :', err);

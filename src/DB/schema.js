@@ -27,6 +27,7 @@ export const mySchema = appSchema({
         {name: 'last_message', type: 'string'},
         {name: 'message_time', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true, isUnique: true},
+        {name: 'user_id', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
       ],

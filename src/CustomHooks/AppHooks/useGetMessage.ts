@@ -20,13 +20,13 @@ export const useGetMessage = (socket: Socket | null) => {
     isReceived: boolean,
     type: string = 'message',
     senderId: string,
+    yourId: string,
   ) => {
     try {
-      console.log('check :', senderId, msg);
       const chatExists = await checkChatExists(senderId);
       if (!chatExists) {
         console.log('a');
-        await createNewChat(senderId, `${senderId}-.png`);
+        await createNewChat(senderId, `${senderId}-.png`, '','', yourId);
       }
       let newMessage;
       if (typeof msg == 'object') {
@@ -83,13 +83,13 @@ export const useGetMessage = (socket: Socket | null) => {
   useEffect(() => {
     const receiveMessage = async () => {
       // Receive message
-      socket?.on('chat message', async (msg, type, senderId) => {
+      socket?.on('chat message', async (msg, type, senderId, yourId) => {
         if (type === 'image') {
           let imageUri = await saveBase64Image(msg);
           let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName};
-          getMessages(computedImg, true, type, senderId);
+          getMessages(computedImg, true, type, senderId, yourId);
         } else {
-          getMessages(msg, true, type, senderId);
+          getMessages(msg, true, type, senderId, yourId);
         }
       });
     };

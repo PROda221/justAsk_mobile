@@ -1,18 +1,18 @@
+import { from, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
 
 export async function createNewUser(username, profilePic, status, skills) {
   try {
-    await database.write(async () => {
-      const newUser = await database.collections.get('users').create(user => {
-        user.username = username;
-        user.userId = username;
-        user.profilePic = profilePic;
-        user.status = status;
-        user.skills = JSON.stringify(skills);
-      });
-      return newUser;
+    const newUser = await database.collections.get('users').create(user => {
+      user.username = username;
+      user.userId = username;
+      user.profilePic = profilePic;
+      user.status = status;
+      user.skills = JSON.stringify(skills);
     });
+    return newUser;
   } catch (error) {
     console.error('Error creating user:', error);
     throw error;
@@ -55,24 +55,62 @@ export const updateOrCreateUser = async (
   }
 };
 
-export async function createNewChat(username, profilePic, status, skills) {
+export async function createNewChat(
+  username,
+  profilePic,
+  status,
+  skills,
+  account,
+) {
   try {
     await database.write(async () => {
-      const newChat = await database.collections.get('chats').create(chat => {
-        chat.username = username;
-        chat.chatId = username;
-        chat.profilePic = profilePic;
-        chat.status = status;
-        chat.skills = JSON.stringify(skills);
-      });
-      console.log('New chat created:', newChat);
-      return newChat;
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const newChat = await database.collections
+          .get('chats')
+          .create(record => {
+            record.user.set(user[0]);
+            record.username = username;
+            record.chatId = username;
+            record.profilePic = profilePic;
+            record.status = status;
+            record.skills = JSON.stringify(skills);
+          });
+        console.log('New chat created:', newChat);
+        return newChat;
+      } else {
+        console.error('User not found:', account);
+      }
     });
   } catch (error) {
     console.error('Error creating chat:', error);
     throw error;
   }
 }
+
+export function getUserChats(account) {
+  return from(
+    database.collections
+      .get('users')
+      .query(Q.where('username', account)).observeWithColumns(['username'])
+  ).pipe(
+    switchMap(users => {
+      if (users.length > 0) {
+        return database.collections
+          .get('chats')
+          .query(Q.where('user_id', users[0].id))
+          .observeWithColumns(['last_message', 'message_time', 'profile_pic']);
+      } else {
+        return of(null); // Return an empty observable array if no user is found
+      }
+    }),
+    catchError(() => of(null)) // Handle any errors
+  );
+}
+
 
 export async function getAllChats() {
   try {
@@ -117,8 +155,8 @@ export async function checkChatExists(chatId) {
 
 export async function updateChatMsg(chat, lastMessage) {
   try {
-    await chat[0].update((chat) => {
-      chat.lastMessage = lastMessage
+    await chat[0].update(chat => {
+      chat.lastMessage = lastMessage;
       chat.messageTime = new Date();
     });
   } catch (error) {
@@ -127,27 +165,26 @@ export async function updateChatMsg(chat, lastMessage) {
 }
 
 export async function updateChatData(chatData) {
-  try{
+  try {
     await database.write(async () => {
       const chat = await database.collections
-      .get('chats')
-      .query(Q.where('chat_id', chatData.username))
-      .fetch();
+        .get('chats')
+        .query(Q.where('chat_id', chatData.username))
+        .fetch();
 
-      if(chat.length){
-        await chat[0].update((chat) => {
+      if (chat.length) {
+        await chat[0].update(chat => {
           chat.username = chatData.username;
           chat.profilePic = chatData.profilePic;
           chat.status = chatData.status;
           chat.skills = JSON.stringify(chatData.adviceGenre);
-        })
-      }else{
-        console.log('chat dosent exist')
+        });
+      } else {
+        console.log('chat dosent exist');
       }
-    }) 
-
-  }catch(err){
-    console.log('chat update data error', err)
+    });
+  } catch (err) {
+    console.log('chat update data error', err);
   }
 }
 

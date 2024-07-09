@@ -7,87 +7,28 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import {getHomeScreenStyles} from './styles';
 import {Typography} from '../../../Components';
 import {SheetManager} from 'react-native-actions-sheet';
-import {FlashList, type ListRenderItem} from '@shopify/flash-list';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
-import {formatTimestamp} from '../../../Functions/FormatTime';
 import {type ParamListBase} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNotifications} from '../../../CustomHooks/AppHooks/useNotifications';
-import {withObservables} from '@nozbe/watermelondb/react';
-import database from '../../../DB/database';
 import {type Model} from '@nozbe/watermelondb';
 import {moderateScale} from '../../../Functions/StyleScale';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
+import ActiveChats from './ActiveChats';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   activeChats: Model[];
 };
 
-type ActiveChatsType = {
-  _raw: _RawRecord;
-};
-
-type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  activeChats: Model[];
-};
-
-const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
+const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
 
   const {profileSuccess} = useProfile();
-
-  const openChatScreen = (item: ActiveChatsType) => {
-    navigation.navigate('ChatScreen', {
-      username: item._raw['username'],
-      image: item._raw['profile_pic'],
-      status: item._raw['status'],
-      skills: item._raw['skills'],
-    });
-  };
-
-  const renderMessage: ListRenderItem<Model> = ({
-    item,
-  }: {
-    item: ActiveChatsType;
-  }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => openChatScreen(item)}
-        style={styles.messageContainer}>
-        <Image
-          source={{uri: getProfilePic(item._raw['profile_pic'])}}
-          style={styles.avatar}
-        />
-        <View style={styles.messageTextContainer}>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.messageName}>
-            {item._raw['username']}
-          </Typography>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.messageText}>
-            {item._raw['last_message'] ? item._raw['last_message'] : 'New Chat'}
-          </Typography>
-        </View>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.messageTime}>
-          {formatTimestamp(item._raw['updated_at'])}
-        </Typography>
-      </TouchableOpacity>
-    );
-  };
-
   const openFullImage = () => {
     void SheetManager.show('ViewProfileImage-sheet', {
       payload: {
@@ -152,22 +93,12 @@ const HomeScreen = ({navigation, activeChats}: HomeScreenProps) => {
       {header()}
       {searchBar()}
 
-      <FlashList
-        data={activeChats}
-        renderItem={renderMessage}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.messagesList}
-        estimatedItemSize={200}
+      <ActiveChats
+        navigation={navigation}
+        accountName={profileSuccess?.username ?? ''}
       />
     </View>
   );
 };
 
-const enhance = withObservables(['activeChats'], ({navigation}: Props) => ({
-  activeChats: database
-    .get('chats')
-    .query()
-    .observeWithColumns(['last_message', 'message_time', 'profile_pic']),
-}));
-const EnhancedHomeScreen = enhance(HomeScreen);
-export default EnhancedHomeScreen;
+export default HomeScreen;

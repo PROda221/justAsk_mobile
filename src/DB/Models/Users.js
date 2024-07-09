@@ -1,5 +1,5 @@
 import { Model } from '@nozbe/watermelondb';
-import { date, field, readonly } from '@nozbe/watermelondb/decorators';
+import { date, field, readonly, children } from '@nozbe/watermelondb/decorators';
 
 export default class Users extends Model {
   static table = 'users';
@@ -15,6 +15,7 @@ export default class Users extends Model {
   @field('emailid') emailid;
   @field('average_rating') averageRating;
   @field('user_id') userId;
+  @children('chats') chats;
   @readonly @date('created_at') createdAt;
   @readonly @date('updated_at') updatedAt;
 }
