@@ -13,7 +13,6 @@ const localReducer = createSlice({
   initialState,
   reducers: {
     setInChatScreen(state, action) {
-      console.log('action.payload :', action.payload);
       state.inChatScreen = action.payload;
     },
   },

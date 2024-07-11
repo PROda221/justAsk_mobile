@@ -108,7 +108,7 @@ export function getUserChats(account) {
             'message_time',
             'profile_pic',
             'status',
-            'read_count',
+            'unread_count',
           ]);
       } else {
         return of(null); // Return an empty observable array if no user is found
