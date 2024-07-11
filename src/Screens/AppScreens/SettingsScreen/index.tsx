@@ -141,6 +141,8 @@ const SettingsScreen = ({navigation}: PropsType) => {
             uri: getProfilePic(profileSuccess?.profilePic),
           }}
           style={styles.profilePic}
+          transition={500}
+          cachePolicy={'none'}
         />
         <View style={styles.profileText}>
           <View style={styles.editContainer}>

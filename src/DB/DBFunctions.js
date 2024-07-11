@@ -102,7 +102,7 @@ export function getUserChats(account) {
         return database.collections
           .get('chats')
           .query(Q.where('user_id', users[0].id))
-          .observeWithColumns(['last_message', 'message_time', 'profile_pic']);
+          .observeWithColumns(['last_message', 'message_time', 'profile_pic', 'status']);
       } else {
         return of(null); // Return an empty observable array if no user is found
       }

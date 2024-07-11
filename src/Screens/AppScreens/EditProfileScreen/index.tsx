@@ -166,6 +166,8 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                   uri: `${newProfileValues.profileImg ?? getProfilePic(profileSuccess?.profilePic ?? image)}`,
                 }}
                 style={styles.profileImage}
+                transition={500}
+                cachePolicy={'none'}
               />
               {editProfile && (
                 <TouchableOpacity

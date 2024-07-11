@@ -60,34 +60,41 @@ const chatHeader = (
   animatedStyle: ViewStyle,
   statusStyle: ViewStyle,
   openUserProfle: () => void,
-) => (
-  //   Console.log('hello chat header');
-
-  <View style={styles.header}>
-    <Header containerStyle={{paddingTop: 0}} />
-    <TouchableOpacity onPress={openUserProfle}>
-      <Image source={{uri: getProfilePic(image)}} style={styles.profileImage} />
-    </TouchableOpacity>
-    <View style={styles.headerTextContainer}>
-      <Animated.View style={animatedStyle}>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.headerText}>
-          {username}
-        </Typography>
-      </Animated.View>
-      <Animated.View style={statusStyle}>
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.headerText}>
-          {'Online'}
-        </Typography>
-      </Animated.View>
+) => {
+  //   Console.log('hello hat header');
+  return (
+    <View style={styles.header}>
+      <Header containerStyle={{paddingTop: 0}} />
+      <TouchableOpacity onPress={openUserProfle}>
+        <Image
+          source={{uri: getProfilePic(image)}}
+          transition={200}
+          cachePolicy={'none'}
+          style={styles.profileImage}
+        />
+      </TouchableOpacity>
+      <View style={styles.headerTextContainer}>
+        <Animated.View style={animatedStyle}>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.headerText}>
+            {username}
+          </Typography>
+        </Animated.View>
+        <Animated.View style={statusStyle}>
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.headerText}>
+            {'Online'}
+          </Typography>
+        </Animated.View>
+      </View>
     </View>
-  </View>
-);
+  );
+};
+
 const ChatScreen = ({navigation, route}: Props) => {
   const {username, skills, status, image} = route.params;
 
@@ -209,7 +216,7 @@ const ChatScreen = ({navigation, route}: Props) => {
         renderItem={renderMessageList}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.chatContainer}
-        estimatedItemSize={300}
+        estimatedItemSize={80}
         inverted
         onEndReached={loadMoreMessages}
         onEndReachedThreshold={0.1}

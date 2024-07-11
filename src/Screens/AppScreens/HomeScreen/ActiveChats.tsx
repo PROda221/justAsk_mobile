@@ -53,6 +53,8 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
         <Image
           source={{uri: getProfilePic(item._raw['profile_pic'])}}
           style={styles.avatar}
+          transition={500}
+          cachePolicy={'none'}
         />
         <View style={styles.messageTextContainer}>
           <Typography
@@ -84,7 +86,7 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
       renderItem={renderMessage}
       keyExtractor={item => item.id}
       contentContainerStyle={styles.messagesList}
-      estimatedItemSize={200}
+      estimatedItemSize={250}
     />
   );
 };

@@ -121,6 +121,8 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
                 source={{
                   uri: getProfilePic(userProfileSuccess?.profilePic || image),
                 }}
+                transition={500}
+                cachePolicy={'none'}
                 style={styles.profileImage}
               />
             </TouchableOpacity>

@@ -88,6 +88,8 @@ const MyFeedbackPage = () => {
             uri: getProfilePic(profileSuccess?.profilePic),
           }}
           style={styles.profileImage}
+          transition={500}
+          cachePolicy={'none'}
         />
         <View style={styles.profileNameStatusContainer}>
           <Typography
@@ -156,7 +158,11 @@ const MyFeedbackPage = () => {
           </Skeleton.Group>
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Image source={EmptyState} style={styles.emptyStateImageStyle} />
+            <Image
+              source={EmptyState}
+              style={styles.emptyStateImageStyle}
+              transition={500}
+            />
             <Typography
               bgColor="white"
               fontWeight="400"
@@ -213,6 +219,8 @@ const MyFeedbackPage = () => {
                   source={{
                     uri: getProfilePic(item.commentUserPic),
                   }}
+                  transition={500}
+                  cachePolicy={'none'}
                   style={styles.commentUserAvatar}
                 />
               </Skeleton>

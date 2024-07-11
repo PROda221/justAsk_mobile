@@ -38,7 +38,12 @@ export const UserCard = ({username, skills, status, image}: Props) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onCardPress}>
       <View style={styles.imageContainer}>
-        <Image source={{uri: getProfilePic(image)}} style={styles.image} />
+        <Image
+          source={{uri: getProfilePic(image)}}
+          style={styles.image}
+          transition={500}
+          cachePolicy={'none'}
+        />
       </View>
       <View style={styles.infoContainer}>
         <Typography

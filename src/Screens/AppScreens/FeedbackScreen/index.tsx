@@ -98,6 +98,8 @@ const FeedbackPage = () => {
             uri: getProfilePic(userProfileSuccess?.profilePic),
           }}
           style={styles.profileImage}
+          transition={500}
+          cachePolicy={'none'}
         />
         <View style={styles.profileNameStatusContainer}>
           <Typography
@@ -166,7 +168,11 @@ const FeedbackPage = () => {
         </Skeleton.Group>
       ) : (
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={EmptyState} style={styles.emptyStateImageStyle} />
+          <Image
+            source={EmptyState}
+            style={styles.emptyStateImageStyle}
+            transition={500}
+          />
           <Typography
             bgColor="white"
             fontWeight="400"
@@ -224,6 +230,8 @@ const FeedbackPage = () => {
                   uri: getProfilePic(item.commentUserPic),
                 }}
                 style={styles.commentUserAvatar}
+                transition={500}
+                cachePolicy={'none'}
               />
             </Skeleton>
           </View>

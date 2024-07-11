@@ -70,6 +70,8 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
               uri: getProfilePic(profileSuccess?.profilePic),
             }}
             style={styles.img}
+            transition={500}
+            cachePolicy={'none'}
           />
         </TouchableOpacity>
         <Typography
