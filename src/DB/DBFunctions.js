@@ -1,5 +1,5 @@
-import { from, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
+import {from, of} from 'rxjs';
+import {switchMap, catchError} from 'rxjs/operators';
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
 
@@ -95,22 +95,28 @@ export function getUserChats(account) {
   return from(
     database.collections
       .get('users')
-      .query(Q.where('username', account)).observeWithColumns(['username'])
+      .query(Q.where('username', account))
+      .observeWithColumns(['username']),
   ).pipe(
     switchMap(users => {
       if (users.length > 0) {
         return database.collections
           .get('chats')
-          .query(Q.where('user_id', users[0].id))
-          .observeWithColumns(['last_message', 'message_time', 'profile_pic', 'status']);
+          .query(Q.where('user_id', users[0].id), Q.sortBy('updated_at', Q.desc))
+          .observeWithColumns([
+            'last_message',
+            'message_time',
+            'profile_pic',
+            'status',
+            'read_count',
+          ]);
       } else {
         return of(null); // Return an empty observable array if no user is found
       }
     }),
-    catchError(() => of(null)) // Handle any errors
+    catchError(() => of(null)), // Handle any errors
   );
 }
-
 
 export async function getAllChats() {
   try {
@@ -153,14 +159,35 @@ export async function checkChatExists(chatId) {
   }
 }
 
-export async function updateChatMsg(chat, lastMessage) {
+export async function updateChatMsg(chat, lastMessage, readMessage) {
   try {
     await chat[0].update(chat => {
       chat.lastMessage = lastMessage;
       chat.messageTime = new Date();
+      chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
     });
   } catch (error) {
     console.error('Error updating chat message:', error);
+  }
+}
+
+export async function markAllRead(chatId) {
+  try {
+    await database.write(async () => {
+      const chat = await database
+        .get('chats')
+        .query(Q.where('chat_id', chatId))
+        .fetch();
+      if (chat.length) {
+        await chat[0].update(chat => {
+          chat.unreadCount = 0;
+        });
+      } else {
+        console.log('chat dosent exist');
+      }
+    });
+  } catch (err) {
+    console.log('chat mark all read error', err);
   }
 }
 
@@ -188,7 +215,13 @@ export async function updateChatData(chatData) {
   }
 }
 
-export async function addMessageToChat(chatId, text, isReceived, type) {
+export async function addMessageToChat(
+  chatId,
+  text,
+  isReceived,
+  type,
+  onChatScreen = false,
+) {
   try {
     let newMessage;
     let lastMessage = type === 'image' ? 'Image' : text;
@@ -199,12 +232,13 @@ export async function addMessageToChat(chatId, text, isReceived, type) {
         .fetch();
       if (chat.length > 0) {
         // Check if chat exists
-        await updateChatMsg(chat, lastMessage);
+        await updateChatMsg(chat, lastMessage, onChatScreen);
         newMessage = await database.get('messages').create(record => {
           record.chat.set(chat[0]);
           record.text = text;
           record.type = type;
           record.received = isReceived;
+          record.read = onChatScreen;
         });
       } else {
         console.error('Chat not found:', chatId);

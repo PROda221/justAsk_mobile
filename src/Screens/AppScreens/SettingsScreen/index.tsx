@@ -142,7 +142,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
           }}
           style={styles.profilePic}
           transition={500}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
         />
         <View style={styles.profileText}>
           <View style={styles.editContainer}>

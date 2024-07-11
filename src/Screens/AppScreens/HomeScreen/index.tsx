@@ -71,7 +71,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
             }}
             style={styles.img}
             transition={500}
-            cachePolicy={'none'}
+            cachePolicy={'memory-disk'}
           />
         </TouchableOpacity>
         <Typography

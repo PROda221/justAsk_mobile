@@ -89,7 +89,7 @@ const MyFeedbackPage = () => {
           }}
           style={styles.profileImage}
           transition={500}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
         />
         <View style={styles.profileNameStatusContainer}>
           <Typography
@@ -220,7 +220,7 @@ const MyFeedbackPage = () => {
                     uri: getProfilePic(item.commentUserPic),
                   }}
                   transition={500}
-                  cachePolicy={'none'}
+                  cachePolicy={'memory-disk'}
                   style={styles.commentUserAvatar}
                 />
               </Skeleton>

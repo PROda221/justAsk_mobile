@@ -7,11 +7,14 @@ import {
 import {Alert} from 'react-native';
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {Socket} from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/rootReducers';
 
 const DOWNLOAD_DIR = ReactNativeBlobUtil.fs.dirs.DownloadDir;
 
 export const useGetMessage = (socket: Socket | null) => {
   const [newMessage, setNewMessage] = useState();
+  const localReducer = useSelector((state: RootState) => state.localReducer)
 
   // const appState = useRef(AppState.currentState);
 
@@ -35,10 +38,11 @@ export const useGetMessage = (socket: Socket | null) => {
           msg.uri,
           isReceived,
           type,
+          localReducer.inChatScreen
         );
       } else {
         console.log('b');
-        newMessage = await addMessageToChat(senderId, msg, isReceived, type);
+        newMessage = await addMessageToChat(senderId, msg, isReceived, type, localReducer.inChatScreen);
       }
       //set message
 
@@ -99,7 +103,7 @@ export const useGetMessage = (socket: Socket | null) => {
     return () => {
       socket?.off('chat message');
     };
-  }, [socket]);
+  }, [socket, localReducer]);
 
   return {newMessage};
 };

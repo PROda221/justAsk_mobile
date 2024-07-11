@@ -42,7 +42,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
           source={{uri: getProfilePic(image)}}
           style={styles.image}
           transition={500}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
         />
       </View>
       <View style={styles.infoContainer}>

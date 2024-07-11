@@ -167,7 +167,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                 }}
                 style={styles.profileImage}
                 transition={500}
-                cachePolicy={'none'}
+                cachePolicy={'memory-disk'}
               />
               {editProfile && (
                 <TouchableOpacity

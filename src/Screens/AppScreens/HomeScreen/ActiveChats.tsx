@@ -13,6 +13,7 @@ import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {getUserChats} from '../../../DB/DBFunctions';
 import {withObservables} from '@nozbe/watermelondb/react';
+import NewMsgNumber from './NewMsgNumber';
 
 type ActiveChatsType = {
   _raw: _RawRecord;
@@ -54,15 +55,20 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
           source={{uri: getProfilePic(item._raw['profile_pic'])}}
           style={styles.avatar}
           transition={500}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
         />
         <View style={styles.messageTextContainer}>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.messageName}>
-            {item._raw['username']}
-          </Typography>
+          <View style={{flexDirection: 'row'}}>
+            <Typography
+              bgColor={colors.textPrimaryColor}
+              fontWeight="400"
+              textStyle={styles.messageName}>
+              {item._raw['username']}
+            </Typography>
+            {item._raw?.['unread_count'] ? (
+              <NewMsgNumber number={item._raw['unread_count']} />
+            ) : null}
+          </View>
           <Typography
             bgColor={colors.textPrimaryColor}
             fontWeight="400"

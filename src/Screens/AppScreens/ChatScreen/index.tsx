@@ -29,6 +29,11 @@ import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {SheetManager} from 'react-native-actions-sheet';
 import {Image} from 'expo-image';
+import {markAllRead} from '../../../DB/DBFunctions';
+import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
+import {useIsFocused} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -69,7 +74,7 @@ const chatHeader = (
         <Image
           source={{uri: getProfilePic(image)}}
           transition={200}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
           style={styles.profileImage}
         />
       </TouchableOpacity>
@@ -101,6 +106,8 @@ const ChatScreen = ({navigation, route}: Props) => {
   const {newMessage} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const {control, getValues, resetField} = useForm();
 
@@ -112,7 +119,15 @@ const ChatScreen = ({navigation, route}: Props) => {
   const flashListRef = useRef(null);
 
   const {colors} = useTheme();
+
   const styles = getChatScreenStyles(colors);
+  useEffect(() => {
+    markAllRead(username);
+    dispatch(setInChatScreen(isFocused));
+    return () => {
+      dispatch(setInChatScreen(false));
+    };
+  }, [isFocused]);
 
   // Handle animation of online status
   useEffect(() => {

@@ -99,7 +99,7 @@ const FeedbackPage = () => {
           }}
           style={styles.profileImage}
           transition={500}
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
         />
         <View style={styles.profileNameStatusContainer}>
           <Typography
@@ -231,7 +231,7 @@ const FeedbackPage = () => {
                 }}
                 style={styles.commentUserAvatar}
                 transition={500}
-                cachePolicy={'none'}
+                cachePolicy={'memory-disk'}
               />
             </Skeleton>
           </View>

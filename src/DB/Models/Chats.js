@@ -15,6 +15,7 @@ export default class Chat extends Model {
   @field('status') status;
   @field('last_message') lastMessage;
   @field('message_time') messageTime;
+  @field('unread_count') unreadCount;
   @field('chat_id') chatId;
   @relation('users', 'user_id') user;
   @children('messages') messages;

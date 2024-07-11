@@ -57,9 +57,10 @@ export const useStartChat = (
           msg.uri,
           isReceived,
           type,
+          true
         );
       } else {
-        newMessage = await addMessageToChat(username, msg, isReceived, type);
+        newMessage = await addMessageToChat(username, msg, isReceived, type, true);
       }
 
       setMessages(prevMessages => [newMessage, ...prevMessages]);
