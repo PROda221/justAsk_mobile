@@ -18,20 +18,19 @@ export const useStartChat = (
   profilePic: string,
   newMessage: any,
   skills: Array<string>,
-  status: string
+  status: string,
 ) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
-  const [chatId, setChatId] = useState<string>('')
+  const [chatId, setChatId] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const appState = useRef(AppState.currentState);
   const {socket} = useSocket();
 
-
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
   const sendMessages = async (
-    messageInput: string | object,
+    messageInput: string,
     username: string,
     type: string = 'message',
   ) => {
@@ -45,24 +44,18 @@ export const useStartChat = (
   };
 
   const getMessages = async (
-    msg: string | object,
+    msg: string,
     isReceived: boolean,
     type: string = 'message',
   ) => {
     try {
-      let newMessage;
-      if (typeof msg == 'object') {
-        newMessage = await addMessageToChat(
-          username,
-          msg.uri,
-          isReceived,
-          type,
-          true
-        );
-      } else {
-        newMessage = await addMessageToChat(username, msg, isReceived, type, true);
-      }
-
+      newMessage = await addMessageToChat(
+        username,
+        msg,
+        isReceived,
+        type,
+        true,
+      );
       setMessages(prevMessages => [newMessage, ...prevMessages]);
     } catch (err) {
       console.log('err on getMessage :', err);
@@ -87,13 +80,19 @@ export const useStartChat = (
       const chatExists = await checkChatExists(username);
       if (chatExists) {
         const {allStoredMsgs, chatId} = await getAllMessagesForChat(username);
-        allMessages = allStoredMsgs
-        setChatId(chatId)
+        allMessages = allStoredMsgs;
+        setChatId(chatId);
         if (allMessages.length) {
           setMessages(allMessages?.slice(0, 20));
         }
       } else {
-        await createNewChat(username, profilePic, status, skills, profileSlice.success?.username);
+        await createNewChat(
+          username,
+          profilePic,
+          status,
+          skills,
+          profileSlice.success?.username,
+        );
       }
     } catch (err) {
       console.log('local db error :', err);

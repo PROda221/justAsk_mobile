@@ -23,7 +23,6 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
-import ReactNativeBlobUtil from 'react-native-blob-util';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
@@ -32,25 +31,24 @@ import {Image} from 'expo-image';
 import {markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../../Redux/rootReducers';
+import {useDispatch} from 'react-redux';
+import {uploadImage} from '../../../Functions/UploadImg';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
 ]);
+type Params = {
+  params: {
+    username: string;
+    status: string;
+    image: string;
+    skills: string[];
+  };
+};
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
-};
-
-const convertToBase64 = async (uri: string) => {
-  try {
-    const base64Data = await ReactNativeBlobUtil.fs.readFile(uri, 'base64');
-    return base64Data;
-  } catch (err) {
-    console.error('Error converting image to base64: ', err);
-  }
+  route: RouteProp<Params>;
 };
 
 const openImage = (imageUrl: string) => {
@@ -170,12 +168,13 @@ const ChatScreen = ({navigation, route}: Props) => {
 
     try {
       const result = await launchImageLibrary(options);
-      const fileName = result.assets?.[0].fileName;
       const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
-      const base64Data = await convertToBase64(compressedResult);
-      getMessages({fileName, uri}, false, 'image');
-      sendMessages({fileName, base64Data}, username, 'image');
+      const uploadedUrl = await uploadImage(compressedResult);
+      if (uploadedUrl) {
+        getMessages(compressedResult, false, 'image');
+        sendMessages(uploadedUrl, username, 'image');
+      }
     } catch (err) {
       console.log('err at image selection :', err);
     }
@@ -184,29 +183,35 @@ const ChatScreen = ({navigation, route}: Props) => {
   const renderMessageList = ({
     item,
   }: {
-    item: {received: boolean; text: string; type: 'message' | 'image'};
-  }) => (
-    // Console.log('hello render message')
-    <View
-      style={[
-        styles.messageContainer,
-        item.received ? {} : styles.messageContainerRight,
-      ]}>
-      {item.type === 'message' && (
-        <Typography
-          fontWeight="300"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.messageText}>
-          {item.text}
-        </Typography>
-      )}
-      {item.type === 'image' && (
-        <TouchableOpacity onPress={() => openImage(item.text)}>
-          <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+    item: {
+      id: string;
+      received: boolean;
+      text: string;
+      type: 'message' | 'image';
+    };
+  }) => {
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          item.received ? {} : styles.messageContainerRight,
+        ]}>
+        {item.type === 'message' && (
+          <Typography
+            fontWeight="300"
+            bgColor={colors.textPrimaryColor}
+            textStyle={styles.messageText}>
+            {item.text}
+          </Typography>
+        )}
+        {item.type === 'image' && (
+          <TouchableOpacity onPress={() => openImage(item.text)}>
+            <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
 
   const openUserProfle = () => {
     navigation.navigate('UserProfile', {username, skills, status, image});

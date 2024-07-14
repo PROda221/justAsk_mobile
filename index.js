@@ -12,6 +12,7 @@ import {
   createNewChat,
 } from './src/DB/DBFunctions';
 import notifee from '@notifee/react-native';
+import {saveURLImage} from './src/Functions/SaveBase64Image'
 
 // Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
@@ -35,14 +36,20 @@ const displayNotification = async (notifeeData) => {
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
-    const {message, senderUsername, type, notifee} = remoteMessage.data;
+    const {message, senderUsername, type, notifee, receiverUsername} = remoteMessage.data;
     if (senderUsername && message && type) {
       displayNotification(JSON.parse(notifee));
       const chatExists = await checkChatExists(senderUsername);
       if (!chatExists) {
-        await createNewChat(senderUsername, `${senderUsername}-.png`);
+        await createNewChat(senderUsername, `${senderUsername}-.png`, '', '', receiverUsername);
       }
-      await addMessageToChat(senderUsername, message, true, type);
+      if (type === 'image') {
+        let imageUri = await saveURLImage(message);
+        let computedImg = {uri: `file://${imageUri}`};
+        await addMessageToChat(senderUsername, computedImg.uri, true, type, false);
+      } else {
+        await addMessageToChat(senderUsername, message, true, type, false);
+      }
     }
   } catch (err) {
     throw new Error('local db error :', err);

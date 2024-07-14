@@ -4,22 +4,19 @@ import {
   checkChatExists,
   createNewChat,
 } from '../../DB/DBFunctions';
-import {Alert} from 'react-native';
-import ReactNativeBlobUtil from 'react-native-blob-util';
 import {Socket} from 'socket.io-client';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../Redux/rootReducers';
-
-const DOWNLOAD_DIR = ReactNativeBlobUtil.fs.dirs.DownloadDir;
+import {useSelector} from 'react-redux';
+import {RootState} from '../../Redux/rootReducers';
+import {saveURLImage} from '../../Functions/SaveBase64Image';
 
 export const useGetMessage = (socket: Socket | null) => {
   const [newMessage, setNewMessage] = useState();
-  const localReducer = useSelector((state: RootState) => state.localReducer)
+  const localReducer = useSelector((state: RootState) => state.localReducer);
 
   // const appState = useRef(AppState.currentState);
 
   const getMessages = async (
-    msg: string | object,
+    msg: string,
     isReceived: boolean,
     type: string = 'message',
     senderId: string,
@@ -29,38 +26,23 @@ export const useGetMessage = (socket: Socket | null) => {
       const chatExists = await checkChatExists(senderId);
       if (!chatExists) {
         console.log('a');
-        await createNewChat(senderId, `${senderId}-.png`, '','', yourId);
+        await createNewChat(senderId, `${senderId}-.png`, '', '', yourId);
       }
       let newMessage;
-      if (typeof msg == 'object') {
-        newMessage = await addMessageToChat(
-          senderId,
-          msg.uri,
-          isReceived,
-          type,
-          localReducer.inChatScreen
-        );
-      } else {
-        console.log('b');
-        newMessage = await addMessageToChat(senderId, msg, isReceived, type, localReducer.inChatScreen);
-      }
+      console.log('b');
+      newMessage = await addMessageToChat(
+        senderId,
+        msg,
+        isReceived,
+        type,
+        localReducer.inChatScreen,
+      );
+
       //set message
 
       setNewMessage(newMessage);
     } catch (err) {
       console.log('err on getMessage :', err);
-    }
-  };
-
-  const saveBase64Image = async ({base64Data, fileName}) => {
-    const imagePath = `${DOWNLOAD_DIR}/${fileName}`;
-    try {
-      await ReactNativeBlobUtil.fs.writeFile(imagePath, base64Data, 'base64');
-      return imagePath;
-    } catch (error) {
-      console.error('Error saving image:', error);
-      Alert.alert('Error', 'Failed to save the image.');
-      return null;
     }
   };
 
@@ -89,9 +71,9 @@ export const useGetMessage = (socket: Socket | null) => {
       // Receive message
       socket?.on('chat message', async (msg, type, senderId, yourId) => {
         if (type === 'image') {
-          let imageUri = await saveBase64Image(msg);
-          let computedImg = {uri: `file://${imageUri}`, fileName: msg.fileName};
-          getMessages(computedImg, true, type, senderId, yourId);
+          let imageUri = await saveURLImage(msg);
+          let computedImg = {uri: `file://${imageUri}`};
+          getMessages(computedImg.uri, true, type, senderId, yourId);
         } else {
           getMessages(msg, true, type, senderId, yourId);
         }
