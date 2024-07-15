@@ -62,4 +62,6 @@ export type DarkColors = {
   errorBoxBorderColor: string;
   errorBoxTextColor: string;
   errorBoxIconColor: string;
+  progressBarBgColor: string;
+  progressBarColor: string;
 };

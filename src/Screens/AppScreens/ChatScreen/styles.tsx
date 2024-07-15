@@ -18,13 +18,14 @@ export type ChatScreenStyles = {
   messageText: TextStyle;
   chatTextInput: ViewStyle;
   inputContainer: ViewStyle;
-  imageChat: ImageStyle
+  imageChat: ImageStyle;
+  imageChatBottom: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors): ChatScreenStyles =>
   StyleSheet.create<ChatScreenStyles>({
     chatContainer: {
-    //   Flex: 1,
+      //   Flex: 1,
       paddingTop: verticalScale(35),
     },
     chatTextInput: {
@@ -49,7 +50,7 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     headerText: {
       fontSize: moderateScale(15),
       paddingLeft: horizontalScale(10),
-      textAlignVertical: 'center'
+      textAlignVertical: 'center',
     },
     headerTextContainer: {
       alignItems: 'flex-start',
@@ -79,7 +80,7 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     },
     imageChat: {
       width: horizontalScale(250),
-      height: verticalScale(250)
+      height: verticalScale(250),
     },
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,
@@ -88,6 +89,7 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
       marginLeft: verticalScale(10),
       width: horizontalScale(45),
     },
+    imageChatBottom: {},
   });
 
 StyleSheet.create({});

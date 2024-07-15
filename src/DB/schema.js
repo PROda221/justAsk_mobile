@@ -41,6 +41,7 @@ export const mySchema = appSchema({
         {name: 'type', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true},
         {name: 'read', type: 'boolean'},
+        {name: 'uploading_image', type: 'boolean'},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
       ],

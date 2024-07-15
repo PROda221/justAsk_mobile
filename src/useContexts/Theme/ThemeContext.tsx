@@ -86,6 +86,8 @@ const darkColors: DarkColors = {
   errorBoxBorderColor: '#EB5757',
   errorBoxTextColor: '#333',
   errorBoxIconColor: '#530C0C',
+  progressBarBgColor: '#e0e0e0',
+  progressBarColor: '#76c7c0',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

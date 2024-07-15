@@ -44,7 +44,7 @@ export const useStartChat = (
   };
 
   const getMessages = async (
-    msg: string,
+    msg: string | object,
     isReceived: boolean,
     type: string = 'message',
   ) => {

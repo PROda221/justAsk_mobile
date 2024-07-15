@@ -1,7 +1,7 @@
 import storage from '@react-native-firebase/storage';
 import { Platform } from 'react-native';
 
-export const uploadImage = async (uri: string) => {
+export const uploadImage = async (uri: string, currentProgress: (progress: number) => void) => {
   const filename = uri.substring(uri.lastIndexOf('/') + 1);
   const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
@@ -9,7 +9,7 @@ export const uploadImage = async (uri: string) => {
 
   try {
     task.on('state_changed', taskSnapshot => {
-      console.log(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes * 100)
+      currentProgress(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes)
     });
     await task;
     const url = await storage().ref(filename).getDownloadURL();

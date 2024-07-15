@@ -1,7 +1,7 @@
 import {Typography} from '../../../Components';
 import {type ParamListBase, type RouteProp} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {LogBox, type ViewStyle} from 'react-native';
+import {type ViewStyle} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
@@ -26,17 +26,22 @@ import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
-import {SheetManager} from 'react-native-actions-sheet';
 import {Image} from 'expo-image';
 import {markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {uploadImage} from '../../../Functions/UploadImg';
+import {RenderMessageList} from './RenderMessageList';
 
-LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
-]);
+type MessageType = {
+  item: {
+    id: string;
+    text: string;
+    type: 'image' | 'message';
+    received: boolean;
+    uploadingImage: boolean;
+  };
+};
 type Params = {
   params: {
     username: string;
@@ -49,10 +54,6 @@ type Params = {
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<Params>;
-};
-
-const openImage = (imageUrl: string) => {
-  SheetManager.show('ViewProfileImage-sheet', {payload: {imageUrl}});
 };
 
 const chatHeader = (
@@ -170,47 +171,14 @@ const ChatScreen = ({navigation, route}: Props) => {
       const result = await launchImageLibrary(options);
       const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
-      const uploadedUrl = await uploadImage(compressedResult);
-      if (uploadedUrl) {
-        getMessages(compressedResult, false, 'image');
-        sendMessages(uploadedUrl, username, 'image');
-      }
+      await getMessages(
+        {url: compressedResult, uploading: true},
+        false,
+        'image',
+      );
     } catch (err) {
       console.log('err at image selection :', err);
     }
-  };
-
-  const renderMessageList = ({
-    item,
-  }: {
-    item: {
-      id: string;
-      received: boolean;
-      text: string;
-      type: 'message' | 'image';
-    };
-  }) => {
-    return (
-      <View
-        style={[
-          styles.messageContainer,
-          item.received ? {} : styles.messageContainerRight,
-        ]}>
-        {item.type === 'message' && (
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            {item.text}
-          </Typography>
-        )}
-        {item.type === 'image' && (
-          <TouchableOpacity onPress={() => openImage(item.text)}>
-            <Image source={{uri: `${item.text}`}} style={styles.imageChat} />
-          </TouchableOpacity>
-        )}
-      </View>
-    );
   };
 
   const openUserProfle = () => {
@@ -233,10 +201,20 @@ const ChatScreen = ({navigation, route}: Props) => {
         data={messages}
         showsVerticalScrollIndicator={false}
         ref={flashListRef}
-        renderItem={renderMessageList}
+        renderItem={({item}: MessageType) => (
+          <RenderMessageList
+            username={username}
+            id={item.id}
+            text={item.text}
+            type={item.type}
+            uploadingImage={item.uploadingImage}
+            received={item.received}
+            sendMessages={sendMessages}
+          />
+        )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.chatContainer}
-        estimatedItemSize={80}
+        estimatedItemSize={300}
         inverted
         onEndReached={loadMoreMessages}
         onEndReachedThreshold={0.1}

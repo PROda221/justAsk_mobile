@@ -235,10 +235,11 @@ export async function addMessageToChat(
         await updateChatMsg(chat, lastMessage, onChatScreen);
         newMessage = await database.get('messages').create(record => {
           record.chat.set(chat[0]);
-          record.text = text;
+          record.text = type === 'image' && !isReceived ? text.url : text;
           record.type = type;
           record.received = isReceived;
           record.read = onChatScreen;
+          record.uploadingImage = type === 'image' ? text.uploading : false
         });
       } else {
         console.error('Chat not found:', chatId);
@@ -247,6 +248,37 @@ export async function addMessageToChat(
     return newMessage;
   } catch (error) {
     console.error('Error adding message to chat:', error);
+    throw error;
+  }
+}
+
+export async function updateImageUploadStatus(chatId, messageId, uploading) {
+  try {
+    await database.write(async () => {
+      const chat = await database
+        .get('chats')
+        .query(Q.where('chat_id', chatId))
+        .fetch();
+      if (chat.length > 0) {
+        // Check if chat exists
+        const message = await database
+          .get('messages')
+          .query(Q.where('id', messageId))
+          .fetch();
+        if (message.length > 0) {
+          // Check if message exists
+          await message[0].update(message => {
+            message.uploadingImage = false;
+          });
+        } else {
+          console.error('Message not found:', messageId);
+        }
+      } else {
+        console.error('Chat not found:', chatId);
+      }
+    });
+  } catch (error) {
+    console.error('Error updating image upload status:', error);
     throw error;
   }
 }
