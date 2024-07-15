@@ -29,7 +29,7 @@ const allGenres = [
     "Traveling",
   ];
 
-  const baseURL = 'http://localhost:8001'
-  // const baseURL = "https://justask-backend.onrender.com"
+  // const baseURL = 'http://localhost:8001'
+  const baseURL = "https://justask-backend.onrender.com"
 
   export {allGenres, baseURL}
