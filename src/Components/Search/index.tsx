@@ -161,8 +161,12 @@ const routes: Route[] = [
 ];
 
 function SearchFeature() {
+  const {colors} = useTheme();
+  const styles = getSearchStyles(colors);
+
   return (
     <ActionSheet
+      containerStyle={styles.actionSheetContainer}
       enableRouterBackNavigation={true}
       routes={routes}
       initialRoute="SearchScreen"

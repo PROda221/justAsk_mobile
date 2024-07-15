@@ -13,8 +13,6 @@ export const useGetMessage = (socket: Socket | null) => {
   const [newMessage, setNewMessage] = useState();
   const localReducer = useSelector((state: RootState) => state.localReducer);
 
-  // const appState = useRef(AppState.currentState);
-
   const getMessages = async (
     msg: string,
     isReceived: boolean,
@@ -38,33 +36,11 @@ export const useGetMessage = (socket: Socket | null) => {
         localReducer.inChatScreen,
       );
 
-      //set message
-
       setNewMessage(newMessage);
     } catch (err) {
       console.log('err on getMessage :', err);
     }
   };
-
-  // useEffect(() => {
-  //   const subscription = AppState.addEventListener('change', nextAppState => {
-  //     if (
-  //       appState.current.match(/inactive|background/) &&
-  //       nextAppState === 'active'
-  //     ) {
-  //       console.log('forground');
-  //     //   fetchMessages();
-  //     } else {
-  //       console.log('background');
-  //       appState.current = nextAppState;
-  //       // socket?.emit('statusUpdate', profileSuccess?.username, 'offline');
-  //     }
-  //   });
-  //   return () => {
-  //     subscription.remove();
-  //     socket?.off('chat message');
-  //   };
-  // }, []);
 
   useEffect(() => {
     const receiveMessage = async () => {

@@ -1,17 +1,16 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {
-  moderateScale,
-  verticalScale,
-} from '../../Functions/StyleScale';
+import {moderateScale, verticalScale} from '../../Functions/StyleScale';
+import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
 export type SearchStyles = {
   searchContainer: ViewStyle;
   searchTextInput: ViewStyle;
   noSearchContainer: ViewStyle;
   noSearchText: TextStyle;
+  actionSheetContainer: ViewStyle;
 };
 
-export const getSearchStyles = (colors): SearchStyles =>
+export const getSearchStyles = (colors: DarkColors): SearchStyles =>
   StyleSheet.create<SearchStyles>({
     noSearchContainer: {
       alignItems: 'center',
@@ -28,5 +27,8 @@ export const getSearchStyles = (colors): SearchStyles =>
     },
     searchTextInput: {
       height: verticalScale(40),
+    },
+    actionSheetContainer: {
+      backgroundColor: colors.appScreenPrimaryBackground,
     },
   });

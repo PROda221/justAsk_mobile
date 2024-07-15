@@ -73,7 +73,7 @@ const chatHeader = (
         <Image
           source={{uri: getProfilePic(image)}}
           transition={200}
-          cachePolicy={'memory-disk'}
+          cachePolicy={'none'}
           style={styles.profileImage}
         />
       </TouchableOpacity>

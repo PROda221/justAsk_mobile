@@ -55,7 +55,7 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
           source={{uri: getProfilePic(item._raw['profile_pic'])}}
           style={styles.avatar}
           transition={500}
-          cachePolicy={'memory-disk'}
+          cachePolicy={'none'}
         />
         <View style={styles.messageTextContainer}>
           <View style={{flexDirection: 'row'}}>

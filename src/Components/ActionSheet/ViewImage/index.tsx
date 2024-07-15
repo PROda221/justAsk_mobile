@@ -8,7 +8,7 @@ import Gallery from 'react-native-awesome-gallery';
 
 function ViewImage({payload}: SheetProps<'ViewProfileImage-sheet'>) {
   return (
-    <ActionSheet>
+    <ActionSheet containerStyle={styles.actionSheetContainer}>
       <View style={styles.fullScreen}>
         <Gallery
           onSwipeToClose={() => {
@@ -28,5 +28,8 @@ const styles = StyleSheet.create({
   fullScreen: {
     height: '100%',
     width: '100%',
+  },
+  actionSheetContainer: {
+    backgroundColor: 'black',
   },
 });
