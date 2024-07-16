@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, FlatList, TouchableOpacity} from 'react-native';
 import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
@@ -21,13 +21,24 @@ import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
+import content from '../../../Assets/Languages/english.json';
+
+type Params = {
+  params: {
+    username: string;
+    status: string;
+    image: string;
+    skills: string[] | string;
+  };
+};
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
+  route: RouteProp<Params>;
 };
 
 const UserProfile = ({navigation, route}: UserProfileProps) => {
+  const [loading, setLoading] = useState(true);
   const {image, username, status, skills} = route.params;
   const {
     userProfileSuccess,
@@ -43,6 +54,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   const styles = getUserProfileStyles(colors);
 
   useEffect(() => {
+    setLoading(false);
     callGetUserProfileApi();
   }, []);
 
@@ -86,7 +98,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   };
 
   return (
-    <Skeleton.Group show={userProfileLoading}>
+    <Skeleton.Group show={userProfileLoading || loading}>
       <LinearGradient
         colors={[
           imageColors?.primary ?? '#000',
@@ -128,7 +140,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
             </TouchableOpacity>
           </Skeleton>
 
-          <View style={{paddingTop: verticalScale(8)}}>
+          <View style={styles.usernameContainer}>
             <Skeleton colorMode="light">
               <Typography
                 fontWeight="400"
@@ -139,7 +151,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
             </Skeleton>
           </View>
 
-          <View style={{paddingTop: verticalScale(11)}}>
+          <View style={styles.statusContainer}>
             <Skeleton colorMode="light">
               <Typography
                 fontWeight="400"
@@ -159,25 +171,34 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
             />
           </View>
 
-          {userProfileSuccess && userProfileSuccess.averageRating.length > 0 ? (
-            <StarRatingDisplay
-              enableHalfStar={false}
-              rating={userProfileSuccess?.averageRating[0].averageStars}
-            />
-          ) : (
-            <Typography
-              textStyle={styles.statusText}
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400">
-              Be the first to rate!
-            </Typography>
-          )}
+          <View style={styles.feedbackContainer}>
+            <Skeleton
+              colorMode="light"
+              height={verticalScale(20)}
+              width={'100%'}>
+              {userProfileSuccess &&
+              userProfileSuccess.averageRating.length > 0 ? (
+                <StarRatingDisplay
+                  style={styles.feedbackStarsStyle}
+                  enableHalfStar={false}
+                  rating={userProfileSuccess?.averageRating[0].averageStars}
+                />
+              ) : (
+                <Typography
+                  textStyle={styles.noFeedbackText}
+                  bgColor={colors.textPrimaryColor}
+                  fontWeight="400">
+                  {content.UserProfile.noFeedbackText}
+                </Typography>
+              )}
+            </Skeleton>
+          </View>
 
           <View style={styles.feedbackButtonContainer}>
             <Skeleton colorMode="light">
               <CustomButton
                 onPress={openFeedback}
-                label="Give Feedback"
+                label={content.UserProfile.feedbackButton}
                 radius={95}
                 viewStyle={styles.feedbackButtonStyle}
               />

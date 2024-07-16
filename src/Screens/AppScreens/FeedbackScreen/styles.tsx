@@ -34,6 +34,13 @@ export type FeedbackScreenStyles = {
   noCommentsText: TextStyle;
   emptyStateImageStyle: ImageStyle;
   loadMoreContainer: ViewStyle;
+  giveFeedbackContainer: ViewStyle;
+  skeletonProfileContainer: ViewStyle;
+  skeletonStarsContainer: ViewStyle;
+  skeletonUserCommentContainer: ViewStyle;
+  noFeedbacksContainer: ViewStyle;
+  feedbackImgContainer: ViewStyle;
+  userDetailsHeader: ViewStyle;
 };
 
 export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
@@ -52,7 +59,7 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       paddingTop: verticalScale(5),
     },
     card: {
-      paddingVertical: verticalScale(10),
+      paddingVertical: verticalScale(15),
       borderWidth: moderateScale(1),
       borderColor: colors.cardGenreCellBgColor,
       borderRadius: moderateScale(10),
@@ -110,15 +117,16 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     commentHeaderContainer: {
       justifyContent: 'space-between',
       flexDirection: 'row',
+      alignSelf: 'flex-start',
       flex: 1,
     },
     commentStarContainer: {
+      paddingRight: horizontalScale(10),
       flexDirection: 'row',
     },
     commentText: {
       textAlign: 'justify',
-      paddingHorizontal: horizontalScale(10),
-      paddingTop: verticalScale(5),
+      padding: moderateScale(10),
       fontSize: moderateScale(12),
     },
     mainHeader: {
@@ -186,4 +194,15 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       alignItems: 'center',
       paddingTop: verticalScale(10),
     },
+    giveFeedbackContainer: {paddingTop: verticalScale(10)},
+    skeletonProfileContainer: {marginLeft: horizontalScale(10)},
+    skeletonStarsContainer: {
+      paddingLeft: horizontalScale(10),
+    },
+    skeletonUserCommentContainer: {
+      padding: moderateScale(10),
+    },
+    noFeedbacksContainer: {justifyContent: 'center', alignItems: 'center'},
+    feedbackImgContainer: {marginLeft: horizontalScale(10)},
+    userDetailsHeader: {flexDirection: 'row'},
   });

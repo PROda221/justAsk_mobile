@@ -22,10 +22,20 @@ import {useProfileUpload} from '../../../CustomHooks/AppHooks/useProfileUpload';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
+import content from '../../../Assets/Languages/english.json';
+
+type Params = {
+  params: {
+    username: string;
+    status: string;
+    image: string;
+    skills: string[] | string;
+  };
+};
 
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<ParamListBase>;
+  route: RouteProp<Params>;
 };
 
 type NewProfileType = {
@@ -41,7 +51,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   });
   const {image = '', username = '', status = '', skills = []} = route.params;
 
-  const {profileLoading, profileSuccess} = useProfile();
+  const {profileLoading, profileSuccess, callGetProfileApi} = useProfile();
   const {imageColors} = useImageColors(
     getProfilePic(profileSuccess?.profilePic),
     newProfileValues.profileImg,
@@ -52,6 +62,12 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
 
   const {colors} = useTheme();
   const styles = getEditProfileStyles(colors);
+
+  useEffect(() => {
+    if (!profileSuccess) {
+      callGetProfileApi();
+    }
+  }, [profileSuccess]);
 
   useEffect(() => {
     if (profileUploadSuccess) {
@@ -183,7 +199,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             </TouchableOpacity>
           </Skeleton>
 
-          <View style={{paddingTop: verticalScale(8)}}>
+          <View style={styles.usernameContainer}>
             <Skeleton colorMode="light">
               <Typography
                 fontWeight="400"
@@ -194,10 +210,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             </Skeleton>
           </View>
 
-          <View
-            style={{
-              paddingTop: verticalScale(2),
-            }}>
+          <View style={styles.statusContainer}>
             <Skeleton colorMode="light">
               <Typography
                 fontWeight="400"
@@ -224,21 +237,33 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             />
           </View>
 
-          {profileSuccess && profileSuccess.averageRating.length > 0 ? (
-            <StarRatingDisplay
-              enableHalfStar={false}
-              rating={profileSuccess?.averageRating[0].averageStars}
-            />
-          ) : (
-            <StarRatingDisplay enableHalfStar={false} rating={0} />
-          )}
+          <View style={styles.feedbackContainer}>
+            <Skeleton
+              colorMode="light"
+              height={verticalScale(20)}
+              width={'100%'}>
+              {profileSuccess && profileSuccess.averageRating.length > 0 ? (
+                <StarRatingDisplay
+                  style={styles.feedbackStarsStyle}
+                  enableHalfStar={false}
+                  rating={profileSuccess?.averageRating[0].averageStars}
+                />
+              ) : (
+                <StarRatingDisplay
+                  style={styles.feedbackStarsStyle}
+                  enableHalfStar={false}
+                  rating={0}
+                />
+              )}
+            </Skeleton>
+          </View>
 
           <View style={styles.feedbackButtonContainer}>
             {editProfile && (
               <Skeleton colorMode="light">
                 <CustomButton
                   onPress={saveHandler}
-                  label={'Save'}
+                  label={content.EditProfile.saveButton}
                   loading={profileUploadLoading}
                   radius={95}
                   viewStyle={styles.feedbackSaveButtonStyle}
@@ -249,7 +274,11 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             <Skeleton colorMode="light">
               <CustomButton
                 onPress={editProfileHandler}
-                label={editProfile ? 'Cancel' : 'Edit Profile'}
+                label={
+                  editProfile
+                    ? content.EditProfile.cancelButton
+                    : content.EditProfile.editProfileButton
+                }
                 radius={95}
                 viewStyle={styles.feedbackButtonStyle}
               />

@@ -37,6 +37,7 @@ export type Comment = {
   commentUserId: string;
   rating: number;
   commentUserPic: string;
+  updatedAt: string;
 };
 
 type AverageRating = {

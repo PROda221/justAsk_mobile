@@ -34,6 +34,12 @@ export type MyFeedbackStyles = {
   noCommentsText: TextStyle;
   emptyStateImageStyle: ImageStyle;
   loadMoreContainer: ViewStyle;
+  skeletonProfileContainer: ViewStyle;
+  skeletonStarsContainer: ViewStyle;
+  skeletonUserCommentContainer: ViewStyle;
+  noFeedbacksContainer: ViewStyle;
+  feedbackImgContainer: ViewStyle;
+  userDetailsHeader: ViewStyle;
 };
 
 export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
@@ -113,6 +119,7 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
       flex: 1,
     },
     commentStarContainer: {
+      paddingLeft: horizontalScale(10),
       flexDirection: 'row',
     },
     commentText: {
@@ -186,4 +193,14 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
       alignItems: 'center',
       paddingTop: verticalScale(10),
     },
+    skeletonProfileContainer: {marginLeft: horizontalScale(10)},
+    skeletonStarsContainer: {
+      paddingLeft: horizontalScale(10),
+    },
+    skeletonUserCommentContainer: {
+      padding: moderateScale(10),
+    },
+    noFeedbacksContainer: {justifyContent: 'center', alignItems: 'center'},
+    feedbackImgContainer: {marginLeft: horizontalScale(10)},
+    userDetailsHeader: {flexDirection: 'row'},
   });

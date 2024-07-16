@@ -80,6 +80,27 @@
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results."
   },
+  "UserProfile": {
+    "noFeedbackText": "Be the first to rate!",
+    "feedbackButton": "Give Feedback"
+  },
+  "UserFeedback": {
+    "commentsTitle": "Comments",
+    "loadMore": "Load More",
+    "noComments": "has no comments yet..."
+  },
+  "MyFeedback": {
+    "commentsTitle": "Comments",
+    "loadMore": "Load More",
+    "noComments": "has no comments yet..."
+  },
+  "EditProfile": {
+    "saveButton": "Save",
+    "cancelButton": "Cancel",
+    "editProfileButton": "Edit Profile",
+    "noFeedbackText": "Be the first to rate!",
+    "feedbackButton": "Give Feedback"
+  },
   "onlineCourses": {
     "title": "Our Online Courses"
   },

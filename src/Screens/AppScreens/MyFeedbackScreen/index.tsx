@@ -21,10 +21,13 @@ import {Skeleton} from 'moti/skeleton';
 import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import content from '../../../Assets/Languages/english.json';
+import {formatTimestamp} from '../../../Functions/FormatTime';
 
 const MyFeedbackPage = () => {
+  const [loading, setLoading] = useState(true);
   const {colors} = useTheme();
-  const {profileSuccess} = useProfile();
+  const {profileSuccess, profileLoading} = useProfile();
 
   const {
     callAllCommentsApi,
@@ -46,6 +49,7 @@ const MyFeedbackPage = () => {
   };
 
   useEffect(() => {
+    setLoading(false);
     getAllComments();
   }, []);
 
@@ -82,50 +86,52 @@ const MyFeedbackPage = () => {
 
   const profileInfo = useCallback(() => {
     return (
-      <View style={styles.profileContainer}>
-        <Image
-          source={{
-            uri: getProfilePic(profileSuccess?.profilePic),
-          }}
-          style={styles.profileImage}
-          transition={500}
-          cachePolicy={'none'}
-        />
-        <View style={styles.profileNameStatusContainer}>
-          <Typography
-            fontWeight="400"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.nameText}>
-            {profileSuccess?.username}
-          </Typography>
-          <Typography
-            fontWeight="400"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.statusText}>
-            {profileSuccess?.status}
-          </Typography>
-          <View style={styles.skillContainer}>
-            <FlatList
-              data={profileSuccess?.adviceGenre}
-              renderItem={renderSkills}
-              // estimatedItemSize={153}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            />
+      <Skeleton colorMode="light" show={profileLoading || loading}>
+        <View style={styles.profileContainer}>
+          <Image
+            source={{
+              uri: getProfilePic(profileSuccess?.profilePic),
+            }}
+            style={styles.profileImage}
+            transition={500}
+            cachePolicy={'none'}
+          />
+          <View style={styles.profileNameStatusContainer}>
+            <Typography
+              fontWeight="400"
+              bgColor={colors.textPrimaryColor}
+              textStyle={styles.nameText}>
+              {profileSuccess?.username}
+            </Typography>
+            <Typography
+              fontWeight="400"
+              bgColor={colors.textPrimaryColor}
+              textStyle={styles.statusText}>
+              {profileSuccess?.status}
+            </Typography>
+            <View style={styles.skillContainer}>
+              <FlatList
+                data={profileSuccess?.adviceGenre}
+                renderItem={renderSkills}
+                // estimatedItemSize={153}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
           </View>
         </View>
-      </View>
+      </Skeleton>
     );
-  }, []);
+  }, [profileLoading, loading, allCommentsLoading]);
 
   const noCommentComponent = () => {
     return (
       <>
-        {allCommentsLoading ? (
-          <Skeleton.Group show={allCommentsLoading}>
+        {loading || allCommentsLoading ? (
+          <Skeleton.Group show={allCommentsLoading || loading}>
             <View style={styles.commentCard}>
               <View style={styles.mainHeader}>
-                <View style={{marginLeft: horizontalScale(10)}}>
+                <View style={styles.skeletonProfileContainer}>
                   <Skeleton
                     colorMode="light"
                     width={horizontalScale(35)}
@@ -157,7 +163,7 @@ const MyFeedbackPage = () => {
             </View>
           </Skeleton.Group>
         ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <View style={styles.noFeedbacksContainer}>
             <Image
               source={EmptyState}
               style={styles.emptyStateImageStyle}
@@ -167,7 +173,7 @@ const MyFeedbackPage = () => {
               bgColor="white"
               fontWeight="400"
               textStyle={styles.noCommentsText}>
-              {`${profileSuccess?.username} has no comments yet...`}
+              {`${profileSuccess?.username} ${content.MyFeedback.noComments}`}
             </Typography>
           </View>
         )}
@@ -183,7 +189,7 @@ const MyFeedbackPage = () => {
         fontWeight="400"
         bgColor={colors.textPrimaryColor}
         textStyle={styles.commentsHeading}>
-        {'Comments'}
+        {content.MyFeedback.commentsTitle}
       </Typography>
     </>
   );
@@ -194,7 +200,7 @@ const MyFeedbackPage = () => {
         {allCommentsSuccess?.data && allCommentsSuccess?.data.length > 10 ? (
           <CustomButton
             onPress={handleLoadMore}
-            label={'Load More'}
+            label={content.MyFeedback.loadMore}
             radius={95}
             loading={false}
             viewStyle={styles.submitButtonStyle}
@@ -206,94 +212,58 @@ const MyFeedbackPage = () => {
 
   const renderItem: ListRenderItem<Comment> = ({item}) => {
     return (
-      <Skeleton.Group show={allCommentsLoading}>
-        <View style={styles.commentCard}>
-          <View style={styles.mainHeader}>
-            <View style={{marginLeft: horizontalScale(10)}}>
-              <Skeleton
-                colorMode="light"
-                width={horizontalScale(35)}
-                height={verticalScale(35)}
-                radius={moderateScale(18)}>
-                <Image
-                  source={{
-                    uri: getProfilePic(item.commentUserPic),
-                  }}
-                  transition={500}
-                  cachePolicy={'none'}
-                  style={styles.commentUserAvatar}
-                />
-              </Skeleton>
-            </View>
-
-            <View style={styles.commentHeaderContainer}>
-              <Skeleton
-                colorMode="light"
-                height={verticalScale(20)}
-                width={'70%'}>
-                <View style={{flexDirection: 'row'}}>
-                  <Typography
-                    bgColor={colors.textPrimaryColor}
-                    fontWeight="400"
-                    textStyle={styles.usernameText}>
-                    {item.commentUserId}
-                  </Typography>
-                  <Typography
-                    bgColor={colors.textInputPlaceholderColor}
-                    fontWeight="400"
-                    textStyle={styles.timeText}>
-                    18 mins ago
-                  </Typography>
-                </View>
-              </Skeleton>
-
-              <View style={{paddingLeft: horizontalScale(10)}}>
-                <Skeleton
-                  colorMode="light"
-                  height={verticalScale(20)}
-                  width={'35%'}>
-                  <View style={styles.commentStarContainer}>
-                    <Typography
-                      bgColor={colors.textPrimaryColor}
-                      fontWeight="400"
-                      textStyle={styles.starText}>
-                      {`x${item.rating}`}
-                    </Typography>
-                    <Entypo
-                      name="star"
-                      size={moderateScale(12)}
-                      color={colors.starColor}
-                    />
-                  </View>
-                </Skeleton>
-              </View>
-            </View>
+      <View style={styles.commentCard}>
+        <View style={styles.mainHeader}>
+          <View style={styles.feedbackImgContainer}>
+            <Image
+              source={{
+                uri: getProfilePic(item.commentUserPic),
+              }}
+              transition={500}
+              cachePolicy={'none'}
+              style={styles.commentUserAvatar}
+            />
           </View>
 
-          {allCommentsLoading ? (
-            <View style={{padding: moderateScale(10)}}>
-              <Skeleton
-                colorMode="light"
-                height={verticalScale(50)}
-                width={'100%'}>
-                <Typography
-                  bgColor={colors.textPrimaryColor}
-                  fontWeight="400"
-                  textStyle={styles.commentText}>
-                  {item.content}
-                </Typography>
-              </Skeleton>
+          <View style={styles.commentHeaderContainer}>
+            <View style={styles.userDetailsHeader}>
+              <Typography
+                bgColor={colors.textPrimaryColor}
+                fontWeight="400"
+                textStyle={styles.usernameText}>
+                {item.commentUserId}
+              </Typography>
+              <Typography
+                bgColor={colors.textInputPlaceholderColor}
+                fontWeight="400"
+                textStyle={styles.timeText}>
+                {formatTimestamp(item.updatedAt)}
+              </Typography>
             </View>
-          ) : (
-            <Typography
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400"
-              textStyle={styles.commentText}>
-              {item.content}
-            </Typography>
-          )}
+
+            <View style={styles.commentStarContainer}>
+              <Typography
+                bgColor={colors.textPrimaryColor}
+                fontWeight="400"
+                textStyle={styles.starText}>
+                {`x${item.rating}`}
+              </Typography>
+              <Entypo
+                name="star"
+                size={moderateScale(12)}
+                color={colors.starColor}
+              />
+            </View>
+          </View>
         </View>
-      </Skeleton.Group>
+
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.commentText}>
+          {item.content}
+        </Typography>
+      </View>
     );
   };
 

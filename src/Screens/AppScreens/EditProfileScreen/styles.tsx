@@ -23,6 +23,10 @@ export type EditProfileStyles = {
   editStatusButton: ViewStyle;
   statusEditStyle: ViewStyle;
   feedbackSaveButtonStyle: ViewStyle;
+  usernameContainer: ViewStyle;
+  statusContainer: ViewStyle;
+  feedbackContainer: ViewStyle;
+  feedbackStarsStyle: TextStyle;
 };
 
 export const getEditProfileStyles = (colors): EditProfileStyles =>
@@ -123,4 +127,8 @@ export const getEditProfileStyles = (colors): EditProfileStyles =>
       alignSelf: 'center',
       marginLeft: horizontalScale(5),
     },
+    usernameContainer: {paddingTop: verticalScale(8)},
+    statusContainer: {paddingTop: verticalScale(11)},
+    feedbackContainer: {paddingTop: verticalScale(5)},
+    feedbackStarsStyle: {flex: 1, alignSelf: 'center'},
   });

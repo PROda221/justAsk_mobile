@@ -18,6 +18,11 @@ export type UserProfileStyles = {
   feedbackButtonContainer: ViewStyle;
   blockIconStyle: ViewStyle;
   headerContainer: ViewStyle;
+  noFeedbackText: TextStyle;
+  usernameContainer: ViewStyle;
+  statusContainer: ViewStyle;
+  feedbackContainer: ViewStyle;
+  feedbackStarsStyle: TextStyle;
 };
 
 export const getUserProfileStyles = (colors): UserProfileStyles =>
@@ -53,7 +58,7 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
       marginRight: horizontalScale(2),
       paddingHorizontal: horizontalScale(10),
       paddingVertical: verticalScale(2),
-      alignSelf: 'center'
+      alignSelf: 'center',
     },
     imageContainer: {
       width: horizontalScale(165),
@@ -81,4 +86,13 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
     statusText: {
       fontSize: moderateScale(13),
     },
+    noFeedbackText: {
+      flex: 1,
+      fontSize: moderateScale(13),
+      textAlign: 'center',
+    },
+    usernameContainer: {paddingTop: verticalScale(8)},
+    statusContainer: {paddingTop: verticalScale(11)},
+    feedbackContainer: {paddingTop: verticalScale(5)},
+    feedbackStarsStyle: {flex: 1, alignSelf: 'center'},
   });

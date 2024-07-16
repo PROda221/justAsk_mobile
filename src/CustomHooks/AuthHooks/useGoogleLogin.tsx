@@ -12,7 +12,7 @@ import {type ParamListBase} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export const useGoogleLogin = (
-  navigation: NativeStackNavigationProp<ParamListBase>,
+  navigation?: NativeStackNavigationProp<ParamListBase>,
 ) => {
   const {userLogedIn} = useIsLogin();
   const googleLoginSlice = useSelector(
@@ -39,7 +39,7 @@ export const useGoogleLogin = (
               : '',
           );
         } else {
-          navigation.navigate('Set Username', {
+          navigation?.navigate('Set Username', {
             emailId: googleLoginSlice.success?.googleData?.email,
             uid: googleLoginSlice.success?.googleData?.uid,
           });
