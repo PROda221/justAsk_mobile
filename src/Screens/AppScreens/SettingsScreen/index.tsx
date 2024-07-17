@@ -23,6 +23,8 @@ import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
 import {useGoogleLogin} from '../../../CustomHooks/AuthHooks/useGoogleLogin';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
+import content from '../../../Assets/Languages/english.json';
+import {onShare} from '../../../Functions/Share';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -69,52 +71,56 @@ const SettingsScreen = ({navigation}: PropsType) => {
   };
 
   const handleLogout = () => {
-    Alert.alert('Log out', 'Are you sure to logout?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Yes',
-        onPress: logout,
-        style: 'cancel',
-      },
-    ]);
+    Alert.alert(
+      content.SettingsScreen.logoutTitle,
+      content.SettingsScreen.logoutWarning,
+      [
+        {
+          text: content.SettingsScreen.cancelButton,
+          style: 'cancel',
+        },
+        {
+          text: content.SettingsScreen.yesButton,
+          onPress: logout,
+          style: 'cancel',
+        },
+      ],
+    );
   };
 
   const listData = [
     {
-      name: 'Change Password',
+      name: content.SettingsScreen.changePassword,
       iconName: 'account-circle',
       iconColor: colors.settingsIconColor,
       onPress: handleChangePass,
     },
     {
-      name: 'My Feedback Page',
+      name: content.SettingsScreen.myFeedbackPage,
       iconName: 'wechat',
       iconColor: colors.settingsIconColor,
       onPress: handleListOnPress,
     },
     {
-      name: 'Blocked List',
+      name: content.SettingsScreen.blockedList,
       iconName: 'chat',
       iconColor: colors.settingsIconColor,
       onPress: handleListOnPress,
     },
     {
-      name: 'Invite a friend',
+      name: content.SettingsScreen.inviteAFriend,
       iconName: 'person-add',
       iconColor: colors.settingsIconColor,
-      onPress: handleListOnPress,
+      onPress: onShare,
     },
     {
-      name: 'Delete Account',
+      name: content.SettingsScreen.deleteAccount,
       iconName: 'delete-forever',
       iconColor: colors.settingsDeleteColor,
       onPress: handleListOnPress,
     },
     {
-      name: 'Log out',
+      name: content.SettingsScreen.logout,
       iconName: 'logout',
       iconColor: colors.settingsLogoutColor,
       onPress: handleLogout,
@@ -129,7 +135,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.headingText}>
-          Settings
+          {content.SettingsScreen.settingsTitle}
         </Typography>
       </View>
 

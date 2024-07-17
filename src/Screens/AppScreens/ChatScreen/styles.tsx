@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type ChatScreenStyles = {
   container: ViewStyle;
@@ -14,15 +15,18 @@ export type ChatScreenStyles = {
   chatContainer: ViewStyle;
   dateText: TextStyle;
   messageContainer: ViewStyle;
-  messageContainerRight: ViewStyle;
   messageText: TextStyle;
   chatTextInput: ViewStyle;
   inputContainer: ViewStyle;
   imageChat: ImageStyle;
   imageChatBottom: ViewStyle;
+  msgTime: TextStyle;
+  messageReceived: ViewStyle;
+  messageSent: ViewStyle;
+  messageBox: ViewStyle;
 };
 
-export const getChatScreenStyles = (colors): ChatScreenStyles =>
+export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
   StyleSheet.create<ChatScreenStyles>({
     chatContainer: {
       //   Flex: 1,
@@ -55,7 +59,6 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
     headerTextContainer: {
       alignItems: 'flex-start',
       flex: 1,
-      // JustifyContent: 'center',
     },
     inputContainer: {
       alignSelf: 'center',
@@ -64,15 +67,17 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
       marginBottom: verticalScale(52),
     },
     messageContainer: {
-      alignSelf: 'flex-start',
-      backgroundColor: colors.receivedMsgColor,
-      borderRadius: moderateScale(20),
       marginBottom: verticalScale(12),
+    },
+    messageBox: {
+      borderRadius: moderateScale(20),
       padding: moderateScale(12),
     },
-    messageContainerRight: {
+    messageReceived: {
+      alignSelf: 'flex-start',
+    },
+    messageSent: {
       alignSelf: 'flex-end',
-      backgroundColor: colors.sentMsgColor,
     },
     messageText: {
       fontSize: moderateScale(13),
@@ -89,6 +94,7 @@ export const getChatScreenStyles = (colors): ChatScreenStyles =>
       marginLeft: verticalScale(10),
       width: horizontalScale(45),
     },
+    msgTime: {textAlign: 'right', flex: 1, marginRight: horizontalScale(5)},
     imageChatBottom: {},
   });
 

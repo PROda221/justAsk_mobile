@@ -101,6 +101,23 @@
     "noFeedbackText": "Be the first to rate!",
     "feedbackButton": "Give Feedback"
   },
+  "SettingsScreen": {
+    "shareTitle": "JustAsk Invite Link",
+    "shareMsg": "Hey there! 🌟\n\nI've been using JustAsk, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, JustAsk has got you covered.\n\nCheck it out and join me on JustAsk! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
+    "shareUrl": "https://www.npmjs.com/package/@react-native-community/netinfo",
+    "logoutTitle": "Log out",
+    "logoutWarning": "Are you sure to logout?",
+    "cancelButton": "Cancel",
+    "yesButton": "Yes",
+    "settingsTitle": "Settings",
+    "changePassword": "Change Password",
+    "myFeedbackPage": "My Feedback Page",
+    "blockedList": "Blocked List",
+    "inviteAFriend": "Invite a friend",
+    "deleteAccount": "Delete Account",
+    "logout": "Log out"
+
+  },
   "onlineCourses": {
     "title": "Our Online Courses"
   },

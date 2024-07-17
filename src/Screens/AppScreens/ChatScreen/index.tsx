@@ -40,6 +40,7 @@ type MessageType = {
     type: 'image' | 'message';
     received: boolean;
     uploadingImage: boolean;
+    createdAt: number;
   };
 };
 type Params = {
@@ -209,6 +210,7 @@ const ChatScreen = ({navigation, route}: Props) => {
             type={item.type}
             uploadingImage={item.uploadingImage}
             received={item.received}
+            createdAt={item.createdAt}
             sendMessages={sendMessages}
           />
         )}

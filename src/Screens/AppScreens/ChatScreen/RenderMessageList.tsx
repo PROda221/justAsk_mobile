@@ -9,6 +9,7 @@ import {getChatScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImage} from '../../../Functions/UploadImg';
 import {updateImageUploadStatus} from '../../../DB/DBFunctions';
+import {formatTimestamp} from '../../../Functions/FormatTime';
 
 type PropTypes = {
   username: string;
@@ -17,6 +18,7 @@ type PropTypes = {
   text: string;
   received: boolean;
   uploadingImage: boolean;
+  createdAt: number;
   sendMessages: (imageUrl: string, username: string, type: string) => void;
 };
 
@@ -31,6 +33,7 @@ export const RenderMessageList = ({
   text,
   type,
   uploadingImage,
+  createdAt,
   sendMessages,
 }: PropTypes): JSX.Element => {
   const {colors} = useTheme();
@@ -64,26 +67,39 @@ export const RenderMessageList = ({
     <View
       style={[
         styles.messageContainer,
-        received ? {} : styles.messageContainerRight,
+        received ? styles.messageReceived : styles.messageSent,
       ]}>
-      {type === 'message' && (
-        <Typography
-          fontWeight="300"
-          bgColor={colors.textPrimaryColor}
-          textStyle={styles.messageText}>
-          {text}
-        </Typography>
-      )}
-      {type === 'image' && (
-        <View>
-          <TouchableOpacity onPress={() => openImage(text)}>
-            <Image source={{uri: `${text}`}} style={styles.imageChat} />
-          </TouchableOpacity>
-          <View style={styles.imageChatBottom}>
-            {uploadingImage && <ProgressBar progress={uploadProgress} />}
+      <View
+        style={[
+          styles.messageBox,
+          {
+            backgroundColor: received
+              ? colors.receivedMsgColor
+              : colors.sentMsgColor,
+          },
+        ]}>
+        {type === 'message' && (
+          <Typography
+            fontWeight="300"
+            bgColor={colors.textPrimaryColor}
+            textStyle={styles.messageText}>
+            {text}
+          </Typography>
+        )}
+        {type === 'image' && (
+          <View>
+            <TouchableOpacity onPress={() => openImage(text)}>
+              <Image source={{uri: `${text}`}} style={styles.imageChat} />
+            </TouchableOpacity>
+            <View style={styles.imageChatBottom}>
+              {uploadingImage && <ProgressBar progress={uploadProgress} />}
+            </View>
           </View>
-        </View>
-      )}
+        )}
+      </View>
+      <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
+        {formatTimestamp(createdAt.toString())}
+      </Typography>
     </View>
   );
 };
