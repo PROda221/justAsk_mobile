@@ -88,6 +88,8 @@ const darkColors: DarkColors = {
   errorBoxIconColor: '#530C0C',
   progressBarBgColor: '#e0e0e0',
   progressBarColor: '#76c7c0',
+  noInternetRetryButton: '#4CAF50',
+  noInternetIcon: '#FF6B6B',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

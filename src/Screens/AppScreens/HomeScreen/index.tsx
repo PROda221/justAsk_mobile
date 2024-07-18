@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
@@ -17,6 +17,7 @@ import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
 import ActiveChats from './ActiveChats';
+import {useCheckNet} from '../../../CustomHooks/AppHooks/useCheckNet';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -27,6 +28,13 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
+  const {net} = useCheckNet();
+
+  useEffect(() => {
+    if (!net) {
+      SheetManager.show('NoInternet-sheet');
+    }
+  }, [net]);
 
   const {profileSuccess} = useProfile();
   const openFullImage = () => {

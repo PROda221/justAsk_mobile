@@ -118,6 +118,11 @@
     "logout": "Log out"
 
   },
+  "NoInternetScreen": {
+    "title": "No Internet Connection",
+    "subTitle": "Please check your mobile network settings and try again.",
+    "retryButton": "Retry"
+  },
   "onlineCourses": {
     "title": "Our Online Courses"
   },

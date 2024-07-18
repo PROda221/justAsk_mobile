@@ -6,11 +6,13 @@ import {
 import SearchFeature from '../Search';
 import ViewImage from './ViewImage';
 import {AddProfileImage, AddUserStatus} from './UserEditProfileBottomSheet';
+import NoInternetScreen from './NoInternetScreen';
 
 registerSheet('SearchFeature-sheet', SearchFeature);
 registerSheet('ViewProfileImage-sheet', ViewImage);
 registerSheet('AddProfileImage-sheet', AddProfileImage);
 registerSheet('AddUserStatus-sheet', AddUserStatus);
+registerSheet('NoInternet-sheet', NoInternetScreen);
 
 // We extend some of the types here to give us great intellisense
 // across the app for all registered sheets.
@@ -34,5 +36,6 @@ declare module 'react-native-actions-sheet' {
     'AddUserStatus-sheet': SheetDefinition<{
       returnValue: string;
     }>;
+    'NoInternet-sheet': SheetDefinition;
   }
 }

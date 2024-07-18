@@ -64,4 +64,6 @@ export type DarkColors = {
   errorBoxIconColor: string;
   progressBarBgColor: string;
   progressBarColor: string;
+  noInternetRetryButton: string;
+  noInternetIcon: string;
 };
