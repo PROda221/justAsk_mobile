@@ -22,7 +22,7 @@ type ActiveChatsType = {
 type PropsType = {
   accountName?: string;
   navigation: NativeStackNavigationProp<ParamListBase>;
-  activeChats: Model[] | null;
+  activeChats: Model[] | [];
 };
 
 const enhance = withObservables(['accountName'], ({accountName}) => ({

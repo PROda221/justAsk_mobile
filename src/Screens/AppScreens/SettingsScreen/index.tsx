@@ -158,7 +158,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
               textStyle={styles.profileName}>
               {profileSuccess?.username}
             </Typography>
-            <View style={{paddingLeft: horizontalScale(15)}}>
+            <View style={{paddingLeft: horizontalScale(5)}}>
               <RenderSvg
                 Icon={ProfileEdit}
                 width={horizontalScale(20)}

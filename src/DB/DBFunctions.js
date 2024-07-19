@@ -99,10 +99,13 @@ export function getUserChats(account) {
       .observeWithColumns(['username']),
   ).pipe(
     switchMap(users => {
-      if (users.length > 0) {
+      if (users?.length > 0) {
         return database.collections
           .get('chats')
-          .query(Q.where('user_id', users[0].id), Q.sortBy('updated_at', Q.desc))
+          .query(
+            Q.where('user_id', users[0].id),
+            Q.sortBy('updated_at', Q.desc),
+          )
           .observeWithColumns([
             'last_message',
             'message_time',
@@ -111,16 +114,24 @@ export function getUserChats(account) {
             'unread_count',
           ]);
       } else {
-        return of(null); // Return an empty observable array if no user is found
+        return of([]); // Return an empty observable array if no user is found
       }
     }),
-    catchError(() => of(null)), // Handle any errors
+    catchError(() => of([])), // Handle any errors
   );
 }
 
-export async function getAllChats() {
+export async function getAllChats(account) {
   try {
-    const chats = await database.collections.get('chats').query().fetch();
+    const user = await database.collections
+      .get('users')
+      .query(Q.where('username', account))
+      .fetch();
+
+    const chats = await database.collections
+      .get('chats')
+      .query(Q.where('user_id', user[0].id))
+      .fetch();
     const allChats = chats.map(value => value._raw);
     return allChats;
   } catch (error) {
@@ -129,11 +140,16 @@ export async function getAllChats() {
   }
 }
 
-export async function getAllMessagesForChat(chatId) {
+export async function getAllMessagesForChat(chatId, account) {
   try {
+    const user = await database.collections
+      .get('users')
+      .query(Q.where('username', account))
+      .fetch();
+
     const chat = await database
       .get('chats')
-      .query(Q.where('chat_id', chatId))
+      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
       .fetch();
     const messages = await database.collections
       .get('messages')
@@ -146,11 +162,16 @@ export async function getAllMessagesForChat(chatId) {
   }
 }
 
-export async function checkChatExists(chatId) {
+export async function checkChatExists(chatId, account) {
   try {
+    const user = await database.collections
+      .get('users')
+      .query(Q.where('username', account))
+      .fetch();
+
     const chat = await database.collections
       .get('chats')
-      .query(Q.where('chat_id', chatId))
+      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
       .fetch();
     return chat[0]?._raw; // Returns true if chat exists, false otherwise
   } catch (error) {
@@ -171,12 +192,17 @@ export async function updateChatMsg(chat, lastMessage, readMessage) {
   }
 }
 
-export async function markAllRead(chatId) {
+export async function markAllRead(chatId, account) {
   try {
     await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
       const chat = await database
         .get('chats')
-        .query(Q.where('chat_id', chatId))
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
         .fetch();
       if (chat.length) {
         await chat[0].update(chat => {
@@ -191,12 +217,20 @@ export async function markAllRead(chatId) {
   }
 }
 
-export async function updateChatData(chatData) {
+export async function updateChatData(chatData, account) {
   try {
     await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
       const chat = await database.collections
         .get('chats')
-        .query(Q.where('chat_id', chatData.username))
+        .query(
+          Q.where('user_id', user[0].id),
+          Q.where('chat_id', chatData.username),
+        )
         .fetch();
 
       if (chat.length) {
@@ -217,6 +251,7 @@ export async function updateChatData(chatData) {
 
 export async function addMessageToChat(
   chatId,
+  account,
   text,
   isReceived,
   type,
@@ -226,23 +261,29 @@ export async function addMessageToChat(
     let newMessage;
     let lastMessage = type === 'image' ? 'Image' : text;
     await database.write(async () => {
-      const chat = await database
-        .get('chats')
-        .query(Q.where('chat_id', chatId))
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
         .fetch();
-      if (chat.length > 0) {
-        // Check if chat exists
-        await updateChatMsg(chat, lastMessage, onChatScreen);
-        newMessage = await database.get('messages').create(record => {
-          record.chat.set(chat[0]);
-          record.text = type === 'image' && !isReceived ? text.url : text;
-          record.type = type;
-          record.received = isReceived;
-          record.read = onChatScreen;
-          record.uploadingImage = type === 'image' ? text.uploading : false
-        });
-      } else {
-        console.error('Chat not found:', chatId);
+      if (user.length > 0) {
+        const chat = await database
+          .get('chats')
+          .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+          .fetch();
+        if (chat.length > 0) {
+          // Check if chat exists
+          await updateChatMsg(chat, lastMessage, onChatScreen);
+          newMessage = await database.get('messages').create(record => {
+            record.chat.set(chat[0]);
+            record.text = type === 'image' && !isReceived ? text.url : text;
+            record.type = type;
+            record.received = isReceived;
+            record.read = onChatScreen;
+            record.uploadingImage = type === 'image' ? text.uploading : false;
+          });
+        } else {
+          console.error('Chat not found:', chatId);
+        }
       }
     });
     return newMessage;
@@ -252,12 +293,22 @@ export async function addMessageToChat(
   }
 }
 
-export async function updateImageUploadStatus(chatId, messageId, uploading) {
+export async function updateImageUploadStatus(
+  chatId,
+  account,
+  messageId,
+  uploading,
+) {
   try {
     await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
       const chat = await database
         .get('chats')
-        .query(Q.where('chat_id', chatId))
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
         .fetch();
       if (chat.length > 0) {
         // Check if chat exists

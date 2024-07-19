@@ -1,6 +1,6 @@
-import moment from 'moment';
+import moment, {Moment} from 'moment';
 
-export function formatTimestamp(timestamp: string) {
+export function formatTimestamp(timestamp: Moment) {
   // Create a moment object from the timestamp
   const momentDate = moment(timestamp);
 

@@ -32,6 +32,7 @@ import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {RenderMessageList} from './RenderMessageList';
+import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 
 type MessageType = {
   item: {
@@ -106,6 +107,7 @@ const ChatScreen = ({navigation, route}: Props) => {
   const {newMessage} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
+  const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
@@ -122,7 +124,7 @@ const ChatScreen = ({navigation, route}: Props) => {
 
   const styles = getChatScreenStyles(colors);
   useEffect(() => {
-    markAllRead(username);
+    markAllRead(username, profileSuccess?.username);
     dispatch(setInChatScreen(isFocused));
     return () => {
       dispatch(setInChatScreen(false));
@@ -205,6 +207,7 @@ const ChatScreen = ({navigation, route}: Props) => {
         renderItem={({item}: MessageType) => (
           <RenderMessageList
             username={username}
+            account={profileSuccess?.username}
             id={item.id}
             text={item.text}
             type={item.type}

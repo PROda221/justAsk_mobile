@@ -10,9 +10,11 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImage} from '../../../Functions/UploadImg';
 import {updateImageUploadStatus} from '../../../DB/DBFunctions';
 import {formatTimestamp} from '../../../Functions/FormatTime';
+import moment from 'moment';
 
 type PropTypes = {
   username: string;
+  account?: string;
   id: string;
   type: 'message' | 'image';
   text: string;
@@ -26,8 +28,16 @@ const openImage = (imageUrl: string) => {
   SheetManager.show('ViewProfileImage-sheet', {payload: {imageUrl}});
 };
 
+const convertTimeToMili = (dateString: string) => {
+  const dateObject = new Date(dateString);
+  const milliseconds = dateObject.getTime();
+  const momentDate = moment(milliseconds);
+  return momentDate;
+};
+
 export const RenderMessageList = ({
   username,
+  account,
   id,
   received,
   text,
@@ -54,7 +64,7 @@ export const RenderMessageList = ({
     try {
       const uploadedUrl = await uploadImage(text, currentProgress);
       if (uploadedUrl) {
-        await updateImageUploadStatus(username, id, false);
+        await updateImageUploadStatus(username, account, id, false);
         console.log('a');
         sendMessages(uploadedUrl, username, 'image');
       }
@@ -98,7 +108,7 @@ export const RenderMessageList = ({
         )}
       </View>
       <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
-        {formatTimestamp(createdAt.toString())}
+        {formatTimestamp(convertTimeToMili(createdAt.toString()))}
       </Typography>
     </View>
   );

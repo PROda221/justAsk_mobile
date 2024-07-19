@@ -21,7 +21,7 @@ export const useGetMessage = (socket: Socket | null) => {
     yourId: string,
   ) => {
     try {
-      const chatExists = await checkChatExists(senderId);
+      const chatExists = await checkChatExists(senderId, yourId);
       if (!chatExists) {
         console.log('a');
         await createNewChat(senderId, `${senderId}-.png`, '', '', yourId);
@@ -30,6 +30,7 @@ export const useGetMessage = (socket: Socket | null) => {
       console.log('b');
       newMessage = await addMessageToChat(
         senderId,
+        yourId,
         msg,
         isReceived,
         type,

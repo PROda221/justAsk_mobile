@@ -44,6 +44,7 @@ export const getSettingsScreenStyles = (colors): SettingsScreenStyles =>
       marginLeft: horizontalScale(16),
     },
     profileName: {
+      textAlign: 'left',
       fontSize: moderateScale(20),
     },
     headingText: {
@@ -67,7 +68,7 @@ export const getSettingsScreenStyles = (colors): SettingsScreenStyles =>
     },
     editContainer: {
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'center',
     },
     headerContainer: {flexDirection: 'row', alignItems: 'center'},

@@ -51,6 +51,7 @@ export const useStartChat = (
     try {
       newMessage = await addMessageToChat(
         username,
+        profileSlice.success?.username,
         msg,
         isReceived,
         type,
@@ -77,9 +78,9 @@ export const useStartChat = (
 
   const fetchMessages = async () => {
     try {
-      const chatExists = await checkChatExists(username);
+      const chatExists = await checkChatExists(username, profileSlice.success?.username);
       if (chatExists) {
-        const {allStoredMsgs, chatId} = await getAllMessagesForChat(username);
+        const {allStoredMsgs, chatId} = await getAllMessagesForChat(username, profileSlice.success?.username);
         allMessages = allStoredMsgs;
         setChatId(chatId);
         if (allMessages.length) {

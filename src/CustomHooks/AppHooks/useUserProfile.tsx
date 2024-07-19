@@ -6,9 +6,11 @@ import {
 } from '../../Redux/Slices/UserProfileSlice';
 import {useEffect} from 'react';
 import {updateChatData} from '../../DB/DBFunctions';
+import {useProfile} from './useProfile';
 
 export const useUserProfile = (username?: string) => {
   const dispatch = useDispatch();
+  const {profileSuccess} = useProfile();
   const userProfileSlice = useSelector(
     (state: RootState) => state.userProfileSlice,
   );
@@ -23,7 +25,10 @@ export const useUserProfile = (username?: string) => {
 
   useEffect(() => {
     if (userProfileSlice.success) {
-      updateChatData(userProfileSlice.success.response.userDetails);
+      updateChatData(
+        userProfileSlice.success.response.userDetails,
+        profileSuccess?.username,
+      );
       console.log('success is :', userProfileSlice.success);
     }
   }, [userProfileSlice.success]);
