@@ -19,9 +19,12 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {Skeleton} from 'moti/skeleton';
 import {SheetManager} from 'react-native-actions-sheet';
-import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 import content from '../../../Assets/Languages/english.json';
+import {withObservables} from '@nozbe/watermelondb/react';
+import {getCurrentChat} from '../../../DB/DBFunctions';
+import {Model} from '@nozbe/watermelondb';
+import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 
 type Params = {
   params: {
@@ -35,19 +38,22 @@ type Params = {
 type UserProfileProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<Params>;
+  chatDetails: Model[] | [];
 };
 
-const UserProfile = ({navigation, route}: UserProfileProps) => {
+const enhance = withObservables(['route'], ({route}) => ({
+  chatDetails: getCurrentChat(
+    route.params?.accountName,
+    route.params?.username,
+  ),
+}));
+
+const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   const [loading, setLoading] = useState(true);
   const {image, username, status, skills} = route.params;
-  const {
-    userProfileSuccess,
-    callGetUserProfileApi,
-    resetUserProfileReducer,
-    userProfileLoading,
-  } = useUserProfile(username);
+  const {userProfileSuccess, userProfileLoading} = useUserProfile(username);
   const {imageColors} = useImageColors(
-    getProfilePic(userProfileSuccess?.profilePic || image),
+    chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
   );
 
   const {colors} = useTheme();
@@ -55,13 +61,12 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
 
   useEffect(() => {
     setLoading(false);
-    callGetUserProfileApi();
   }, []);
 
   const openFullImage = () => {
     SheetManager.show('ViewProfileImage-sheet', {
       payload: {
-        imageUrl: getProfilePic(userProfileSuccess?.profilePic || image),
+        imageUrl: chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
       },
     });
   };
@@ -108,7 +113,7 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
         useAngle
         style={styles.gradientContainer}>
         <View style={styles.headerContainer}>
-          <Header onPress={resetUserProfileReducer} />
+          <Header />
           <View style={styles.blockIconStyle}>
             <Skeleton colorMode="light">
               <Entypo
@@ -131,10 +136,9 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
               style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: getProfilePic(userProfileSuccess?.profilePic || image),
+                  uri: chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
                 }}
                 transition={500}
-                cachePolicy={'none'}
                 style={styles.profileImage}
               />
             </TouchableOpacity>
@@ -210,4 +214,4 @@ const UserProfile = ({navigation, route}: UserProfileProps) => {
   );
 };
 
-export default UserProfile;
+export default enhance(UserProfile);

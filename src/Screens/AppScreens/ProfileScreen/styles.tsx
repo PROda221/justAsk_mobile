@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type UserProfileStyles = {
   gradientContainer: ViewStyle;
@@ -25,7 +26,7 @@ export type UserProfileStyles = {
   feedbackStarsStyle: TextStyle;
 };
 
-export const getUserProfileStyles = (colors): UserProfileStyles =>
+export const getUserProfileStyles = (colors: DarkColors): UserProfileStyles =>
   StyleSheet.create<UserProfileStyles>({
     headerContainer: {justifyContent: 'space-between', flexDirection: 'row'},
     blockIconStyle: {
@@ -44,6 +45,7 @@ export const getUserProfileStyles = (colors): UserProfileStyles =>
     gradientContainer: {
       flex: 1,
       paddingHorizontal: horizontalScale(25),
+      backgroundColor: colors.appScreenPrimaryBackground,
     },
     skillContainer: {
       paddingTop: verticalScale(15),

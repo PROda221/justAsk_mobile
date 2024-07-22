@@ -93,6 +93,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     if (newProfileValues.profileImg || newProfileValues.status) {
       let data = {
         filePath: newProfileValues.profileImg,
+        currentPath: profileSuccess?.profilePic,
         status: newProfileValues.status,
       };
       callProfileUploadApi(data);

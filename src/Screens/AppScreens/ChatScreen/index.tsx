@@ -25,7 +25,7 @@ import {
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
-import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import {Image} from 'expo-image';
 import {markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
@@ -33,6 +33,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {RenderMessageList} from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
+import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 
 type MessageType = {
   item: {
@@ -67,13 +68,17 @@ const chatHeader = (
   statusStyle: ViewStyle,
   openUserProfle: () => void,
 ) => {
+  const {resetUserProfileReducer} = useUserProfile(username);
   //   Console.log('hello hat header');
   return (
     <View style={styles.header}>
-      <Header containerStyle={{paddingTop: 0}} />
+      <Header
+        containerStyle={{paddingTop: 0}}
+        onPress={resetUserProfileReducer}
+      />
       <TouchableOpacity onPress={openUserProfle}>
         <Image
-          source={{uri: getProfilePic(image)}}
+          source={{uri: image || DEFAULT_IMAGE}}
           transition={200}
           cachePolicy={'none'}
           style={styles.profileImage}
@@ -103,6 +108,10 @@ const chatHeader = (
 
 const ChatScreen = ({navigation, route}: Props) => {
   const {username, skills, status, image} = route.params;
+  const {callGetUserProfileApi, userProfileSuccess} = useUserProfile(
+    username,
+    image,
+  );
 
   const {newMessage} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
@@ -130,6 +139,10 @@ const ChatScreen = ({navigation, route}: Props) => {
       dispatch(setInChatScreen(false));
     };
   }, [isFocused]);
+
+  useEffect(() => {
+    callGetUserProfileApi();
+  }, []);
 
   // Handle animation of online status
   useEffect(() => {
@@ -185,7 +198,14 @@ const ChatScreen = ({navigation, route}: Props) => {
   };
 
   const openUserProfle = () => {
-    navigation.navigate('UserProfile', {username, skills, status, image});
+    console.log('image sent from chat screen :', image);
+    navigation.navigate('UserProfile', {
+      username,
+      skills,
+      status,
+      image,
+      accountName: profileSuccess?.username,
+    });
   };
 
   return (

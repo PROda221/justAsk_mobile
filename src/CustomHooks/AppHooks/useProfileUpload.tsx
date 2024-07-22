@@ -16,6 +16,7 @@ export const useProfileUpload = () => {
 
   const callProfileUploadApi = (data: {
     filePath?: string | null;
+    currentPath?: string | null;
     string?: string | null;
   }) => {
     dispatch(callProfileUpload(data));

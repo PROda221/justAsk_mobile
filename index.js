@@ -36,7 +36,7 @@ const displayNotification = async notifeeData => {
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
-    const {message, senderUsername, type, notifee, receiverUsername} =
+    const {message, senderUsername, type, notifee, receiverUsername, profilePic} =
       remoteMessage.data;
     if (senderUsername && message && type) {
       displayNotification(JSON.parse(notifee));
@@ -47,7 +47,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       if (!chatExists) {
         await createNewChat(
           senderUsername,
-          `${senderUsername}-.png`,
+          profilePic,
           '',
           '',
           receiverUsername,

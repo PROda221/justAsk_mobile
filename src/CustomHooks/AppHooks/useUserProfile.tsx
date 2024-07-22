@@ -7,8 +7,9 @@ import {
 import {useEffect} from 'react';
 import {updateChatData} from '../../DB/DBFunctions';
 import {useProfile} from './useProfile';
+import {downloadImage} from '../../Functions/UpdateLocalPic';
 
-export const useUserProfile = (username?: string) => {
+export const useUserProfile = (username?: string, image?: string) => {
   const dispatch = useDispatch();
   const {profileSuccess} = useProfile();
   const userProfileSlice = useSelector(
@@ -24,12 +25,25 @@ export const useUserProfile = (username?: string) => {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const profilePic = await downloadImage(
+          userProfileSlice.success?.response.userDetails.profilePic ?? '',
+          image,
+        );
+        let computedImg = {uri: `file://${profilePic}`};
+        updateChatData(
+          userProfileSlice.success?.response.userDetails,
+          profileSuccess?.username,
+          profilePic ? computedImg.uri : '',
+        );
+      } catch (err) {
+        console.log('err in fetchProfilePic :', err);
+      }
+    };
+
     if (userProfileSlice.success) {
-      updateChatData(
-        userProfileSlice.success.response.userDetails,
-        profileSuccess?.username,
-      );
-      console.log('success is :', userProfileSlice.success);
+      fetchUserData();
     }
   }, [userProfileSlice.success]);
 

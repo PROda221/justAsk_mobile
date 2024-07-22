@@ -40,6 +40,7 @@ export const useStartChat = (
       profileSlice.success?.username,
       username,
       type,
+      profileSlice.success?.profilePic
     );
   };
 

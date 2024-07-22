@@ -108,14 +108,16 @@ const SearchScreen = () => {
     </View>
   );
 
-  const renderItem = ({item}) => (
-    <UserCard
-      username={item.username}
-      skills={item.adviceGenre}
-      status={item.status}
-      image={item.pic}
-    />
-  );
+  const renderItem = ({item}) => {
+    return (
+      <UserCard
+        username={item.username}
+        skills={item.adviceGenre}
+        status={item.status}
+        image={item.pic}
+      />
+    );
+  };
 
   return (
     <View style={styles.searchContainer}>

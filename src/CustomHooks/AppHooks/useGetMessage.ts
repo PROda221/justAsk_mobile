@@ -19,12 +19,13 @@ export const useGetMessage = (socket: Socket | null) => {
     type: string = 'message',
     senderId: string,
     yourId: string,
+    profilePic: string
   ) => {
     try {
       const chatExists = await checkChatExists(senderId, yourId);
       if (!chatExists) {
         console.log('a');
-        await createNewChat(senderId, `${senderId}-.png`, '', '', yourId);
+        await createNewChat(senderId, profilePic, '', '', yourId);
       }
       let newMessage;
       console.log('b');
@@ -46,13 +47,13 @@ export const useGetMessage = (socket: Socket | null) => {
   useEffect(() => {
     const receiveMessage = async () => {
       // Receive message
-      socket?.on('chat message', async (msg, type, senderId, yourId) => {
+      socket?.on('chat message', async (msg, type, senderId, yourId, profilePic) => {
         if (type === 'image') {
           let imageUri = await saveURLImage(msg);
           let computedImg = {uri: `file://${imageUri}`};
-          getMessages(computedImg.uri, true, type, senderId, yourId);
+          getMessages(computedImg.uri, true, type, senderId, yourId, profilePic);
         } else {
-          getMessages(msg, true, type, senderId, yourId);
+          getMessages(msg, true, type, senderId, yourId, profilePic);
         }
       });
     };

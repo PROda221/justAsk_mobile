@@ -2,6 +2,9 @@
   "name": "just_ask",
   "displayName": "just_ask",
   "expo": {
+    "metro": {
+      "runtime": "metro-runtime"
+    },
     "extra": {
       "eas": {
         "projectId": "1113e7f8-54a1-49de-a628-a38ba3e0134e"
@@ -12,6 +15,8 @@
       "url": "https://u.expo.dev/1113e7f8-54a1-49de-a628-a38ba3e0134e"
     },
     "android": {},
-    "ios": {}
+    "ios": {
+       "jsEngine": "jsc"
+    }
   }
 }

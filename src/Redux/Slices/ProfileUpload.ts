@@ -16,7 +16,7 @@ type ProfileUploadError = {
 
 export const callProfileUpload = createAsyncThunk(
   'callProfileUpload',
-  async (data: {filePath?: string; status?: string}, {rejectWithValue}) => {
+  async (data: {filePath?: string; status?: string; currentPath?: string;}, {rejectWithValue}) => {
     try {
       const formData = new FormData();
       if (data.filePath) {
@@ -29,6 +29,10 @@ export const callProfileUpload = createAsyncThunk(
 
       if (data.status) {
         formData.append('status', data.status);
+      }
+
+      if(data.currentPath){
+        formData.append('currentPath', data.currentPath);
       }
 
       const response = await post<ProfileUpload>(Endpoints.profileUpload, formData, {

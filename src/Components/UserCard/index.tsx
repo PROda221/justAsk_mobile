@@ -11,6 +11,7 @@ import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../Functions/GetProfilePic';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {baseURL} from '../../Constants';
 
 type Props = {
   username: string;
@@ -31,7 +32,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
       username,
       status,
       skills,
-      image,
+      image: image ? `${baseURL}/${image}` : '',
     });
   };
 

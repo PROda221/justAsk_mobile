@@ -6,7 +6,7 @@ export const DEFAULT_IMAGE = Image.resolveAssetSource(ProfilePic).uri;
 
 export const getProfilePic = (profilePic: string | undefined) => {
   if (profilePic) {
-    return encodeURI(`${baseURL}/${profilePic}?time=${new Date()}`);
+    return `${baseURL}/${profilePic}`;
   }
   return DEFAULT_IMAGE;
 };

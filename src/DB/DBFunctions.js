@@ -217,7 +217,7 @@ export async function markAllRead(chatId, account) {
   }
 }
 
-export async function updateChatData(chatData, account) {
+export async function updateChatData(chatData, account, profilePic) {
   try {
     await database.write(async () => {
       const user = await database.collections
@@ -236,7 +236,7 @@ export async function updateChatData(chatData, account) {
       if (chat.length) {
         await chat[0].update(chat => {
           chat.username = chatData.username;
-          chat.profilePic = chatData.profilePic;
+          chat.profilePic = profilePic;
           chat.status = chatData.status;
           chat.skills = JSON.stringify(chatData.adviceGenre);
         });
@@ -332,4 +332,25 @@ export async function updateImageUploadStatus(
     console.error('Error updating image upload status:', error);
     throw error;
   }
+}
+
+
+export function getCurrentChat(account, username) {
+  return database.collections
+    .get('users')
+    .query(Q.where('username', account))
+    .observe()
+    .pipe(
+      switchMap(users => {
+        if (users.length === 0) {
+          throw new Error('User not found');
+        }
+
+        const userId = users[0].id;
+        return database.collections
+          .get('chats')
+          .query(Q.where('user_id', userId), Q.where('chat_id', username))
+          .observe();
+      })
+    );
 }
