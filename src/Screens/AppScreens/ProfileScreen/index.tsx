@@ -22,7 +22,7 @@ import {SheetManager} from 'react-native-actions-sheet';
 import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 import content from '../../../Assets/Languages/english.json';
 import {withObservables} from '@nozbe/watermelondb/react';
-import {getCurrentChat} from '../../../DB/DBFunctions';
+import {getCurrentChatObservable} from '../../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
 import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 
@@ -42,7 +42,7 @@ type UserProfileProps = {
 };
 
 const enhance = withObservables(['route'], ({route}) => ({
-  chatDetails: getCurrentChat(
+  chatDetails: getCurrentChatObservable(
     route.params?.accountName,
     route.params?.username,
   ),

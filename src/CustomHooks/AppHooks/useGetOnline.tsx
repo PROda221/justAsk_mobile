@@ -1,16 +1,20 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {Socket} from 'socket.io-client';
-import {useProfile} from './useProfile';
 import {AppState} from 'react-native';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
+import {RootState} from '../../Redux/rootReducers';
+import {useDispatch, useSelector} from 'react-redux';
+import {callGetProfile} from '../../Redux/Slices/ProfileSlice';
 
 export const useGetOnline = (socket: Socket | null) => {
   const appState = useRef(AppState.currentState);
-
-  const {profileSuccess, callGetProfileApi} = useProfile();
+  const profileSuccess = useSelector(
+    (state: RootState) => state.profileSlice.success,
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    callGetProfileApi();
+    dispatch(callGetProfile());
   }, []);
 
   useEffect(() => {

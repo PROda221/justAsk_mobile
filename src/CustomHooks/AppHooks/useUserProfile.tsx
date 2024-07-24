@@ -7,7 +7,7 @@ import {
 import {useEffect} from 'react';
 import {updateChatData} from '../../DB/DBFunctions';
 import {useProfile} from './useProfile';
-import {downloadImage} from '../../Functions/UpdateLocalPic';
+import {downloadImage} from '../../Functions/DownloadLocalPic';
 
 export const useUserProfile = (username?: string, image?: string) => {
   const dispatch = useDispatch();

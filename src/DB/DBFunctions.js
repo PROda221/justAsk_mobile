@@ -19,35 +19,43 @@ export async function createNewUser(username, profilePic, status, skills) {
   }
 }
 
+export const getUser = async username => {
+  try {
+    const user = await database
+      .get('users')
+      .query(Q.where('username', username))
+      .fetch();
+    return user;
+  } catch (err) {
+    console.log('error getting user:', err);
+  }
+};
+
 export const updateOrCreateUser = async (
-  username,
+  userData,
   profilePic,
-  status,
-  skills,
-  emailId,
-  averageRating,
 ) => {
   try {
     await database.write(async () => {
       let user = await database.collections
         .get('users')
-        .query(Q.where('username', username))
+        .query(Q.where('username', userData.username))
         .fetch();
 
       if (user.length > 0) {
         // User exists, update the user
         user = user[0];
         await user.update(u => {
-          u.username = username;
+          u.username = userData.username;
           u.profilePic = profilePic;
-          u.skills = skills;
-          u.status = JSON.stringify(skills);
-          u.emailId = emailId;
-          u.averageRating = averageRating;
+          u.status = userData.status;
+          u.skills = JSON.stringify(userData.skills);
+          u.emailId = userData.emailId;
+          u.averageRating = userData.averageRating;
         });
       } else {
         // User does not exist, create a new user
-        createNewUser(username, profilePic, status, skills);
+        createNewUser(userData.username, profilePic, userData.status, userData.skills);
       }
     });
   } catch (err) {
@@ -80,7 +88,7 @@ export async function createNewChat(
             record.skills = JSON.stringify(skills);
           });
         console.log('New chat created:', newChat);
-        return newChat;
+        return newChat?.[0]?._raw;
       } else {
         console.error('User not found:', account);
       }
@@ -169,6 +177,8 @@ export async function checkChatExists(chatId, account) {
       .query(Q.where('username', account))
       .fetch();
 
+      console.log('user is :', user)
+
     const chat = await database.collections
       .get('chats')
       .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
@@ -180,12 +190,15 @@ export async function checkChatExists(chatId, account) {
   }
 }
 
-export async function updateChatMsg(chat, lastMessage, readMessage) {
+export async function updateChatMsg(chat, lastMessage, readMessage, profilePic) {
   try {
     await chat[0].update(chat => {
       chat.lastMessage = lastMessage;
       chat.messageTime = new Date();
       chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
+      if (profilePic) {
+        chat.profilePic = profilePic;
+      }
     });
   } catch (error) {
     console.error('Error updating chat message:', error);
@@ -256,6 +269,7 @@ export async function addMessageToChat(
   isReceived,
   type,
   onChatScreen = false,
+  profilePic = ''
 ) {
   try {
     let newMessage;
@@ -272,7 +286,7 @@ export async function addMessageToChat(
           .fetch();
         if (chat.length > 0) {
           // Check if chat exists
-          await updateChatMsg(chat, lastMessage, onChatScreen);
+          await updateChatMsg(chat, lastMessage, onChatScreen, profilePic);
           newMessage = await database.get('messages').create(record => {
             record.chat.set(chat[0]);
             record.text = type === 'image' && !isReceived ? text.url : text;
@@ -334,6 +348,26 @@ export async function updateImageUploadStatus(
   }
 }
 
+
+export function getCurrentChatObservable(account, username) {
+  return database.collections
+    .get('users')
+    .query(Q.where('username', account))
+    .observe()
+    .pipe(
+      switchMap(users => {
+        if (users.length === 0) {
+          throw new Error('User not found');
+        }
+
+        const userId = users[0].id;
+        return database.collections
+          .get('chats')
+          .query(Q.where('user_id', userId), Q.where('chat_id', username))
+          .observe();
+      })
+    );
+}
 
 export function getCurrentChat(account, username) {
   return database.collections

@@ -3,7 +3,6 @@ import {View, TouchableOpacity, Alert} from 'react-native';
 import {Image} from 'expo-image';
 import {Typography} from '../../../Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getSettingsScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {RenderSvg} from '../../../Components/RenderSvg';
@@ -22,16 +21,32 @@ import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
 import {useGoogleLogin} from '../../../CustomHooks/AuthHooks/useGoogleLogin';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
 import {onShare} from '../../../Functions/Share';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
+import {withObservables} from '@nozbe/watermelondb/react';
+import database from '../../../DB/database';
+import {Model, Q} from '@nozbe/watermelondb';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
+  currentUser: Model[] | [];
 };
 
-const SettingsScreen = ({navigation}: PropsType) => {
-  const {profileSuccess} = useProfile();
+const enhance = withObservables(['route'], ({route}) => ({
+  currentUser: database
+    .get('users')
+    .query(Q.where('username', route.params?.username))
+    .observeWithColumns(['profile_pic', 'status']),
+}));
+
+const SettingsScreen = ({navigation, currentUser}: PropsType) => {
+  const profileSuccess = useSelector(
+    (state: RootState) => state.profileSlice.success,
+  );
+
   const {colors} = useTheme();
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
@@ -144,11 +159,10 @@ const SettingsScreen = ({navigation}: PropsType) => {
         style={styles.profileContainer}>
         <Image
           source={{
-            uri: getProfilePic(profileSuccess?.profilePic),
+            uri: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
           }}
           style={styles.profilePic}
           transition={500}
-          cachePolicy={'none'}
         />
         <View style={styles.profileText}>
           <View style={styles.editContainer}>
@@ -171,7 +185,7 @@ const SettingsScreen = ({navigation}: PropsType) => {
             bgColor={colors.textInputPlaceholderColor}
             fontWeight="400"
             textStyle={styles.profileStatus}>
-            {profileSuccess?.status}
+            {currentUser[0]?._raw['status']}
           </Typography>
         </View>
       </TouchableOpacity>
@@ -198,4 +212,4 @@ const SettingsScreen = ({navigation}: PropsType) => {
   );
 };
 
-export default SettingsScreen;
+export default enhance(SettingsScreen);

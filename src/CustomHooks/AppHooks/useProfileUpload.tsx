@@ -5,10 +5,9 @@ import {
   resetProfileUploadResponse,
 } from '../../Redux/Slices/ProfileUpload';
 import {useEffect} from 'react';
-import {useProfile} from './useProfile';
+import {callGetProfile} from '../../Redux/Slices/ProfileSlice';
 
 export const useProfileUpload = () => {
-  const {callGetProfileApi} = useProfile();
   const dispatch = useDispatch();
   const profileUploadSlice = useSelector(
     (state: RootState) => state.profileUpload,
@@ -28,9 +27,8 @@ export const useProfileUpload = () => {
 
   useEffect(() => {
     if (profileUploadSlice.success) {
-      console.log('upload success :', profileUploadSlice.success);
       resetProfileUploadReducer();
-      callGetProfileApi();
+      dispatch(callGetProfile());
     }
   }, [profileUploadSlice.success]);
 

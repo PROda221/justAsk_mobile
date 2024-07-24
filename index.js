@@ -13,6 +13,7 @@ import {
 } from './src/DB/DBFunctions';
 import notifee from '@notifee/react-native';
 import {saveURLImage} from './src/Functions/SaveBase64Image';
+import {downloadImage} from './src/Functions/DownloadLocalPic';
 
 // Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
@@ -34,10 +35,24 @@ const displayNotification = async notifeeData => {
   await notifee.displayNotification(notifeeData);
 };
 
+const downloadImg = async (imgUrl, prevImg = '') => {
+  try {
+    let downloadedPic;
+    downloadedPic = await downloadImage(imgUrl ?? '', prevImg);
+
+    let computedImg = {uri: `file://${downloadedPic}`};
+    return computedImg.uri;
+  } catch (err) {
+    console.log('err in fetchProfilePic :', err);
+  }
+};
+
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
     const {message, senderUsername, type, notifee, receiverUsername, profilePic} =
       remoteMessage.data;
+    let downloadedPic;
     if (senderUsername && message && type) {
       displayNotification(JSON.parse(notifee));
       const chatExists = await checkChatExists(
@@ -45,12 +60,18 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
         receiverUsername,
       );
       if (!chatExists) {
+        downloadedPic = await downloadImg(profilePic);
         await createNewChat(
           senderUsername,
-          profilePic,
+          downloadedPic,
           '',
           '',
           receiverUsername,
+        );
+      }else {
+        downloadedPic = await downloadImg(
+          profilePic,
+          chatExists?.['profile_pic'],
         );
       }
       if (type === 'image') {
@@ -63,6 +84,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
           true,
           type,
           false,
+          downloadedPic
         );
       } else {
         await addMessageToChat(
@@ -72,6 +94,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
           true,
           type,
           false,
+          downloadedPic
         );
       }
     }

@@ -18,12 +18,15 @@ export const downloadImage = async (url: string, image?: string) => {
       return path;
     } else {
         if(image){
+          console.log('image to delete :', image)
+          console.log('new url to download :', url)
             await fs.unlink(image);
         }
       const response = await ReactNativeBlobUtil.config({
         fileCache: true,
         path: path,
       }).fetch('GET', `${baseURL}/${url}`);
+      console.log('image downloaded :', path);
       return response.path();
     }
   } catch (error) {

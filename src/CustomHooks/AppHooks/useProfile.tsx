@@ -5,9 +5,10 @@ import {
   resetProfileResponse,
 } from '../../Redux/Slices/ProfileSlice';
 import {useEffect} from 'react';
-import {updateOrCreateUser} from '../../DB/DBFunctions';
+import {getUser, updateOrCreateUser} from '../../DB/DBFunctions';
+import {downloadImage} from '../../Functions/DownloadLocalPic';
 
-export const useProfile = () => {
+export const useProfile = (isFocused: boolean = true) => {
   const dispatch = useDispatch();
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -20,33 +21,37 @@ export const useProfile = () => {
   };
 
   useEffect(() => {
-    if (profileSlice.success) {
-      const {
-        username,
-        adviceGenre,
-        status,
-        profilePic,
-        emailId,
-        averageRating,
-      } = profileSlice.success;
-
-      const storeUser = async () => {
+    const fetchUserData = async (username: string) => {
+      try {
+        let downloadedPic: string | null;
+        let currentUser = await getUser(username);
+        if (currentUser?.length > 0) {
+          // console.log('user inside hook :', currentUser);
+          downloadedPic = await downloadImage(
+            profileSlice.success?.profilePic ?? '',
+            currentUser?.[0]._raw?.['profile_pic'],
+          );
+        } else {
+          downloadedPic = await downloadImage(
+            profileSlice.success?.profilePic ?? '',
+          );
+        }
+        let computedImg = {uri: `file://${downloadedPic}`};
         await updateOrCreateUser(
-          username,
-          profilePic,
-          status,
-          adviceGenre,
-          emailId,
-          averageRating,
+          profileSlice.success,
+          downloadedPic ? computedImg.uri : '',
         );
-      };
-
-      void storeUser();
+      } catch (err) {
+        console.log('err in fetchProfilePic :', err);
+      }
+    };
+    if (profileSlice.success && !profileSlice.loading && isFocused) {
+      fetchUserData(profileSlice.success.username);
     }
   }, [profileSlice.success]);
 
   useEffect(() => {
-    if (profileSlice.error) {
+    if (profileSlice.error && !profileSlice.loading) {
       console.log('error in searchUser :', profileSlice.error);
     }
   }, [profileSlice.error]);
