@@ -3,7 +3,11 @@ import {View, TouchableOpacity} from 'react-native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {Typography} from '../../../Components';
 import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
-import {moderateScale} from '../../../Functions/StyleScale';
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../../../Functions/StyleScale';
 import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {HomeScreenStyles} from './styles';
 import {withObservables} from '@nozbe/watermelondb/react';
@@ -11,6 +15,7 @@ import database from '../../../DB/database';
 import {Model, Q} from '@nozbe/watermelondb';
 import {Image} from 'expo-image';
 import {SheetManager} from 'react-native-actions-sheet';
+import {Skeleton} from 'moti/skeleton';
 
 const enhance = withObservables(['username'], ({username}) => ({
   currentUser: database
@@ -25,6 +30,7 @@ type Props = {
   username: string;
   openSettings: () => void;
   currentUser: Model[];
+  loading: boolean;
 };
 
 const HomeHeader = ({
@@ -33,6 +39,7 @@ const HomeHeader = ({
   username,
   openSettings,
   currentUser,
+  loading,
 }: Props) => {
   const openFullImage = () => {
     void SheetManager.show('ViewProfileImage-sheet', {
@@ -43,33 +50,45 @@ const HomeHeader = ({
   };
 
   return (
-    <View style={styles.header}>
-      <View style={styles.profileUsernameContainer}>
-        <TouchableOpacity
-          style={styles.profilePicContainer}
-          onPress={openFullImage}>
-          <Image
-            source={{
-              uri: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
-            }}
-            style={styles.img}
-            transition={500}
-          />
-        </TouchableOpacity>
-        <Typography
-          bgColor="white"
-          fontWeight="400"
-          textStyle={styles.headerText}>
-          {username}
-        </Typography>
+    <Skeleton.Group show={loading}>
+      <View style={styles.header}>
+        <View style={styles.profileUsernameContainer}>
+          <Skeleton
+            colorMode="light"
+            width={horizontalScale(45)}
+            height={verticalScale(45)}
+            radius={moderateScale(22)}>
+            <TouchableOpacity
+              style={styles.profilePicContainer}
+              onPress={openFullImage}>
+              <Image
+                source={{
+                  uri: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
+                }}
+                style={styles.img}
+                transition={500}
+              />
+            </TouchableOpacity>
+          </Skeleton>
+          <View style={{paddingLeft: horizontalScale(15)}}>
+            <Skeleton colorMode="light" width={horizontalScale(150)}>
+              <Typography
+                bgColor="white"
+                fontWeight="400"
+                textStyle={styles.headerText}>
+                {username}
+              </Typography>
+            </Skeleton>
+          </View>
+        </View>
+        <Fontisto
+          name="player-settings"
+          size={moderateScale(20)}
+          color={colors.settingsIcons}
+          onPress={openSettings}
+        />
       </View>
-      <Fontisto
-        name="player-settings"
-        size={moderateScale(20)}
-        color={colors.settingsIcons}
-        onPress={openSettings}
-      />
-    </View>
+    </Skeleton.Group>
   );
 };
 

@@ -1,8 +1,8 @@
 import {baseURL} from '../Constants';
-import {ProfilePic} from '../Assets/Images/index';
+import {ProfilePic1} from '../Assets/Images/index';
 import {Image} from 'react-native';
 
-export const DEFAULT_IMAGE = Image.resolveAssetSource(ProfilePic).uri;
+export const DEFAULT_IMAGE = Image.resolveAssetSource(ProfilePic1).uri;
 
 export const getProfilePic = (profilePic: string | undefined) => {
   if (profilePic) {

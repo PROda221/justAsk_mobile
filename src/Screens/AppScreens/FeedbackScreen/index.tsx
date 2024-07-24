@@ -23,11 +23,34 @@ import {Skeleton} from 'moti/skeleton';
 import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
 import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
 import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
-import {getProfilePic} from '../../../Functions/GetProfilePic';
+import {DEFAULT_IMAGE, getProfilePic} from '../../../Functions/GetProfilePic';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import content from '../../../Assets/Languages/english.json';
+import {RouteProp} from '@react-navigation/native';
+import {withObservables} from '@nozbe/watermelondb/react';
+import {getCurrentChatObservable} from '../../../DB/DBFunctions';
+import {Model} from '@nozbe/watermelondb';
 
-const FeedbackPage = () => {
+type Params = {
+  params: {
+    username: string;
+    accountName: string;
+  };
+};
+
+type PropsType = {
+  route: RouteProp<Params>;
+  chatDetails: Model[] | [];
+};
+
+const enhance = withObservables(['route'], ({route}) => ({
+  chatDetails: getCurrentChatObservable(
+    route.params?.accountName,
+    route.params?.username,
+  ),
+}));
+
+const FeedbackPage = ({route, chatDetails}: PropsType) => {
   const [loading, setLoading] = useState(true);
   const {colors} = useTheme();
   const {userProfileSuccess, userProfileLoading} = useUserProfile();
@@ -101,7 +124,7 @@ const FeedbackPage = () => {
         <View style={styles.profileContainer}>
           <Image
             source={{
-              uri: getProfilePic(userProfileSuccess?.profilePic),
+              uri: chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
             }}
             style={styles.profileImage}
             transition={500}
@@ -112,13 +135,13 @@ const FeedbackPage = () => {
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.nameText}>
-              {userProfileSuccess?.username}
+              {chatDetails[0]._raw?.['username']}
             </Typography>
             <Typography
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.statusText}>
-              {userProfileSuccess?.status}
+              {chatDetails[0]._raw?.['status']}
             </Typography>
             <View style={styles.skillContainer}>
               <FlatList
@@ -306,4 +329,4 @@ const FeedbackPage = () => {
   );
 };
 
-export default FeedbackPage;
+export default enhance(FeedbackPage);

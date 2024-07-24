@@ -31,6 +31,7 @@ type Params = {
     username: string;
     status: string;
     image: string;
+    accountName: string;
     skills: string[] | string;
   };
 };
@@ -50,7 +51,7 @@ const enhance = withObservables(['route'], ({route}) => ({
 
 const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   const [loading, setLoading] = useState(true);
-  const {image, username, status, skills} = route.params;
+  const {username, status, skills, accountName} = route.params;
   const {userProfileSuccess, userProfileLoading} = useUserProfile(username);
   const {imageColors} = useImageColors(
     chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
@@ -72,7 +73,10 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   };
 
   const openFeedback = () => {
-    navigation.navigate('UserFeedback');
+    navigation.navigate('UserFeedback', {
+      accountName: accountName,
+      username: username,
+    });
   };
 
   const handleBlock = () => {

@@ -63,7 +63,6 @@ export const getHomeScreenStyles = (colors: DarkColors): HomeScreenStyles =>
       color: colors.textPrimaryColor,
       fontFamily: 'Urbanist-Regular',
       fontSize: moderateScale(27),
-      paddingLeft: horizontalScale(15),
     },
     img: {
       borderRadius: moderateScale(22),
@@ -104,7 +103,6 @@ export const getHomeScreenStyles = (colors: DarkColors): HomeScreenStyles =>
     profileUsernameContainer: {alignItems: 'center', flexDirection: 'row'},
     searchButtonContainer: {
       flexDirection: 'row',
-      paddingTop: verticalScale(14),
     },
     searchButtonTextStyle: {
       fontSize: moderateScale(14),

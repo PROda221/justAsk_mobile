@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,8 +15,9 @@ import ActiveChats from './ActiveChats';
 import {useCheckNet} from '../../../CustomHooks/AppHooks/useCheckNet';
 import HomeHeader from './HomeHeader';
 import {useIsFocused} from '@react-navigation/native';
-import Loader from '../../../Components/Loader/Loader';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
+import {Skeleton} from 'moti/skeleton';
+import {verticalScale} from '../../../Functions/StyleScale';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -25,6 +26,7 @@ type HomeScreenProps = {
 };
 
 const HomeScreen = ({navigation}: HomeScreenProps) => {
+  const [initialLoader, setInitialLoader] = useState(true);
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
@@ -38,6 +40,12 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       SheetManager.show('NoInternet-sheet');
     }
   }, [net]);
+
+  useEffect(() => {
+    if (profileLoading) {
+      setInitialLoader(false);
+    }
+  }, [profileLoading]);
 
   const openSettings = () => {
     navigation.navigate('Settings', {username: profileSuccess?.username});
@@ -66,12 +74,15 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       <HomeHeader
         styles={styles}
         colors={colors}
+        loading={initialLoader || profileLoading}
         username={profileSuccess?.username ?? ''}
         openSettings={openSettings}
       />
-      <Loader isLoading={profileLoading} />
-
-      {searchBar()}
+      <View style={{paddingTop: verticalScale(15)}}>
+        <Skeleton show={initialLoader || profileLoading} colorMode="light">
+          {searchBar()}
+        </Skeleton>
+      </View>
 
       <ActiveChats
         navigation={navigation}
