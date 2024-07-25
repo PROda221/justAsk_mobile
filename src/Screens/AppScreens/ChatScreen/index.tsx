@@ -25,7 +25,6 @@ import {
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
-import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import {Image} from 'expo-image';
 import {markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
@@ -78,9 +77,8 @@ const chatHeader = (
       />
       <TouchableOpacity onPress={openUserProfle}>
         <Image
-          source={{uri: image || DEFAULT_IMAGE}}
+          source={{uri: image}}
           transition={200}
-          cachePolicy={'none'}
           style={styles.profileImage}
         />
       </TouchableOpacity>

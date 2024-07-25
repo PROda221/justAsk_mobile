@@ -23,7 +23,7 @@ import {Skeleton} from 'moti/skeleton';
 import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
 import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
 import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
-import {DEFAULT_IMAGE, getProfilePic} from '../../../Functions/GetProfilePic';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import content from '../../../Assets/Languages/english.json';
 import {RouteProp} from '@react-navigation/native';
@@ -124,11 +124,10 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
         <View style={styles.profileContainer}>
           <Image
             source={{
-              uri: chatDetails[0]._raw?.['profile_pic'] || DEFAULT_IMAGE,
+              uri: chatDetails[0]._raw?.['profile_pic'],
             }}
             style={styles.profileImage}
             transition={500}
-            cachePolicy={'none'}
           />
           <View style={styles.profileNameStatusContainer}>
             <Typography
@@ -259,7 +258,6 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
             }}
             style={styles.commentUserAvatar}
             transition={500}
-            cachePolicy={'none'}
           />
         </View>
 

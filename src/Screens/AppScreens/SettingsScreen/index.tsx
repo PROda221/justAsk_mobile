@@ -21,7 +21,6 @@ import {useSendOtp} from '../../../CustomHooks/AuthHooks/useSendOtp';
 import {useIsLogin} from '../../../CustomHooks/AuthHooks/useIsLogin';
 import {useGoogleLogin} from '../../../CustomHooks/AuthHooks/useGoogleLogin';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
 import {onShare} from '../../../Functions/Share';
 import {useSelector} from 'react-redux';
@@ -159,7 +158,7 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
         style={styles.profileContainer}>
         <Image
           source={{
-            uri: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
+            uri: currentUser[0]?._raw['profile_pic'],
           }}
           style={styles.profilePic}
           transition={500}

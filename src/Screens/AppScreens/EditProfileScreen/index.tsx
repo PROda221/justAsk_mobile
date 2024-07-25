@@ -149,11 +149,13 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   };
 
   const openFullImage = () => {
-    SheetManager.show('ViewProfileImage-sheet', {
-      payload: {
-        imageUrl: getProfilePic(profileSuccess?.profilePic || image),
-      },
-    });
+    if (profileSuccess?.profilePic || image) {
+      SheetManager.show('ViewProfileImage-sheet', {
+        payload: {
+          imageUrl: getProfilePic(profileSuccess?.profilePic || image),
+        },
+      });
+    }
   };
 
   return (
@@ -184,7 +186,6 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                 }}
                 style={styles.profileImage}
                 transition={500}
-                cachePolicy={'none'}
               />
               {editProfile && (
                 <TouchableOpacity

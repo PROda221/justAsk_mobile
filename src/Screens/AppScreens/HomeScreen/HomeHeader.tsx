@@ -2,7 +2,6 @@ import React from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {Typography} from '../../../Components';
-import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import {
   horizontalScale,
   moderateScale,
@@ -42,11 +41,13 @@ const HomeHeader = ({
   loading,
 }: Props) => {
   const openFullImage = () => {
-    void SheetManager.show('ViewProfileImage-sheet', {
-      payload: {
-        imageUrl: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
-      },
-    });
+    if (currentUser[0]?._raw['profile_pic']) {
+      void SheetManager.show('ViewProfileImage-sheet', {
+        payload: {
+          imageUrl: currentUser[0]?._raw['profile_pic'],
+        },
+      });
+    }
   };
 
   return (
@@ -63,7 +64,7 @@ const HomeHeader = ({
               onPress={openFullImage}>
               <Image
                 source={{
-                  uri: currentUser[0]?._raw['profile_pic'] || DEFAULT_IMAGE,
+                  uri: currentUser[0]?._raw['profile_pic'],
                 }}
                 style={styles.img}
                 transition={500}

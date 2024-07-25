@@ -5,7 +5,6 @@ import {FlashList, type ListRenderItem} from '@shopify/flash-list';
 import {Model} from '@nozbe/watermelondb';
 import {Typography} from '../../../Components';
 import {formatTimestamp} from '../../../Functions/FormatTime';
-import {DEFAULT_IMAGE} from '../../../Functions/GetProfilePic';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getHomeScreenStyles} from './styles';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
@@ -52,10 +51,9 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
         onPress={() => openChatScreen(item)}
         style={styles.messageContainer}>
         <Image
-          source={{uri: item._raw['profile_pic'] || DEFAULT_IMAGE}}
+          source={{uri: item._raw['profile_pic']}}
           style={styles.avatar}
           transition={500}
-          cachePolicy={'none'}
         />
         <View style={styles.messageTextContainer}>
           <View style={{flexDirection: 'row'}}>
