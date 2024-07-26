@@ -3,8 +3,9 @@ import StarRating, {StarRatingDisplay} from 'react-native-star-rating-widget';
 import {TextInput, View} from 'react-native';
 import {CustomButton, Typography} from '../../../Components';
 import {FeedbackScreenStyles} from './styles';
-import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
 import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
 
 type GiveFeedbackProps = {
   styles: FeedbackScreenStyles;
@@ -17,8 +18,8 @@ export const GiveFeedback = ({styles, colors, username}: GiveFeedbackProps) => {
   const [comment, setComment] = useState('');
   const [editComment, setEditComment] = useState(true);
 
-  const {getYourCommentSuccess, getYourCommentLoading} =
-    useYourComment(username);
+  const {success: getYourCommentSuccess, loading: getYourCommentLoading} =
+    useSelector((state: RootState) => state.feedbackSlice.getYourComment);
 
   useEffect(() => {
     if (getYourCommentSuccess?.success) {

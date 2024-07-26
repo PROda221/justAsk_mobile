@@ -6,6 +6,7 @@ import {
   callAllComments,
   resetAllCommentsData,
 } from '../../Redux/Slices/FeedbackSlice';
+import Toast from 'react-native-toast-message';
 
 export const useAllComments = (username?: string) => {
   const dispatch = useDispatch();
@@ -33,7 +34,12 @@ export const useAllComments = (username?: string) => {
 
   useEffect(() => {
     if (allCommentsSlice.error) {
-      console.log('error in searchUser :', allCommentsSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: allCommentsSlice.error.message,
+        visibilityTime: 5000,
+      });
     }
   }, [allCommentsSlice.error]);
 

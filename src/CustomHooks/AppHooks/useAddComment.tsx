@@ -1,12 +1,13 @@
 import {useDispatch, useSelector} from 'react-redux';
 
 import {useEffect} from 'react';
-import {useYourComment} from './useYourComment';
 import {RootState} from '../../Redux/rootReducers';
 import {
   callAddComment,
+  callYourComment,
   resetAddCommenetData,
 } from '../../Redux/Slices/FeedbackSlice';
+import Toast from 'react-native-toast-message';
 
 export const useAddComments = (
   username?: string,
@@ -18,8 +19,6 @@ export const useAddComments = (
     (state: RootState) => state.feedbackSlice.addCommenet,
   );
 
-  const {callGetYourCommentApi} = useYourComment(username);
-
   const callAddCommentApi = () => {
     dispatch(callAddComment({username, content, rating}));
   };
@@ -30,15 +29,25 @@ export const useAddComments = (
 
   useEffect(() => {
     if (addCommenetSlice.success) {
-      console.log('success add comment :', addCommenetSlice.success);
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: addCommenetSlice.success.message,
+        visibilityTime: 5000,
+      });
       resetaddCommenetReducer();
-      callGetYourCommentApi();
+      dispatch(callYourComment({username}));
     }
   }, [addCommenetSlice.success]);
 
   useEffect(() => {
     if (addCommenetSlice.error) {
-      console.log('error add comment :', addCommenetSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: addCommenetSlice.error.message,
+        visibilityTime: 5000,
+      });
     }
   }, [addCommenetSlice.error]);
 

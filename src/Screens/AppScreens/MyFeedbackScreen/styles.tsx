@@ -119,7 +119,7 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
       flex: 1,
     },
     commentStarContainer: {
-      paddingLeft: horizontalScale(10),
+      paddingRight: horizontalScale(10),
       flexDirection: 'row',
     },
     commentText: {

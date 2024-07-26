@@ -248,59 +248,61 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
       ) : null}
     </View>
   );
-  const renderItem: ListRenderItem<Comment> = ({item}) => (
-    <View style={styles.commentCard}>
-      <View style={styles.mainHeader}>
-        <View style={styles.feedbackImgContainer}>
-          <Image
-            source={{
-              uri: getProfilePic(item.commentUserPic),
-            }}
-            style={styles.commentUserAvatar}
-            transition={500}
-          />
-        </View>
-
-        <View style={styles.commentHeaderContainer}>
-          <View style={styles.userDetailsHeader}>
-            <Typography
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400"
-              textStyle={styles.usernameText}>
-              {item.commentUserId}
-            </Typography>
-            <Typography
-              bgColor={colors.textInputPlaceholderColor}
-              fontWeight="400"
-              textStyle={styles.timeText}>
-              {formatTimestamp(item.updatedAt)}
-            </Typography>
-          </View>
-
-          <View style={styles.commentStarContainer}>
-            <Typography
-              bgColor={colors.textPrimaryColor}
-              fontWeight="400"
-              textStyle={styles.starText}>
-              {`x${item.rating}`}
-            </Typography>
-            <Entypo
-              name="star"
-              size={moderateScale(12)}
-              color={colors.starColor}
+  const renderItem: ListRenderItem<Comment> = ({item}) => {
+    return (
+      <View style={styles.commentCard}>
+        <View style={styles.mainHeader}>
+          <View style={styles.feedbackImgContainer}>
+            <Image
+              source={{
+                uri: getProfilePic(item.commentUserPic),
+              }}
+              style={styles.commentUserAvatar}
+              transition={500}
             />
           </View>
-        </View>
-      </View>
 
-      <Typography
-        bgColor={colors.textPrimaryColor}
-        fontWeight="400"
-        textStyle={styles.commentText}>
-        {item.content}
-      </Typography>
-    </View>
-  );
+          <View style={styles.commentHeaderContainer}>
+            <View style={styles.userDetailsHeader}>
+              <Typography
+                bgColor={colors.textPrimaryColor}
+                fontWeight="400"
+                textStyle={styles.usernameText}>
+                {item.commentUserId}
+              </Typography>
+              <Typography
+                bgColor={colors.textInputPlaceholderColor}
+                fontWeight="400"
+                textStyle={styles.timeText}>
+                {formatTimestamp(item.updatedAt)}
+              </Typography>
+            </View>
+
+            <View style={styles.commentStarContainer}>
+              <Typography
+                bgColor={colors.textPrimaryColor}
+                fontWeight="400"
+                textStyle={styles.starText}>
+                {`x${item.rating}`}
+              </Typography>
+              <Entypo
+                name="star"
+                size={moderateScale(12)}
+                color={colors.starColor}
+              />
+            </View>
+          </View>
+        </View>
+
+        <Typography
+          bgColor={colors.textPrimaryColor}
+          fontWeight="400"
+          textStyle={styles.commentText}>
+          {item.content}
+        </Typography>
+      </View>
+    );
+  };
 
   const renderComments = () => (
     <FlashList

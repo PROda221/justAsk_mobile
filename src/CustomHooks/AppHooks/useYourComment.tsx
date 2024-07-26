@@ -6,6 +6,7 @@ import {
   callYourComment,
   resetYourCommentData,
 } from '../../Redux/Slices/FeedbackSlice';
+import Toast from 'react-native-toast-message';
 
 export const useYourComment = (username?: string) => {
   const dispatch = useDispatch();
@@ -30,6 +31,12 @@ export const useYourComment = (username?: string) => {
   useEffect(() => {
     if (getYourCommentSlice.error) {
       console.log('error your comment :', getYourCommentSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: getYourCommentSlice.error.message,
+        visibilityTime: 5000,
+      });
     }
   }, [getYourCommentSlice.error]);
 
