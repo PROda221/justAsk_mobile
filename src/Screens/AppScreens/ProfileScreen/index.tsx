@@ -177,7 +177,6 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
               showsHorizontalScrollIndicator={false}
             />
           </View>
-
           <View style={styles.feedbackContainer}>
             <Skeleton
               colorMode="light"

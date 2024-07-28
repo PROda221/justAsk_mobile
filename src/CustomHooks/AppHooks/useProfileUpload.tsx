@@ -6,6 +6,7 @@ import {
 } from '../../Redux/Slices/ProfileUpload';
 import {useEffect} from 'react';
 import {callGetProfile} from '../../Redux/Slices/ProfileSlice';
+import Toast from 'react-native-toast-message';
 
 export const useProfileUpload = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,12 @@ export const useProfileUpload = () => {
 
   useEffect(() => {
     if (profileUploadSlice.success) {
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: profileUploadSlice.success.message,
+        visibilityTime: 3000,
+      });
       resetProfileUploadReducer();
       dispatch(callGetProfile());
     }
@@ -34,7 +41,12 @@ export const useProfileUpload = () => {
 
   useEffect(() => {
     if (profileUploadSlice.error) {
-      console.log('error in upload :', profileUploadSlice.error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: profileUploadSlice.error.message,
+        visibilityTime: 3000,
+      });
     }
   }, [profileUploadSlice.error]);
 

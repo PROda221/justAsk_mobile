@@ -67,10 +67,12 @@ const profileSlice = createSlice({
     builder.addCase(callGetProfile.fulfilled, (state, action) => {
       state.loading = false;
       state.success = action.payload;
+      state.error = undefined;
     });
     builder.addCase(callGetProfile.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+      state.success = undefined;
     });
   },
 });

@@ -33,7 +33,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {net} = useCheckNet();
   const isFocused = useIsFocused();
 
-  const {profileSuccess, profileLoading} = useProfile(isFocused);
+  const {profileSuccess, profileLoading, profileError} = useProfile(isFocused);
 
   useEffect(() => {
     if (!net) {
@@ -86,6 +86,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
 
       <ActiveChats
         navigation={navigation}
+        error={profileError?.message ?? ''}
         accountName={profileSuccess?.username ?? ''}
       />
     </View>

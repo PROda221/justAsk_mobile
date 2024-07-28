@@ -63,6 +63,7 @@ const HomeHeader = ({
               style={styles.profilePicContainer}
               onPress={openFullImage}>
               <Image
+                cachePolicy={'none'}
                 source={{
                   uri: currentUser[0]?._raw['profile_pic'],
                 }}

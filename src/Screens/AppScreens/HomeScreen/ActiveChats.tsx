@@ -13,6 +13,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {getUserChats} from '../../../DB/DBFunctions';
 import {withObservables} from '@nozbe/watermelondb/react';
 import NewMsgNumber from './NewMsgNumber';
+import ErrorBox from '../../../Components/ErrorBox';
 
 type ActiveChatsType = {
   _raw: _RawRecord;
@@ -20,6 +21,7 @@ type ActiveChatsType = {
 
 type PropsType = {
   accountName?: string;
+  error: string;
   navigation: NativeStackNavigationProp<ParamListBase>;
   activeChats: Model[] | [];
 };
@@ -28,7 +30,7 @@ const enhance = withObservables(['accountName'], ({accountName}) => ({
   activeChats: getUserChats(accountName),
 }));
 
-const ActiveChats = ({activeChats, navigation}: PropsType) => {
+const ActiveChats = ({activeChats, navigation, error}: PropsType) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
 
@@ -41,6 +43,12 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
     });
   };
 
+  const renderListHeader = () => {
+    if (error) {
+      return <ErrorBox title="Error" message={error} />;
+    }
+  };
+
   const renderMessage: ListRenderItem<Model> = ({
     item,
   }: {
@@ -51,6 +59,7 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
         onPress={() => openChatScreen(item)}
         style={styles.messageContainer}>
         <Image
+          cachePolicy={'none'}
           source={{uri: item._raw['profile_pic']}}
           style={styles.avatar}
           transition={500}
@@ -87,6 +96,7 @@ const ActiveChats = ({activeChats, navigation}: PropsType) => {
   return (
     <FlashList
       data={activeChats}
+      ListHeaderComponent={renderListHeader}
       renderItem={renderMessage}
       keyExtractor={item => item.id}
       contentContainerStyle={styles.messagesList}
