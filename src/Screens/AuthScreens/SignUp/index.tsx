@@ -111,8 +111,8 @@ const SignUp = ({navigation}: Props): JSX.Element => {
           name="password"
           secureTextEntry={true}
           control={control}
-          label={content.SettingScreen.password}
-          placeholder={content.SettingScreen.password}
+          label={content.SignInScreen.password}
+          placeholder={content.SignInScreen.password}
           leftIcon="lock"
           rules={{
             required: content.SignInScreen.passwordMissing,

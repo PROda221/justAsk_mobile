@@ -4,7 +4,7 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {type LandingScreenStyles, getLandingScreenStyles} from './styles';
 import {RenderSvg} from '../../../Components/RenderSvg';
-import {justAskTempLogo} from '../../../Assets/Images';
+import {HumanTouch} from '../../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../../Functions/StyleScale';
 import {Typography} from '../../../Components';
 import {CustomButton} from '../../../Components';
@@ -19,7 +19,7 @@ const logoView = (styles: LandingScreenStyles) => (
     <RenderSvg
       height={verticalScale(184)}
       width={horizontalScale(154)}
-      Icon={justAskTempLogo}
+      Icon={HumanTouch}
     />
   </View>
 );

@@ -19,6 +19,7 @@ import EmptyState from './EmptyState.png'
 import ProfileEdit from './ProfileEdit.svg'
 import ProfilePic from './ProfilePic.png'
 import ProfilePic1 from './ProfilePic1.png'
+import HumanTouch from './HumanTouch.svg'
 
 export {
   Login,
@@ -41,5 +42,6 @@ export {
   EmptyState,
   ProfileEdit,
   ProfilePic,
-  ProfilePic1
+  ProfilePic1,
+  HumanTouch
 };

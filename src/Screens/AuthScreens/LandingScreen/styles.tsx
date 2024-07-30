@@ -39,6 +39,7 @@ export const getLandingScreenStyles = (colors): LandingScreenStyles =>
     },
     logoView: {
       alignSelf: 'center',
+      paddingLeft: horizontalScale(50),
     },
     mainContainer: {
       flex: 1,

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
-import {useSheetRouteParams, useSheetRouter} from 'react-native-actions-sheet';
+import {useSheetRouter} from 'react-native-actions-sheet';
 import {ScrollView} from 'react-native-actions-sheet';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getAdviceListStyles} from './AdviceListStyle';
@@ -61,7 +61,7 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.icon}>
-              {selectedGenres.includes(item) ? '✔️' : '❌'}
+              {selectedGenres.includes(item) ? '✔️' : ''}
             </Typography>
             <Typography
               fontWeight="400"

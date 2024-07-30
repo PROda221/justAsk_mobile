@@ -8,6 +8,7 @@ import {
   resetAddCommenetData,
 } from '../../Redux/Slices/FeedbackSlice';
 import Toast from 'react-native-toast-message';
+import {callGetUserProfile} from '../../Redux/Slices/UserProfileSlice';
 
 export const useAddComments = (
   username?: string,
@@ -35,6 +36,7 @@ export const useAddComments = (
         text2: addCommenetSlice.success.message,
         visibilityTime: 5000,
       });
+      dispatch(callGetUserProfile({username}));
       resetaddCommenetReducer();
       dispatch(callYourComment({username}));
     }

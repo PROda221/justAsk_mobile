@@ -18,13 +18,8 @@ const Loader: React.FC<LoaderProps> = ({isLoading}) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    bottom: 0,
     flex: 1,
     justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0,
   },
 });
 

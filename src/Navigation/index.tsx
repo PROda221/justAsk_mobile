@@ -8,14 +8,13 @@ import {useIsLogin} from '../CustomHooks/AuthHooks/useIsLogin';
 const Navigation = (): JSX.Element => {
   const {isLogedIn, userLogedIn} = useIsLogin();
 
-  const getAuth = async () => {
-    const token = await retrieveAccessToken();
-    if (token) {
-      userLogedIn();
-    }
-  };
-
   useEffect(() => {
+    const getAuth = async () => {
+      const token = await retrieveAccessToken();
+      if (token) {
+        userLogedIn();
+      }
+    };
     getAuth();
   }, []);
 
