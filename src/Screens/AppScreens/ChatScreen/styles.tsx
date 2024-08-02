@@ -68,6 +68,7 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     },
     messageContainer: {
       marginBottom: verticalScale(12),
+      alignSelf: 'center',
     },
     messageBox: {
       borderRadius: moderateScale(20),

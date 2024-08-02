@@ -1,7 +1,7 @@
 import {Typography} from '../../../Components';
 import {type ParamListBase, type RouteProp} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {type ViewStyle} from 'react-native';
+import {Alert, type ViewStyle} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
@@ -26,13 +26,17 @@ import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {Image} from 'expo-image';
-import {markAllRead} from '../../../DB/DBFunctions';
+import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import {RenderMessageList} from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
+import {resetUserProfileResponse} from '../../../Redux/Slices/UserProfileSlice';
+import {withObservables} from '@nozbe/watermelondb/react';
+import {Model} from '@nozbe/watermelondb';
+import {YourBlockStatus} from './YourBlockStatus';
 
 type MessageType = {
   item: {
@@ -50,12 +54,14 @@ type Params = {
     status: string;
     image: string;
     skills: string[];
+    accountName: string;
   };
 };
 
 type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<Params>;
+  activeChat: Model[];
 };
 
 const chatHeader = (
@@ -67,7 +73,10 @@ const chatHeader = (
   statusStyle: ViewStyle,
   openUserProfle: () => void,
 ) => {
-  const {resetUserProfileReducer} = useUserProfile(username);
+  const dispatch = useDispatch();
+  const resetUserProfileReducer = () => {
+    dispatch(resetUserProfileResponse());
+  };
   //   Console.log('hello hat header');
   return (
     <View style={styles.header}>
@@ -104,13 +113,16 @@ const chatHeader = (
   );
 };
 
-const ChatScreen = ({navigation, route}: Props) => {
-  const {username, skills, status, image} = route.params;
-  const {callGetUserProfileApi, userProfileSuccess} = useUserProfile(
-    username,
-    image,
-  );
+const enhance = withObservables(['route'], ({route}) => ({
+  activeChat: getCurrentChatObservable(
+    route.params?.accountName,
+    route.params?.username,
+  ),
+}));
 
+const ChatScreen = ({navigation, route, activeChat}: Props) => {
+  const {username, skills, status, image} = route.params;
+  const {callGetUserProfileApi} = useUserProfile(username, image);
   const {newMessage} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
@@ -122,8 +134,16 @@ const ChatScreen = ({navigation, route}: Props) => {
 
   const [height, setHeight] = useState<number>(verticalScale(50));
 
-  const position = useSharedValue(partnerStatus === 'online' ? 0 : 10);
-  const opacity = useSharedValue(partnerStatus === 'online' ? 1 : 0);
+  const position = useSharedValue(
+    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
+      ? 0
+      : 10,
+  );
+  const opacity = useSharedValue(
+    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
+      ? 1
+      : 0,
+  );
 
   const flashListRef = useRef(null);
 
@@ -144,7 +164,10 @@ const ChatScreen = ({navigation, route}: Props) => {
 
   // Handle animation of online status
   useEffect(() => {
-    if (partnerStatus === 'online') {
+    if (
+      !activeChat[0]?._raw['got_blocked_status'] &&
+      partnerStatus === 'online'
+    ) {
       // Move the username up first then appear the status
       position.value = withTiming(0, {duration: 500});
       opacity.value = withDelay(500, withTiming(1, {duration: 500}));
@@ -154,7 +177,7 @@ const ChatScreen = ({navigation, route}: Props) => {
         position.value = withTiming(10, {duration: 500});
       });
     }
-  }, [partnerStatus]);
+  }, [partnerStatus, activeChat[0]?._raw['got_blocked_status']]);
 
   // Create animation styles of online status
   const animatedStyle = useAnimatedStyle(() => ({
@@ -166,6 +189,10 @@ const ChatScreen = ({navigation, route}: Props) => {
   }));
 
   const sendMessage = async () => {
+    if (activeChat[0]?._raw['you_blocked_status']) {
+      Alert.alert('You have blocked this user. Unblock to chat');
+      return;
+    }
     if (getValues('chattext')) {
       const msg = getValues('chattext');
       resetField('chattext');
@@ -175,6 +202,10 @@ const ChatScreen = ({navigation, route}: Props) => {
   };
 
   const handleImageSelection = async () => {
+    if (activeChat[0]?._raw['you_blocked_status']) {
+      Alert.alert('You have blocked this user. Unblock to chat');
+      return;
+    }
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 0.5,
@@ -196,7 +227,10 @@ const ChatScreen = ({navigation, route}: Props) => {
   };
 
   const openUserProfle = () => {
-    console.log('image sent from chat screen :', image);
+    if (activeChat[0]?._raw['got_blocked_status']) {
+      Alert.alert('You have been blocked by the user');
+      return;
+    }
     navigation.navigate('UserProfile', {
       username,
       skills,
@@ -233,6 +267,7 @@ const ChatScreen = ({navigation, route}: Props) => {
             received={item.received}
             createdAt={item.createdAt}
             sendMessages={sendMessages}
+            youBlockedStatus={activeChat[0]?._raw['you_blocked_status']}
           />
         )}
         keyExtractor={item => item.id}
@@ -241,7 +276,16 @@ const ChatScreen = ({navigation, route}: Props) => {
         inverted
         onEndReached={loadMoreMessages}
         onEndReachedThreshold={0.1}
+        extraData={[
+          activeChat[0]?._raw['you_blocked_status'],
+          activeChat[0]?._raw['got_blocked_status'],
+        ]}
         // OnLoad={scrollToBottom}
+      />
+
+      <YourBlockStatus
+        show={activeChat[0]?._raw['you_blocked_status']}
+        username={username}
       />
 
       <View style={styles.inputContainer}>
@@ -254,12 +298,21 @@ const ChatScreen = ({navigation, route}: Props) => {
           secureTextEntry={false}
           control={control}
           label="Write"
-          placeholder="Write..."
-          leftIcon="gallary"
+          placeholder={
+            activeChat[0]?._raw['got_blocked_status']
+              ? 'Chat Blocked'
+              : 'Write...'
+          }
+          leftIcon={
+            activeChat[0]?._raw['got_blocked_status'] ? 'block' : 'gallary'
+          }
           rightIcon="chat"
           handleRightIconPress={sendMessage}
-          handleLeftIconPress={handleImageSelection}
+          {...(!activeChat[0]?._raw['got_blocked_status'] && {
+            handleLeftIconPress: handleImageSelection,
+          })}
           multiline={true}
+          editable={!activeChat[0]?._raw['got_blocked_status']}
           onContentSizeChange={event => {
             setHeight(event.nativeEvent.contentSize.height);
           }}
@@ -269,4 +322,4 @@ const ChatScreen = ({navigation, route}: Props) => {
   );
 };
 
-export default ChatScreen;
+export default enhance(ChatScreen);

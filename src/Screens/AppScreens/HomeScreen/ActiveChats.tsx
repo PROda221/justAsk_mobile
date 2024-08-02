@@ -30,7 +30,12 @@ const enhance = withObservables(['accountName'], ({accountName}) => ({
   activeChats: getUserChats(accountName),
 }));
 
-const ActiveChats = ({activeChats, navigation, error}: PropsType) => {
+const ActiveChats = ({
+  activeChats,
+  navigation,
+  error,
+  accountName,
+}: PropsType) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
 
@@ -40,6 +45,7 @@ const ActiveChats = ({activeChats, navigation, error}: PropsType) => {
       image: item._raw['profile_pic'],
       status: item._raw['status'],
       skills: item._raw['skills'],
+      accountName,
     });
   };
 

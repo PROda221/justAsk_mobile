@@ -18,4 +18,6 @@ export const Endpoints = {
   addCommenet: '/users/feedback/add',
   gtAllComments: '/users/feedback',
   profileUpload: '/users/upload',
+  blockUser: '/users/blocked/add',
+  unblockUser: '/users/blocked/unblock',
 };

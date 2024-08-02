@@ -77,8 +77,13 @@
   "HomeScreen": {
     "searchPlaceholder": "Search...."
   },
+  "ChatScreen": {
+    "yourBlockStatus": "You blocked this user. Tap to unblock"
+  },
   "SearchFeature": {
-    "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results."
+    "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",
+    "NoSearch": "No search results found. Please try again with different search values",
+    "SelectGenreHeading": "Select topics you want to talk in"
   },
   "UserProfile": {
     "noFeedbackText": "Be the first to rate!",

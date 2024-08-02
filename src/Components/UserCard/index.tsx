@@ -12,6 +12,8 @@ import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../Functions/GetProfilePic';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {baseURL} from '../../Constants';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../Redux/rootReducers';
 
 type Props = {
   username: string;
@@ -23,6 +25,7 @@ type Props = {
 export const UserCard = ({username, skills, status, image}: Props) => {
   const {colors} = useTheme();
   const styles = getUserCardStyles(colors);
+  const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
@@ -33,6 +36,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
       status,
       skills,
       image: image ? `${baseURL}/${image}` : '',
+      accountName: profileSlice.success?.username,
     });
   };
 

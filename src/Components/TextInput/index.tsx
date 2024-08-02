@@ -51,8 +51,16 @@ type TextInputProps = {
   multiline?: boolean;
   handleRightIconPress?: () => void;
   handleLeftIconPress?: () => void;
-  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary';
+  leftIcon?:
+    | 'email'
+    | 'lock'
+    | 'chat'
+    | 'search'
+    | 'user'
+    | 'gallary'
+    | 'block';
   rightIcon?: 'search' | 'chat';
+  disable?: boolean;
 };
 
 const ErrorView = styled(View)`
@@ -121,7 +129,7 @@ const RightIconContainer = styled(TouchableOpacity)<{
 `;
 
 const renderLeftIcon = (
-  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary',
+  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary' | 'block',
 ) => {
   switch (leftIcon) {
     case 'email':
@@ -144,6 +152,8 @@ const renderLeftIcon = (
       return (
         <Entypo name="folder-images" size={moderateScale(25)} color={'white'} />
       );
+    case 'block':
+      return <Entypo name="block" size={moderateScale(25)} color={'white'} />;
 
     default:
       return null;
@@ -192,6 +202,7 @@ export const TextInput = ({
   multiline = undefined,
   handleRightIconPress,
   handleLeftIconPress,
+  disable,
   ...props
 }: TextInputProps & RNTextInputProps) => {
   const {colors} = useTheme();

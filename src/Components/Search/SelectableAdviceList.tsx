@@ -8,6 +8,8 @@ import {Typography} from '../Typography';
 import Header from '../Header';
 import {allGenres} from '../../Constants';
 import {useSearch} from '../../CustomHooks/AppHooks/useSearch';
+import {CustomButton} from '../CustomButton';
+import content from '../../Assets/Languages/english.json';
 
 interface SelectableAdviceListProps {
   items: string[];
@@ -19,7 +21,7 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
     useState<string[]>(searchedGenres);
   const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
-  const styles = getAdviceListStyles(colors);
+  const styles = getAdviceListStyles(colors, selectedGenres);
 
   const toggleItem = (item: string) => {
     const updatedSelectedItems = selectedGenres.includes(item)
@@ -43,7 +45,7 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.subTitle}>
-          {'Select topics you want to talk in'}
+          {content.SearchFeature.SelectGenreHeading}
         </Typography>
       </View>
       <ScrollView contentContainerStyle={styles.container}>
@@ -72,6 +74,16 @@ const SelectableAdviceList: React.FC<SelectableAdviceListProps> = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <CustomButton
+        onPress={() => {
+          setSearchedGenres(selectedGenres);
+          router?.goBack();
+        }}
+        label="Confirm"
+        disabled={selectedGenres.length === 0}
+        radius={14}
+        viewStyle={styles.confirmButton}
+      />
     </View>
   );
 };

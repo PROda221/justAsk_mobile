@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../Functions/StyleScale';
+import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
 export type AdviceListStyles = {
   main: ViewStyle;
@@ -16,9 +17,13 @@ export type AdviceListStyles = {
   subTitle: TextStyle;
   headerStyle: ViewStyle;
   headerContainer: ViewStyle;
+  confirmButton: ViewStyle;
 };
 
-export const getAdviceListStyles = (colors): AdviceListStyles =>
+export const getAdviceListStyles = (
+  colors: DarkColors,
+  searchedGenres: string[],
+): AdviceListStyles =>
   StyleSheet.create<AdviceListStyles>({
     cell: {
       alignItems: 'center',
@@ -52,6 +57,7 @@ export const getAdviceListStyles = (colors): AdviceListStyles =>
       backgroundColor: colors.appScreenPrimaryBackground,
       borderRadius: moderateScale(8),
       padding: moderateScale(10),
+      height: '100%',
     },
     selected: {
       backgroundColor: colors.cellSelectedColor,
@@ -66,5 +72,12 @@ export const getAdviceListStyles = (colors): AdviceListStyles =>
     unselected: {
       backgroundColor: colors.cellUnSelectedColor,
       borderColor: colors.cellUnSelectedBorderColor,
+    },
+    confirmButton: {
+      backgroundColor:
+        searchedGenres.length > 0
+          ? colors.cellSelectedColor
+          : colors.primaryBackgroundColor,
+      paddingVertical: verticalScale(10),
     },
   });

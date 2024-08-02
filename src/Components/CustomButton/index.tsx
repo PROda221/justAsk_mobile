@@ -17,6 +17,7 @@ import Animated, {
 
 type CustomButtonProps = {
   onPress?: () => void;
+  disabled?: boolean;
   label: string;
   backArrow?: boolean;
   viewStyle?: ViewStyle[] | ViewStyle;
@@ -59,6 +60,7 @@ const ButtonText = styled(Text)<StyledButtonTextType>`
 export const CustomButton: React.FC<CustomButtonProps> = ({
   loading,
   onPress,
+  disabled,
   ...props
 }) => {
   const {colors} = useTheme();
@@ -79,6 +81,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <Animated.View style={animatedStyle}>
       <Button
+        disabled={disabled}
         activeOpacity={1}
         onPressIn={handlePressIn}
         onPressOut={() => handlePressOut(onPress)}
@@ -86,7 +89,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         style={props.viewStyle}
         radius={props.radius}>
         {loading ? (
-          <ActivityIndicator size='large' color={colors.buttonLoader} />
+          <ActivityIndicator size="large" color={colors.buttonLoader} />
         ) : (
           <ButtonText
             textColor={

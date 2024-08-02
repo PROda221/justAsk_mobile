@@ -4,12 +4,14 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
 import { Endpoints } from '../../Api/Endpoints';
 
-type UserDetails = {
+export type UserDetails = {
     username: string;
     adviceGenre: string[];
     averageRating: Array<{_id: string; averageStars: number}>
     status: string;
     profilePic: string;
+    gotBlockedStatus: boolean;
+    youBlockedStatus: boolean;
 }
 
  type UserProfile = {

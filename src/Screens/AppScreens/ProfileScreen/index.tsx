@@ -24,6 +24,7 @@ import content from '../../../Assets/Languages/english.json';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {getCurrentChatObservable} from '../../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
+import {useBlockUser} from '../../../CustomHooks/AppHooks/useBlockUser';
 
 type Params = {
   params: {
@@ -52,6 +53,7 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   const [loading, setLoading] = useState(true);
   const {username, status, skills, accountName} = route.params;
   const {userProfileSuccess, userProfileLoading} = useUserProfile(username);
+  const {callBlockUserApi} = useBlockUser(username);
   const {imageColors} = useImageColors(chatDetails[0]._raw?.['profile_pic']);
 
   const {colors} = useTheme();
@@ -79,7 +81,7 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   };
 
   const handleBlock = () => {
-    console.log('handle your block state here :');
+    callBlockUserApi();
   };
 
   const computeData = () => {

@@ -31,10 +31,7 @@ export const getUser = async username => {
   }
 };
 
-export const updateOrCreateUser = async (
-  userData,
-  profilePic,
-) => {
+export const updateOrCreateUser = async (userData, profilePic) => {
   try {
     await database.write(async () => {
       let user = await database.collections
@@ -55,7 +52,12 @@ export const updateOrCreateUser = async (
         });
       } else {
         // User does not exist, create a new user
-        createNewUser(userData.username, profilePic, userData.status, userData.skills);
+        createNewUser(
+          userData.username,
+          profilePic,
+          userData.status,
+          userData.skills,
+        );
       }
     });
   } catch (err) {
@@ -177,7 +179,6 @@ export async function checkChatExists(chatId, account) {
       .query(Q.where('username', account))
       .fetch();
 
-      console.log('user is :', user)
 
     const chat = await database.collections
       .get('chats')
@@ -190,7 +191,12 @@ export async function checkChatExists(chatId, account) {
   }
 }
 
-export async function updateChatMsg(chat, lastMessage, readMessage, profilePic) {
+export async function updateChatMsg(
+  chat,
+  lastMessage,
+  readMessage,
+  profilePic,
+) {
   try {
     await chat[0].update(chat => {
       chat.lastMessage = lastMessage;
@@ -252,6 +258,8 @@ export async function updateChatData(chatData, account, profilePic) {
           chat.profilePic = profilePic;
           chat.status = chatData.status;
           chat.skills = JSON.stringify(chatData.adviceGenre);
+          chat.gotBlockedStatus = chatData.gotBlockedStatus;
+          chat.youBlockedStatus = chatData.youBlockedStatus;
         });
       } else {
         console.log('chat dosent exist');
@@ -269,7 +277,7 @@ export async function addMessageToChat(
   isReceived,
   type,
   onChatScreen = false,
-  profilePic = ''
+  profilePic = '',
 ) {
   try {
     let newMessage;
@@ -348,7 +356,6 @@ export async function updateImageUploadStatus(
   }
 }
 
-
 export function getCurrentChatObservable(account, username) {
   return database.collections
     .get('users')
@@ -356,35 +363,22 @@ export function getCurrentChatObservable(account, username) {
     .observe()
     .pipe(
       switchMap(users => {
-        if (users.length === 0) {
-          throw new Error('User not found');
+        try {
+          if (users.length === 0) {
+            // Return an empty observable or handle user not found
+            return of([]); // Use `of` from `rxjs` to emit an empty array
+          }
+
+          const userId = users[0].id;
+          return database.collections
+            .get('chats')
+            .query(Q.where('user_id', userId), Q.where('chat_id', username))
+            .observeWithColumns(['you_blocked_status', 'got_blocked_status', 'profile_pic', 'status', 'advice_genre', 'username']);
+        } catch (error) {
+          console.error('Error while querying chats:', error);
+          // Return an empty observable or handle the error
+          return of([]); // Emit an empty array in case of error
         }
-
-        const userId = users[0].id;
-        return database.collections
-          .get('chats')
-          .query(Q.where('user_id', userId), Q.where('chat_id', username))
-          .observe();
-      })
-    );
-}
-
-export function getCurrentChat(account, username) {
-  return database.collections
-    .get('users')
-    .query(Q.where('username', account))
-    .observe()
-    .pipe(
-      switchMap(users => {
-        if (users.length === 0) {
-          throw new Error('User not found');
-        }
-
-        const userId = users[0].id;
-        return database.collections
-          .get('chats')
-          .query(Q.where('user_id', userId), Q.where('chat_id', username))
-          .observe();
       })
     );
 }

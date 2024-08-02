@@ -30,6 +30,7 @@ export const useUserProfile = (username?: string, image?: string) => {
         const profilePic = await downloadImage(
           userProfileSlice.success?.response.userDetails.profilePic ?? '',
           image,
+          userProfileSlice.success?.response.userDetails.gotBlockedStatus,
         );
         let computedImg = {uri: `file://${profilePic}`};
         updateChatData(
@@ -49,7 +50,7 @@ export const useUserProfile = (username?: string, image?: string) => {
 
   useEffect(() => {
     if (userProfileSlice.error) {
-      console.log('error in searchUser :', userProfileSlice.error);
+      console.log('error in userProfile api :', userProfileSlice.error);
     }
   }, [userProfileSlice.error]);
 

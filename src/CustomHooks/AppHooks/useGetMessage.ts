@@ -5,15 +5,19 @@ import {
   createNewChat,
 } from '../../DB/DBFunctions';
 import {Socket} from 'socket.io-client';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../Redux/rootReducers';
 import {saveURLImage} from '../../Functions/SaveBase64Image';
 import {downloadImage} from '../../Functions/DownloadLocalPic';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
+import { callGetUserProfile } from '../../Redux/Slices/UserProfileSlice';
+
 
 export const useGetMessage = (socket: Socket | null) => {
   const [newMessage, setNewMessage] = useState();
   const localReducer = useSelector((state: RootState) => state.localReducer);
+
+  const dispatch = useDispatch();
 
   const downloadImg = async (imgUrl: string, prevImg?: string) => {
     try {
@@ -34,38 +38,44 @@ export const useGetMessage = (socket: Socket | null) => {
     senderId: string,
     yourId: string,
     profilePic: string,
+    source = 'user',
   ) => {
     try {
-      let downloadedPic;
-      let chatExists: boolean | _RawRecord = await checkChatExists(
-        senderId,
-        yourId,
-      );
-      if (!chatExists) {
-        console.log('a');
-        downloadedPic = await downloadImg(profilePic);
-        // add download logic from here
-        await createNewChat(senderId, downloadedPic, '', '', yourId);
-      } else {
-        downloadedPic = await downloadImg(
-          profilePic,
-          chatExists?.['profile_pic'],
-        );
+      if (source === 'server') {
+        dispatch(callGetUserProfile({username: yourId}))
       }
-      let newMessage;
-      console.log('b');
+      else {
+        let downloadedPic;
+        let chatExists: boolean | _RawRecord = await checkChatExists(
+          senderId,
+          yourId,
+        );
+        if (!chatExists) {
+          console.log('a');
+          downloadedPic = await downloadImg(profilePic);
+          // add download logic from here
+          await createNewChat(senderId, downloadedPic, '', '', yourId);
+        } else {
+          downloadedPic = await downloadImg(
+            profilePic,
+            chatExists?.['profile_pic'],
+          );
+        }
+        let newMessage;
+        console.log('b');
 
-      newMessage = await addMessageToChat(
-        senderId,
-        yourId,
-        msg,
-        isReceived,
-        type,
-        localReducer.inChatScreen,
-        downloadedPic,
-      );
+        newMessage = await addMessageToChat(
+          senderId,
+          yourId,
+          msg,
+          isReceived,
+          type,
+          localReducer.inChatScreen,
+          downloadedPic,
+        );
 
-      setNewMessage(newMessage);
+        setNewMessage(newMessage);
+      }
     } catch (err) {
       console.log('err on getMessage :', err);
     }
@@ -76,7 +86,7 @@ export const useGetMessage = (socket: Socket | null) => {
       // Receive message
       socket?.on(
         'chat message',
-        async (msg, type, senderId, yourId, profilePic) => {
+        async (msg, type, senderId, yourId, profilePic, source = 'user') => {
           if (type === 'image') {
             let imageUri = await saveURLImage(msg);
             let computedImg = {uri: `file://${imageUri}`};
@@ -87,9 +97,10 @@ export const useGetMessage = (socket: Socket | null) => {
               senderId,
               yourId,
               profilePic,
+              source,
             );
           } else {
-            getMessages(msg, true, type, senderId, yourId, profilePic);
+            getMessages(msg, true, type, senderId, yourId, profilePic, source);
           }
         },
       );

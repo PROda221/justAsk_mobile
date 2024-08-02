@@ -5,11 +5,7 @@ import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getSearchStyles} from './styles';
 import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
-import ActionSheet, {
-  Route,
-  useSheetRef,
-  useSheetRouter,
-} from 'react-native-actions-sheet';
+import ActionSheet, {Route, useSheetRouter} from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
 
@@ -21,6 +17,7 @@ import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import {UserCard} from '../UserCard';
 import {useSearch} from '../../CustomHooks/AppHooks/useSearch';
 import content from '../../Assets/Languages/english.json';
+import Loader from '../Loader/Loader';
 
 let currentGenres: string[];
 
@@ -30,7 +27,6 @@ const SearchScreen = () => {
   const styles = getSearchStyles(colors);
   const {control, getValues, watch} = useForm();
   const allFields = watch('search');
-  const ref = useSheetRef('SearchFeature-sheet');
 
   const {
     searchedGenres,
@@ -40,6 +36,7 @@ const SearchScreen = () => {
     searchSuccess,
     resetSearchUserReducer,
     searchError,
+    searchLoading,
   } = useSearch();
   const [userList, setUserList] = useState(
     searchedResults.length ? searchedResults : [],
@@ -85,20 +82,21 @@ const SearchScreen = () => {
     if (searchError?.message) {
       return searchError.message;
     }
-
+    if (!userList.length && (searchedGenres.length || getValues('search'))) {
+      return content.SearchFeature.NoSearch;
+    }
     return content.SearchFeature.EmptyListMsg;
   };
 
   const renderNotFound = () => (
     <View style={styles.noSearchContainer}>
-      {
-        <RenderSvg
-          Icon={Filter}
-          height={verticalScale(100)}
-          width={horizontalScale(100)}
-          onPress={() => router?.navigate('AdviceListScreen')}
-        />
-      }
+      <RenderSvg
+        Icon={Filter}
+        height={verticalScale(100)}
+        width={horizontalScale(100)}
+        onPress={() => router?.navigate('AdviceListScreen')}
+      />
+
       <Typography
         fontWeight="400"
         bgColor={colors.textPrimaryColor}
@@ -132,16 +130,18 @@ const SearchScreen = () => {
         rightIcon="search"
         handleRightIconPress={() => router?.navigate('AdviceListScreen')}
       />
-      {(!searchedGenres.length && !userList.length) || searchError?.message
-        ? renderNotFound()
-        : null}
       <View
         style={{
-          height: userList.length ? verticalScale(500) : verticalScale(30),
+          height: userList.length ? verticalScale(500) : verticalScale(220),
         }}>
         <FlashList
           data={userList}
+          ListEmptyComponent={renderNotFound}
+          ListFooterComponent={() => {
+            return <>{searchLoading && <Loader isLoading />}</>;
+          }}
           renderItem={renderItem}
+          extraData={searchLoading}
           estimatedItemSize={100}
           onEndReached={() => searchSuccess?.data.length && createSearchObj()}
           onEndReachedThreshold={0.5}

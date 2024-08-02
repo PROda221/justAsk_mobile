@@ -17,6 +17,8 @@ export default class Chat extends Model {
   @field('message_time') messageTime;
   @field('unread_count') unreadCount;
   @field('chat_id') chatId;
+  @field('got_blocked_status') gotBlockedStatus;
+  @field('you_blocked_status') youBlockedStatus;
   @relation('users', 'user_id') user;
   @children('messages') messages;
   @readonly @date('created_at') createdAt;
