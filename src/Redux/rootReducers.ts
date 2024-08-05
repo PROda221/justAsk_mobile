@@ -22,6 +22,8 @@ import googleLoginSlice from './Slices/GoogleLoginSlice';
 import localReducer from './Slices/LocalReducer'
 import blockUserSlice from './Slices/BlockUserSlice';
 import unblockUserSlice from './Slices/UnblockUserSlice';
+import allBlockedSlice from './Slices/AllBlockedSlice';
+import multiUnblockSlice from './Slices/MultiUnblockSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -46,7 +48,9 @@ const rootReducer = combineReducers({
 	googleLoginSlice,
 	localReducer,
 	blockUserSlice,
-	unblockUserSlice
+	unblockUserSlice,
+	allBlockedSlice,
+	multiUnblockSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -16,8 +16,10 @@ export const Endpoints = {
   userProfile: '/users/profile',
   getYourComment: '/users/feedback/getyourcomment',
   addCommenet: '/users/feedback/add',
-  gtAllComments: '/users/feedback',
+  getAllComments: '/users/feedback',
   profileUpload: '/users/upload',
   blockUser: '/users/blocked/add',
+  getAllBlocked: '/users/blocked/getAll',
   unblockUser: '/users/blocked/unblock',
+  multiUnblock: '/users/blocked/multiUnblock',
 };

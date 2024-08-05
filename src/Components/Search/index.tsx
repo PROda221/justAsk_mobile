@@ -142,7 +142,7 @@ const SearchScreen = () => {
           }}
           renderItem={renderItem}
           extraData={searchLoading}
-          estimatedItemSize={100}
+          estimatedItemSize={120}
           onEndReached={() => searchSuccess?.data.length && createSearchObj()}
           onEndReachedThreshold={0.5}
         />

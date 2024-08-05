@@ -27,6 +27,7 @@ type AddCommentSuccess = {
 };
 
 type AddCommentError = {
+  status: number;
   success: boolean;
   message: string;
 };
@@ -99,6 +100,7 @@ export const callAddComment = createAsyncThunk(
       throw response.data;
     } catch (err) {
       const serializableError = {
+        status: err.status,
         message: err.message,
         success: err.success,
       };
@@ -112,7 +114,7 @@ export const callAllComments = createAsyncThunk(
   async (data: {username: string, limit: number, lastId: string}, {rejectWithValue}) => {
     try {
       const response = await post<AllCommentsSuccess>(
-        Endpoints.gtAllComments,
+        Endpoints.getAllComments,
         data,
       );
       if (response.status === 200) {

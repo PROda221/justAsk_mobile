@@ -21,7 +21,6 @@ type PropTypes = {
   received: boolean;
   uploadingImage: boolean;
   createdAt: number;
-  youBlockedStatus: boolean;
   sendMessages: (imageUrl: string, username: string, type: string) => void;
 };
 
@@ -45,7 +44,6 @@ export const RenderMessageList = ({
   type,
   uploadingImage,
   createdAt,
-  youBlockedStatus,
   sendMessages,
 }: PropTypes): JSX.Element => {
   const {colors} = useTheme();

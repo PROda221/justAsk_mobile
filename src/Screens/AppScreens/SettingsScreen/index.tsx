@@ -63,6 +63,10 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
     navigation.navigate('MyFeedback');
   };
 
+  const openBlockedUsers = () => {
+    navigation.navigate('BlockedUsers', {username: profileSuccess?.username});
+  };
+
   const openEditProfile = () => {
     navigation.navigate('EditProfile', {
       image: profileSuccess?.profilePic,
@@ -119,7 +123,7 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
       name: content.SettingsScreen.blockedList,
       iconName: 'chat',
       iconColor: colors.settingsIconColor,
-      onPress: handleListOnPress,
+      onPress: openBlockedUsers,
     },
     {
       name: content.SettingsScreen.inviteAFriend,

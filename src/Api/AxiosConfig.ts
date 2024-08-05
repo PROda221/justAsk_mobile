@@ -41,7 +41,7 @@ const post = async <T>(
   } catch (error) {
     // Handle errors
     if (error.response) {
-      throw error.response.data;
+      throw {...error.response.data, status: error.response.status};
     }
 
     throw error;

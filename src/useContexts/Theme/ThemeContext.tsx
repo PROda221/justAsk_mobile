@@ -28,6 +28,7 @@ const darkColors: DarkColors = {
   appScreenPrimaryBackground: '#292F3F',
   searchContainer: 'rgba(0, 0, 0, 0.25)',
   textPrimaryColor: '#FFFFFF',
+  textPrimarySelectedColor: '#000',
   iconPrimaryColor: '#FFFFFF',
   textInputBackgroundColor: '#232627',
   textInputPlaceholderColor: '#C2C3CB',
@@ -90,6 +91,8 @@ const darkColors: DarkColors = {
   progressBarColor: '#76c7c0',
   noInternetRetryButton: '#4CAF50',
   noInternetIcon: '#FF6B6B',
+  disabledButton: '#6C757D',
+  enabledButton: '#28A745',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

@@ -51,7 +51,7 @@ export const UserCard = ({username, skills, status, image}: Props) => {
       </View>
       <View style={styles.infoContainer}>
         <Typography
-          bgColor="white"
+          bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.username}>
           {username}

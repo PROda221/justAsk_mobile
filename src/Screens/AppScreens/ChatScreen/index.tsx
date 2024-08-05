@@ -1,18 +1,16 @@
-import {Typography} from '../../../Components';
 import {type ParamListBase, type RouteProp} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Alert, type ViewStyle} from 'react-native';
+import {Alert} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {type ChatScreenStyles, getChatScreenStyles} from './styles';
+import {getChatScreenStyles} from './styles';
 import {verticalScale} from '../../../Functions/StyleScale';
-import Header from '../../../Components/Header';
 import {TextInput} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
-import Animated, {
+import {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -24,8 +22,6 @@ import {
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
-import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
-import {Image} from 'expo-image';
 import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
@@ -33,10 +29,10 @@ import {useDispatch} from 'react-redux';
 import {RenderMessageList} from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
-import {resetUserProfileResponse} from '../../../Redux/Slices/UserProfileSlice';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {Model} from '@nozbe/watermelondb';
 import {YourBlockStatus} from './YourBlockStatus';
+import ChatHeader from './ChatHeader';
 
 type MessageType = {
   item: {
@@ -62,55 +58,6 @@ type Props = {
   navigation: NativeStackNavigationProp<ParamListBase>;
   route: RouteProp<Params>;
   activeChat: Model[];
-};
-
-const chatHeader = (
-  styles: ChatScreenStyles,
-  colors: DarkColors,
-  username: string,
-  image: string,
-  animatedStyle: ViewStyle,
-  statusStyle: ViewStyle,
-  openUserProfle: () => void,
-) => {
-  const dispatch = useDispatch();
-  const resetUserProfileReducer = () => {
-    dispatch(resetUserProfileResponse());
-  };
-  //   Console.log('hello hat header');
-  return (
-    <View style={styles.header}>
-      <Header
-        containerStyle={{paddingTop: 0}}
-        onPress={resetUserProfileReducer}
-      />
-      <TouchableOpacity onPress={openUserProfle}>
-        <Image
-          source={{uri: image}}
-          transition={200}
-          style={styles.profileImage}
-        />
-      </TouchableOpacity>
-      <View style={styles.headerTextContainer}>
-        <Animated.View style={animatedStyle}>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.headerText}>
-            {username}
-          </Typography>
-        </Animated.View>
-        <Animated.View style={statusStyle}>
-          <Typography
-            bgColor={colors.textPrimaryColor}
-            fontWeight="400"
-            textStyle={styles.headerText}>
-            {'Online'}
-          </Typography>
-        </Animated.View>
-      </View>
-    </View>
-  );
 };
 
 const enhance = withObservables(['route'], ({route}) => ({
@@ -242,15 +189,16 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   return (
     <View style={styles.container}>
-      {chatHeader(
-        styles,
-        colors,
-        username,
-        image,
-        animatedStyle,
-        statusStyle,
-        openUserProfle,
-      )}
+      <ChatHeader
+        styles={styles}
+        colors={colors}
+        username={username}
+        animatedStyle={animatedStyle}
+        statusStyle={statusStyle}
+        image={image}
+        accountName={profileSuccess?.username}
+        openUserProfle={openUserProfle}
+      />
 
       <FlashList
         data={messages}
@@ -267,7 +215,6 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
             received={item.received}
             createdAt={item.createdAt}
             sendMessages={sendMessages}
-            youBlockedStatus={activeChat[0]?._raw['you_blocked_status']}
           />
         )}
         keyExtractor={item => item.id}

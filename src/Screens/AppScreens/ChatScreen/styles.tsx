@@ -98,5 +98,3 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     msgTime: {textAlign: 'right', flex: 1, marginRight: horizontalScale(5)},
     imageChatBottom: {},
   });
-
-StyleSheet.create({});

@@ -44,6 +44,9 @@ export const useAddComments = (
 
   useEffect(() => {
     if (addCommenetSlice.error) {
+      if (addCommenetSlice.error.status === 405) {
+        dispatch(callGetUserProfile({username}));
+      }
       Toast.show({
         type: 'error',
         text1: 'Error',

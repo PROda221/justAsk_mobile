@@ -4,6 +4,7 @@ export type DarkColors = {
   appScreenPrimaryBackground: string;
   searchContainer: string;
   textPrimaryColor: string;
+  textPrimarySelectedColor: string;
   iconPrimaryColor: string;
   textInputBackgroundColor: string;
   textInputPlaceholderColor: string;
@@ -66,4 +67,6 @@ export type DarkColors = {
   progressBarColor: string;
   noInternetRetryButton: string;
   noInternetIcon: string;
+  disabledButton: string;
+  enabledButton: string;
 };

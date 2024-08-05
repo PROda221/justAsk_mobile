@@ -127,5 +127,9 @@
     "title": "No Internet Connection",
     "subTitle": "Please check your mobile network settings and try again.",
     "retryButton": "Retry"
+  },
+  "BlockScreen": {
+    "title": "Blocked Users",
+    "unblockButton": "Unblock Selected"
   }
 }

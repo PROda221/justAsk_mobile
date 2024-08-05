@@ -382,3 +382,38 @@ export function getCurrentChatObservable(account, username) {
       })
     );
 }
+
+export async function unblockChats(chatIds, account) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
+      const userId = user[0].id;
+
+      // Query for all chats that match the userId and any of the chatIds
+      const chats = await database
+        .get('chats')
+        .query(
+          Q.where('user_id', userId),
+          Q.where('chat_id', Q.oneOf(chatIds))
+        )
+        .fetch();
+
+      // Update each chat's youBlockedStatus to false
+      for (const chat of chats) {
+        await chat.update(chat => {
+          chat.youBlockedStatus = false;
+        });
+      }
+
+      if (chats.length === 0) {
+        console.log('No chats found for the provided chat IDs.');
+      }
+    });
+  } catch (err) {
+    console.log('Error unblocking chats:', err);
+  }
+}
