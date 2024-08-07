@@ -1,6 +1,7 @@
 package com.just_ask
 
 import expo.modules.ReactActivityDelegateWrapper
+import com.zoontek.rnbootsplash.RNBootSplash
 import android.os.Bundle;
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -23,6 +24,7 @@ class MainActivity : ReactActivity() {
       ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled))
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    RNBootSplash.init(this, R.style.BootTheme)
     super.onCreate(null)
   }
 }
