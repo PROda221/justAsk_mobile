@@ -93,6 +93,7 @@ const darkColors: DarkColors = {
   noInternetIcon: '#FF6B6B',
   disabledButton: '#6C757D',
   enabledButton: '#28A745',
+  splashScreenBackground: '#0097b2',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

@@ -69,4 +69,5 @@ export type DarkColors = {
   noInternetIcon: string;
   disabledButton: string;
   enabledButton: string;
+  splashScreenBackground: string;
 };
