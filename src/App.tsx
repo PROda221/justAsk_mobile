@@ -1,9 +1,10 @@
 import 'react-native-reanimated';
 import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
+import {PersistGate} from 'redux-persist/integration/react';
 import Navigation from './Navigation';
 import {Provider} from 'react-redux';
-import store from './Redux/store.ts';
+import store, {persistor} from './Redux/store.ts';
 import {PaperProvider} from 'react-native-paper';
 import {ThemeProvider} from './useContexts/Theme/ThemeContext.tsx';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -29,12 +30,14 @@ const App = (): JSX.Element => {
 
   return (
     <Provider store={store}>
-      <PaperProvider>
-        <ThemeProvider>
-          <Navigation />
-          <Toast config={toastConfig} />
-        </ThemeProvider>
-      </PaperProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <PaperProvider>
+          <ThemeProvider>
+            <Navigation />
+            <Toast config={toastConfig} />
+          </ThemeProvider>
+        </PaperProvider>
+      </PersistGate>
     </Provider>
   );
 };
