@@ -11,6 +11,7 @@ import {TextInput} from '../../TextInput';
 import {useForm} from 'react-hook-form';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {moderateScale} from '../../../Functions/StyleScale';
+import content from '../../../Assets/Languages/english.json';
 
 function AddUserStatus({payload}: SheetProps<'AddUserStatus-sheet'>) {
   const {colors} = useTheme();
@@ -30,7 +31,7 @@ function AddUserStatus({payload}: SheetProps<'AddUserStatus-sheet'>) {
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.textStyle}>
-              {'Change your status'}
+              {content.SetStatus.changeStatus}
             </Typography>
           </View>
           <View>
@@ -48,10 +49,13 @@ function AddUserStatus({payload}: SheetProps<'AddUserStatus-sheet'>) {
             name="status"
             secureTextEntry={false}
             control={control}
-            label="Status"
-            placeholder="Status"
+            label={content.SetStatus.status}
+            placeholder={content.SetStatus.status}
             leftIcon="chat"
-            rules={{required: 'Status is required'}}
+            rules={{
+              required: content.SetStatus.statusMissing,
+              maxLength: {value: 80, message: content.SetStatus.statusTooLong},
+            }}
           />
         </View>
       </View>

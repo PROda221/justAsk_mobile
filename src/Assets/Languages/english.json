@@ -26,7 +26,8 @@
     "passwordRequirement": "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.",
     "alreadyAccount": "Already Have An Account?",
     "signIn": " Sign In",
-    "errorBoxTitle": "Error"
+    "errorBoxTitle": "Error",
+    "usernameSpaces": "Username cannot contain spaces"
   },
   "SelectGenres": {
     "title1": "Select Your",
@@ -50,7 +51,14 @@
     "invalidEmail": "Whoops! That email doesn’t look right. Please check and try again.",
     "usernameMissing": "Please enter your username.",
     "enterUsername": "Enter Your Username",
-    "nextButton": "Next"
+    "nextButton": "Next",
+    "usernameSpaces": "Username cannot contain spaces"
+  },
+  "SetStatus": {
+    "changeStatus": "Change your status",
+    "statusMissing": "Please enter your status",
+    "statusTooLong": "Status is too long",
+    "status": "Status"
   },
   "OtpScreen": {
     "title": "Verify Email",

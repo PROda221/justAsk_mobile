@@ -91,6 +91,12 @@ const SetUsername = ({navigation, route}: Props): JSX.Element => {
         leftIcon="user"
         rules={{
           required: content.SetUsernameScreen.usernameMissing,
+          validate: {
+            value: (value: string) =>
+              value.includes(' ')
+                ? content.SetUsernameScreen.usernameSpaces
+                : true,
+          },
         }}
       />
       {checkUsernameError && (

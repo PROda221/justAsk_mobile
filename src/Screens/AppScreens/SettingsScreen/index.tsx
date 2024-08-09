@@ -186,6 +186,8 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
 
           <Typography
             bgColor={colors.textInputPlaceholderColor}
+            elipses="tail"
+            numberOfLines={1}
             fontWeight="400"
             textStyle={styles.profileStatus}>
             {currentUser[0]?._raw['status']}

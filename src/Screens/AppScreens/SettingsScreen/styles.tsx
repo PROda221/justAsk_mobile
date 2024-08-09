@@ -54,6 +54,7 @@ export const getSettingsScreenStyles = (colors): SettingsScreenStyles =>
     profileStatus: {
       fontSize: moderateScale(12),
       textAlign: 'left',
+      width: '85%',
     },
     menuItem: {
       flexDirection: 'row',

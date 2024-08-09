@@ -56,7 +56,12 @@ export const UserCard = ({username, skills, status, image}: Props) => {
           textStyle={styles.username}>
           {username}
         </Typography>
-        <Typography bgColor="white" fontWeight="400" textStyle={styles.status}>
+        <Typography
+          elipses={'tail'}
+          numberOfLines={1}
+          bgColor="white"
+          fontWeight="400"
+          textStyle={styles.status}>
           {status}
         </Typography>
         <FlashList

@@ -87,7 +87,13 @@ const SignUp = ({navigation}: Props): JSX.Element => {
         label={`${content.SignInScreen.username}`}
         placeholder={`${content.SignInScreen.username}`}
         leftIcon="user"
-        rules={{required: content.SignInScreen.usernameMissing}}
+        rules={{
+          required: content.SignInScreen.usernameMissing,
+          validate: {
+            value: (value: string) =>
+              value.includes(' ') ? content.SignInScreen.usernameSpaces : true,
+          },
+        }}
       />
       <View style={styles.textInputContainer}>
         <TextInput
