@@ -83,6 +83,8 @@ const ActiveChats = ({
             ) : null}
           </View>
           <Typography
+            numberOfLines={1}
+            elipses="tail"
             bgColor={colors.textPrimaryColor}
             fontWeight="400"
             textStyle={styles.messageText}>

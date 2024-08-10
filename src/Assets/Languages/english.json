@@ -115,8 +115,8 @@
     "feedbackButton": "Give Feedback"
   },
   "SettingsScreen": {
-    "shareTitle": "JustAsk Invite Link",
-    "shareMsg": "Hey there! 🌟\n\nI've been using JustAsk, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, JustAsk has got you covered.\n\nCheck it out and join me on JustAsk! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
+    "shareTitle": "HumanTouch Invite Link",
+    "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
     "shareUrl": "https://www.npmjs.com/package/@react-native-community/netinfo",
     "logoutTitle": "Log out",
     "logoutWarning": "Are you sure to logout?",
