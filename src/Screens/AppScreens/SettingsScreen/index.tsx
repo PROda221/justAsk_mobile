@@ -131,12 +131,12 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
       iconColor: colors.settingsIconColor,
       onPress: onShare,
     },
-    {
-      name: content.SettingsScreen.deleteAccount,
-      iconName: 'delete-forever',
-      iconColor: colors.settingsDeleteColor,
-      onPress: handleListOnPress,
-    },
+    // {
+    //   name: content.SettingsScreen.deleteAccount,
+    //   iconName: 'delete-forever',
+    //   iconColor: colors.settingsDeleteColor,
+    //   onPress: handleListOnPress,
+    // },
     {
       name: content.SettingsScreen.logout,
       iconName: 'logout',

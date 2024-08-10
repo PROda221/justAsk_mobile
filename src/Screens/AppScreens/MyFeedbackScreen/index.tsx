@@ -103,6 +103,8 @@ const MyFeedbackPage = () => {
               {profileSuccess?.username}
             </Typography>
             <Typography
+              numberOfLines={1}
+              elipses="tail"
               fontWeight="400"
               bgColor={colors.textPrimaryColor}
               textStyle={styles.statusText}>

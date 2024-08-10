@@ -138,6 +138,8 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
             </Typography>
             <Typography
               fontWeight="400"
+              elipses="tail"
+              numberOfLines={1}
               bgColor={colors.textPrimaryColor}
               textStyle={styles.statusText}>
               {chatDetails[0]._raw?.['status']}
