@@ -7,16 +7,17 @@ const useNativeDriver = Platform.OS !== 'web';
 
 type Props = {
   onAnimationEnd: () => void;
+  isLoggedIn: boolean;
 };
 
-export const AnimatedBootSplash = ({onAnimationEnd}: Props) => {
+export const AnimatedBootSplash = ({onAnimationEnd, isLoggedIn}: Props) => {
   const [opacity] = useState(() => new Animated.Value(1));
   const [translateY] = useState(() => new Animated.Value(0));
 
   const {colors} = useTheme();
 
   const {container, logo /*, brand */} = BootSplash.useHideAnimation({
-    // ready: isLoggedIn,
+    ready: isLoggedIn,
     manifest: {
       background: colors.splashScreenBackground,
       logo: {
