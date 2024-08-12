@@ -23,6 +23,8 @@ import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 import content from '../../../Assets/Languages/english.json';
+import {removeFirebaseUrl} from '../../../Functions/DownloadLocalPic';
+import {storageBucketUrl} from '../../../Constants';
 
 type Params = {
   params: {
@@ -93,7 +95,10 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
     if (newProfileValues.profileImg || newProfileValues.status) {
       let data = {
         filePath: newProfileValues.profileImg,
-        currentPath: profileSuccess?.profilePic,
+        currentPath: removeFirebaseUrl(
+          profileSuccess?.profilePic,
+          storageBucketUrl + '/',
+        ),
         status: newProfileValues.status,
       };
       callProfileUploadApi(data);

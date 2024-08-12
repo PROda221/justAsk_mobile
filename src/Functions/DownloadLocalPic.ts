@@ -1,32 +1,44 @@
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import { baseURL } from '../Constants';
+import {baseURL, storageBucketUrl} from '../Constants';
+
+export const removeFirebaseUrl = (filePath: string = '', baseUrl: string): string => {
+  // Remove the base URL from the filePath
+  const updatedPath = filePath.replace(baseUrl, '');
+  return updatedPath;
+};
 
 const DOWNLOAD_DIR = ReactNativeBlobUtil.fs.dirs.DownloadDir;
-export const downloadImage = async (url: string, image?: string, gotBlockedStatus: boolean = false) => {
+export const downloadImage = async (
+  url: string,
+  image?: string,
+  gotBlockedStatus: boolean = false,
+) => {
   try {
-    if(!url){
-      return ''
+    if (!url) {
+      return '';
     }
     const {fs} = ReactNativeBlobUtil;
     // Generate a unique filename based on the URL
-    let computedUrl = gotBlockedStatus ? 'ProfilePic.png' : url
+    let computedUrl = gotBlockedStatus ? `${baseURL}/ProfilePic.png` : url;
+
     const path = `${DOWNLOAD_DIR}/${computedUrl}`;
 
+    const filePath = removeFirebaseUrl(path, storageBucketUrl);
+
     // Check if the file already exists
-    const fileExists = await fs.exists(path);
+    const fileExists = await fs.exists(filePath);
 
     if (fileExists) {
-      return path;
+      return filePath;
     } else {
-        if(image){
-          console.log('image to delete :', image)
-            await fs.unlink(image);
-        }
+      if (image) {
+        console.log('image to delete :', image);
+        await fs.unlink(image);
+      }
       const response = await ReactNativeBlobUtil.config({
         fileCache: true,
-        path: path,
-      }).fetch('GET', `${baseURL}/${computedUrl}`);
-      console.log('image downloaded :', path);
+        path: filePath,
+      }).fetch('GET', `${computedUrl}`);
       return response.path();
     }
   } catch (error) {
