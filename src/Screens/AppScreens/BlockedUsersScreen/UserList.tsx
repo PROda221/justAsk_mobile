@@ -6,7 +6,7 @@ import {BlockedUsersScreenStyles} from './styles';
 import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import {Moment} from 'moment';
-import {baseURL} from '../../../Constants';
+import {getProfilePic} from '../../../Functions/GetProfilePic';
 
 type PropsType = {
   name: string;
@@ -33,7 +33,7 @@ const UserList = ({
       onPress={() => toggleSelection(name)}
       style={[styles.card, isSelected && styles.selectedItem]}>
       <View style={styles.imageContainer}>
-        <Image source={{uri: `${baseURL}/${image}`}} style={styles.image} />
+        <Image source={{uri: getProfilePic(image)}} style={styles.image} />
       </View>
       <View style={styles.info}>
         <Typography
