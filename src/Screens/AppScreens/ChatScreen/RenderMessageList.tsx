@@ -10,6 +10,7 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImage} from '../../../Functions/UploadImg';
 import {updateImageUploadStatus} from '../../../DB/DBFunctions';
 import {formatTimestamp} from '../../../Functions/FormatTime';
+import Autolink from 'react-native-autolink';
 import moment from 'moment';
 
 type PropTypes = {
@@ -65,7 +66,6 @@ export const RenderMessageList = ({
       const uploadedUrl = await uploadImage(text, currentProgress);
       if (uploadedUrl) {
         await updateImageUploadStatus(username, account, id, false);
-        console.log('a');
         sendMessages(uploadedUrl, username, 'image');
       }
     } catch (err) {
@@ -93,7 +93,7 @@ export const RenderMessageList = ({
             fontWeight="300"
             bgColor={colors.textPrimaryColor}
             textStyle={styles.messageText}>
-            {text}
+            <Autolink text={text} email phone="sms" url />
           </Typography>
         )}
         {type === 'image' && (

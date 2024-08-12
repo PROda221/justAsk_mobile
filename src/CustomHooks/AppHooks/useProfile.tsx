@@ -26,7 +26,6 @@ export const useProfile = (isFocused: boolean = true) => {
         let downloadedPic: string | null;
         let currentUser = await getUser(username);
         if (currentUser?.length > 0) {
-          // console.log('user inside hook :', currentUser);
           downloadedPic = await downloadImage(
             profileSlice.success?.profilePic ?? '',
             currentUser?.[0]._raw?.['profile_pic'],

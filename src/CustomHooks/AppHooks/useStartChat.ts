@@ -107,10 +107,8 @@ export const useStartChat = (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        console.log('forground');
         fetchMessages();
       } else {
-        console.log('background');
         appState.current = nextAppState;
       }
     });

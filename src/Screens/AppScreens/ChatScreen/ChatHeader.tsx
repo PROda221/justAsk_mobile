@@ -45,7 +45,6 @@ const ChatHeader = ({
   const resetUserProfileReducer = () => {
     dispatch(resetUserProfileResponse());
   };
-  //   Console.log('hello hat header');
   return (
     <View style={styles.header}>
       <Header

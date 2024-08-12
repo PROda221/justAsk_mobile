@@ -14,9 +14,6 @@ export const useImageColors = (
 
   React.useEffect(() => {
     const url = dependency ?? imageUrl;
-
-    console.log('image inside get colors :', imageUrl);
-
     getColors(url, {
       fallback: '#228B22',
       cache: true,

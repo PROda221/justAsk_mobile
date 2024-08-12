@@ -60,12 +60,10 @@ const notificationSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(sendDeviceToken.fulfilled, (state, action) => {
-        console.log('success :', action.payload)
       state.loading = false;
       state.success = action.payload;
     });
     builder.addCase(sendDeviceToken.rejected, (state, action) => {
-        console.log('error :', action.payload)
       state.loading = false;
       state.error = action.payload;
     });

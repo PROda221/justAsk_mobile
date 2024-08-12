@@ -23,12 +23,6 @@ export const useYourComment = (username?: string) => {
   };
 
   useEffect(() => {
-    if (getYourCommentSlice.success) {
-      console.log('success your comment :', getYourCommentSlice.success);
-    }
-  }, [getYourCommentSlice.success]);
-
-  useEffect(() => {
     if (getYourCommentSlice.error) {
       console.log('error your comment :', getYourCommentSlice.error);
       Toast.show({
