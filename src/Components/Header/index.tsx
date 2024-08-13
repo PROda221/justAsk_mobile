@@ -1,5 +1,10 @@
-import React from 'react';
-import {View, TouchableOpacity, type ViewStyle} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  BackHandler,
+  View,
+  TouchableOpacity,
+  type ViewStyle,
+} from 'react-native';
 import styled from 'styled-components';
 import {
   type NavigationProp,
@@ -31,10 +36,10 @@ const leftFeatureHandler = (
   onPress: () => void,
   dontGoBack?: boolean,
 ): void => {
-  onPress?.();
   if (!dontGoBack) {
     navigation?.goBack();
   }
+  onPress?.();
 };
 
 type Props = {
@@ -53,9 +58,21 @@ const Header = ({navigation, containerStyle, onPress, dontGoBack}: Props) => {
   const styles = getHeaderStyles(colors);
   const scale = useSharedValue(1);
 
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, []);
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{scale: scale.value}],
   }));
+
+  const handleBackPress = () => {
+    leftFeatureHandler(headerNavigation, onPress, dontGoBack);
+    return true;
+  };
 
   const handlePressIn = () => {
     scale.value = withSpring(0.95);

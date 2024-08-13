@@ -4,13 +4,12 @@ import AppNavigation from './AppNavigation';
 import AuthNavigation from './AuthStack';
 import {retrieveAccessToken} from '../Functions/EncryptedStorage';
 import {useIsLogin} from '../CustomHooks/AuthHooks/useIsLogin';
-import BootSplash from 'react-native-bootsplash';
-// import {AnimatedBootSplash} from '../Components/AnimatedSplashScreen';
+import {AnimatedBootSplash} from '../Components/AnimatedSplashScreen';
 
 const Navigation = (): JSX.Element => {
   const {isLogedIn, userLogedIn} = useIsLogin();
   const [animationEnd, setAnimationEnd] = useState(false);
-  // const [hideSplash, setHideSplash] = useState(false);
+  const [hideSplash, setHideSplash] = useState(false);
 
   useEffect(() => {
     const getAuth = async () => {
@@ -20,8 +19,7 @@ const Navigation = (): JSX.Element => {
       }
     };
     getAuth().finally(async () => {
-      // setHideSplash(true);
-      await BootSplash.hide({fade: true});
+      setHideSplash(true);
       console.log('BootSplash has been hidden successfully');
     });
     getAuth();
@@ -30,14 +28,14 @@ const Navigation = (): JSX.Element => {
   return (
     <NavigationContainer>
       {isLogedIn ? <AppNavigation /> : <AuthNavigation />}
-      {/* {!animationEnd && (
+      {!animationEnd && (
         <AnimatedBootSplash
           isLoggedIn={hideSplash}
           onAnimationEnd={() => {
             setAnimationEnd(true);
           }}
         />
-      )} */}
+      )}
     </NavigationContainer>
   );
 };

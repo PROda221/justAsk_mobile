@@ -27,7 +27,7 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <meta-data
+    <!-- <meta-data
       android:name="expo.modules.updates.ENABLED"
       android:value="true" />
     <meta-data
@@ -41,6 +41,6 @@
       android:value="https://u.expo.dev/1113e7f8-54a1-49de-a628-a38ba3e0134e" />
     <meta-data
       android:name="expo.modules.updates.EXPO_RUNTIME_VERSION"
-      android:value="@string/expo_runtime_version" />
+      android:value="@string/expo_runtime_version" /> -->
   </application>
 </manifest>

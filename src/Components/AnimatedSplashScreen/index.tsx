@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Animated, Dimensions, Platform} from 'react-native';
 import BootSplash from 'react-native-bootsplash';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
+import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
 
 const useNativeDriver = Platform.OS !== 'web';
 
@@ -21,8 +22,8 @@ export const AnimatedBootSplash = ({onAnimationEnd, isLoggedIn}: Props) => {
     manifest: {
       background: colors.splashScreenBackground,
       logo: {
-        width: 180,
-        height: 180,
+        width: horizontalScale(190),
+        height: verticalScale(190),
       },
     },
 
