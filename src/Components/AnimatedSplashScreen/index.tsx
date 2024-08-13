@@ -22,8 +22,8 @@ export const AnimatedBootSplash = ({onAnimationEnd, isLoggedIn}: Props) => {
     manifest: {
       background: colors.splashScreenBackground,
       logo: {
-        width: horizontalScale(190),
-        height: verticalScale(190),
+        width: 180,
+        height: 180,
       },
     },
 
@@ -41,7 +41,7 @@ export const AnimatedBootSplash = ({onAnimationEnd, isLoggedIn}: Props) => {
       Animated.stagger(250, [
         Animated.spring(translateY, {
           useNativeDriver,
-          toValue: -50,
+          toValue: -150,
         }),
         Animated.spring(translateY, {
           useNativeDriver,
