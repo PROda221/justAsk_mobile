@@ -70,8 +70,8 @@
   "ResetPassScreen": {
     "title1": "Reset Your",
     "title2": "Password",
-    "alertTitle": "Exiting Resetiing Password",
-    "alertMessage": "Are You Sure You Want to Leave?",
+    "alertTitle": "Exiting Resetting Password",
+    "alertMessage": "Are you sure you want to leave?",
     "cancel": "Cancel",
     "agree": "Yes",
     "passwordMissing": "Please enter your password.",
@@ -86,7 +86,11 @@
     "searchPlaceholder": "Search...."
   },
   "ChatScreen": {
-    "yourBlockStatus": "You blocked this user. Tap to unblock"
+    "yourBlockStatus": "You blocked this user. Tap to unblock",
+    "chatBlocked": "Chat Blocked",
+    "message": "Message",
+    "blockError": "You have been blocked by the user",
+    "unblockToOpen": "You have blocked this user. Unblock to chat"
   },
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",

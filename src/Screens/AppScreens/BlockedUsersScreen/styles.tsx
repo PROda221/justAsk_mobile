@@ -21,6 +21,7 @@ export type BlockedUsersScreenStyles = {
   headerContainer: ViewStyle;
   headingText: TextStyle;
   listConatiner: ViewStyle;
+  loaderContainer: ViewStyle;
 };
 
 export const getBlockedUsersScreenStyles = (
@@ -102,5 +103,8 @@ export const getBlockedUsersScreenStyles = (
     },
     listConatiner: {
       paddingTop: verticalScale(10),
+    },
+    loaderContainer: {
+      padding: moderateScale(15),
     },
   });

@@ -106,6 +106,14 @@ const SearchScreen = () => {
     </View>
   );
 
+  const searchLoader = () => {
+    return (
+      <View style={styles.loaderContainer}>
+        <Loader isLoading />
+      </View>
+    );
+  };
+
   const renderItem = ({item}) => {
     return (
       <UserCard
@@ -138,7 +146,7 @@ const SearchScreen = () => {
           data={userList}
           ListEmptyComponent={renderNotFound}
           ListFooterComponent={() => {
-            return <>{searchLoading && <Loader isLoading />}</>;
+            return <>{searchLoading && searchLoader()}</>;
           }}
           renderItem={renderItem}
           extraData={searchLoading}

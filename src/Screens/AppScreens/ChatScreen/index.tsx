@@ -33,6 +33,7 @@ import {withObservables} from '@nozbe/watermelondb/react';
 import {Model} from '@nozbe/watermelondb';
 import {YourBlockStatus} from './YourBlockStatus';
 import ChatHeader from './ChatHeader';
+import content from '../../../Assets/Languages/english.json';
 
 type MessageType = {
   item: {
@@ -137,7 +138,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const sendMessage = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
-      Alert.alert('You have blocked this user. Unblock to chat');
+      Alert.alert(content.ChatScreen.unblockToOpen);
       return;
     }
     if (getValues('chattext')) {
@@ -150,7 +151,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const handleImageSelection = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
-      Alert.alert('You have blocked this user. Unblock to chat');
+      Alert.alert(content.ChatScreen.unblockToOpen);
       return;
     }
     const options: ImageLibraryOptions = {
@@ -175,7 +176,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const openUserProfle = () => {
     if (activeChat[0]?._raw['got_blocked_status']) {
-      Alert.alert('You have been blocked by the user');
+      Alert.alert(content.ChatScreen.blockError);
       return;
     }
     navigation.navigate('UserProfile', {
@@ -247,8 +248,8 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           label="Write"
           placeholder={
             activeChat[0]?._raw['got_blocked_status']
-              ? 'Chat Blocked'
-              : 'Write...'
+              ? content.ChatScreen.chatBlocked
+              : content.ChatScreen.message
           }
           leftIcon={
             activeChat[0]?._raw['got_blocked_status'] ? 'block' : 'gallary'

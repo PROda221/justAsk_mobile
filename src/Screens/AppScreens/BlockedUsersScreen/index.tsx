@@ -98,6 +98,14 @@ const BlockedListScreen = ({
     );
   };
 
+  const blockerLoader = () => {
+    return (
+      <View style={styles.loaderContainer}>
+        <Loader isLoading />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -121,7 +129,7 @@ const BlockedListScreen = ({
         renderItem={renderItem}
         onEndReached={() => allBlockedSuccess?.data.length && getBlockedList()}
         ListFooterComponent={() => {
-          return <>{(loading || allBlockedLoading) && <Loader isLoading />}</>;
+          return <>{(loading || allBlockedLoading) && blockerLoader()}</>;
         }}
         extraData={[selectedUsers]}
       />

@@ -30,6 +30,19 @@ export const useResetPass = (
     dispatch(resetClearPassResponse());
   };
 
+  const gotoScreen = () => {
+    if (screenName === 'Settings') {
+      navigation.popToTop();
+    } else {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{name: 'LandingScreen'}, {name: 'Login'}],
+        }),
+      );
+    }
+  };
+
   useEffect(() => {
     if (resetPassSlice.success) {
       Toast.show({
@@ -38,12 +51,7 @@ export const useResetPass = (
         text2: resetPassSlice.success.message,
         visibilityTime: 5000,
       });
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [{name: 'LandingScreen'}, {name: 'Login'}],
-        }),
-      );
+      gotoScreen();
       resetResetPassReducer();
     }
   }, [resetPassSlice.success]);

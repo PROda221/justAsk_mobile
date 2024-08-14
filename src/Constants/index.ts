@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 const allGenres = [
     "Health & Fitness",
     "Relationships",
-    "Psycology",
+    "Psychology",
     "Financial",
     "Career",
     "Education",

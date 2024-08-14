@@ -8,6 +8,7 @@ export type SearchStyles = {
   noSearchContainer: ViewStyle;
   noSearchText: TextStyle;
   actionSheetContainer: ViewStyle;
+  loaderContainer: ViewStyle;
 };
 
 export const getSearchStyles = (colors: DarkColors): SearchStyles =>
@@ -30,5 +31,8 @@ export const getSearchStyles = (colors: DarkColors): SearchStyles =>
     },
     actionSheetContainer: {
       backgroundColor: colors.appScreenPrimaryBackground,
+    },
+    loaderContainer: {
+      padding: moderateScale(15),
     },
   });

@@ -74,6 +74,20 @@ const ResetPassword = ({navigation, route}: Props): JSX.Element => {
 
   const styles = getResetPassScreenStyles(colors);
 
+  const goBack = () => {
+    resetResetPassReducer();
+    if (isLogin) {
+      navigation.popToTop();
+    } else {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 1,
+          routes: [{name: 'LandingScreen'}, {name: 'Login'}],
+        }),
+      );
+    }
+  };
+
   const handleNextButton: SubmitHandler<FieldValues> = data => {
     resetResetPassReducer();
     callResetPassApi({
@@ -94,13 +108,7 @@ const ResetPassword = ({navigation, route}: Props): JSX.Element => {
         },
         {
           text: `${content.ResetPassScreen.agree}`,
-          onPress: () =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 1,
-                routes: [{name: 'LandingScreen'}, {name: 'Login'}],
-              }),
-            ),
+          onPress: goBack,
         },
       ],
     );

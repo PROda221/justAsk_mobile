@@ -33,7 +33,7 @@ import {
   verticalScale,
 } from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {DarkColors} from '../../useContexts/Theme/ThemeType';
@@ -182,9 +182,7 @@ const renderRightIcon = (rightIcon: 'search' | 'chat') => {
         />
       );
     case 'chat':
-      return (
-        <AntDesign name="enter" size={moderateScale(25)} color={'white'} />
-      );
+      return <Ionicons name="send" size={moderateScale(25)} color={'white'} />;
     default:
       return <View />;
   }

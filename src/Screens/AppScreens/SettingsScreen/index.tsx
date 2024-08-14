@@ -28,6 +28,7 @@ import {RootState} from '../../../Redux/rootReducers';
 import {withObservables} from '@nozbe/watermelondb/react';
 import database from '../../../DB/database';
 import {Model, Q} from '@nozbe/watermelondb';
+import Loader from '../../../Components/Loader/Loader';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -50,7 +51,11 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
   const {resetGoogleLoginReducer} = useGoogleLogin();
-  const {callSendOtpApi, sendOtpSuccess} = useSendOtp();
+  const {callSendOtpApi, sendOtpSuccess, sendOtpLoading} = useSendOtp(
+    navigation,
+    'Otp Screen',
+    profileSuccess?.emailId,
+  );
   const {userLogedOut} = useIsLogin();
 
   useEffect(() => {
@@ -156,6 +161,8 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
           {content.SettingsScreen.settingsTitle}
         </Typography>
       </View>
+
+      <Loader size="large" isLoading={sendOtpLoading} />
 
       <TouchableOpacity
         onPress={openEditProfile}
