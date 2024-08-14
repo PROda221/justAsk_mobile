@@ -29,6 +29,7 @@ import {withObservables} from '@nozbe/watermelondb/react';
 import database from '../../../DB/database';
 import {Model, Q} from '@nozbe/watermelondb';
 import Loader from '../../../Components/Loader/Loader';
+import {useLogout} from '../../../CustomHooks/AppHooks/useLogout';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -47,9 +48,18 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
     (state: RootState) => state.profileSlice.success,
   );
 
+  const logout = async () => {
+    await resetAccessToken();
+    resetLoginReducer();
+    resetGoogleLoginReducer();
+    await GoogleSignin.signOut();
+    userLogedOut();
+  };
+
   const {colors} = useTheme();
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
+  const {callLogoutApi, logoutLoading} = useLogout(logout);
   const {resetGoogleLoginReducer} = useGoogleLogin();
   const {callSendOtpApi, sendOtpSuccess, sendOtpLoading} = useSendOtp(
     navigation,
@@ -81,14 +91,6 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
     });
   };
 
-  const logout = async () => {
-    await resetAccessToken();
-    resetLoginReducer();
-    resetGoogleLoginReducer();
-    await GoogleSignin.signOut();
-    userLogedOut();
-  };
-
   const handleChangePass = () => {
     callSendOtpApi({emailId: profileSuccess?.emailId || 'emailId'});
   };
@@ -104,7 +106,7 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
         },
         {
           text: content.SettingsScreen.yesButton,
-          onPress: logout,
+          onPress: callLogoutApi,
           style: 'cancel',
         },
       ],
@@ -162,7 +164,7 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
         </Typography>
       </View>
 
-      <Loader size="large" isLoading={sendOtpLoading} />
+      <Loader size="large" isLoading={sendOtpLoading || logoutLoading} />
 
       <TouchableOpacity
         onPress={openEditProfile}

@@ -22,4 +22,5 @@ export const Endpoints = {
   getAllBlocked: '/users/blocked/getAll',
   unblockUser: '/users/blocked/unblock',
   multiUnblock: '/users/blocked/multiUnblock',
+  logout: '/users/logout',
 };

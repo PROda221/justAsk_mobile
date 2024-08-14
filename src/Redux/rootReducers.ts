@@ -24,6 +24,7 @@ import blockUserSlice from './Slices/BlockUserSlice';
 import unblockUserSlice from './Slices/UnblockUserSlice';
 import allBlockedSlice from './Slices/AllBlockedSlice';
 import multiUnblockSlice from './Slices/MultiUnblockSlice';
+import logoutSlice from './Slices/LogoutSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -50,7 +51,8 @@ const rootReducer = combineReducers({
 	blockUserSlice,
 	unblockUserSlice,
 	allBlockedSlice,
-	multiUnblockSlice
+	multiUnblockSlice,
+	logoutSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
