@@ -12,7 +12,9 @@ import {
 } from '../../DB/DBFunctions';
 import {saveURLImage} from '../../Functions/SaveBase64Image';
 import {downloadImage} from '../../Functions/DownloadLocalPic';
-import notifee from '@notifee/react-native';
+import {SheetManager} from 'react-native-actions-sheet';
+import content from '../../Assets/Languages/english.json';
+import {hideAlertBox} from '../../Functions/ShowHideAlert';
 
 type CustomRemoteMessageData = {
   message: string;
@@ -65,13 +67,11 @@ export const useNotifications = () => {
               message,
               senderUsername,
               type,
-              notifee,
               receiverUsername,
               profilePic,
             } = remoteMessage.data;
             let downloadedPic;
             if (senderUsername && message && type) {
-              // displayNotification(JSON.parse(notifee));
               const chatExists = await checkChatExists(
                 senderUsername,
                 receiverUsername,
@@ -150,6 +150,13 @@ export const useNotifications = () => {
         let fcmToken = await getToken();
         dispatch(sendDeviceToken({deviceToken: fcmToken}));
       } else {
+        SheetManager.show('AlertBox-sheet', {
+          payload: {
+            title: content.AlertBox.notificationTitle,
+            description: content.AlertBox.notificationDescription,
+            onPressOk: hideAlertBox,
+          },
+        });
         console.log('Notifications permission denied');
       }
     } catch (err) {

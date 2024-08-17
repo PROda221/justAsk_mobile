@@ -1,6 +1,6 @@
 {
   "LoginScreen": {
-    "forgotPassword":"Forgot Password?",
+    "forgotPassword": "Forgot Password?",
     "createNewAccount": "Create New Account?",
     "signUp": " Sign Up",
     "loginTitle1": "Login Your",
@@ -33,7 +33,6 @@
     "title1": "Select Your",
     "title2": "Expertise",
     "subtitle": "Select some topics on which you can advice people!"
-
   },
   "ForgotPasswordScreen": {
     "title1": "Forget Password",
@@ -88,9 +87,7 @@
   "ChatScreen": {
     "yourBlockStatus": "You blocked this user. Tap to unblock",
     "chatBlocked": "Chat Blocked",
-    "message": "Message",
-    "blockError": "You have been blocked by the user",
-    "unblockToOpen": "You have blocked this user. Unblock to chat"
+    "message": "Message"
   },
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",
@@ -122,8 +119,6 @@
     "shareTitle": "HumanTouch Invite Link",
     "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
     "shareUrl": "https://www.npmjs.com/package/@react-native-community/netinfo",
-    "logoutTitle": "Log out",
-    "logoutWarning": "Are you sure to logout?",
     "cancelButton": "Cancel",
     "yesButton": "Yes",
     "settingsTitle": "Settings",
@@ -133,7 +128,6 @@
     "inviteAFriend": "Invite a friend",
     "deleteAccount": "Delete Account",
     "logout": "Log out"
-
   },
   "NoInternetScreen": {
     "title": "No Internet Connection",
@@ -143,5 +137,18 @@
   "BlockScreen": {
     "title": "Blocked Users",
     "unblockButton": "Unblock Selected"
+  },
+  "AlertBox": {
+    "notificationTitle": "Messages Unavailable Offline",
+    "notificationDescription": "Enable notifications in your phone settings to receive messages even when you're offline.",
+    "blockedTitle": "Chat Blocked",
+    "blockError": "You have been blocked by the user. You cannot send messages anymore",
+    "unblockToOpen": "You have blocked this user. Please unblock to chat again",
+    "logoutTitle": "Log out",
+    "logoutWarning": "Are you sure you want to log out? You’ll not receive messages for this account until you sign in again.",
+    "resetPassTitle": "Exiting Resetting Password",
+    "resetPassMessage": "Are you sure you want to leave?",
+    "genereSelectionTitle": "Limit Reached",
+    "genreSelectionDescription": "You can only select up to 3 genres. Please adjust your selection."
   }
 }

@@ -24,6 +24,7 @@ type PropsType = {
   error: string;
   navigation: NativeStackNavigationProp<ParamListBase>;
   activeChats: Model[] | [];
+  retryProfileApi: () => void;
 };
 
 const enhance = withObservables(['accountName'], ({accountName}) => ({
@@ -35,6 +36,7 @@ const ActiveChats = ({
   navigation,
   error,
   accountName,
+  retryProfileApi,
 }: PropsType) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
@@ -51,7 +53,7 @@ const ActiveChats = ({
 
   const renderListHeader = () => {
     if (error) {
-      return <ErrorBox title="Error" message={error} />;
+      return <ErrorBox title="Error" message={error} retry={retryProfileApi} />;
     }
   };
 

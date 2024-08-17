@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, TouchableOpacity, Alert} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import {Image} from 'expo-image';
 import {Typography} from '../../../Components';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -30,6 +30,7 @@ import database from '../../../DB/database';
 import {Model, Q} from '@nozbe/watermelondb';
 import Loader from '../../../Components/Loader/Loader';
 import {useLogout} from '../../../CustomHooks/AppHooks/useLogout';
+import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -96,20 +97,11 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      content.SettingsScreen.logoutTitle,
-      content.SettingsScreen.logoutWarning,
-      [
-        {
-          text: content.SettingsScreen.cancelButton,
-          style: 'cancel',
-        },
-        {
-          text: content.SettingsScreen.yesButton,
-          onPress: callLogoutApi,
-          style: 'cancel',
-        },
-      ],
+    showAlertBox(
+      content.AlertBox.logoutTitle,
+      content.AlertBox.logoutWarning,
+      callLogoutApi,
+      hideAlertBox,
     );
   };
 

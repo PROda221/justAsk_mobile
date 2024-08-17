@@ -9,9 +9,10 @@ import {Typography} from '../Typography';
 type ErrorBoxProps = {
   title: string;
   message: string;
+  retry?: () => void;
 };
 
-const ErrorBox = ({title, message}: ErrorBoxProps) => {
+const ErrorBox = ({title, message, retry}: ErrorBoxProps) => {
   const {colors} = useTheme();
   const styles = getErrorBoxStyles(colors);
 
@@ -36,6 +37,15 @@ const ErrorBox = ({title, message}: ErrorBoxProps) => {
         textStyle={styles.message}>
         {message}
       </Typography>
+      {retry && (
+        <Typography
+          fontWeight="400"
+          bgColor={colors.errorBoxTextColor}
+          onPress={retry}
+          textStyle={styles.title}>
+          Retry
+        </Typography>
+      )}
     </View>
   );
 };

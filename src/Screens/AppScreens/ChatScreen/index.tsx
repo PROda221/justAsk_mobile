@@ -1,6 +1,5 @@
 import {type ParamListBase, type RouteProp} from '@react-navigation/native';
 import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Alert} from 'react-native';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
@@ -34,6 +33,7 @@ import {Model} from '@nozbe/watermelondb';
 import {YourBlockStatus} from './YourBlockStatus';
 import ChatHeader from './ChatHeader';
 import content from '../../../Assets/Languages/english.json';
+import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 
 type MessageType = {
   item: {
@@ -138,7 +138,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const sendMessage = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
-      Alert.alert(content.ChatScreen.unblockToOpen);
+      showAlertBox(
+        content.AlertBox.blockedTitle,
+        content.AlertBox.unblockToOpen,
+        hideAlertBox,
+      );
       return;
     }
     if (getValues('chattext')) {
@@ -151,7 +155,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const handleImageSelection = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
-      Alert.alert(content.ChatScreen.unblockToOpen);
+      showAlertBox(
+        content.AlertBox.blockedTitle,
+        content.AlertBox.unblockToOpen,
+        hideAlertBox,
+      );
       return;
     }
     const options: ImageLibraryOptions = {
@@ -176,7 +184,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const openUserProfle = () => {
     if (activeChat[0]?._raw['got_blocked_status']) {
-      Alert.alert(content.ChatScreen.blockError);
+      showAlertBox(
+        content.AlertBox.blockedTitle,
+        content.AlertBox.blockError,
+        hideAlertBox,
+      );
       return;
     }
     navigation.navigate('UserProfile', {

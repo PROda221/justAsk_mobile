@@ -94,6 +94,7 @@ const darkColors: DarkColors = {
   disabledButton: '#6C757D',
   enabledButton: '#28A745',
   splashScreenBackground: '#0097b2',
+  alertIcon: '#F2C94C',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

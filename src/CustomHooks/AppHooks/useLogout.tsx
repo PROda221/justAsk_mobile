@@ -3,12 +3,14 @@ import {type RootState} from '../../Redux/rootReducers';
 import {callLogout, resetLogoutResponse} from '../../Redux/Slices/LogoutSlice';
 import {useEffect} from 'react';
 import Toast from 'react-native-toast-message';
+import {SheetManager} from 'react-native-actions-sheet';
 
 export const useLogout = (onSuccess: () => void) => {
   const dispatch = useDispatch();
   const logoutSlice = useSelector((state: RootState) => state.logoutSlice);
 
-  const callLogoutApi = () => {
+  const callLogoutApi = async () => {
+    await SheetManager.hide('AlertBox-sheet');
     dispatch(callLogout());
   };
 

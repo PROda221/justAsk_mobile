@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import './Components/ActionSheet/sheets.tsx';
 import {toastConfig} from './Components/CustomToast/index.tsx';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import {SheetProvider} from 'react-native-actions-sheet';
 
 const App = (): JSX.Element => {
   useEffect(() => {
@@ -33,7 +34,9 @@ const App = (): JSX.Element => {
       <PersistGate loading={null} persistor={persistor}>
         <PaperProvider>
           <ThemeProvider>
-            <Navigation />
+            <SheetProvider>
+              <Navigation />
+            </SheetProvider>
             <Toast config={toastConfig} />
           </ThemeProvider>
         </PaperProvider>

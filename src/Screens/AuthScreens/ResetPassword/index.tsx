@@ -21,6 +21,8 @@ import {useResetPass} from '../../../CustomHooks/AuthHooks/useResetPass';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import content from '../../../Assets/Languages/english.json';
 import ErrorBox from '../../../Components/ErrorBox';
+import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
+import {SheetManager} from 'react-native-actions-sheet';
 
 type Params = {
   params: {
@@ -76,6 +78,7 @@ const ResetPassword = ({navigation, route}: Props): JSX.Element => {
 
   const goBack = () => {
     resetResetPassReducer();
+    SheetManager.hide('AlertBox-sheet');
     if (isLogin) {
       navigation.popToTop();
     } else {
@@ -98,19 +101,11 @@ const ResetPassword = ({navigation, route}: Props): JSX.Element => {
   };
 
   const handleBackButton = () => {
-    Alert.alert(
-      `${content.ResetPassScreen.alertTitle}`,
-      `${content.ResetPassScreen.alertMessage}`,
-      [
-        {
-          text: `${content.ResetPassScreen.cancel}`,
-          style: 'cancel',
-        },
-        {
-          text: `${content.ResetPassScreen.agree}`,
-          onPress: goBack,
-        },
-      ],
+    showAlertBox(
+      content.AlertBox.resetPassTitle,
+      content.AlertBox.resetPassMessage,
+      goBack,
+      hideAlertBox,
     );
   };
 

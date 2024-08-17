@@ -67,6 +67,7 @@ export type DarkColors = {
   progressBarColor: string;
   noInternetRetryButton: string;
   noInternetIcon: string;
+  alertIcon: string;
   disabledButton: string;
   enabledButton: string;
   splashScreenBackground: string;

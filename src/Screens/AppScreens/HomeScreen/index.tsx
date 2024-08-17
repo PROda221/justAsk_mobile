@@ -30,16 +30,11 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
-  const {net} = useCheckNet();
+  // useCheckNet();
   const isFocused = useIsFocused();
 
-  const {profileSuccess, profileLoading, profileError} = useProfile(isFocused);
-
-  useEffect(() => {
-    if (!net) {
-      SheetManager.show('NoInternet-sheet');
-    }
-  }, [net]);
+  const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
+    useProfile(isFocused);
 
   useEffect(() => {
     if (profileLoading) {
@@ -87,6 +82,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       <ActiveChats
         navigation={navigation}
         error={profileError?.message ?? ''}
+        retryProfileApi={callGetProfileApi}
         accountName={profileSuccess?.username ?? ''}
       />
     </View>

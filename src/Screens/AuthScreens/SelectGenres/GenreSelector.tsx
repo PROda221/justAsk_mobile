@@ -3,6 +3,8 @@ import {View, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getGenreSelectorStyles} from './GenreSelectorStyle';
 import {Typography} from '../../../Components';
+import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
+import content from '../../../Assets/Languages/english.json';
 
 type Props = {
   genres: string[];
@@ -28,7 +30,11 @@ const GenreSelector = ({genres, getSelectedValues}: Props) => {
       setSelectedGenres([...selectedGenres, genre]);
     } else {
       // Only allow 3 genres to be selected
-      alert('You can only select up to 3 genres.');
+      showAlertBox(
+        content.AlertBox.genereSelectionTitle,
+        content.AlertBox.genreSelectionDescription,
+        hideAlertBox,
+      );
     }
   };
 
