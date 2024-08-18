@@ -2,6 +2,9 @@
 #
 .DS_Store
 
+android/app/google-services.json
+ios/app_lst/GoogleService-Info.plist
+
 # Xcode
 #
 build/
@@ -20,7 +23,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-ios/.xcode.env.local
+**/.xcode.env.local
 
 # Android/IntelliJ
 #
@@ -36,6 +39,7 @@ local.properties
 
 # node.js
 #
+dist
 node_modules/
 npm-debug.log
 yarn-error.log
@@ -58,7 +62,7 @@ package-lock.json
 *.jsbundle
 
 # Ruby / CocoaPods
-/ios/Pods/
+**/Pods/
 /vendor/bundle/
 
 # Temporary files created by Metro to check the health of the file watcher
@@ -66,3 +70,10 @@ package-lock.json
 
 # testing
 /coverage
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

@@ -1,67 +1,102 @@
- 
-import React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  BackHandler,
+  View,
+  TouchableOpacity,
+  type ViewStyle,
+} from 'react-native';
 import styled from 'styled-components';
-import {colors} from '../../DesignTokens/Colors';
-import {type NavigationProp, useNavigation} from '@react-navigation/native';
-import {DrawerActions} from '@react-navigation/native';
-import {Hamburger, HeaderBackArrow} from '../../Assets/Images';
+import {
+  type NavigationProp,
+  useNavigation,
+  type ParamListBase,
+} from '@react-navigation/native';
+import {HeaderBackArrow} from '../../Assets/Images';
 import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
-
-type HeaderProps = {
-  title: string;
-  drawer?: boolean;
-  center?: boolean;
-};
+import {useTheme} from '../../useContexts/Theme/ThemeContext';
+import {getHeaderStyles} from './styles';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import {type Router} from 'react-native-actions-sheet';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const Container = styled(View)<{drawer?: boolean}>`
-  flex-direction: row;
-  padding: 16px 0 16px 16px;
-  align-items: center;
-  border-bottom-width: ${props => (props.drawer ? 0 : '1px')};
-  border-color: ${props => (props.drawer ? colors.white : colors.headerBottom)};
-`;
-
-const Title = styled(Text)<{drawer?: boolean, textCenter?: boolean}>`
-  color: ${({drawer}) => (drawer ? colors.homeTitle : colors.black)};
-  margin-left: 10px;
-  font-size: 16px;
-  flex: 1;
-  text-align: ${({textCenter})=> textCenter ? "center" : "left"};
-  padding-right: 30px;
+  padding: 20px 0 0 0;
+  align-items: flex-start;
 `;
 
 const leftFeatureHandler = (
-  navigation: NavigationProp<ReactNavigation.RootParamList>,
-  drawer?: boolean,
+  navigation:
+    | NavigationProp<ReactNavigation.RootParamList>
+    | Router
+    | undefined,
+  onPress: () => void,
+  dontGoBack?: boolean,
 ): void => {
-  if (drawer) {
-    navigation.dispatch(DrawerActions.openDrawer());
-  } else {
-    navigation.goBack();
+  if (!dontGoBack) {
+    navigation?.goBack();
   }
+  onPress?.();
 };
 
-const Header = (props: HeaderProps) => {
-  const navigation = useNavigation();
+type Props = {
+  navigation?:
+    | Router<'SearchFeature-sheet'>
+    | undefined
+    | NativeStackNavigationProp<ParamListBase>;
+  containerStyle?: ViewStyle;
+  onPress?: () => void;
+  dontGoBack?: boolean;
+};
+
+const Header = ({navigation, containerStyle, onPress, dontGoBack}: Props) => {
+  const headerNavigation = navigation ? navigation : useNavigation();
+  const {colors} = useTheme();
+  const styles = getHeaderStyles(colors);
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
+    };
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{scale: scale.value}],
+  }));
+
+  const handleBackPress = () => {
+    leftFeatureHandler(headerNavigation, onPress, dontGoBack);
+    return true;
+  };
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1);
+    leftFeatureHandler(headerNavigation, onPress, dontGoBack);
+  };
 
   return (
-    <Container drawer={props.drawer}>
-      <TouchableOpacity
-        onPress={() => {
-          leftFeatureHandler(navigation, props.drawer);
-        }}>
-        {props.drawer ? (
-          <Hamburger width={horizontalScale(23)} height={verticalScale(16)} />
-        ) : (
+    <Animated.View style={animatedStyle}>
+      <Container style={containerStyle}>
+        <TouchableOpacity
+          style={styles.backButtonContainer}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}>
           <HeaderBackArrow
             width={horizontalScale(9.26)}
             height={verticalScale(16)}
           />
-        )}
-      </TouchableOpacity>
-      <Title textCenter={props.center} drawer={props.drawer}>{props.title}</Title>
-    </Container>
+        </TouchableOpacity>
+      </Container>
+    </Animated.View>
   );
 };
 

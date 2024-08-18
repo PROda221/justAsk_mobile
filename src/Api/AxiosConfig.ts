@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import axios, {type AxiosResponse} from 'axios';
+import { baseURL } from '../Constants';
+import { retrieveAccessToken } from '../Functions/EncryptedStorage';
 
 // Set your base URL here
-const baseURL = 'https://www.lst.ac/server/api';
 
 // Create axios instance
 const axiosInstance = axios.create({
@@ -12,9 +13,9 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor to include the auth token in each request
 axiosInstance.interceptors.request.use(
-  config => {
+  async config => {
     // Add your authentication logic here, for example:
-    const authToken = 'TFNUQVBQOkxzdEFwaVBhc3M=';
+    const authToken = await retrieveAccessToken();
     if (authToken) {
       config.headers.Authorization = `Bearer ${authToken}`;
     }
@@ -40,7 +41,7 @@ const post = async <T>(
   } catch (error) {
     // Handle errors
     if (error.response) {
-      throw error.response.data;
+      throw {...error.response.data, status: error.response.status};
     }
 
     throw error;

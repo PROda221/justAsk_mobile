@@ -1,211 +1,170 @@
-import {View, ScrollView, StyleSheet} from 'react-native';
-import React from 'react';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {Typography} from '../../../Components';
-import Header from '../../../Components/Header';
+import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';
-import {colors} from '../../../DesignTokens/Colors';
-import {
-  moderateScale,
-  verticalScale,
-} from '../../../Functions/StyleScale';
-import {MyProfile} from '../../../Assets/Images';
+import {type LogInScreenStyles, getLogInScreenStyles} from './styles';
+import {useTheme} from '../../../useContexts/Theme/ThemeContext';
+import Header from '../../../Components/Header';
+import Animated, {FadeInUp} from 'react-native-reanimated';
+import {type FieldValues, useForm, type SubmitHandler} from 'react-hook-form';
+import {RenderLoginOptions} from '../../../Components/RenderLoginOptions';
+import {type ParamListBase} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useLogin} from '../../../CustomHooks/AuthHooks/useLogin';
+import content from '../../../Assets/Languages/english.json';
+import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
+import ErrorBox from '../../../Components/ErrorBox';
+import {useIsFocused} from '@react-navigation/native';
 
-const LoginScreen = (): JSX.Element => {
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+const RenderTitle = ({
+  styles,
+  colors,
+}: {
+  styles: LogInScreenStyles;
+  colors: DarkColors;
+}) => (
+  <>
+    <Typography
+      bgColor={colors.textPrimaryColor}
+      fontWeight="400"
+      textStyle={styles.title}>
+      {content.LoginScreen.loginTitle1}
+    </Typography>
+    <Typography
+      bgColor={colors.textPrimaryColor}
+      fontWeight="400"
+      textStyle={styles.title}>
+      {content.LoginScreen.loginTitle2}
+    </Typography>
+  </>
+);
+
+const LogIn = ({navigation}: Props): JSX.Element => {
+  const {control, handleSubmit} = useForm();
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
-    padding: 0 8px 0 8px;
   `;
+
+  const isFocused = useIsFocused();
+  const {colors} = useTheme();
+
+  useEffect(() => {
+    if (!isFocused) {
+      resetLoginReducer();
+    }
+  }, [isFocused]);
+
+  const {callLoginApi, resetLoginReducer, loginLoading, loginError} =
+    useLogin();
+
+  const styles = getLogInScreenStyles(colors);
+
+  const handleLogin: SubmitHandler<FieldValues> = (data: FieldValues) => {
+    resetLoginReducer();
+    callLoginApi({
+      username: data.username as string,
+      password: data.password as string,
+    });
+  };
+
+  const renderGoogleLogin = () => (
+    <View style={styles.googleLoginContainer}>
+      <View style={styles.seperator} />
+      <View style={styles.loginOptionsContainer}>
+        <RenderLoginOptions colors={colors} navigation={navigation} />
+      </View>
+    </View>
+  );
+
+  const handleForgotScreen = () => {
+    navigation.navigate('Forgot Password');
+  };
+
+  const renderForm = () => (
+    <>
+      <TextInput
+        name="username"
+        secureTextEntry={false}
+        control={control}
+        label="Username"
+        placeholder="Username"
+        leftIcon="user"
+        rules={{required: content.LoginScreen.usernameMissing}}
+      />
+      <View style={styles.textInputContainer}>
+        <TextInput
+          name="password"
+          secureTextEntry={true}
+          control={control}
+          label="Password"
+          placeholder="Password"
+          leftIcon="lock"
+          rules={{required: content.LoginScreen.passwordMissing}}
+        />
+      </View>
+      <TouchableOpacity onPress={handleForgotScreen}>
+        <Typography
+          bgColor={colors.buttonTextColor}
+          fontWeight="400"
+          textStyle={styles.forgotPassText}>
+          {content.LoginScreen.forgotPassword}
+        </Typography>
+      </TouchableOpacity>
+      {loginError && (
+        <ErrorBox
+          title={`${content.LoginScreen.errorBoxTitle}`}
+          message={loginError.message}
+        />
+      )}
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          loading={loginLoading}
+          label="Login"
+          radius={14}
+          onPress={handleSubmit(handleLogin)}
+        />
+      </View>
+      <View style={styles.newAccountTextContainer}>
+        <Typography
+          bgColor={colors.loginOptionsTextColor}
+          fontWeight="400"
+          textStyle={styles.alreadyHaveAnAccount}>
+          {content.LoginScreen.createNewAccount}
+        </Typography>
+        <Typography
+          bgColor={colors.buttonTextColor}
+          fontWeight="400"
+          onPress={() => navigation.navigate('Sign Up')}
+          textStyle={styles.alreadyHaveAnAccount}>
+          {content.LoginScreen.signUp}
+        </Typography>
+      </View>
+    </>
+  );
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeAreaContainer}>
-        <Header title={'My Profile'} />
-        <Scroll>
-          <View style={styles.container}>
-            <View style={styles.profile}>
-              <MyProfile />
-              {/* <EditProfile /> */}
+        <Animated.View
+          entering={FadeInUp.duration(1000)}
+          style={styles.mainContainer}>
+          <Header onPress={resetLoginReducer} />
+          <Scroll>
+            <View style={styles.titleContainer}>
+              <RenderTitle styles={styles} colors={colors} />
             </View>
-            <View style={styles.textBox}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'First Name'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox2}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Last Name'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Email Address'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox2}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Contach No.'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Date Of Birth'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox2}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Country'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-            <View style={styles.textBox}>
-              <View style={styles.leftContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'700'}
-                  textStyle={styles.textContentStyle}>
-                  {'Address'}
-                </Typography>
-              </View>
-              <View style={styles.rightContainer}>
-                <Typography
-                  bgColor={'black'}
-                  size={'medium'}
-                  fontWeight={'500'}
-                  textStyle={styles.textContentStyle}>
-                  {': Sachin asfafafaewfawfawffafwfafwfvbzregzrg'}
-                </Typography>
-              </View>
-            </View>
-          </View>
-        </Scroll>
+            <View style={styles.formContainer}>{renderForm()}</View>
+            {renderGoogleLogin()}
+          </Scroll>
+        </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-    borderColor: colors.lightGrey,
-    borderRadius: moderateScale(10),
-    borderWidth: moderateScale(1),
-    marginTop: moderateScale(10),
-
-  },
-  leftContainer: {width: '40%'},
-  profile: {alignItems: 'center', marginVertical: verticalScale(30)},
-  rightContainer: {width: '60%'},
-
-  safeAreaContainer: {
-    backgroundColor: colors.white,
-    flex: 1,
-  },
-
-  textBox: {
-    borderColor: colors.lightGrey,
-    borderTopWidth: moderateScale(1),
-    flexDirection: 'row',
-    paddingHorizontal: moderateScale(16),
-    paddingVertical: verticalScale(16),
-  },
-  textBox2: {
-    backgroundColor: colors.studentCard,
-    borderColor: colors.lightGrey,
-    borderTopWidth: moderateScale(1),
-    flexDirection: 'row',
-    paddingHorizontal: moderateScale(16),
-    paddingVertical: verticalScale(16),
-  },
-  textContentStyle: {textAlign: 'left'},
-});
-export default LoginScreen;
+export default LogIn;

@@ -1,3 +1,4 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -8,16 +9,18 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# Uncomment this line if you're not using auto-linking or if auto-linking causes trouble
+# pod 'WatermelonDB', path: '../node_modules/@nozbe/watermelondb'
+
+# WatermelonDB dependency, should not be needed on modern React Native
+# (please file an issue if this causes issues for you)
+# pod 'React-jsi', path: '../node_modules/react-native/ReactCommon/jsi', modular_headers: true
+
+pod 'react-native-compressor', :path => '../node_modules/react-native-compressor'
+
+# WatermelonDB dependency
+pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true
+
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -25,7 +28,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'app_lst' do
+target 'just_ask' do
   config = use_native_modules!
 
   use_react_native!(
@@ -39,7 +42,7 @@ target 'app_lst' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'app_lstTests' do
+  target 'just_askTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -50,6 +53,7 @@ target 'app_lst' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false
+       # :ccache_enabled => true
     )
   end
 end
