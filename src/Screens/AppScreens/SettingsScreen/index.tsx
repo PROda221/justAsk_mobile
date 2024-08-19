@@ -31,6 +31,7 @@ import {Model, Q} from '@nozbe/watermelondb';
 import Loader from '../../../Components/Loader/Loader';
 import {useLogout} from '../../../CustomHooks/AppHooks/useLogout';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
+import {useDeactivateAccount} from '../../../CustomHooks/AppHooks/useDeactivateAccount';
 
 type PropsType = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -61,6 +62,8 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
   const styles = getSettingsScreenStyles(colors);
   const {resetLoginReducer} = useLogin();
   const {callLogoutApi, logoutLoading} = useLogout(logout);
+  const {callDeactivateAccountApi, deactivateLoading} =
+    useDeactivateAccount(logout);
   const {resetGoogleLoginReducer} = useGoogleLogin();
   const {callSendOtpApi, sendOtpSuccess, sendOtpLoading} = useSendOtp(
     navigation,
@@ -105,6 +108,15 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
     );
   };
 
+  const handleDeactivateAccount = () => {
+    showAlertBox(
+      content.AlertBox.deactivateTitle,
+      content.AlertBox.deactivateWarning,
+      callDeactivateAccountApi,
+      hideAlertBox,
+    );
+  };
+
   const listData = [
     {
       name: content.SettingsScreen.changePassword,
@@ -130,12 +142,12 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
       iconColor: colors.settingsIconColor,
       onPress: onShare,
     },
-    // {
-    //   name: content.SettingsScreen.deleteAccount,
-    //   iconName: 'delete-forever',
-    //   iconColor: colors.settingsDeleteColor,
-    //   onPress: handleListOnPress,
-    // },
+    {
+      name: content.SettingsScreen.deactivateAccount,
+      iconName: 'delete-forever',
+      iconColor: colors.settingsDeleteColor,
+      onPress: handleDeactivateAccount,
+    },
     {
       name: content.SettingsScreen.logout,
       iconName: 'logout',
@@ -156,7 +168,10 @@ const SettingsScreen = ({navigation, currentUser}: PropsType) => {
         </Typography>
       </View>
 
-      <Loader size="large" isLoading={sendOtpLoading || logoutLoading} />
+      <Loader
+        size="large"
+        isLoading={sendOtpLoading || logoutLoading || deactivateLoading}
+      />
 
       <TouchableOpacity
         onPress={openEditProfile}

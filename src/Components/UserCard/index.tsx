@@ -7,7 +7,7 @@ import {Typography} from '../Typography';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {moderateScale} from '../../Functions/StyleScale';
-import {ParamListBase, useNavigation} from '@react-navigation/native';
+import {ParamListBase} from '@react-navigation/native';
 import {SheetManager} from 'react-native-actions-sheet';
 import {getProfilePic} from '../../Functions/GetProfilePic';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -20,18 +20,23 @@ type Props = {
   skills: string[];
   status: string;
   image: string;
+  navigation?: NativeStackNavigationProp<ParamListBase>;
 };
 
-export const UserCard = ({username, skills, status, image}: Props) => {
+export const UserCard = ({
+  username,
+  skills,
+  status,
+  image,
+  navigation,
+}: Props) => {
   const {colors} = useTheme();
   const styles = getUserCardStyles(colors);
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
-  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-
   const onCardPress = () => {
     SheetManager.hide('SearchFeature-sheet');
-    navigation.navigate('ChatScreen', {
+    navigation?.navigate('ChatScreen', {
       username,
       status,
       skills,

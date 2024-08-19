@@ -49,6 +49,7 @@ export const updateOrCreateUser = async (userData, profilePic) => {
           u.skills = JSON.stringify(userData.skills);
           u.emailId = userData.emailId;
           u.averageRating = userData.averageRating;
+          u.deactivated = userData.deactivated;
         });
       } else {
         // User does not exist, create a new user
@@ -260,6 +261,7 @@ export async function updateChatData(chatData, account, profilePic) {
           chat.skills = JSON.stringify(chatData.adviceGenre);
           chat.gotBlockedStatus = chatData.gotBlockedStatus;
           chat.youBlockedStatus = chatData.youBlockedStatus;
+          chat.deactivated = chatData.deactivated;
         });
       } else {
         console.log('chat dosent exist');
@@ -373,7 +375,7 @@ export function getCurrentChatObservable(account, username) {
           return database.collections
             .get('chats')
             .query(Q.where('user_id', userId), Q.where('chat_id', username))
-            .observeWithColumns(['you_blocked_status', 'got_blocked_status', 'profile_pic', 'status', 'advice_genre', 'username']);
+            .observeWithColumns(['you_blocked_status', 'got_blocked_status', 'profile_pic', 'status', 'advice_genre', 'username', 'deactivated']);
         } catch (error) {
           console.error('Error while querying chats:', error);
           // Return an empty observable or handle the error

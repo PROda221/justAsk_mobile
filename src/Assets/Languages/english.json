@@ -87,7 +87,8 @@
   "ChatScreen": {
     "yourBlockStatus": "You blocked this user. Tap to unblock",
     "chatBlocked": "Chat Blocked",
-    "message": "Message"
+    "message": "Message",
+    "chatDeactivated": "Account Deactivated"
   },
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",
@@ -127,6 +128,7 @@
     "blockedList": "Blocked List",
     "inviteAFriend": "Invite a friend",
     "deleteAccount": "Delete Account",
+    "deactivateAccount": "Deactivate",
     "logout": "Log out"
   },
   "NoInternetScreen": {
@@ -149,6 +151,12 @@
     "resetPassTitle": "Exiting Resetting Password",
     "resetPassMessage": "Are you sure you want to leave?",
     "genereSelectionTitle": "Limit Reached",
-    "genreSelectionDescription": "You can only select up to 3 genres. Please adjust your selection."
+    "genreSelectionDescription": "You can only select up to 3 genres. Please adjust your selection.",
+    "deactivateTitle": "Deactivate Account",
+    "deactivateWarning": "Are you sure you want to deactivate your account? You will no longer be able to use the app unless you reactivate. You can reactivate again by logining in.",
+    "accountDeactivated": "Account Deactivated",
+    "accountDeactivatedDesc": "This account has been deactivated. You will no longer be able to chat unless user reactivates.",
+    "yourAccountDeactivatedDec": "Your account has been deactivated. Please reactivate to continue"
+
   }
 }

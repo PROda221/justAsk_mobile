@@ -8,6 +8,8 @@ import ViewImage from './ViewImage';
 import {AddProfileImage, AddUserStatus} from './UserEditProfileBottomSheet';
 import NoInternetScreen from './NoInternetScreen';
 import AlertBox from './AlertBox';
+import {ParamListBase} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 registerSheet('SearchFeature-sheet', SearchFeature);
 registerSheet('ViewProfileImage-sheet', ViewImage);
@@ -21,8 +23,11 @@ registerSheet('AlertBox-sheet', AlertBox);
 declare module 'react-native-actions-sheet' {
   interface Sheets {
     'SearchFeature-sheet': SheetDefinition<{
+      payload: {
+        navigation: NativeStackNavigationProp<ParamListBase>;
+      };
       routes: {
-        SearchScreen: RouteDefinition;
+        SearchScreen: RouteDefinition<{}>;
         // Route B with params.
         AdviceListScreen: RouteDefinition;
       };
@@ -45,6 +50,8 @@ declare module 'react-native-actions-sheet' {
         description: string;
         onPressOk: () => void;
         onPressCancel?: () => void;
+        confirmCustomName?: string;
+        cancelCustomName?: string;
       };
     }>;
   }

@@ -12,12 +12,12 @@ import {useNotifications} from '../../../CustomHooks/AppHooks/useNotifications';
 import {type Model} from '@nozbe/watermelondb';
 import content from '../../../Assets/Languages/english.json';
 import ActiveChats from './ActiveChats';
-import {useCheckNet} from '../../../CustomHooks/AppHooks/useCheckNet';
 import HomeHeader from './HomeHeader';
 import {useIsFocused} from '@react-navigation/native';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {Skeleton} from 'moti/skeleton';
 import {verticalScale} from '../../../Functions/StyleScale';
+import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccount';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -36,6 +36,8 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
     useProfile(isFocused);
 
+  useActivateAccount(profileSuccess?.deactivated, callGetProfileApi);
+
   useEffect(() => {
     if (profileLoading) {
       setInitialLoader(false);
@@ -49,7 +51,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
-      onPress={async () => SheetManager.show('SearchFeature-sheet')}>
+      onPress={async () =>
+        SheetManager.show('SearchFeature-sheet', {payload: {navigation}})
+      }>
       <View style={styles.searchContainer}>
         <Typography
           fontWeight="400"

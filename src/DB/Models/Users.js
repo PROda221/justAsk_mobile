@@ -15,6 +15,7 @@ export default class Users extends Model {
   @field('emailid') emailid;
   @field('average_rating') averageRating;
   @field('user_id') userId;
+  @field('deactivated') deactivated;
   @children('chats') chats;
   @readonly @date('created_at') createdAt;
   @readonly @date('updated_at') updatedAt;

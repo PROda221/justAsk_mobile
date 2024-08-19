@@ -37,7 +37,7 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
                 fontWeight="400"
                 bgColor={colors.noInternetRetryButton}
                 textStyle={styles.buttonText}>
-                {'Cancel'}
+                {payload?.cancelCustomName ?? 'Cancel'}
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
@@ -47,7 +47,7 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
                 fontWeight="400"
                 bgColor={colors.noInternetRetryButton}
                 textStyle={styles.buttonText}>
-                {'Yes'}
+                {payload?.confirmCustomName ?? 'Yes'}
               </Typography>
             </TouchableOpacity>
           </View>

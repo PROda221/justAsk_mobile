@@ -12,6 +12,7 @@ export type UserDetails = {
     profilePic: string;
     gotBlockedStatus: boolean;
     youBlockedStatus: boolean;
+    deactivated: boolean;
 }
 
  type UserProfile = {

@@ -5,7 +5,11 @@ import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getSearchStyles} from './styles';
 import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
-import ActionSheet, {Route, useSheetRouter} from 'react-native-actions-sheet';
+import ActionSheet, {
+  Route,
+  SheetProps,
+  useSheetRouter,
+} from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
 
@@ -21,7 +25,7 @@ import Loader from '../Loader/Loader';
 
 let currentGenres: string[];
 
-const SearchScreen = () => {
+const SearchScreen = ({payload}: SheetProps<'SearchFeature-sheet'>) => {
   const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getSearchStyles(colors);
@@ -117,6 +121,7 @@ const SearchScreen = () => {
   const renderItem = ({item}) => {
     return (
       <UserCard
+        navigation={payload?.navigation}
         username={item.username}
         skills={item.adviceGenre}
         status={item.status}

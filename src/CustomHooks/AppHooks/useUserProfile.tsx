@@ -30,7 +30,8 @@ export const useUserProfile = (username?: string, image?: string) => {
         const profilePic = await downloadImage(
           userProfileSlice.success?.response.userDetails.profilePic ?? '',
           image,
-          userProfileSlice.success?.response.userDetails.gotBlockedStatus,
+          userProfileSlice.success?.response.userDetails.gotBlockedStatus ||
+            userProfileSlice.success?.response.userDetails.deactivated,
         );
         let computedImg = {uri: `file://${profilePic}`};
         updateChatData(

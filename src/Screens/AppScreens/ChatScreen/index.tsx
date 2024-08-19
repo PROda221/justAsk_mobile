@@ -78,19 +78,25 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
+  const closeChat = () => {
+    if (
+      activeChat[0]?._raw['got_blocked_status'] ||
+      activeChat[0]?._raw['deactivated']
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const {control, getValues, resetField} = useForm();
 
   const [height, setHeight] = useState<number>(verticalScale(50));
 
   const position = useSharedValue(
-    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
-      ? 0
-      : 10,
+    !closeChat() && partnerStatus === 'online' ? 0 : 10,
   );
   const opacity = useSharedValue(
-    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
-      ? 1
-      : 0,
+    !closeChat() && partnerStatus === 'online' ? 1 : 0,
   );
 
   const flashListRef = useRef(null);
@@ -112,10 +118,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   // Handle animation of online status
   useEffect(() => {
-    if (
-      !activeChat[0]?._raw['got_blocked_status'] &&
-      partnerStatus === 'online'
-    ) {
+    if (!closeChat() && partnerStatus === 'online') {
       // Move the username up first then appear the status
       position.value = withTiming(0, {duration: 500});
       opacity.value = withDelay(500, withTiming(1, {duration: 500}));
@@ -125,7 +128,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         position.value = withTiming(10, {duration: 500});
       });
     }
-  }, [partnerStatus, activeChat[0]?._raw['got_blocked_status']]);
+  }, [
+    partnerStatus,
+    activeChat[0]?._raw['got_blocked_status'],
+    activeChat[0]?._raw['deactivated'],
+  ]);
 
   // Create animation styles of online status
   const animatedStyle = useAnimatedStyle(() => ({
@@ -139,8 +146,12 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const sendMessage = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.unblockToOpen,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.unblockToOpen,
         hideAlertBox,
       );
       return;
@@ -156,8 +167,12 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const handleImageSelection = async () => {
     if (activeChat[0]?._raw['you_blocked_status']) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.unblockToOpen,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.unblockToOpen,
         hideAlertBox,
       );
       return;
@@ -183,10 +198,14 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   };
 
   const openUserProfle = () => {
-    if (activeChat[0]?._raw['got_blocked_status']) {
+    if (closeChat()) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.blockError,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.blockError,
         hideAlertBox,
       );
       return;
@@ -259,20 +278,20 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           control={control}
           label="Write"
           placeholder={
-            activeChat[0]?._raw['got_blocked_status']
-              ? content.ChatScreen.chatBlocked
-              : content.ChatScreen.message
+            activeChat[0]?._raw['deactivated']
+              ? content.ChatScreen.chatDeactivated
+              : activeChat[0]?._raw['got_blocked_status']
+                ? content.ChatScreen.chatBlocked
+                : content.ChatScreen.message
           }
-          leftIcon={
-            activeChat[0]?._raw['got_blocked_status'] ? 'block' : 'gallary'
-          }
+          leftIcon={closeChat() ? 'block' : 'gallary'}
           rightIcon="chat"
           handleRightIconPress={sendMessage}
-          {...(!activeChat[0]?._raw['got_blocked_status'] && {
+          {...(!closeChat() && {
             handleLeftIconPress: handleImageSelection,
           })}
           multiline={true}
-          editable={!activeChat[0]?._raw['got_blocked_status']}
+          editable={!closeChat()}
           onContentSizeChange={event => {
             setHeight(event.nativeEvent.contentSize.height);
           }}
