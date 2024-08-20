@@ -25,25 +25,7 @@ import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 import content from '../../../Assets/Languages/english.json';
 import {removeFirebaseUrl} from '../../../Functions/DownloadLocalPic';
 import {storageBucketUrl} from '../../../Constants';
-
-type Params = {
-  params: {
-    username: string;
-    status: string;
-    image: string;
-    skills: string[] | string;
-  };
-};
-
-type UserProfileProps = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<Params>;
-};
-
-type NewProfileType = {
-  profileImg: string | null;
-  status: string | null;
-};
+import {UserProfileProps, NewProfileType} from './types';
 
 const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   const [editProfile, setEditProfile] = useState<boolean>(false);

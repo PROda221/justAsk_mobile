@@ -11,7 +11,10 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
   const styles = getAlertBoxStyles(colors);
 
   return (
-    <ActionSheet containerStyle={styles.actionSheet} closeOnPressBack={false}>
+    <ActionSheet
+      containerStyle={styles.actionSheet}
+      closeOnTouchBackdrop={false}
+      closeOnPressBack={false}>
       <View style={styles.container}>
         <View style={styles.center}>
           <Feather name="alert-triangle" size={100} color={colors.alertIcon} />

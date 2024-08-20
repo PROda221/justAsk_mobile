@@ -1,5 +1,3 @@
-import {type ParamListBase, type RouteProp} from '@react-navigation/native';
-import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
 import {View} from 'react-native';
@@ -29,37 +27,11 @@ import {RenderMessageList} from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {withObservables} from '@nozbe/watermelondb/react';
-import {Model} from '@nozbe/watermelondb';
 import {YourBlockStatus} from './YourBlockStatus';
 import ChatHeader from './ChatHeader';
 import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
-
-type MessageType = {
-  item: {
-    id: string;
-    text: string;
-    type: 'image' | 'message';
-    received: boolean;
-    uploadingImage: boolean;
-    createdAt: number;
-  };
-};
-type Params = {
-  params: {
-    username: string;
-    status: string;
-    image: string;
-    skills: string[];
-    accountName: string;
-  };
-};
-
-type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<Params>;
-  activeChat: Model[];
-};
+import {MessageType, Props} from './types';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(

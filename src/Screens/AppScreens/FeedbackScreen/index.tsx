@@ -26,22 +26,9 @@ import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import content from '../../../Assets/Languages/english.json';
-import {RouteProp} from '@react-navigation/native';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {getCurrentChatObservable} from '../../../DB/DBFunctions';
-import {Model} from '@nozbe/watermelondb';
-
-type Params = {
-  params: {
-    username: string;
-    accountName: string;
-  };
-};
-
-type PropsType = {
-  route: RouteProp<Params>;
-  chatDetails: Model[] | [];
-};
+import {PropsType} from './types';
 
 const enhance = withObservables(['route'], ({route}) => ({
   chatDetails: getCurrentChatObservable(

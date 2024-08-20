@@ -19,7 +19,7 @@ export const useActivateAccount = (
   deactivated: boolean = false,
   callProfileApi: () => void,
 ) => {
-  const {callLogoutApi} = useLogout(logout);
+  const {callLogoutApi, logoutLoading} = useLogout(logout);
   const {resetLoginReducer} = useLogin();
   const {resetGoogleLoginReducer} = useGoogleLogin();
   const {userLogedOut} = useIsLogin();
@@ -90,5 +90,6 @@ export const useActivateAccount = (
     ActivateSuccess: activateAccountSlice.success,
     ActivateLoading: activateAccountSlice.loading,
     ActivateError: activateAccountSlice.error,
+    ActivateLogoutLoading: logoutLoading,
   };
 };
