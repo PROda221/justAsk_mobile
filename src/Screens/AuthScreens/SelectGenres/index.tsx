@@ -17,6 +17,8 @@ import GenreSelector from './GenreSelector';
 import {useSignIn} from '../../../CustomHooks/AuthHooks/useSIgnIn';
 import {type DarkColors} from '../../../useContexts/Theme/ThemeType';
 import content from '../../../Assets/Languages/english.json';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
 
 type Params = {
   params: {
@@ -24,6 +26,7 @@ type Params = {
       emailId: string;
       password: string;
       username: string;
+      isGoogleLogin?: boolean;
     };
   };
 };
@@ -65,10 +68,14 @@ const RenderTitle = ({
 
 const SelectGenres = ({navigation, route}: Props): JSX.Element => {
   const {emailId, password, username} = route.params.data;
-  const {callSignUpApi, signUpError, signUpLoading} = useSignIn(
+  const {callSignUpApi, signUpLoading} = useSignIn(
     navigation,
     'LandingScreen',
     'Login',
+    route.params.data?.isGoogleLogin,
+  );
+  const googleLoginLoading = useSelector(
+    (state: RootState) => state.googleLoginSlice.loading,
   );
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
@@ -86,33 +93,12 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
     adviceGenre = value;
   };
 
-  const renderError = () => (
-    <View>
-      <Typography
-        bgColor={colors.errorTextPrimary}
-        size="medium"
-        fontWeight="400"
-        textStyle={styles.errorStyle}>
-        {signUpError?.message}
-      </Typography>
-    </View>
-  );
-
   const renderList = () => (
     <>
       <GenreSelector
         getSelectedValues={handleSelectedValues}
         genres={allGenres}
       />
-      {signUpError && renderError()}
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          loading={signUpLoading}
-          label="Sign Up"
-          radius={14}
-          onPress={handleSignUp}
-        />
-      </View>
     </>
   );
 
@@ -129,6 +115,14 @@ const SelectGenres = ({navigation, route}: Props): JSX.Element => {
             </View>
             <View style={styles.formContainer}>{renderList()}</View>
           </Scroll>
+          <View style={styles.buttonContainer}>
+            <CustomButton
+              loading={signUpLoading || googleLoginLoading}
+              label={route.params.data?.isGoogleLogin ? 'Login' : 'Sign Up'}
+              radius={14}
+              onPress={handleSignUp}
+            />
+          </View>
         </Animated.View>
       </SafeAreaView>
     </SafeAreaProvider>

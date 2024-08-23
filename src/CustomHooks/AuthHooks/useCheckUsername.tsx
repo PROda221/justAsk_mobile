@@ -36,7 +36,9 @@ export const useCheckUsername = (
   useEffect(() => {
     if (checkUsernameSlice.success) {
       resetCheckUsernameReducer();
-      navigtion.navigate(screenName, {data: paramsData});
+      navigtion.navigate(screenName, {
+        data: {...paramsData, isGoogleLogin: true},
+      });
     }
   }, [checkUsernameSlice.success]);
 

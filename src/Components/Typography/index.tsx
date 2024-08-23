@@ -1,7 +1,7 @@
 import React, {type ReactNode} from 'react';
 import styled from 'styled-components/native';
-import {Text} from 'react-native-paper';
-import {View, type TextStyle} from 'react-native';
+// import {Text} from 'react-native-paper';
+import {View, Text, type TextStyle, type LayoutChangeEvent} from 'react-native';
 
 type TypographyProps = {
   bgColor: string;
@@ -14,6 +14,7 @@ type TypographyProps = {
   onPress?: () => void;
   numberOfLines?: number;
   component?: () => JSX.Element;
+  onTextLayout?: (event: LayoutChangeEvent) => void;
 };
 
 type StyledTextType = {
@@ -38,12 +39,10 @@ const setFonts = (size: string) => {
       fontSize = 10;
       break;
   }
-
   return `${fontSize}px`;
 };
 
 const StyledText = styled(Text)<StyledTextType>`
-  /* Adapt the colors based on primary prop */
   text-align: center;
   color: ${props => props.bgColor};
   font-family: 'Urbanist-SemiBold';
@@ -57,11 +56,11 @@ export const Typography = (
   <View style={{flexDirection: 'row'}}>
     <StyledText
       {...(props.numberOfLines && {numberOfLines: props.numberOfLines})}
-      numberOfLines={props.numberOfLines}
+      {...(props.onTextLayout && {onLayout: props.onTextLayout})}
       ellipsizeMode={props.elipses}
       style={props.textStyle}
       bgColor={props.bgColor}
-      size={props.size}
+      size={props.size || 'small'}
       onPress={props.onPress}
       fontWeight={props.fontWeight}>
       {props.children}

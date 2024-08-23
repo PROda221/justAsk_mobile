@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type MyFeedbackStyles = {
   gradientContainer: ViewStyle;
@@ -42,7 +43,7 @@ export type MyFeedbackStyles = {
   userDetailsHeader: ViewStyle;
 };
 
-export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
+export const getMyFeedbackStyles = (colors: DarkColors): MyFeedbackStyles =>
   StyleSheet.create<MyFeedbackStyles>({
     gradientContainer: {
       flex: 1,
@@ -127,6 +128,8 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
       paddingHorizontal: horizontalScale(10),
       paddingTop: verticalScale(5),
       fontSize: moderateScale(12),
+      lineHeight: verticalScale(18),
+      color: colors.textPrimaryColor,
     },
     mainHeader: {
       flexDirection: 'row',

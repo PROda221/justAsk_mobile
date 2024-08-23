@@ -60,6 +60,7 @@ export const useGoogleLogin = (
         text2: googleLoginSlice.error?.message ?? '',
         visibilityTime: 5000,
       });
+      resetGoogleLoginReducer();
     }
   }, [googleLoginSlice.error]);
 

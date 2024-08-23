@@ -29,6 +29,7 @@ import content from '../../../Assets/Languages/english.json';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {getCurrentChatObservable} from '../../../DB/DBFunctions';
 import {PropsType} from './types';
+import {Comment as CommentComponent} from '../../../Components/Comment';
 
 const enhance = withObservables(['route'], ({route}) => ({
   chatDetails: getCurrentChatObservable(
@@ -283,12 +284,12 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
           </View>
         </View>
 
-        <Typography
+        <CommentComponent
+          content={item.content}
           bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.commentText}>
-          {item.content}
-        </Typography>
+          numberOfLines={3}
+          textStyle={styles.commentText}
+        />
       </View>
     );
   };

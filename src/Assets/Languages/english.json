@@ -140,6 +140,10 @@
     "title": "Blocked Users",
     "unblockButton": "Unblock Selected"
   },
+  "CommentComponent": {
+    "showMore": "Show More",
+    "showLess": "Show Less"
+  },
   "AlertBox": {
     "notificationTitle": "Messages Unavailable Offline",
     "notificationDescription": "Enable notifications in your phone settings to receive messages even when you're offline.",

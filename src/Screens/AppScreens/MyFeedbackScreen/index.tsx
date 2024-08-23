@@ -23,6 +23,7 @@ import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
 import {formatTimestamp} from '../../../Functions/FormatTime';
+import {Comment as CommentComponent} from '../../../Components/Comment';
 
 const MyFeedbackPage = () => {
   const [loading, setLoading] = useState(true);
@@ -257,12 +258,12 @@ const MyFeedbackPage = () => {
           </View>
         </View>
 
-        <Typography
+        <CommentComponent
+          content={item.content}
           bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.commentText}>
-          {item.content}
-        </Typography>
+          numberOfLines={3}
+          textStyle={styles.commentText}
+        />
       </View>
     );
   };

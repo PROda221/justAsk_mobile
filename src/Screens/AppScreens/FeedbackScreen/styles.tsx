@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type FeedbackScreenStyles = {
   gradientContainer: ViewStyle;
@@ -43,7 +44,9 @@ export type FeedbackScreenStyles = {
   userDetailsHeader: ViewStyle;
 };
 
-export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
+export const getFeedbackScreenStyles = (
+  colors: DarkColors,
+): FeedbackScreenStyles =>
   StyleSheet.create<FeedbackScreenStyles>({
     gradientContainer: {
       flex: 1,
@@ -128,6 +131,8 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       textAlign: 'justify',
       padding: moderateScale(10),
       fontSize: moderateScale(12),
+      lineHeight: verticalScale(18),
+      color: colors.textPrimaryColor,
     },
     mainHeader: {
       flexDirection: 'row',

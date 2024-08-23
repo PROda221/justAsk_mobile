@@ -71,4 +71,6 @@ export type DarkColors = {
   disabledButton: string;
   enabledButton: string;
   splashScreenBackground: string;
+  showMore: string;
+  showLess: string;
 };
