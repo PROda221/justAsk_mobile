@@ -125,8 +125,7 @@ export const getMyFeedbackStyles = (colors: DarkColors): MyFeedbackStyles =>
     },
     commentText: {
       textAlign: 'justify',
-      paddingHorizontal: horizontalScale(10),
-      paddingTop: verticalScale(5),
+      padding: moderateScale(10),
       fontSize: moderateScale(12),
       lineHeight: verticalScale(18),
       color: colors.textPrimaryColor,
