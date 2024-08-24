@@ -76,7 +76,7 @@ const StyledTextInput = styled(RNTextInput)<{
 }>`
   font-size: 15px;
   height: 65.52px;
-  width: ${props => (props.secure || props.rightIcon ? '64%' : '82%')};
+  width: ${props => (props.secure || props.rightIcon ? '64%' : '81%')};
   border-radius: ${props =>
     props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0'};
   font-family: 'Segoe UI';
@@ -120,7 +120,7 @@ const RightIconContainer = styled(TouchableOpacity)<{
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
   height: 65.52px;
-  width: 65.52px;
+  width: 62.52px;
   border-radius: 0 12.84px 12.84px 0;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
