@@ -27,6 +27,8 @@ import multiUnblockSlice from './Slices/MultiUnblockSlice';
 import logoutSlice from './Slices/LogoutSlice';
 import deactivateAccountSlice from './Slices/DeactivateSlice';
 import activateAccountSlice from './Slices/ActivateSlice';
+import syncMessagesSlice from './Slices/SyncMessagesSlice';
+import syncChatsSlice from './Slices/SyncChatsSlice';
 
 const rootReducer = combineReducers({
 	homeSliderSlice,
@@ -56,7 +58,9 @@ const rootReducer = combineReducers({
 	multiUnblockSlice,
 	logoutSlice,
 	deactivateAccountSlice,
-	activateAccountSlice
+	activateAccountSlice,
+	syncMessagesSlice,
+	syncChatsSlice
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

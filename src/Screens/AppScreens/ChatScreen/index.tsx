@@ -19,7 +19,11 @@ import {
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
-import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
+import {
+  getCurrentChatObservable,
+  markAllRead,
+  markMsgRead,
+} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
@@ -32,6 +36,8 @@ import ChatHeader from './ChatHeader';
 import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 import {MessageType, Props} from './types';
+import {Model} from '@nozbe/watermelondb';
+import {useSyncMessages} from '../../../CustomHooks/AppHooks/useSyncMessages';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -43,9 +49,13 @@ const enhance = withObservables(['route'], ({route}) => ({
 const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {username, skills, status, image} = route.params;
   const {callGetUserProfileApi} = useUserProfile(username, image);
-  const {newMessage} = useSocket();
+  // const {callSyncMessagesApi} = useSyncMessages();
+  const {newMessage, socket} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
+
+  const flashListRef = useRef(null);
+
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -71,8 +81,6 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     !closeChat() && partnerStatus === 'online' ? 1 : 0,
   );
 
-  const flashListRef = useRef(null);
-
   const {colors} = useTheme();
 
   const styles = getChatScreenStyles(colors);
@@ -84,9 +92,41 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     };
   }, [isFocused]);
 
+  const sendReadReceipt = async (ReadMsgObj: Model[]) => {
+    let firstReceivedMessage: Model = {} as Model;
+    for (let i = 0; i < ReadMsgObj.length; i++) {
+      if (ReadMsgObj[i]._raw['is_received'] === true) {
+        firstReceivedMessage = ReadMsgObj[i];
+        break; // Exit the loop as soon as we find the first match
+      }
+    }
+
+    const msg = firstReceivedMessage._raw?.['text'];
+    const msgId = firstReceivedMessage._raw?.['msg_id'];
+    const read = firstReceivedMessage._raw?.['read'];
+
+    if (!msg || !msgId) return;
+
+    if (!read) {
+      await markMsgRead(firstReceivedMessage.id);
+      socket?.emit('read receipt', {
+        msg,
+        msgId,
+        senderId: username,
+        receiverId: profileSuccess?.username,
+      });
+    }
+  };
+
   useEffect(() => {
     callGetUserProfileApi();
   }, []);
+
+  useEffect(() => {
+    if (messages?.length) {
+      sendReadReceipt(messages);
+    }
+  }, [messages]);
 
   // Handle animation of online status
   useEffect(() => {
@@ -131,8 +171,8 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     if (getValues('chattext')) {
       const msg = getValues('chattext');
       resetField('chattext');
-      getMessages(msg, false, 'message');
-      sendMessages(msg, username, 'message');
+      let newMessage: Model = await getMessages(msg, false, 'message');
+      sendMessages(msg, username, 'message', newMessage.id);
     }
   };
 
@@ -218,6 +258,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
             uploadingImage={item.uploadingImage}
             received={item.received}
             createdAt={item.createdAt}
+            msgCreatedAt={item.msgCreatedAt}
             sendMessages={sendMessages}
           />
         )}

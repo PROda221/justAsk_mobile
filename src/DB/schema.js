@@ -1,7 +1,7 @@
 import {appSchema, tableSchema} from '@nozbe/watermelondb';
 
 export const mySchema = appSchema({
-  version: 1,
+  version: 2,
   tables: [
     tableSchema({
       name: 'users',
@@ -30,6 +30,8 @@ export const mySchema = appSchema({
         {name: 'unread_count', type: 'number'},
         {name: 'got_blocked_status', type: 'boolean'},
         {name: 'you_blocked_status', type: 'boolean'},
+        {name: 'msg_id', type: 'string', isIndexed: true},
+        {name: 'msg_created_at', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true, isUnique: true},
         {name: 'user_id', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
@@ -46,6 +48,8 @@ export const mySchema = appSchema({
         {name: 'chat_id', type: 'string', isIndexed: true},
         {name: 'read', type: 'boolean'},
         {name: 'uploading_image', type: 'boolean'},
+        {name: 'msg_id', type: 'string', isIndexed: true},
+        {name: 'msg_created_at', type: 'string'},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
       ],

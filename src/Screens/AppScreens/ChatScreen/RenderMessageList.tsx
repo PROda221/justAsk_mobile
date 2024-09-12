@@ -22,7 +22,13 @@ type PropTypes = {
   received: boolean;
   uploadingImage: boolean;
   createdAt: number;
-  sendMessages: (imageUrl: string, username: string, type: string) => void;
+  msgCreatedAt?: Date;
+  sendMessages: (
+    imageUrl: string,
+    username: string,
+    type: string,
+    id: string,
+  ) => void;
 };
 
 const openImage = (imageUrl: string) => {
@@ -45,6 +51,7 @@ export const RenderMessageList = ({
   type,
   uploadingImage,
   createdAt,
+  msgCreatedAt,
   sendMessages,
 }: PropTypes): JSX.Element => {
   const {colors} = useTheme();
@@ -66,7 +73,7 @@ export const RenderMessageList = ({
       const uploadedUrl = await uploadImage(text, currentProgress);
       if (uploadedUrl) {
         await updateImageUploadStatus(username, account, id, false);
-        sendMessages(uploadedUrl, username, 'image');
+        sendMessages(uploadedUrl, username, 'image', id);
       }
     } catch (err) {
       console.log('err at image upload :', err);
@@ -108,7 +115,11 @@ export const RenderMessageList = ({
         )}
       </View>
       <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
-        {formatTimestamp(convertTimeToMili(createdAt.toString()))}
+        {formatTimestamp(
+          convertTimeToMili(
+            msgCreatedAt ? msgCreatedAt.toString() : createdAt.toString(),
+          ),
+        )}
       </Typography>
     </View>
   );

@@ -20,6 +20,8 @@ export default class Chat extends Model {
   @field('got_blocked_status') gotBlockedStatus;
   @field('you_blocked_status') youBlockedStatus;
   @field('deactivated') deactivated;
+  @field('msg_id') msgId;
+  @field('msg_created_at') msgCreatedAt;
   @relation('users', 'user_id') user;
   @children('messages') messages;
   @readonly @date('created_at') createdAt;

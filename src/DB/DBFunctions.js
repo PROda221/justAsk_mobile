@@ -102,6 +102,95 @@ export async function createNewChat(
   }
 }
 
+export async function syncChatToLocal(
+  username,
+  profilePic,
+  status,
+  skills,
+  account,
+  unreadCount,
+  latestMsg,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const newChat = await database.collections
+          .get('chats')
+          .create(record => {
+            record.user.set(user[0]);
+            record.username = username;
+            record.chatId = username;
+            record.profilePic = profilePic;
+            record.status = status;
+            record.skills = JSON.stringify(skills);
+            record.lastMessage =
+              latestMsg.type === 'image' ? 'Image' : latestMsg.message;
+            record.messageTime = new Date();
+            record.unreadCount = unreadCount;
+            record.msgId = latestMsg._id;
+            record.msgCreatedAt = latestMsg.createdAt;
+          });
+        return newChat?.[0]?._raw;
+      } else {
+        console.error('User not found:', account);
+      }
+    });
+  } catch (error) {
+    console.error('Error syncing old chats:', error);
+    throw error;
+  }
+}
+
+export async function updateSynchedChatToLocal(
+  username,
+  profilePic,
+  status,
+  skills,
+  account,
+  unreadCount,
+  latestMsg,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const chat = await database
+          .get('chats')
+          .query(Q.where('user_id', user[0].id), Q.where('chat_id', username))
+          .fetch();
+        if (chat.length > 0) {
+          await chat[0].update(record => {
+            record.user.set(user[0]);
+            record.username = username;
+            record.chatId = username;
+            record.profilePic = profilePic;
+            record.status = status;
+            record.skills = JSON.stringify(skills);
+            record.lastMessage =
+              latestMsg.type === 'image' ? 'Image' : latestMsg.message;
+            record.messageTime = new Date();
+            record.unreadCount = unreadCount;
+            record.msgId = latestMsg._id;
+            record.msgCreatedAt = latestMsg.createdAt;
+          });
+        }
+      } else {
+        console.error('User not found:', account);
+      }
+    });
+  } catch (error) {
+    console.error('Error updating while syncing old chats:', error);
+    throw error;
+  }
+}
+
 export function getUserChats(account) {
   return from(
     database.collections
@@ -115,7 +204,7 @@ export function getUserChats(account) {
           .get('chats')
           .query(
             Q.where('user_id', users[0].id),
-            Q.sortBy('updated_at', Q.desc),
+            Q.sortBy('unread_count', Q.desc),
           )
           .observeWithColumns([
             'last_message',
@@ -151,6 +240,34 @@ export async function getAllChats(account) {
   }
 }
 
+export async function getLatestMessageForChat(chatId, account) {
+  try {
+    const user = await database.collections
+      .get('users')
+      .query(Q.where('username', account))
+      .fetch();
+
+    const chat = await database
+      .get('chats')
+      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+      .fetch();
+
+    const latestMessage = await database.collections
+      .get('messages')
+      .query(
+        Q.where('chat_id', chat[0].id),
+        Q.sortBy('msg_created_at', Q.desc),
+        Q.take(1), // Fetch only the latest message
+      )
+      .fetch();
+
+    return latestMessage[0];
+  } catch (error) {
+    console.error('Error fetching latest message for chat:', error);
+    throw error;
+  }
+}
+
 export async function getAllMessagesForChat(chatId, account) {
   try {
     const user = await database.collections
@@ -164,9 +281,9 @@ export async function getAllMessagesForChat(chatId, account) {
       .fetch();
     const messages = await database.collections
       .get('messages')
-      .query(Q.where('chat_id', chat[0].id), Q.sortBy('created_at', Q.desc))
+      .query(Q.where('chat_id', chat[0].id), Q.sortBy('msg_created_at', Q.desc))
       .fetch();
-    return {allStoredMsgs: messages, chatId: chat[0].id};
+    return {allLocalStoredMsgs: messages, chatId: chat[0].id};
   } catch (error) {
     console.error('Error fetching messages for chat:', error);
     throw error;
@@ -179,7 +296,6 @@ export async function checkChatExists(chatId, account) {
       .get('users')
       .query(Q.where('username', account))
       .fetch();
-
 
     const chat = await database.collections
       .get('chats')
@@ -197,12 +313,16 @@ export async function updateChatMsg(
   lastMessage,
   readMessage,
   profilePic,
+  msgId,
+  msgCreatedAt,
 ) {
   try {
     await chat[0].update(chat => {
       chat.lastMessage = lastMessage;
       chat.messageTime = new Date();
       chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
+      chat.msgId = msgId;
+      chat.msgCreatedAt = msgCreatedAt;
       if (profilePic) {
         chat.profilePic = profilePic;
       }
@@ -280,6 +400,8 @@ export async function addMessageToChat(
   type,
   onChatScreen = false,
   profilePic = '',
+  id = null,
+  createdAt = null,
 ) {
   try {
     let newMessage;
@@ -296,14 +418,23 @@ export async function addMessageToChat(
           .fetch();
         if (chat.length > 0) {
           // Check if chat exists
-          await updateChatMsg(chat, lastMessage, onChatScreen, profilePic);
+          await updateChatMsg(
+            chat,
+            lastMessage,
+            onChatScreen,
+            profilePic,
+            id,
+            createdAt,
+          );
           newMessage = await database.get('messages').create(record => {
             record.chat.set(chat[0]);
             record.text = type === 'image' && !isReceived ? text.url : text;
             record.type = type;
             record.received = isReceived;
-            record.read = onChatScreen;
+            // record.read = onChatScreen;
             record.uploadingImage = type === 'image' ? text.uploading : false;
+            record.msgId = id;
+            record.msgCreatedAt = createdAt;
           });
         } else {
           console.error('Chat not found:', chatId);
@@ -375,13 +506,21 @@ export function getCurrentChatObservable(account, username) {
           return database.collections
             .get('chats')
             .query(Q.where('user_id', userId), Q.where('chat_id', username))
-            .observeWithColumns(['you_blocked_status', 'got_blocked_status', 'profile_pic', 'status', 'advice_genre', 'username', 'deactivated']);
+            .observeWithColumns([
+              'you_blocked_status',
+              'got_blocked_status',
+              'profile_pic',
+              'status',
+              'advice_genre',
+              'username',
+              'deactivated',
+            ]);
         } catch (error) {
           console.error('Error while querying chats:', error);
           // Return an empty observable or handle the error
           return of([]); // Emit an empty array in case of error
         }
-      })
+      }),
     );
 }
 
@@ -398,10 +537,7 @@ export async function unblockChats(chatIds, account) {
       // Query for all chats that match the userId and any of the chatIds
       const chats = await database
         .get('chats')
-        .query(
-          Q.where('user_id', userId),
-          Q.where('chat_id', Q.oneOf(chatIds))
-        )
+        .query(Q.where('user_id', userId), Q.where('chat_id', Q.oneOf(chatIds)))
         .fetch();
 
       // Update each chat's youBlockedStatus to false
@@ -417,5 +553,113 @@ export async function unblockChats(chatIds, account) {
     });
   } catch (err) {
     console.log('Error unblocking chats:', err);
+  }
+}
+
+export async function markMsgRead(msgLocalId) {
+  try {
+    await database.write(async () => {
+      try {
+        const message = await database
+          .get('messages')
+          .query(Q.where('id', msgLocalId))
+          .fetch();
+        if (message.length > 0) {
+          // Check if message exists
+          await message[0].update(message => {
+            message.read = true;
+          });
+        } else {
+          console.error('Message not found:', messageId);
+        }
+      } catch (error) {
+        console.log('error updating read status :', error);
+      }
+    });
+  } catch (err) {
+    console.log('error updating read status :', err);
+  }
+}
+
+export async function storeSyncedMessages(account, chatId, messages) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
+      const chat = await database
+        .get('chats')
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+        .fetch();
+
+      if (chat.length > 0) {
+        // Check if chat exists
+        messages.forEach(async message => {
+          await database.get('messages').create(record => {
+            record.chat.set(chat[0]);
+            record.text = message.message;
+            record.type = message.type;
+            record.received = message.senderId !== account ? true : false;
+            record.read = false;
+            record.uploadingImage = false;
+            record.msgId = message._id;
+            record.msgCreatedAt = message.createdAt;
+          });
+        });
+        return true;
+      } else {
+        console.error('Chat not found:', chatId);
+      }
+    });
+  } catch (error) {
+    console.error('Error storing synced messages:', error);
+    throw error;
+  }
+}
+
+export async function updateLocalMessageId(
+  account,
+  chatId,
+  id,
+  tempMsgId,
+  createdAt,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const chat = await database
+          .get('chats')
+          .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+          .fetch();
+        if (chat.length > 0) {
+          await chat[0].update(chat => {
+            chat.msgId = id;
+            chat.msgCreatedAt = createdAt;
+          });
+          const message = await database
+            .get('messages')
+            .query(Q.where('id', tempMsgId))
+            .fetch();
+          if (message.length > 0) {
+            await message[0].update(message => {
+              message.msgId = id;
+              message.msgCreatedAt = createdAt;
+            });
+          }
+          // Check if chat exists
+        } else {
+          console.error('message not found:', chatId);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating message:', error);
+    throw error;
   }
 }

@@ -6,7 +6,7 @@ import {
 } from '../../Redux/Slices/ProfileSlice';
 import {useEffect} from 'react';
 import {getUser, updateOrCreateUser} from '../../DB/DBFunctions';
-import {downloadImage} from '../../Functions/DownloadLocalPic';
+import {downloadImageToLocal} from '../../Functions/DownloadLocalPic';
 
 export const useProfile = (isFocused: boolean = true) => {
   const dispatch = useDispatch();
@@ -25,13 +25,13 @@ export const useProfile = (isFocused: boolean = true) => {
       try {
         let downloadedPic: string | null;
         let currentUser = await getUser(username);
-        if (currentUser?.length > 0) {
-          downloadedPic = await downloadImage(
+        if (currentUser && currentUser.length > 0) {
+          downloadedPic = await downloadImageToLocal(
             profileSlice.success?.profilePic ?? '',
             currentUser?.[0]._raw?.['profile_pic'],
           );
         } else {
-          downloadedPic = await downloadImage(
+          downloadedPic = await downloadImageToLocal(
             profileSlice.success?.profilePic ?? '',
           );
         }

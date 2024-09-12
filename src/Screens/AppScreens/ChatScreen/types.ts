@@ -10,6 +10,7 @@ export type MessageType = {
       received: boolean;
       uploadingImage: boolean;
       createdAt: number;
+      msgCreatedAt?: Date;
     };
   };
   export type Params = {

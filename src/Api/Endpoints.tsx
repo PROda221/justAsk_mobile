@@ -27,4 +27,6 @@ export const Endpoints = {
   logout: `/${usersEndpoint}/logout`,
   deactivate: `/${usersEndpoint}/deactivate`,
   activate: `/${usersEndpoint}/activate`,
+  syncMessages: `/${usersEndpoint}/sync/messages`,
+  syncChats: `/${usersEndpoint}/sync/chats`,
 };

@@ -11,7 +11,7 @@ import {
   createNewChat,
 } from '../../DB/DBFunctions';
 import {saveURLImage} from '../../Functions/SaveBase64Image';
-import {downloadImage} from '../../Functions/DownloadLocalPic';
+import {downloadImg} from '../../Functions/DownloadLocalPic';
 import {SheetManager} from 'react-native-actions-sheet';
 import content from '../../Assets/Languages/english.json';
 import {hideAlertBox} from '../../Functions/ShowHideAlert';
@@ -23,6 +23,8 @@ type CustomRemoteMessageData = {
   notifee: string;
   receiverUsername: string;
   profilePic: string;
+  id?: string;
+  createdAt?: string;
 };
 
 type CustomRemoteMessage = FirebaseMessagingTypes.RemoteMessage & {
@@ -41,18 +43,6 @@ export const useNotifications = () => {
   //   await notifee.displayNotification(notifeeData);
   // };
 
-  const downloadImg = async (imgUrl, prevImg = '') => {
-    try {
-      let downloadedPic;
-      downloadedPic = await downloadImage(imgUrl ?? '', prevImg);
-
-      let computedImg = {uri: `file://${downloadedPic}`};
-      return computedImg.uri;
-    } catch (err) {
-      console.log('err in fetchProfilePic :', err);
-    }
-  };
-
   useEffect(() => {
     if (Platform.OS == 'ios') {
       requestUserPermissionIos();
@@ -69,8 +59,10 @@ export const useNotifications = () => {
               type,
               receiverUsername,
               profilePic,
+              id,
+              createdAt,
             } = remoteMessage.data;
-            let downloadedPic;
+            let downloadedPic: string | undefined;
             if (senderUsername && message && type) {
               const chatExists = await checkChatExists(
                 senderUsername,
@@ -102,6 +94,8 @@ export const useNotifications = () => {
                   type,
                   false,
                   downloadedPic,
+                  id,
+                  createdAt,
                 );
               } else {
                 await addMessageToChat(
@@ -112,6 +106,8 @@ export const useNotifications = () => {
                   type,
                   false,
                   downloadedPic,
+                  id,
+                  createdAt,
                 );
               }
             }

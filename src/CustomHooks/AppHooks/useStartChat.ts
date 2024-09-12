@@ -6,10 +6,14 @@ import {
   checkChatExists,
   createNewChat,
   getAllMessagesForChat,
+  getLatestMessageForChat,
+  storeSyncedMessages,
 } from '../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
 import {AppState} from 'react-native';
 import {useSocket} from '../../useContexts/SocketContext';
+import {useSyncMessages} from './useSyncMessages';
+import {Messages} from '../../Redux/Slices/SyncMessagesSlice';
 
 let allMessages: Model[] = [];
 
@@ -26,6 +30,8 @@ export const useStartChat = (
   const [hasMore, setHasMore] = useState<boolean>(true);
   const appState = useRef(AppState.currentState);
   const {socket} = useSocket();
+  const {callSyncMessagesApi, syncMessagesSuccess, resetSyncMessagesReducer} =
+    useSyncMessages();
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
 
@@ -33,6 +39,7 @@ export const useStartChat = (
     messageInput: string,
     username: string,
     type: string = 'message',
+    messageId: string,
   ) => {
     socket?.emit(
       'chat message',
@@ -40,7 +47,8 @@ export const useStartChat = (
       profileSlice.success?.username,
       username,
       type,
-      profileSlice.success?.profilePic
+      profileSlice.success?.profilePic,
+      messageId,
     );
   };
 
@@ -58,14 +66,17 @@ export const useStartChat = (
         type,
         true,
       );
-      setMessages(prevMessages => [newMessage, ...prevMessages]);
+      if(messages){
+        setMessages(prevMessages => [newMessage, ...prevMessages]);
+      }
+      return newMessage;
     } catch (err) {
       console.log('err on getMessage :', err);
     }
   };
 
   const loadMoreMessages = () => {
-    if (hasMore && allMessages.length && messages.length) {
+    if (hasMore && allMessages.length && messages?.length) {
       const currentLength = messages.length;
       const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
 
@@ -79,14 +90,20 @@ export const useStartChat = (
 
   const fetchMessages = async () => {
     try {
-      const chatExists = await checkChatExists(username, profileSlice.success?.username);
+      const chatExists = await checkChatExists(
+        username,
+        profileSlice.success?.username,
+      );
       if (chatExists) {
-        const {allStoredMsgs, chatId} = await getAllMessagesForChat(username, profileSlice.success?.username);
-        allMessages = allStoredMsgs;
-        setChatId(chatId);
-        if (allMessages.length) {
-          setMessages(allMessages?.slice(0, 20));
-        }
+        const latestMsg = await getLatestMessageForChat(
+          username,
+          profileSlice.success?.username,
+        );
+        callSyncMessagesApi(
+          profileSlice.success?.username,
+          username,
+          latestMsg?._raw?.['msg_id'] ?? '',
+        );
       } else {
         await createNewChat(
           username,
@@ -100,6 +117,28 @@ export const useStartChat = (
       console.log('local db error :', err);
     }
   };
+
+  useEffect(() => {
+    const getMessages = async (data: Messages[]) => {
+      if(data.length){
+        await storeSyncedMessages(profileSlice.success?.username, username, data);
+      }
+      
+      const {allLocalStoredMsgs, chatId} = await getAllMessagesForChat(
+        username,
+        profileSlice.success?.username,
+      );
+      allMessages = allLocalStoredMsgs;
+      setChatId(chatId);
+      if (allMessages.length) {
+        setMessages(allMessages?.slice(0, 20));
+      }
+    };
+    if (syncMessagesSuccess) {
+      getMessages(syncMessagesSuccess.data);
+      resetSyncMessagesReducer();
+    }
+  }, [syncMessagesSuccess]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {

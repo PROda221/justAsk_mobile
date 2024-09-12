@@ -49,9 +49,9 @@ const BlockedListScreen = ({
   }, []);
 
   const {callMultiUnblockApi} = useMultiUnblock(
-    handleUnblockSuccess,
     [...selectedUsers],
     route.params.username,
+    handleUnblockSuccess,
   );
 
   const getBlockedList = () => {
