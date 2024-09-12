@@ -145,8 +145,8 @@
     "showLess": "Show Less"
   },
   "AlertBox": {
-    "notificationTitle": "Messages Unavailable Offline",
-    "notificationDescription": "Enable notifications in your phone settings to receive messages even when you're offline.",
+    "notificationTitle": "Notifications Disabled",
+    "notificationDescription": "Enable notifications in your phone settings to be notified even when you're offline.",
     "blockedTitle": "Chat Blocked",
     "blockError": "You have been blocked by the user. You cannot send messages anymore",
     "unblockToOpen": "You have blocked this user. Please unblock to chat again",
