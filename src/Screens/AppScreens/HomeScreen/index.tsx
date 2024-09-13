@@ -19,7 +19,6 @@ import {Skeleton} from 'moti/skeleton';
 import {verticalScale} from '../../../Functions/StyleScale';
 import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccount';
 import Loader from '../../../Components/Loader/Loader';
-import {useSyncChats} from '../../../CustomHooks/AppHooks/useSyncChats';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -38,8 +37,6 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
     useProfile(isFocused);
 
-  const {callSyncChatsApi} = useSyncChats();
-
   const {ActivateLogoutLoading} = useActivateAccount(
     profileSuccess?.deactivated,
     callGetProfileApi,
@@ -50,12 +47,6 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       setInitialLoader(false);
     }
   }, [profileLoading]);
-
-  useEffect(() => {
-    if (profileSuccess?.username) {
-      callSyncChatsApi(profileSuccess?.username);
-    }
-  }, [profileSuccess?.username]);
 
   const openSettings = () => {
     navigation.navigate('Settings', {username: profileSuccess?.username});

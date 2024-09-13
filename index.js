@@ -48,54 +48,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       createdAt,
     } = remoteMessage.data;
     let downloadedPic;
-    if (senderUsername && message && type) {
+    if (senderUsername && message && type && id && createdAt) {
       displayNotification(JSON.parse(notifee));
-      const chatExists = await checkChatExists(
-        senderUsername,
-        receiverUsername,
-      );
-      if (!chatExists) {
-        downloadedPic = await downloadImg(profilePic);
-        await createNewChat(
-          senderUsername,
-          downloadedPic,
-          '',
-          '',
-          receiverUsername,
-        );
-      } else {
-        downloadedPic = await downloadImg(
-          profilePic,
-          chatExists?.['profile_pic'],
-        );
-      }
-      if (type === 'image') {
-        let imageUri = await saveURLImage(message);
-        let computedImg = {uri: `file://${imageUri}`};
-        await addMessageToChat(
-          senderUsername,
-          receiverUsername,
-          computedImg.uri,
-          true,
-          type,
-          false,
-          downloadedPic,
-          id,
-          createdAt,
-        );
-      } else {
-        await addMessageToChat(
-          senderUsername,
-          receiverUsername,
-          message,
-          true,
-          type,
-          false,
-          downloadedPic,
-          id,
-          createdAt,
-        );
-      }
     }
   } catch (err) {
     throw new Error('local db error :', err);

@@ -66,7 +66,7 @@ export const useStartChat = (
         type,
         true,
       );
-      if(messages){
+      if (messages) {
         setMessages(prevMessages => [newMessage, ...prevMessages]);
       }
       return newMessage;
@@ -104,6 +104,15 @@ export const useStartChat = (
           username,
           latestMsg?._raw?.['msg_id'] ?? '',
         );
+        const {allLocalStoredMsgs, chatId} = await getAllMessagesForChat(
+          username,
+          profileSlice.success?.username,
+        );
+        allMessages = allLocalStoredMsgs;
+        setChatId(chatId);
+        if (allMessages.length) {
+          setMessages(allMessages?.slice(0, 20));
+        }
       } else {
         await createNewChat(
           username,
@@ -120,18 +129,16 @@ export const useStartChat = (
 
   useEffect(() => {
     const getMessages = async (data: Messages[]) => {
-      if(data.length){
-        await storeSyncedMessages(profileSlice.success?.username, username, data);
-      }
-      
-      const {allLocalStoredMsgs, chatId} = await getAllMessagesForChat(
-        username,
-        profileSlice.success?.username,
-      );
-      allMessages = allLocalStoredMsgs;
-      setChatId(chatId);
-      if (allMessages.length) {
-        setMessages(allMessages?.slice(0, 20));
+      if (data.length) {
+        console.log('messages from db :', data);
+        let newMessages: Model[] = [];
+        newMessages = await storeSyncedMessages(
+          profileSlice.success?.username,
+          username,
+          data,
+        );
+        newMessages.reverse()
+        setMessages(prevMessages => [...newMessages, ...prevMessages]);
       }
     };
     if (syncMessagesSuccess) {

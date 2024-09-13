@@ -583,7 +583,8 @@ export async function markMsgRead(msgLocalId) {
 
 export async function storeSyncedMessages(account, chatId, messages) {
   try {
-    await database.write(async () => {
+    let newMessagesArray = [];
+    const newMessages = await database.write(async () => {
       const user = await database.collections
         .get('users')
         .query(Q.where('username', account))
@@ -596,23 +597,27 @@ export async function storeSyncedMessages(account, chatId, messages) {
 
       if (chat.length > 0) {
         // Check if chat exists
-        messages.forEach(async message => {
-          await database.get('messages').create(record => {
+        for (const message of messages) {
+          const newMessage = await database.get('messages').create(record => {
             record.chat.set(chat[0]);
             record.text = message.message;
             record.type = message.type;
-            record.received = message.senderId !== account ? true : false;
+            record.received = message.senderId !== account;
             record.read = false;
             record.uploadingImage = false;
             record.msgId = message._id;
             record.msgCreatedAt = message.createdAt;
           });
-        });
-        return true;
+          newMessagesArray.push(newMessage);
+        }
+        return newMessagesArray; // Return from inside database.write
       } else {
         console.error('Chat not found:', chatId);
+        return newMessagesArray; // Return null if chat not found
       }
     });
+
+    return newMessages; // Return the array of newly added messages outside the write block
   } catch (error) {
     console.error('Error storing synced messages:', error);
     throw error;
