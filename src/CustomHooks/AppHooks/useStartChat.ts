@@ -66,9 +66,7 @@ export const useStartChat = (
         type,
         true,
       );
-      if (messages) {
-        setMessages(prevMessages => [newMessage, ...prevMessages]);
-      }
+      setMessages(prevMessages => [newMessage, ...prevMessages]);
       return newMessage;
     } catch (err) {
       console.log('err on getMessage :', err);
@@ -130,14 +128,13 @@ export const useStartChat = (
   useEffect(() => {
     const getMessages = async (data: Messages[]) => {
       if (data.length) {
-        console.log('messages from db :', data);
         let newMessages: Model[] = [];
         newMessages = await storeSyncedMessages(
           profileSlice.success?.username,
           username,
           data,
         );
-        newMessages.reverse()
+        newMessages.reverse();
         setMessages(prevMessages => [...newMessages, ...prevMessages]);
       }
     };
