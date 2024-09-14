@@ -19,6 +19,8 @@ import {Skeleton} from 'moti/skeleton';
 import {verticalScale} from '../../../Functions/StyleScale';
 import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccount';
 import Loader from '../../../Components/Loader/Loader';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../Redux/rootReducers';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -33,7 +35,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   useNotifications();
   // useCheckNet();
   const isFocused = useIsFocused();
-
+  const syncChatsSlice = useSelector(
+    (state: RootState) => state.syncChatsSlice,
+  );
   const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
     useProfile(isFocused);
 
@@ -77,7 +81,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       <HomeHeader
         styles={styles}
         colors={colors}
-        loading={initialLoader || profileLoading}
+        loading={initialLoader || profileLoading || syncChatsSlice.loading}
         username={profileSuccess?.username ?? ''}
         openSettings={openSettings}
       />

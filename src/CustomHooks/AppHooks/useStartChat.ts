@@ -23,6 +23,7 @@ export const useStartChat = (
   newMessage: any,
   skills: Array<string>,
   status: string,
+  imgSelectionOpen: boolean,
 ) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
@@ -69,7 +70,7 @@ export const useStartChat = (
       setMessages(prevMessages => [newMessage, ...prevMessages]);
       return newMessage;
     } catch (err) {
-      console.log('err on getMessage :', err);
+      console.log('err on getMessage in useStartChat:', err);
     }
   };
 
@@ -150,7 +151,9 @@ export const useStartChat = (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        fetchMessages();
+        if(imgSelectionOpen){
+          fetchMessages();
+        }
       } else {
         appState.current = nextAppState;
       }

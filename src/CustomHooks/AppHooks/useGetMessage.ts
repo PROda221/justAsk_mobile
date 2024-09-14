@@ -78,7 +78,7 @@ export const useGetMessage = (socket: Socket | null) => {
         setNewMessage(newMessage);
       }
     } catch (err) {
-      console.log('err on getMessage :', err);
+      console.log('err on getMessage in useGetmessages:', err);
     }
   };
 

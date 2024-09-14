@@ -10,8 +10,10 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImage} from '../../../Functions/UploadImg';
 import {updateImageUploadStatus} from '../../../DB/DBFunctions';
 import {formatTimestamp} from '../../../Functions/FormatTime';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Autolink from 'react-native-autolink';
 import moment from 'moment';
+import {moderateScale} from '../../../Functions/StyleScale';
 
 type PropTypes = {
   username: string;
@@ -80,6 +82,26 @@ export const RenderMessageList = ({
     }
   };
 
+  const showMsgTicks = () => {
+    return (
+      <>
+        {msgCreatedAt ? (
+          <MaterialCommunityIcons
+            name="checkbox-marked-circle"
+            size={moderateScale(12)}
+            color="white"
+          />
+        ) : (
+          <MaterialCommunityIcons
+            name="checkbox-blank-circle-outline"
+            size={moderateScale(15)}
+            color="white"
+          />
+        )}
+      </>
+    );
+  };
+
   return (
     <View
       style={[
@@ -108,19 +130,22 @@ export const RenderMessageList = ({
             <TouchableOpacity onPress={() => openImage(text)}>
               <Image source={{uri: `${text}`}} style={styles.imageChat} />
             </TouchableOpacity>
-            <View style={styles.imageChatBottom}>
+            <View>
               {uploadingImage && <ProgressBar progress={uploadProgress} />}
             </View>
           </View>
         )}
       </View>
-      <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
-        {formatTimestamp(
-          convertTimeToMili(
-            msgCreatedAt ? msgCreatedAt.toString() : createdAt.toString(),
-          ),
-        )}
-      </Typography>
+      <View style={styles.msgInfoContainer}>
+        <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
+          {formatTimestamp(
+            convertTimeToMili(
+              msgCreatedAt ? msgCreatedAt.toString() : createdAt.toString(),
+            ),
+          )}
+        </Typography>
+        {!received && showMsgTicks()}
+      </View>
     </View>
   );
 };

@@ -37,7 +37,6 @@ import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 import {MessageType, Props} from './types';
 import {Model} from '@nozbe/watermelondb';
-import {useSyncMessages} from '../../../CustomHooks/AppHooks/useSyncMessages';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -48,13 +47,21 @@ const enhance = withObservables(['route'], ({route}) => ({
 
 const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {username, skills, status, image} = route.params;
-  const {callGetUserProfileApi} = useUserProfile(username, image);
-  // const {callSyncMessagesApi} = useSyncMessages();
-  const {newMessage, socket} = useSocket();
-  const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-    useStartChat(username, image, newMessage, skills, status);
 
   const flashListRef = useRef(null);
+  const imgSelectionOpen = useRef(false);
+
+  const {callGetUserProfileApi} = useUserProfile(username, image);
+  const {newMessage, socket} = useSocket();
+  const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
+    useStartChat(
+      username,
+      image,
+      newMessage,
+      skills,
+      status,
+      imgSelectionOpen.current,
+    );
 
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
@@ -196,7 +203,9 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     };
 
     try {
+      imgSelectionOpen.current = true;
       const result = await launchImageLibrary(options);
+      imgSelectionOpen.current = false;
       const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
       await getMessages(
@@ -205,6 +214,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         'image',
       );
     } catch (err) {
+      imgSelectionOpen.current = false;
       console.log('err at image selection :', err);
     }
   };
