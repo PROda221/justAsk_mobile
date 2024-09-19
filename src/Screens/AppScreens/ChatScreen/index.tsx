@@ -27,7 +27,7 @@ import {
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {RenderMessageList} from './RenderMessageList';
+import RenderMessageList from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
 import {withObservables} from '@nozbe/watermelondb/react';
@@ -49,19 +49,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {username, skills, status, image} = route.params;
 
   const flashListRef = useRef(null);
-  const imgSelectionOpen = useRef(false);
 
   const {callGetUserProfileApi} = useUserProfile(username, image);
   const {newMessage, socket} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-    useStartChat(
-      username,
-      image,
-      newMessage,
-      skills,
-      status,
-      imgSelectionOpen.current,
-    );
+    useStartChat(username, image, newMessage, skills, status);
 
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
@@ -203,9 +195,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     };
 
     try {
-      imgSelectionOpen.current = true;
       const result = await launchImageLibrary(options);
-      imgSelectionOpen.current = false;
       const uri = result.assets?.[0].uri;
       const compressedResult = await Compress.compress(`${uri}`);
       await getMessages(
@@ -214,7 +204,6 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         'image',
       );
     } catch (err) {
-      imgSelectionOpen.current = false;
       console.log('err at image selection :', err);
     }
   };

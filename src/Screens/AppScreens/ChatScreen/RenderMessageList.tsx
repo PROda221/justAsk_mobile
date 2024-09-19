@@ -8,14 +8,20 @@ import {SheetManager} from 'react-native-actions-sheet';
 import {getChatScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImage} from '../../../Functions/UploadImg';
-import {updateImageUploadStatus} from '../../../DB/DBFunctions';
+import {
+  getCurrentMsgObservable,
+  updateImageUploadStatus,
+} from '../../../DB/DBFunctions';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Autolink from 'react-native-autolink';
 import moment from 'moment';
 import {moderateScale} from '../../../Functions/StyleScale';
+import {withObservables} from '@nozbe/watermelondb/react';
+import {Model} from '@nozbe/watermelondb';
 
 type PropTypes = {
+  activeMsg: Model[] | undefined;
   username: string;
   account?: string;
   id: string;
@@ -44,7 +50,12 @@ const convertTimeToMili = (dateString: string) => {
   return momentDate;
 };
 
-export const RenderMessageList = ({
+const enhance = withObservables(['id'], ({id}) => ({
+  activeMsg: getCurrentMsgObservable(id),
+}));
+
+const RenderMessageList = ({
+  activeMsg,
   username,
   account,
   id,
@@ -85,7 +96,7 @@ export const RenderMessageList = ({
   const showMsgTicks = () => {
     return (
       <>
-        {msgCreatedAt ? (
+        {activeMsg?.[0]?._raw['msg_id'] ? (
           <MaterialCommunityIcons
             name="checkbox-marked-circle"
             size={moderateScale(12)}
@@ -94,7 +105,7 @@ export const RenderMessageList = ({
         ) : (
           <MaterialCommunityIcons
             name="checkbox-blank-circle-outline"
-            size={moderateScale(15)}
+            size={moderateScale(12)}
             color="white"
           />
         )}
@@ -149,3 +160,5 @@ export const RenderMessageList = ({
     </View>
   );
 };
+
+export default enhance(RenderMessageList);

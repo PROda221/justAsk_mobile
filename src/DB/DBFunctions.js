@@ -434,7 +434,7 @@ export async function addMessageToChat(
             // record.read = onChatScreen;
             record.uploadingImage = type === 'image' ? text.uploading : false;
             record.msgId = id;
-            record.msgCreatedAt = createdAt;
+            record.msgCreatedAt = createdAt ?? new Date().toISOString();
           });
         } else {
           console.error('Chat not found:', chatId);
@@ -522,6 +522,17 @@ export function getCurrentChatObservable(account, username) {
         }
       }),
     );
+}
+
+export function getCurrentMsgObservable(id) {
+  try {
+    return database.collections
+      .get('messages')
+      .query(Q.where('id', id))
+      .observeWithColumns(['msg_id']);
+  } catch (err) {
+    console.log('err in observing msgId :', err);
+  }
 }
 
 export async function unblockChats(chatIds, account) {

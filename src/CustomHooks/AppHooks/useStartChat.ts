@@ -22,8 +22,7 @@ export const useStartChat = (
   profilePic: string,
   newMessage: any,
   skills: Array<string>,
-  status: string,
-  imgSelectionOpen: boolean,
+  status: string
 ) => {
   const [partnerStatus, setPartnerStatus] = useState('offline');
   const [messages, setMessages] = useState<Model[]>([]);
@@ -151,9 +150,7 @@ export const useStartChat = (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        if(imgSelectionOpen){
           fetchMessages();
-        }
       } else {
         appState.current = nextAppState;
       }
