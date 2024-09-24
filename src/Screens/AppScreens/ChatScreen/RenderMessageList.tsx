@@ -73,7 +73,7 @@ const RenderMessageList = ({
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   useEffect(() => {
-    if (type === 'image' && uploadingImage) {
+    if (type === 'image' && activeMsg?.[0]?._raw['uploading_image']) {
       uploadAndShareImage();
     }
   }, [text]);
@@ -155,7 +155,9 @@ const RenderMessageList = ({
               <Image source={{uri: `${text}`}} style={styles.imageChat} />
             </TouchableOpacity>
             <View>
-              {uploadingImage && <ProgressBar progress={uploadProgress} />}
+              {activeMsg?.[0]?._raw['uploading_image'] && (
+                <ProgressBar progress={uploadProgress} />
+              )}
             </View>
           </View>
         )}

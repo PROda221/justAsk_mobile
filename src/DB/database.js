@@ -5,10 +5,11 @@ import Chat from './Models/Chats';
 import Message from './Models/Message'
 import Users from './Models/Users'
 import Notification from './Models/Notifications'
+import { migrations } from './migrations';
 
 const adapter = new SQLiteAdapter({
-
     schema: mySchema,
+    migrations,  // Add migrations here
   });
   const database = new Database({
     adapter,

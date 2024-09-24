@@ -323,7 +323,9 @@ export async function updateChatMsg(
       chat.messageTime = new Date();
       chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
       chat.msgId = msgId;
-      chat.msgCreatedAt = new Date(msgCreatedAt).toISOString();
+      chat.msgCreatedAt = msgCreatedAt
+        ? new Date(msgCreatedAt).toISOString()
+        : new Date().toISOString;
       if (profilePic) {
         chat.profilePic = profilePic;
       }
@@ -435,7 +437,9 @@ export async function addMessageToChat(
             // record.read = onChatScreen;
             record.uploadingImage = type === 'image' ? text.uploading : false;
             record.msgId = id;
-            record.msgCreatedAt = new Date(createdAt).toISOString() ?? new Date().toISOString();
+            record.msgCreatedAt = createdAt
+              ? new Date(createdAt).toISOString()
+              : new Date().toISOString();
             record.status = isReceived ? 'success' : 'pending';
           });
         } else {
@@ -476,7 +480,7 @@ export async function updateImageUploadStatus(
         if (message.length > 0) {
           // Check if message exists
           await message[0].update(message => {
-            message.uploadingImage = false;
+            message.uploadingImage = uploading;
           });
         } else {
           console.error('Message not found:', messageId);
@@ -531,7 +535,7 @@ export function getCurrentMsgObservable(id) {
     return database.collections
       .get('messages')
       .query(Q.where('id', id))
-      .observeWithColumns(['msg_id', 'status']);
+      .observeWithColumns(['msg_id', 'status', 'uploading_image']);
   } catch (err) {
     console.log('err in observing msgId :', err);
   }
