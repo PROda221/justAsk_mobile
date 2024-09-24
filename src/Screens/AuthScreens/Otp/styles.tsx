@@ -75,7 +75,7 @@ export const getOtpScreenStyles = (colors: DarkColors): OtpScreenStyles =>
     },
     otpContainer: {
       paddingHorizontal: horizontalScale(18),
-      paddingTop: verticalScale(40),
+      padding: verticalScale(40),
     },
     otpTextInputStyle: {
       borderBottomWidth: moderateScale(2),
@@ -84,13 +84,13 @@ export const getOtpScreenStyles = (colors: DarkColors): OtpScreenStyles =>
       color: colors.textPrimaryColor,
       fontFamily: 'Urbanist-Regular',
       fontSize: moderateScale(30),
-      height: verticalScale(60),
-      width: horizontalScale(60),
+      minHeight: verticalScale(60),
+      minWidth: horizontalScale(60),
     },
     otpView: {
       backgroundColor: colors.primaryBackgroundColor,
       borderRadius: moderateScale(20),
-      height: verticalScale(502),
+      minHeight: verticalScale(502),
       marginTop: verticalScale(40),
     },
     safeAreaContainer: {

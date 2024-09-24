@@ -19,6 +19,7 @@ export default class Message extends Model {
   @field('read') read;
   @field('uploading_image') uploadingImage;
   @field('msg_id') msgId;
+  @field('status') status;
   @field('msg_created_at') msgCreatedAt;
   @relation('chats', 'chat_id') chat;
   @readonly @date('created_at') createdAt;

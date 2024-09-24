@@ -44,9 +44,9 @@ export const getHomeScreenStyles = (colors: DarkColors): HomeScreenStyles =>
     },
     avatar: {
       borderRadius: moderateScale(22),
-      height: verticalScale(44),
+      height: moderateScale(44),
       marginRight: horizontalScale(10),
-      width: horizontalScale(44),
+      width: moderateScale(44),
     },
     container: {
       backgroundColor: colors.appScreenPrimaryBackground,
@@ -66,8 +66,8 @@ export const getHomeScreenStyles = (colors: DarkColors): HomeScreenStyles =>
     },
     img: {
       borderRadius: moderateScale(22),
-      height: verticalScale(45),
-      width: verticalScale(45),
+      height: moderateScale(45),
+      width: moderateScale(45),
     },
     messageContainer: {
       // AlignItems: 'center',

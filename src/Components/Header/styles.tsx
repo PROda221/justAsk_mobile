@@ -12,11 +12,11 @@ export type HeaderStyles = {
 export const getHeaderStyles = (colors): HeaderStyles =>
   StyleSheet.create<HeaderStyles>({
     backButtonContainer: {
-        alignItems: 'center',
-        backgroundColor: colors.backButtonContainerColor,
-        borderRadius: moderateScale(15),
-        height: verticalScale(45),
-        justifyContent: 'center',
-        width: horizontalScale(45),
-    }
+      alignItems: 'center',
+      backgroundColor: colors.backButtonContainerColor,
+      borderRadius: moderateScale(15),
+      height: moderateScale(45),
+      justifyContent: 'center',
+      width: moderateScale(45),
+    },
   });

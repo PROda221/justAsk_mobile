@@ -74,9 +74,9 @@ const StyledTextInput = styled(RNTextInput)<{
   contextStyle: DarkColors;
   error: FieldError | undefined;
 }>`
+  flex: 1;
   font-size: 15px;
-  height: 65.52px;
-  width: ${props => (props.secure || props.rightIcon ? '64%' : '81%')};
+  min-height: 65.52px;
   border-radius: ${props =>
     props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0'};
   font-family: 'Segoe UI';
@@ -92,18 +92,18 @@ const StyledTextInput = styled(RNTextInput)<{
 
 const Container = styled(View)`
   flex-direction: row;
+  flex: 1;
 `;
 
 const LeftIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
 }>`
+  padding: 20px;
   justify-content: center;
   align-items: center;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  height: 65.52px;
-  width: 65.52px;
   border-radius: 12.84px 0 0 12.84px;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
@@ -117,10 +117,9 @@ const RightIconContainer = styled(TouchableOpacity)<{
 }>`
   justify-content: center;
   align-items: center;
+  padding: 20px;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  height: 65.52px;
-  width: 62.52px;
   border-radius: 0 12.84px 12.84px 0;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
@@ -133,19 +132,43 @@ const renderLeftIcon = (
 ) => {
   switch (leftIcon) {
     case 'email':
-      return <Email />;
+      return (
+        <RenderSvg
+          Icon={Email}
+          width={moderateScale(25)}
+          height={moderateScale(25)}
+        />
+      );
     case 'lock':
-      return <Lock />;
+      return (
+        <RenderSvg
+          Icon={Lock}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'user':
-      return <Username />;
+      return (
+        <RenderSvg
+          Icon={Username}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'search':
-      return <Search />;
+      return (
+        <RenderSvg
+          Icon={Search}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'chat':
       return (
         <RenderSvg
           Icon={ChatIcon}
-          height={verticalScale(25)}
-          width={horizontalScale(25)}
+          height={verticalScale(20)}
+          width={horizontalScale(20)}
         />
       );
     case 'gallary':

@@ -256,6 +256,7 @@ export async function getLatestMessageForChat(chatId, account) {
       .get('messages')
       .query(
         Q.where('chat_id', chat[0].id),
+        Q.where('msg_id', Q.notEq('')),
         Q.sortBy('msg_created_at', Q.desc),
         Q.take(1), // Fetch only the latest message
       )
@@ -322,7 +323,7 @@ export async function updateChatMsg(
       chat.messageTime = new Date();
       chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
       chat.msgId = msgId;
-      chat.msgCreatedAt = msgCreatedAt;
+      chat.msgCreatedAt = new Date(msgCreatedAt).toISOString();
       if (profilePic) {
         chat.profilePic = profilePic;
       }
@@ -434,7 +435,8 @@ export async function addMessageToChat(
             // record.read = onChatScreen;
             record.uploadingImage = type === 'image' ? text.uploading : false;
             record.msgId = id;
-            record.msgCreatedAt = createdAt ?? new Date().toISOString();
+            record.msgCreatedAt = new Date(createdAt).toISOString() ?? new Date().toISOString();
+            record.status = isReceived ? 'success' : 'pending';
           });
         } else {
           console.error('Chat not found:', chatId);
@@ -529,7 +531,7 @@ export function getCurrentMsgObservable(id) {
     return database.collections
       .get('messages')
       .query(Q.where('id', id))
-      .observeWithColumns(['msg_id']);
+      .observeWithColumns(['msg_id', 'status']);
   } catch (err) {
     console.log('err in observing msgId :', err);
   }
@@ -618,6 +620,7 @@ export async function storeSyncedMessages(account, chatId, messages) {
             record.uploadingImage = false;
             record.msgId = message._id;
             record.msgCreatedAt = message.createdAt;
+            record.status = 'success';
           });
           newMessagesArray.push(newMessage);
         }
@@ -666,6 +669,7 @@ export async function updateLocalMessageId(
             await message[0].update(message => {
               message.msgId = id;
               message.msgCreatedAt = createdAt;
+              message.status = 'success';
             });
           }
           // Check if chat exists
@@ -676,6 +680,88 @@ export async function updateLocalMessageId(
     });
   } catch (error) {
     console.error('Error updating message:', error);
+    throw error;
+  }
+}
+
+export async function getAllPendingMsgs() {
+  try {
+    const messages = await database.collections
+      .get('messages')
+      .query(Q.where('status', 'pending'))
+      .fetch();
+    return messages;
+  } catch (error) {
+    console.error('Error fetching pending messages:', error);
+    throw error;
+  }
+}
+
+export async function updateMsgStatus(id, status) {
+  try {
+    await database.write(async () => {
+      const message = await database.collections
+        .get('messages')
+        .query(Q.where('id', id))
+        .fetch();
+      await message[0].update(message => {
+        message.status = status;
+        message.msgCreatedAt = new Date().toISOString();
+      });
+    });
+  } catch (error) {
+    console.error('Error fetching pending messages:', error);
+    throw error;
+  }
+}
+
+export async function getSenderNotifications(sender) {
+  try {
+    const notification = await database.collections
+      .get('notifications')
+      .query(Q.where('sender', sender))
+      .fetch();
+    return notification[0];
+  } catch (error) {
+    console.error('Error fetching sender notification exists:', error);
+    throw error;
+  }
+}
+
+export async function setSenderNotifications(sender) {
+  try {
+    let notification;
+    await database.write(async () => {
+      notification = await database.collections
+        .get('notifications')
+        .create(record => {
+          record.sender = sender;
+        });
+      return notification;
+    });
+    return notification;
+  } catch (error) {
+    console.error('Error setting sender notification:', error);
+    throw error;
+  }
+}
+
+export async function clearSenderNotifications() {
+  try {
+    await database.write(async () => {
+      const notifications = await database.collections
+        .get('notifications')
+        .query() // Fetch all notifications
+        .fetch();
+      const batchOperations = notifications.map(notification =>
+        notification.prepareDestroyPermanently(),
+      );
+
+      // Perform the batch delete
+      await database.batch(...batchOperations);
+    });
+  } catch (error) {
+    console.error('Error deleting sender notifications:', error);
     throw error;
   }
 }

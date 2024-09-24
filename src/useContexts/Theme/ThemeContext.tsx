@@ -97,6 +97,7 @@ const darkColors: DarkColors = {
   alertIcon: '#F2C94C',
   showMore: '#065fd4',
   showLess: '#065fd4',
+  retryMsg: '#EB5757',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

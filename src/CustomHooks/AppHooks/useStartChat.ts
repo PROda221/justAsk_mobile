@@ -14,6 +14,7 @@ import {AppState} from 'react-native';
 import {useSocket} from '../../useContexts/SocketContext';
 import {useSyncMessages} from './useSyncMessages';
 import {Messages} from '../../Redux/Slices/SyncMessagesSlice';
+import NetInfo from "@react-native-community/netinfo";
 
 let allMessages: Model[] = [];
 
@@ -29,8 +30,10 @@ export const useStartChat = (
   const [chatId, setChatId] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
   const appState = useRef(AppState.currentState);
+  const wasConnected = useRef(false)
+  const initialMount = useRef(true)
   const {socket} = useSocket();
-  const {callSyncMessagesApi, syncMessagesSuccess, resetSyncMessagesReducer} =
+  const {callSyncMessagesApi, syncMessagesSuccess, resetSyncMessagesReducer, syncMessagesLoading} =
     useSyncMessages();
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
@@ -41,7 +44,7 @@ export const useStartChat = (
     type: string = 'message',
     messageId: string,
   ) => {
-    socket?.emit(
+    socket?.volatile.emit(
       'chat message',
       messageInput,
       profileSlice.success?.username,
@@ -155,7 +158,18 @@ export const useStartChat = (
         appState.current = nextAppState;
       }
     });
+    const networkSubscription = NetInfo.addEventListener(state => {
+      if(state.isConnected && !wasConnected.current && !initialMount.current){
+        wasConnected.current = true;
+        fetchMessages();
+       
+      }else if (!state.isConnected) {
+        wasConnected.current = false; // Reset connection status when offline
+      }
+    });
+  
     return () => {
+      networkSubscription()
       subscription.remove();
       socket?.off('statusUpdate');
     };
@@ -180,11 +194,13 @@ export const useStartChat = (
     };
 
     connectWithUser();
+    initialMount.current = false
   }, [username]);
 
   return {
     partnerStatus,
     messages,
+    syncMessagesLoading,
     getMessages,
     sendMessages,
     loadMoreMessages,

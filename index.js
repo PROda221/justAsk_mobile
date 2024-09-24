@@ -10,8 +10,11 @@ import {
   checkChatExists,
   addMessageToChat,
   createNewChat,
+  getSenderNotifications,
+  setSenderNotifications,
+  clearSenderNotifications,
 } from './src/DB/DBFunctions';
-import notifee from '@notifee/react-native';
+import notifee, {EventType} from '@notifee/react-native';
 import {saveURLImage} from './src/Functions/SaveBase64Image';
 import {downloadImg} from './src/Functions/DownloadLocalPic';
 
@@ -26,14 +29,35 @@ import {downloadImg} from './src/Functions/DownloadLocalPic';
 //   }
 // });
 
-const displayNotification = async notifeeData => {
+const displayNotification = async (notifeeData, senderUsername) => {
   await notifee.createChannel({
     id: 'test',
     name: 'test',
   });
 
-  await notifee.displayNotification(notifeeData);
+  let notification = await getSenderNotifications(senderUsername);
+
+  if (notification) {
+    await notifee.displayNotification(notifeeData);
+  } else {
+    await setSenderNotifications(senderUsername);
+    await notifee.displayNotification({
+      ...notifeeData,
+      android: {...notifeeData.android, groupSummary: true},
+    });
+  }
 };
+
+notifee.onBackgroundEvent(async ({ type, detail }) => {
+  if (type === EventType.PRESS) {
+    // Cancel all notifications
+    await notifee.cancelAllNotifications();
+    await clearSenderNotifications();
+
+    // Navigate to the desired screen or perform other actions
+    // Example: navigation.navigate('YourScreen');
+  }
+});
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
@@ -49,7 +73,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     } = remoteMessage.data;
     let downloadedPic;
     if (senderUsername && message && type && id && createdAt) {
-      displayNotification(JSON.parse(notifee));
+      displayNotification(JSON.parse(notifee), senderUsername);
     }
   } catch (err) {
     throw new Error('local db error :', err);

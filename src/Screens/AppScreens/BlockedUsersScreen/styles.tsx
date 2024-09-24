@@ -58,8 +58,8 @@ export const getBlockedUsersScreenStyles = (
     image: {
       alignSelf: 'center',
       borderRadius: moderateScale(40),
-      height: verticalScale(80),
-      width: horizontalScale(80),
+      height: moderateScale(80),
+      width: moderateScale(80),
     },
     info: {
       flex: 1,

@@ -162,8 +162,8 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
         <View style={styles.container}>
           <Skeleton
             colorMode="light"
-            height={verticalScale(165)}
-            width={horizontalScale(165)}>
+            height={moderateScale(165)}
+            width={moderateScale(165)}>
             <TouchableOpacity
               onPress={openFullImage}
               style={styles.imageContainer}>

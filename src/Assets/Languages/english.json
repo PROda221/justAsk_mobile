@@ -118,8 +118,8 @@
   },
   "SettingsScreen": {
     "shareTitle": "HumanTouch Invite Link",
-    "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
-    "shareUrl": "https://www.npmjs.com/package/@react-native-community/netinfo",
+    "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat help app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://play.google.com/store/apps/details?id=com.just_ask&hl=en]",
+    "shareUrl": "https://play.google.com/store/apps/details?id=com.just_ask&hl=en",
     "cancelButton": "Cancel",
     "yesButton": "Yes",
     "settingsTitle": "Settings",
@@ -161,6 +161,5 @@
     "accountDeactivated": "Account Deactivated",
     "accountDeactivatedDesc": "This account has been deactivated. You will no longer be able to chat unless user reactivates.",
     "yourAccountDeactivatedDec": "Your account has been deactivated. Please reactivate to continue"
-
   }
 }

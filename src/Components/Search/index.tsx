@@ -14,7 +14,11 @@ import ActionSheet, {
 import {Typography} from '../Typography';
 
 import {Filter} from '../../Assets/Images';
-import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
+import {
+  horizontalScale,
+  verticalScale,
+  moderateScale,
+} from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
 import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
@@ -145,7 +149,9 @@ const SearchScreen = ({payload}: SheetProps<'SearchFeature-sheet'>) => {
       />
       <View
         style={{
-          height: userList.length ? verticalScale(500) : verticalScale(220),
+          justifyContent: 'center',
+          paddingTop: verticalScale(50),
+          height: userList.length ? moderateScale(500) : moderateScale(220),
         }}>
         <FlashList
           data={userList}

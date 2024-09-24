@@ -99,8 +99,8 @@ export const getMyFeedbackStyles = (colors: DarkColors): MyFeedbackStyles =>
       marginTop: verticalScale(10),
     },
     commentUserAvatar: {
-      width: horizontalScale(35),
-      height: verticalScale(35),
+      width: moderateScale(35),
+      height: moderateScale(35),
       borderRadius: moderateScale(18),
     },
     usernameText: {
@@ -134,8 +134,8 @@ export const getMyFeedbackStyles = (colors: DarkColors): MyFeedbackStyles =>
       flexDirection: 'row',
     },
     profileImage: {
-      width: horizontalScale(100),
-      height: verticalScale(100),
+      width: moderateScale(100),
+      height: moderateScale(100),
       borderRadius: moderateScale(50),
     },
     nameText: {

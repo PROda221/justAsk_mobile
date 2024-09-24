@@ -34,7 +34,7 @@ export const useUserProfile = (username?: string, image?: string) => {
             userProfileSlice.success?.response.userDetails.deactivated,
         );
         let computedImg = {uri: `file://${profilePic}`};
-        updateChatData(
+        await updateChatData(
           userProfileSlice.success?.response.userDetails,
           profileSuccess?.username,
           profilePic ? computedImg.uri : '',

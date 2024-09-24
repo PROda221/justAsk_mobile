@@ -37,6 +37,7 @@ import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 import {MessageType, Props} from './types';
 import {Model} from '@nozbe/watermelondb';
+import Loader from '../../../Components/Loader/Loader';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -52,8 +53,14 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const {callGetUserProfileApi} = useUserProfile(username, image);
   const {newMessage, socket} = useSocket();
-  const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
-    useStartChat(username, image, newMessage, skills, status);
+  const {
+    getMessages,
+    sendMessages,
+    messages,
+    partnerStatus,
+    loadMoreMessages,
+    syncMessagesLoading,
+  } = useStartChat(username, image, newMessage, skills, status);
 
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
@@ -71,7 +78,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const {control, getValues, resetField} = useForm();
 
-  const [height, setHeight] = useState<number>(verticalScale(50));
+  // const [height, setHeight] = useState<number>(verticalScale(50));
 
   const position = useSharedValue(
     !closeChat() && partnerStatus === 'online' ? 0 : 10,
@@ -279,12 +286,10 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         username={username}
       />
 
+      <Loader isLoading={syncMessagesLoading} />
+
       <View style={styles.inputContainer}>
         <TextInput
-          viewStyle={[
-            styles.chatTextInput,
-            {height: height < verticalScale(50) ? verticalScale(50) : height},
-          ]}
           name="chattext"
           secureTextEntry={false}
           control={control}
@@ -304,9 +309,13 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           })}
           multiline={true}
           editable={!closeChat()}
-          onContentSizeChange={event => {
-            setHeight(event.nativeEvent.contentSize.height);
-          }}
+          // viewStyle={[
+          //   styles.chatTextInput,
+          //   {height: height < verticalScale(50) ? verticalScale(50) : height},
+          // ]}
+          // onContentSizeChange={event => {
+          //   setHeight(event.nativeEvent.contentSize.height);
+          // }}
         />
       </View>
     </View>

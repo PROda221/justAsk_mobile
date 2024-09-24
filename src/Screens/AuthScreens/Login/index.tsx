@@ -48,6 +48,7 @@ const LogIn = ({navigation}: Props): JSX.Element => {
   const {control, handleSubmit} = useForm();
   const Scroll = styled(ScrollView)`
     flex-grow: 1;
+    flex: 1;
   `;
 
   const isFocused = useIsFocused();

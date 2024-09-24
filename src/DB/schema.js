@@ -52,6 +52,13 @@ export const mySchema = appSchema({
         {name: 'msg_created_at', type: 'string'},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
+        {name: 'status', type: 'string', isIndexed: true}
+      ],
+    }),
+    tableSchema({
+      name: 'notifications',
+      columns: [
+        {name: 'sender', type: 'string'},
       ],
     }),
   ],

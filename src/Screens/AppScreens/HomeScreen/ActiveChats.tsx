@@ -97,7 +97,9 @@ const ActiveChats = ({
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.messageTime}>
-          {formatTimestamp(item._raw['updated_at'])}
+          {formatTimestamp(
+            item._raw['msg_created_at'] || item._raw['created_at'],
+          )}
         </Typography>
       </TouchableOpacity>
     );

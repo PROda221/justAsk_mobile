@@ -73,4 +73,5 @@ export type DarkColors = {
   splashScreenBackground: string;
   showMore: string;
   showLess: string;
+  retryMsg: string;
 };

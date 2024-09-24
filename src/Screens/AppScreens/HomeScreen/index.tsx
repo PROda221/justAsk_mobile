@@ -21,6 +21,7 @@ import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccou
 import Loader from '../../../Components/Loader/Loader';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../Redux/rootReducers';
+import {useCheckMsgStatus} from '../../../CustomHooks/AppHooks/useCheckMsgStatus';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -33,7 +34,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
-  // useCheckNet();
+  useCheckMsgStatus();
   const isFocused = useIsFocused();
   const syncChatsSlice = useSelector(
     (state: RootState) => state.syncChatsSlice,

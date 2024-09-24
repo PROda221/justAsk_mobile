@@ -11,6 +11,7 @@ import {uploadImage} from '../../../Functions/UploadImg';
 import {
   getCurrentMsgObservable,
   updateImageUploadStatus,
+  updateMsgStatus,
 } from '../../../DB/DBFunctions';
 import {formatTimestamp} from '../../../Functions/FormatTime';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -32,7 +33,7 @@ type PropTypes = {
   createdAt: number;
   msgCreatedAt?: Date;
   sendMessages: (
-    imageUrl: string,
+    imagemessageInputUrl: string,
     username: string,
     type: string,
     id: string,
@@ -102,6 +103,12 @@ const RenderMessageList = ({
             size={moderateScale(12)}
             color="white"
           />
+        ) : activeMsg?.[0]?._raw['status'] === 'failed' ? (
+          <MaterialCommunityIcons
+            name="checkbox-blank-circle-outline"
+            size={moderateScale(12)}
+            color={colors.retryMsg}
+          />
         ) : (
           <MaterialCommunityIcons
             name="checkbox-blank-circle-outline"
@@ -114,7 +121,13 @@ const RenderMessageList = ({
   };
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={async () => {
+        await updateMsgStatus(id, 'pending');
+        console.log('1');
+        sendMessages(text, username, type, id);
+      }}
+      disabled={activeMsg?.[0]?._raw['status'] !== 'failed'}
       style={[
         styles.messageContainer,
         received ? styles.messageReceived : styles.messageSent,
@@ -148,16 +161,25 @@ const RenderMessageList = ({
         )}
       </View>
       <View style={styles.msgInfoContainer}>
-        <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
-          {formatTimestamp(
-            convertTimeToMili(
-              msgCreatedAt ? msgCreatedAt.toString() : createdAt.toString(),
-            ),
-          )}
+        <Typography
+          textStyle={styles.msgTime}
+          fontWeight="400"
+          bgColor={
+            activeMsg?.[0]?._raw['status'] === 'failed'
+              ? colors.retryMsg
+              : 'white'
+          }>
+          {activeMsg?.[0]?._raw['status'] === 'failed'
+            ? 'Retry'
+            : formatTimestamp(
+                convertTimeToMili(
+                  msgCreatedAt ? msgCreatedAt.toString() : createdAt.toString(),
+                ),
+              )}
         </Typography>
         {!received && showMsgTicks()}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

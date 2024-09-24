@@ -29,7 +29,8 @@ const allGenres = [
     "Traveling",
   ];
 
-  // const baseURL = 'http://10.0.2.2:8001'
+  // const baseURL = 'http://192.168.29.240:8001'
+   // const baseURL = 'http://10.0.2.2:8001'
   // const baseURL = "https://justask-backend.onrender.com"
   const baseURL = "https://justaskbackend-production.up.railway.app"
   // const baseURL = 'http://52.66.244.89:8001'
