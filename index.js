@@ -29,6 +29,13 @@ import {downloadImg} from './src/Functions/DownloadLocalPic';
 //   }
 // });
 
+const getImageUrl = async (msg) => {
+  let imageUri = await saveURLImage(msg);
+  let computedImg = {uri: `file://${imageUri}`};
+  console.log('computedImgUri :', computedImg.uri)
+  return computedImg.uri;
+};
+
 const displayNotification = async (notifeeData, senderUsername) => {
   await notifee.createChannel({
     id: 'test',
@@ -48,7 +55,7 @@ const displayNotification = async (notifeeData, senderUsername) => {
   }
 };
 
-notifee.onBackgroundEvent(async ({ type, detail }) => {
+notifee.onBackgroundEvent(async ({type, detail}) => {
   if (type === EventType.PRESS) {
     // Cancel all notifications
     await notifee.cancelAllNotifications();
@@ -74,6 +81,38 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     let downloadedPic;
     if (senderUsername && message && type && id && createdAt) {
       displayNotification(JSON.parse(notifee), senderUsername);
+      const chatExists = await checkChatExists(
+        senderUsername,
+        receiverUsername,
+      );
+      if (!chatExists) {
+        downloadedPic = await downloadImg(profilePic);
+        await createNewChat(
+          senderUsername,
+          downloadedPic,
+          '',
+          '',
+          receiverUsername,
+        );
+      } else {
+        downloadedPic = await downloadImg(
+          profilePic,
+          chatExists?.['profile_pic'],
+        );
+      }
+      
+        await addMessageToChat(
+          senderUsername,
+          receiverUsername,
+          type === 'image' ? await getImageUrl(message) : message,
+          true,
+          type,
+          false,
+          downloadedPic,
+          id,
+          createdAt,
+        );
+      
     }
   } catch (err) {
     throw new Error('local db error :', err);

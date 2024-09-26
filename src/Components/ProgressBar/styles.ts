@@ -10,7 +10,8 @@ export type ProgressBarStyles = {
 export const getProgressBarStyles = (colors: DarkColors): ProgressBarStyles => {
   return StyleSheet.create<ProgressBarStyles>({
     progressBar: {
-      width: '100%',
+      alignSelf: 'center',
+      width: '80%',
       height: verticalScale(5),
       backgroundColor: colors.progressBarBgColor,
       borderRadius: moderateScale(10),

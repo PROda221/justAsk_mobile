@@ -1,9 +1,8 @@
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {View} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getChatScreenStyles} from './styles';
-import {verticalScale} from '../../../Functions/StyleScale';
 import {TextInput} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
@@ -38,6 +37,7 @@ import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
 import {MessageType, Props} from './types';
 import {Model} from '@nozbe/watermelondb';
 import Loader from '../../../Components/Loader/Loader';
+import {sendReadReceipt} from '../../../Functions/SendReadReceipt';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -98,39 +98,13 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     };
   }, [isFocused]);
 
-  const sendReadReceipt = async (ReadMsgObj: Model[]) => {
-    let firstReceivedMessage: Model = {} as Model;
-    for (let i = 0; i < ReadMsgObj.length; i++) {
-      if (ReadMsgObj[i]._raw['is_received'] === true) {
-        firstReceivedMessage = ReadMsgObj[i];
-        break; // Exit the loop as soon as we find the first match
-      }
-    }
-
-    const msg = firstReceivedMessage._raw?.['text'];
-    const msgId = firstReceivedMessage._raw?.['msg_id'];
-    const read = firstReceivedMessage._raw?.['read'];
-
-    if (!msg || !msgId) return;
-
-    if (!read) {
-      await markMsgRead(firstReceivedMessage.id);
-      socket?.emit('read receipt', {
-        msg,
-        msgId,
-        senderId: username,
-        receiverId: profileSuccess?.username,
-      });
-    }
-  };
-
   useEffect(() => {
     callGetUserProfileApi();
   }, []);
 
   useEffect(() => {
     if (messages?.length) {
-      sendReadReceipt(messages);
+      sendReadReceipt(messages, socket, username, profileSuccess?.username);
     }
   }, [messages]);
 
@@ -198,18 +172,21 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 0.5,
+      selectionLimit: 0,
       // includeBase64: true
     };
 
     try {
       const result = await launchImageLibrary(options);
-      const uri = result.assets?.[0].uri;
-      const compressedResult = await Compress.compress(`${uri}`);
-      await getMessages(
-        {url: compressedResult, uploading: true},
-        false,
-        'image',
-      );
+      result.assets?.forEach(async image => {
+        const uri = image.uri;
+        const compressedResult = await Compress.compress(`${uri}`);
+        await getMessages(
+          {url: compressedResult, uploading: true},
+          false,
+          'image',
+        );
+      });
     } catch (err) {
       console.log('err at image selection :', err);
     }

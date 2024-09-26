@@ -44,7 +44,7 @@ export const callSyncChats = createAsyncThunk(
 
       throw response.data;
     } catch (err) {
-      console.log('c :', err)
+      console.log('error in callSyncChats :', err)
       return rejectWithValue(err);
     }
   },

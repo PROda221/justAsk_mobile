@@ -52,7 +52,6 @@ export const useGetMessage = (socket: Socket | null) => {
         if (!chatExists) {
           console.log('a');
           downloadedPic = await downloadImg(profilePic);
-          // add download logic from here
           await createNewChat(senderId, downloadedPic, '', '', yourId);
         } else {
           downloadedPic = await downloadImg(

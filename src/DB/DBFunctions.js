@@ -410,43 +410,51 @@ export async function addMessageToChat(
     let newMessage;
     let lastMessage = type === 'image' ? 'Image' : text;
     await database.write(async () => {
+      // Fetch user
       const user = await database.collections
         .get('users')
         .query(Q.where('username', account))
         .fetch();
-      if (user.length > 0) {
-        const chat = await database
-          .get('chats')
-          .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
-          .fetch();
-        if (chat.length > 0) {
-          // Check if chat exists
-          await updateChatMsg(
-            chat,
-            lastMessage,
-            onChatScreen,
-            profilePic,
-            id,
-            createdAt,
-          );
-          newMessage = await database.get('messages').create(record => {
-            record.chat.set(chat[0]);
-            record.text = type === 'image' && !isReceived ? text.url : text;
-            record.type = type;
-            record.received = isReceived;
-            // record.read = onChatScreen;
-            record.uploadingImage = type === 'image' ? text.uploading : false;
-            record.msgId = id;
-            record.msgCreatedAt = createdAt
-              ? new Date(createdAt).toISOString()
-              : new Date().toISOString();
-            record.status = isReceived ? 'success' : 'pending';
-          });
-        } else {
-          console.error('Chat not found:', chatId);
-        }
+
+      if (user.length === 0) {
+        return;
       }
+
+      // Fetch chat for the user
+      const chat = await database
+        .get('chats')
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+        .fetch();
+
+      if (chat.length === 0) {
+        return;
+      }
+
+      // Update chat with last message details
+      await updateChatMsg(
+        chat,
+        lastMessage,
+        onChatScreen,
+        profilePic,
+        id,
+        createdAt,
+      );
+
+      // Create new message
+      newMessage = await database.get('messages').create(record => {
+        record.chat.set(chat[0]);
+        record.text = type === 'image' && !isReceived ? text.url : text;
+        record.type = type;
+        record.received = isReceived;
+        record.uploadingImage = type === 'image' ? text.uploading : false;
+        record.msgId = id;
+        record.msgCreatedAt = createdAt
+          ? new Date(createdAt).toISOString()
+          : new Date().toISOString();
+        record.status = isReceived ? 'success' : 'pending';
+      });
     });
+
     return newMessage;
   } catch (error) {
     console.error('Error adding message to chat:', error);
@@ -615,18 +623,24 @@ export async function storeSyncedMessages(account, chatId, messages) {
       if (chat.length > 0) {
         // Check if chat exists
         for (const message of messages) {
-          const newMessage = await database.get('messages').create(record => {
-            record.chat.set(chat[0]);
-            record.text = message.message;
-            record.type = message.type;
-            record.received = message.senderId !== account;
-            record.read = false;
-            record.uploadingImage = false;
-            record.msgId = message._id;
-            record.msgCreatedAt = message.createdAt;
-            record.status = 'success';
-          });
-          newMessagesArray.push(newMessage);
+          let msgExists = await database
+            .get('messages')
+            .query(Q.where('msg_id', message._id))
+            .fetch();
+          if (!msgExists.length) {
+            const newMessage = await database.get('messages').create(record => {
+              record.chat.set(chat[0]);
+              record.text = message.message;
+              record.type = message.type;
+              record.received = message.senderId !== account;
+              record.read = false;
+              record.uploadingImage = false;
+              record.msgId = message._id;
+              record.msgCreatedAt = message.createdAt;
+              record.status = 'success';
+            });
+            newMessagesArray.push(newMessage);
+          }
         }
         return newMessagesArray; // Return from inside database.write
       } else {

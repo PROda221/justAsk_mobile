@@ -86,8 +86,11 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       textAlign: 'left',
     },
     imageChat: {
-      width: moderateScale(250),
-      height: moderateScale(250),
+      minWidth: moderateScale(150),
+      minHeight: moderateScale(150),
+      borderRadius: moderateScale(20),
+      resizeMode: 'cover',
+      overflow: 'hidden',
     },
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,
