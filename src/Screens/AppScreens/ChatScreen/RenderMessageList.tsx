@@ -152,7 +152,11 @@ const RenderMessageList = ({
         {type === 'image' && (
           <View>
             <TouchableOpacity onPress={() => openImage(text)}>
-              <Image source={{uri: `${text}`}} style={styles.imageChat} />
+              <Image
+                contentFit="cover"
+                source={{uri: `${text}`}}
+                style={styles.imageChat}
+              />
             </TouchableOpacity>
             <View>
               {activeMsg?.[0]?._raw['uploading_image'] && (

@@ -625,7 +625,7 @@ export async function storeSyncedMessages(account, chatId, messages) {
         for (const message of messages) {
           let msgExists = await database
             .get('messages')
-            .query(Q.where('msg_id', message._id))
+            .query(Q.where('id', message.localMsgId ?? ''))
             .fetch();
           if (!msgExists.length) {
             const newMessage = await database.get('messages').create(record => {
@@ -706,7 +706,7 @@ export async function getAllPendingMsgs() {
   try {
     const messages = await database.collections
       .get('messages')
-      .query(Q.where('status', 'pending'))
+      .query(Q.where('status', 'pending'), Q.where('uploading_image', false))
       .fetch();
     return messages;
   } catch (error) {

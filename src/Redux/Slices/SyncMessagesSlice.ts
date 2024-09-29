@@ -10,6 +10,7 @@ export type Messages = {
     message: string;
     type: string;
     timeStamp: Date;
+    localMsgId: string;
 }
 
  type SyncMessages = {

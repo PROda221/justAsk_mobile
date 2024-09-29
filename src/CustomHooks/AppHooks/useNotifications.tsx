@@ -136,27 +136,48 @@ export const useNotifications = () => {
       console.log('Authorization status:', authStatus);
     }
   };
+  const registerDeviceToken = async () => {
+    try {
+      let fcmToken = await getToken();
+      if (fcmToken) {
+        dispatch(sendDeviceToken({deviceToken: fcmToken}));
+      } else {
+        console.log('Failed to get FCM token');
+      }
+    } catch (error) {
+      console.log('Error getting FCM token:', error);
+    }
+  };
+
+  const showPermissionDeniedAlert = () => {
+    SheetManager.show('AlertBox-sheet', {
+      payload: {
+        title: content.AlertBox.notificationTitle,
+        description: content.AlertBox.notificationDescription,
+        onPressOk: hideAlertBox,
+      },
+    });
+    console.log('Notifications permission denied');
+  };
 
   const requestUserPermissionsAndroid = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        let fcmToken = await getToken();
-        dispatch(sendDeviceToken({deviceToken: fcmToken}));
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        // Request POST_NOTIFICATIONS permission on Android 13 and above
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          await registerDeviceToken();
+        } else {
+          showPermissionDeniedAlert();
+        }
       } else {
-        SheetManager.show('AlertBox-sheet', {
-          payload: {
-            title: content.AlertBox.notificationTitle,
-            description: content.AlertBox.notificationDescription,
-            onPressOk: hideAlertBox,
-          },
-        });
-        console.log('Notifications permission denied');
+        // For Android versions below 13, proceed without requesting POST_NOTIFICATIONS permission
+        await registerDeviceToken();
       }
     } catch (err) {
-      console.log('error getting notifications :', err);
+      console.log('Error requesting notifications permission:', err);
     }
   };
 };

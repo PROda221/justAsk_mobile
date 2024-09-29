@@ -89,7 +89,6 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       minWidth: moderateScale(150),
       minHeight: moderateScale(150),
       borderRadius: moderateScale(20),
-      resizeMode: 'cover',
       overflow: 'hidden',
     },
     profileImage: {
