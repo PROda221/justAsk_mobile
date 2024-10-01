@@ -14,7 +14,7 @@ import {
   setSenderNotifications,
   clearSenderNotifications,
 } from './src/DB/DBFunctions';
-import notifee, {EventType} from '@notifee/react-native';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {saveURLImage} from './src/Functions/SaveBase64Image';
 import {downloadImg} from './src/Functions/DownloadLocalPic';
 
@@ -40,6 +40,7 @@ const displayNotification = async (notifeeData, senderUsername) => {
   await notifee.createChannel({
     id: 'test',
     name: 'test',
+    importance: AndroidImportance.HIGH,
   });
 
   let notification = await getSenderNotifications(senderUsername);

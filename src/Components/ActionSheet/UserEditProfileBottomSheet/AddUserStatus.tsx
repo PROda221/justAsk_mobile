@@ -44,10 +44,11 @@ function AddUserStatus({payload}: SheetProps<'AddUserStatus-sheet'>) {
           </View>
         </View>
         <View style={styles.separator} />
-        <View style={styles.option}>
+        <View style={styles.statusOption}>
           <TextInput
             name="status"
             secureTextEntry={false}
+            viewStyle={styles.textInputViewStyle}
             control={control}
             label={content.SetStatus.status}
             placeholder={content.SetStatus.status}

@@ -204,7 +204,8 @@ export function getUserChats(account) {
           .get('chats')
           .query(
             Q.where('user_id', users[0].id),
-            Q.sortBy('unread_count', Q.desc),
+            Q.sortBy('unread_count', Q.desc), // First priority: sort by unread count in descending order
+            Q.sortBy('msg_created_at', Q.desc), // Second priority: sort by message creation time in descending order
           )
           .observeWithColumns([
             'last_message',
