@@ -5,8 +5,6 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getEditProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {StarRatingDisplay} from 'react-native-star-rating-widget';
 import Header from '../../../Components/Header';
@@ -165,7 +163,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
             height={moderateScale(165)}
             width={moderateScale(165)}>
             <TouchableOpacity
-              onPress={openFullImage}
+              onPress={editProfile ? changeProfileImg : openFullImage}
               style={styles.imageContainer}>
               <Image
                 source={{
@@ -175,15 +173,13 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                 transition={500}
               />
               {editProfile && (
-                <TouchableOpacity
-                  style={styles.editIcon}
-                  onPress={changeProfileImg}>
+                <View style={styles.editIcon}>
                   <MaterialIcons
                     name="edit"
                     size={moderateScale(20)}
                     color={colors.editProfileButtonBgColor}
                   />
-                </TouchableOpacity>
+                </View>
               )}
             </TouchableOpacity>
           </Skeleton>
@@ -204,6 +200,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
               <Typography
                 fontWeight="400"
                 bgColor={colors.textPrimaryColor}
+                onPress={editProfile ? changeStatus : undefined}
                 textStyle={[
                   styles.statusText,
                   {

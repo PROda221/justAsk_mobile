@@ -84,7 +84,12 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         disabled={disabled}
         activeOpacity={1}
         onPressIn={handlePressIn}
-        onPressOut={() => handlePressOut(onPress)}
+        onPress={() => {
+          handlePressOut(onPress);
+        }}
+        onPressOut={() => {
+          scale.value = withSpring(1);
+        }}
         label={props.label}
         style={props.viewStyle}
         radius={props.radius}>

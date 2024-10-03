@@ -36,9 +36,6 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   useNotifications();
   useCheckMsgStatus();
   const isFocused = useIsFocused();
-  const syncChatsSlice = useSelector(
-    (state: RootState) => state.syncChatsSlice,
-  );
   const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
     useProfile(isFocused);
 
@@ -82,7 +79,7 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
       <HomeHeader
         styles={styles}
         colors={colors}
-        loading={initialLoader || profileLoading || syncChatsSlice.loading}
+        loading={initialLoader || profileLoading}
         username={profileSuccess?.username ?? ''}
         openSettings={openSettings}
       />

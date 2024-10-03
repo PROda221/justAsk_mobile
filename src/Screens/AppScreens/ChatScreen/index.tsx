@@ -53,14 +53,8 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   const {callGetUserProfileApi} = useUserProfile(username, image);
   const {newMessage, socket} = useSocket();
-  const {
-    getMessages,
-    sendMessages,
-    messages,
-    partnerStatus,
-    loadMoreMessages,
-    syncMessagesLoading,
-  } = useStartChat(username, image, newMessage, skills, status);
+  const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
+    useStartChat(username, image, newMessage, skills, status);
 
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
@@ -262,8 +256,6 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         show={activeChat[0]?._raw['you_blocked_status']}
         username={username}
       />
-
-      <Loader isLoading={syncMessagesLoading} />
 
       <View style={styles.inputContainer}>
         <TextInput

@@ -292,7 +292,7 @@ export async function getAllMessagesForChat(chatId, account) {
   }
 }
 
-export async function checkChatExists(chatId, account) {
+export async function checkChatExists(chatUsername, account) {
   try {
     const user = await database.collections
       .get('users')
@@ -301,7 +301,7 @@ export async function checkChatExists(chatId, account) {
 
     const chat = await database.collections
       .get('chats')
-      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+      .query(Q.where('user_id', user[0].id), Q.where('username', chatUsername))
       .fetch();
     return chat[0]?._raw; // Returns true if chat exists, false otherwise
   } catch (error) {
