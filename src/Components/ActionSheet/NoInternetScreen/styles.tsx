@@ -19,7 +19,10 @@ export const getNoInternetSheetStyles = (
   colors: DarkColors,
 ): NoInternetSheetStyles =>
   StyleSheet.create<NoInternetSheetStyles>({
-    actionSheet: {backgroundColor: colors.appScreenPrimaryBackground},
+    actionSheet: {
+      backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
+    },
     container: {
       justifyContent: 'center',
       alignItems: 'center',

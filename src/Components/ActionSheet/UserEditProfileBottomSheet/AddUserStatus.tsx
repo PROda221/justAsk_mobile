@@ -23,7 +23,7 @@ function AddUserStatus({payload}: SheetProps<'AddUserStatus-sheet'>) {
   };
 
   return (
-    <ActionSheet containerStyle={styles.actionSheet}>
+    <ActionSheet gestureEnabled containerStyle={styles.actionSheet}>
       <View style={styles.container}>
         <View style={styles.statusHeader}>
           <View>

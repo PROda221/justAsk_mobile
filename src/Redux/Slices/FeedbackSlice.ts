@@ -4,7 +4,7 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
 import {Endpoints} from '../../Api/Endpoints';
 
-type YourCommentSuccess = {
+export type YourCommentSuccess = {
   success: boolean;
   message: string;
   yourComment: {
@@ -13,6 +13,7 @@ type YourCommentSuccess = {
     content: string;
     rating: number;
     updatedAt: string;
+    commentUserPic: string;
   };
 };
 

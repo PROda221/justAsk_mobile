@@ -31,6 +31,7 @@ const NoInternetScreen = ({payload}: SheetProps<'NoInternet-sheet'>) => {
 
   return (
     <ActionSheet
+      gestureEnabled
       containerStyle={styles.actionSheet}
       closeOnTouchBackdrop={false}
       closeOnPressBack={false}>

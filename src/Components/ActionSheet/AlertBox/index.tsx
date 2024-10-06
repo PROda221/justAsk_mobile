@@ -12,6 +12,7 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
 
   return (
     <ActionSheet
+      gestureEnabled
       containerStyle={styles.actionSheet}
       closeOnTouchBackdrop={false}
       closeOnPressBack={false}>

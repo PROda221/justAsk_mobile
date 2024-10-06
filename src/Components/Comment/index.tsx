@@ -9,12 +9,23 @@ import {Typography} from '../Typography'; // Adjust the import path as needed
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getCommentStyles} from './styles';
 import content from '../../Assets/Languages/english.json';
+import {FeedbackScreenStyles} from '../../Screens/AppScreens/FeedbackScreen/styles';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {getProfilePic} from '../../Functions/GetProfilePic';
+import {Image} from 'expo-image';
+import {formatTimestamp} from '../../Functions/FormatTime';
+import {moderateScale} from '../../Functions/StyleScale';
 
 type CommentProps = {
   numberOfLines: number;
   bgColor: string;
   textStyle: TextStyle;
   content: string;
+  feedbackStyles: FeedbackScreenStyles;
+  commentUserPic: string;
+  commentUserId: string;
+  rating: number;
+  updatedAt: string;
 };
 
 export const Comment = (props: CommentProps) => {
@@ -47,38 +58,82 @@ export const Comment = (props: CommentProps) => {
   };
 
   return (
-    <View>
-      <Typography
-        numberOfLines={isExpanded ? undefined : props.numberOfLines}
-        textStyle={props.textStyle}
-        bgColor={props.bgColor}
-        fontWeight="400"
-        onTextLayout={isExpanded ? onFullTextLayout : onLimitedTextLayout}>
-        {props.content}
-      </Typography>
+    <View style={props.feedbackStyles.commentCard}>
+      <View style={props.feedbackStyles.mainHeader}>
+        <View style={props.feedbackStyles.feedbackImgContainer}>
+          <Image
+            source={{
+              uri: getProfilePic(props.commentUserPic),
+            }}
+            style={props.feedbackStyles.commentUserAvatar}
+            transition={500}
+          />
+        </View>
 
-      {!isExpanded && (
+        <View style={props.feedbackStyles.commentHeaderContainer}>
+          <View style={props.feedbackStyles.userDetailsHeader}>
+            <Typography
+              bgColor={colors.textPrimaryColor}
+              fontWeight="400"
+              textStyle={props.feedbackStyles.usernameText}>
+              {props.commentUserId}
+            </Typography>
+            <Typography
+              bgColor={colors.textInputPlaceholderColor}
+              fontWeight="400"
+              textStyle={props.feedbackStyles.timeText}>
+              {formatTimestamp(props.updatedAt)}
+            </Typography>
+          </View>
+
+          <View style={props.feedbackStyles.commentStarContainer}>
+            <Typography
+              bgColor={colors.textPrimaryColor}
+              fontWeight="400"
+              textStyle={props.feedbackStyles.starText}>
+              {`x${props.rating}`}
+            </Typography>
+            <Entypo
+              name="star"
+              size={moderateScale(12)}
+              color={colors.starColor}
+            />
+          </View>
+        </View>
+      </View>
+      <View>
         <Typography
-          textStyle={[props.textStyle, styles.textStyle]}
+          numberOfLines={isExpanded ? undefined : props.numberOfLines}
+          textStyle={props.textStyle}
           bgColor={props.bgColor}
           fontWeight="400"
-          onTextLayout={onFullTextLayout}>
+          onTextLayout={isExpanded ? onFullTextLayout : onLimitedTextLayout}>
           {props.content}
         </Typography>
-      )}
 
-      {shouldShowButton && (
-        <TouchableOpacity onPress={toggleReadMore}>
+        {!isExpanded && (
           <Typography
-            textStyle={[props.textStyle, styles.readMoreText]}
+            textStyle={[props.textStyle, styles.textStyle]}
             bgColor={props.bgColor}
-            fontWeight="400">
-            {isExpanded
-              ? content.CommentComponent.showLess
-              : content.CommentComponent.showMore}
+            fontWeight="400"
+            onTextLayout={onFullTextLayout}>
+            {props.content}
           </Typography>
-        </TouchableOpacity>
-      )}
+        )}
+
+        {shouldShowButton && (
+          <TouchableOpacity onPress={toggleReadMore}>
+            <Typography
+              textStyle={[props.textStyle, styles.readMoreText]}
+              bgColor={props.bgColor}
+              fontWeight="400">
+              {isExpanded
+                ? content.CommentComponent.showLess
+                : content.CommentComponent.showMore}
+            </Typography>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };

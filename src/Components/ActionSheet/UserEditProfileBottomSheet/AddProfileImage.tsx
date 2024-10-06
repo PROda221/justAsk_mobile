@@ -53,7 +53,7 @@ function AddProfileImage({payload}: SheetProps<'AddProfileImage-sheet'>) {
   };
 
   return (
-    <ActionSheet containerStyle={styles.actionSheet}>
+    <ActionSheet gestureEnabled containerStyle={styles.actionSheet}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.option} onPress={openGalary}>
           <Typography

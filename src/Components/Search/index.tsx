@@ -187,6 +187,7 @@ function SearchFeature() {
 
   return (
     <ActionSheet
+      gestureEnabled
       containerStyle={styles.actionSheetContainer}
       enableRouterBackNavigation={true}
       routes={routes}

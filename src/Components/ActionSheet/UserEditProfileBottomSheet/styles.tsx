@@ -1,5 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {moderateScale} from '../../../Functions/StyleScale';
+import {moderateScale, verticalScale} from '../../../Functions/StyleScale';
 import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type EditProfileSheetStyles = {
@@ -19,6 +19,7 @@ export const getEditProfileSheetStyles = (
   StyleSheet.create<EditProfileSheetStyles>({
     actionSheet: {
       backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
     },
     container: {
       borderTopRightRadius: moderateScale(10),

@@ -1,35 +1,32 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {View, FlatList} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {View, FlatList, ScrollView} from 'react-native';
 import {Image} from 'expo-image';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getFeedbackScreenStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import LinearGradient from 'react-native-linear-gradient';
-import {FlashList, type ListRenderItem} from '@shopify/flash-list';
-import Entypo from 'react-native-vector-icons/Entypo';
+import Header from '../../../Components/Header';
+import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
+import {GiveFeedback} from './GiveFeedback';
+import {Skeleton} from 'moti/skeleton';
+import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
+import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
+import content from '../../../Assets/Languages/english.json';
+import {withObservables} from '@nozbe/watermelondb/react';
+import {getCurrentChatObservable} from '../../../DB/DBFunctions';
+import {PropsType} from './types';
+import YourComment from './YourComment';
+import ActionSheet, {ActionSheetRef} from 'react-native-actions-sheet';
+import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
+import {FlashList, ListRenderItem} from '@shopify/flash-list';
+import {Comment as CommentComponent} from '../../../Components/Comment';
+import {EmptyState} from '../../../Assets/Images';
 import {
   horizontalScale,
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
-import Header from '../../../Components/Header';
-import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
-
 import {type Comment} from '../../../Redux/Slices/FeedbackSlice';
-import {EmptyState} from '../../../Assets/Images';
-
-import {GiveFeedback} from './GiveFeedback';
-import {Skeleton} from 'moti/skeleton';
-import {useAllComments} from '../../../CustomHooks/AppHooks/useAllComments.';
-import {useYourComment} from '../../../CustomHooks/AppHooks/useYourComment';
-import {useAddComments} from '../../../CustomHooks/AppHooks/useAddComment';
-import {getProfilePic} from '../../../Functions/GetProfilePic';
-import {formatTimestamp} from '../../../Functions/FormatTime';
-import content from '../../../Assets/Languages/english.json';
-import {withObservables} from '@nozbe/watermelondb/react';
-import {getCurrentChatObservable} from '../../../DB/DBFunctions';
-import {PropsType} from './types';
-import {Comment as CommentComponent} from '../../../Components/Comment';
 
 const enhance = withObservables(['route'], ({route}) => ({
   chatDetails: getCurrentChatObservable(
@@ -43,21 +40,27 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
   const {colors} = useTheme();
   const {userProfileSuccess, userProfileLoading} = useUserProfile();
 
+  const actionSheetRef = useRef<ActionSheetRef>(null);
+
+  const {resetaddCommenetReducer} = useAddComments();
+
+  const {
+    callGetYourCommentApi,
+    resetYourCommenReducer,
+    getYourCommentLoading,
+    getYourCommentSuccess,
+  } = useYourComment(userProfileSuccess?.username);
+
   const {
     callAllCommentsApi,
     allCommentsSuccess,
-    resetAllCommentsReducer,
     allCommentsLoading,
+    resetAllCommentsReducer,
   } = useAllComments(userProfileSuccess?.username);
-
-  const {resetaddCommenetReducer} = useAddComments();
 
   const [commentList, setCommentList] = useState(
     allCommentsSuccess?.data || [],
   );
-
-  const {callGetYourCommentApi, resetYourCommenReducer, getYourCommentLoading} =
-    useYourComment(userProfileSuccess?.username);
 
   const getAllComments = () => {
     callAllCommentsApi(
@@ -68,12 +71,6 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
   };
 
   useEffect(() => {
-    setLoading(false);
-    callGetYourCommentApi();
-    getAllComments();
-  }, []);
-
-  useEffect(() => {
     if (allCommentsSuccess?.data.length) {
       const conctinatedCommentedList = [
         ...commentList,
@@ -81,7 +78,13 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
       ];
       setCommentList(conctinatedCommentedList);
     }
-  }, [allCommentsSuccess?.data]);
+  }, [allCommentsSuccess?.lastId]);
+
+  useEffect(() => {
+    getAllComments();
+    setLoading(false);
+    callGetYourCommentApi();
+  }, []);
 
   const styles = getFeedbackScreenStyles(colors);
 
@@ -148,10 +151,39 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
     [userProfileLoading, getYourCommentLoading, loading],
   );
 
+  const listHeaderComponent = () => (
+    <>
+      {profileInfo()}
+      <View style={styles.giveFeedbackContainer}>
+        <Skeleton colorMode="light" show={getYourCommentLoading || loading}>
+          <GiveFeedback
+            styles={styles}
+            colors={colors}
+            username={userProfileSuccess?.username}
+          />
+        </Skeleton>
+      </View>
+    </>
+  );
+
+  const loadMoreComponent = () => (
+    <View style={styles.loadMoreContainer}>
+      {allCommentsSuccess?.data && allCommentsSuccess?.data.length > 10 ? (
+        <CustomButton
+          onPress={handleLoadMore}
+          label={content.UserFeedback.loadMore}
+          radius={95}
+          loading={allCommentsLoading}
+          viewStyle={styles.submitButtonStyle}
+        />
+      ) : null}
+    </View>
+  );
+
   const noCommentComponent = () => (
     <>
-      {loading || allCommentsLoading ? (
-        <Skeleton.Group show={allCommentsLoading || loading}>
+      {allCommentsLoading ? (
+        <Skeleton.Group show={allCommentsLoading}>
           <View style={styles.commentCard}>
             <View style={styles.mainHeader}>
               <View style={styles.skeletonProfileContainer}>
@@ -203,118 +235,64 @@ const FeedbackPage = ({route, chatDetails}: PropsType) => {
     </>
   );
 
-  const listHeaderComponent = () => (
-    <>
-      {profileInfo()}
-      <View style={styles.giveFeedbackContainer}>
-        <Skeleton colorMode="light" show={getYourCommentLoading || loading}>
-          <GiveFeedback
-            styles={styles}
-            colors={colors}
-            username={userProfileSuccess?.username}
-          />
-        </Skeleton>
-      </View>
-
-      <Typography
-        fontWeight="400"
-        bgColor={colors.textPrimaryColor}
-        textStyle={styles.commentsHeading}>
-        {content.UserFeedback.commentsTitle}
-      </Typography>
-    </>
-  );
-
-  const loadMoreComponent = () => (
-    <View style={styles.loadMoreContainer}>
-      {allCommentsSuccess?.data && allCommentsSuccess?.data.length > 10 ? (
-        <CustomButton
-          onPress={handleLoadMore}
-          label={content.UserFeedback.loadMore}
-          radius={95}
-          loading={false}
-          viewStyle={styles.submitButtonStyle}
-        />
-      ) : null}
-    </View>
-  );
   const renderItem: ListRenderItem<Comment> = ({item}) => {
     return (
-      <View style={styles.commentCard}>
-        <View style={styles.mainHeader}>
-          <View style={styles.feedbackImgContainer}>
-            <Image
-              source={{
-                uri: getProfilePic(item.commentUserPic),
-              }}
-              style={styles.commentUserAvatar}
-              transition={500}
-            />
-          </View>
-
-          <View style={styles.commentHeaderContainer}>
-            <View style={styles.userDetailsHeader}>
-              <Typography
-                bgColor={colors.textPrimaryColor}
-                fontWeight="400"
-                textStyle={styles.usernameText}>
-                {item.commentUserId}
-              </Typography>
-              <Typography
-                bgColor={colors.textInputPlaceholderColor}
-                fontWeight="400"
-                textStyle={styles.timeText}>
-                {formatTimestamp(item.updatedAt)}
-              </Typography>
-            </View>
-
-            <View style={styles.commentStarContainer}>
-              <Typography
-                bgColor={colors.textPrimaryColor}
-                fontWeight="400"
-                textStyle={styles.starText}>
-                {`x${item.rating}`}
-              </Typography>
-              <Entypo
-                name="star"
-                size={moderateScale(12)}
-                color={colors.starColor}
-              />
-            </View>
-          </View>
-        </View>
-
-        <CommentComponent
-          content={item.content}
-          bgColor={colors.textPrimaryColor}
-          numberOfLines={3}
-          textStyle={styles.commentText}
-        />
-      </View>
+      <CommentComponent
+        content={item.content}
+        bgColor={colors.textPrimaryColor}
+        numberOfLines={3}
+        textStyle={styles.commentText}
+        feedbackStyles={styles}
+        commentUserPic={item.commentUserPic}
+        commentUserId={item.commentUserId}
+        rating={item.rating}
+        updatedAt={item.updatedAt}
+      />
     );
   };
-
-  const renderComments = () => (
-    <FlashList
-      ListEmptyComponent={noCommentComponent}
-      // ListHeaderComponent={listHeaderComponent}
-      ListFooterComponent={loadMoreComponent}
-      estimatedItemSize={150}
-      data={commentList}
-      renderItem={renderItem}
-      showsVerticalScrollIndicator={false}
-    />
-  );
 
   return (
     <LinearGradient
       colors={['#868F96', '#596164']}
       style={styles.gradientContainer}>
-      <View style={styles.backButtonContainer}>
-        <Header onPress={resetFeedbackReducers} />
-      </View>
-      {listHeaderComponent()}
-      {renderComments()}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.backButtonContainer}>
+          <Header onPress={resetFeedbackReducers} />
+        </View>
+        {listHeaderComponent()}
+        <YourComment
+          title={content.UserFeedback.yourComment}
+          titleColor={colors.textPrimaryColor}
+          titleStyle={styles.commentsHeading}
+          commentStyle={styles.commentText}
+          commentColor={colors.textPrimaryColor}
+          yourComment={getYourCommentSuccess}
+          yourCommentLoading={getYourCommentLoading || loading}
+        />
+        <CustomButton
+          label="View Comments"
+          radius={14}
+          viewStyle={styles.viewCommentsButton}
+          onPress={() => actionSheetRef.current?.show()}
+        />
+        <ActionSheet
+          gestureEnabled
+          ref={actionSheetRef}
+          containerStyle={styles.commentActionSheet}
+          closeOnTouchBackdrop={true}
+          closeOnPressBack={true}>
+          <View style={{height: '100%'}}>
+            <FlashList
+              ListEmptyComponent={noCommentComponent}
+              ListFooterComponent={loadMoreComponent}
+              estimatedItemSize={150}
+              data={commentList}
+              renderItem={renderItem}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        </ActionSheet>
+      </ScrollView>
     </LinearGradient>
   );
 };

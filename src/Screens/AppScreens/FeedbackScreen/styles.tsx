@@ -42,6 +42,8 @@ export type FeedbackScreenStyles = {
   noFeedbacksContainer: ViewStyle;
   feedbackImgContainer: ViewStyle;
   userDetailsHeader: ViewStyle;
+  viewCommentsButton: ViewStyle;
+  commentActionSheet: ViewStyle;
 };
 
 export const getFeedbackScreenStyles = (
@@ -210,4 +212,12 @@ export const getFeedbackScreenStyles = (
     noFeedbacksContainer: {justifyContent: 'center', alignItems: 'center'},
     feedbackImgContainer: {marginLeft: horizontalScale(10)},
     userDetailsHeader: {flexDirection: 'row'},
+    viewCommentsButton: {
+      marginVertical: verticalScale(10),
+    },
+    commentActionSheet: {
+      height: '70%',
+      padding: horizontalScale(16),
+      backgroundColor: '#227B94',
+    },
   });

@@ -31,6 +31,7 @@ export const getSearchStyles = (colors: DarkColors): SearchStyles =>
     },
     actionSheetContainer: {
       backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
     },
     loaderContainer: {
       padding: moderateScale(15),
