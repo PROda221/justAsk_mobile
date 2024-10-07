@@ -9,7 +9,6 @@ import {useSyncChats} from './useSyncChats';
 
 export const useGetOnline = (socket: Socket | null) => {
   const appState = useRef(AppState.currentState);
-  const appOpen = useRef(true);
   const profileSuccess = useSelector(
     (state: RootState) => state.profileSlice.success,
   );
@@ -23,7 +22,6 @@ export const useGetOnline = (socket: Socket | null) => {
   useEffect(() => {
     if (profileSuccess?.username) {
       callSyncChatsApi(profileSuccess?.username);
-      appOpen.current = false;
     }
   }, [profileSuccess?.username]);
 
@@ -33,7 +31,7 @@ export const useGetOnline = (socket: Socket | null) => {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        if (profileSuccess?.username && !appOpen.current) {
+        if (profileSuccess?.username) {
           callSyncChatsApi(profileSuccess?.username);
         }
         socket?.emit('statusUpdate', profileSuccess?.username, 'online');

@@ -1,3 +1,4 @@
+import React, {useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {useEffect} from 'react';
@@ -13,6 +14,7 @@ import {syncChatsToLocal} from '../../Functions/SyncChatsWithLocalStorage';
 let yourId = '';
 
 export const useSyncChats = () => {
+  const syncing = useRef(false);
   const dispatch = useDispatch();
   const syncChatsSlice = useSelector(
     (state: RootState) => state.syncChatsSlice,
@@ -29,10 +31,12 @@ export const useSyncChats = () => {
 
   useEffect(() => {
     const syncLocalWithDb = async (data: Chats[]) => {
+      syncing.current = true;
       await syncChatsToLocal(data, yourId);
+      syncing.current = false;
     };
 
-    if (syncChatsSlice.success) {
+    if (syncChatsSlice.success && !syncing.current) {
       syncLocalWithDb(syncChatsSlice.success.data);
     }
   }, [syncChatsSlice.success]);

@@ -13,39 +13,39 @@ export const syncChatsToLocal = async (
   data: Chats[],
   accountUsername: string,
 ) => {
-  data.map(async chat => {
-    let downloadedPic;
-    let chatExists: boolean | _RawRecord = await checkChatExists(
-      chat.username,
-      accountUsername,
-    );
-    if (!chatExists) {
-      console.log('syncing new chats.....');
-      downloadedPic = await downloadImg(chat.profilePic);
-      // add download logic from here
-      await syncChatToLocal(
-        chat.username,
-        downloadedPic,
-        chat.status,
-        chat.adviveGenre,
-        accountUsername,
-        chat.unreadCount,
-        chat.latestMessage
-      );
-    } else {
-      downloadedPic = await downloadImg(
-        chat.profilePic,
-        chatExists?.['profile_pic'],
-      );
-      await updateSynchedChatToLocal(
-        chat.username,
-        downloadedPic,
-        chat.status,
-        chat.adviveGenre,
-        accountUsername,
-        chat.unreadCount,
-        chat.latestMessage
-      )
-    }
-  });
+  // Use Promise.all to wait for all async tasks in map
+  await Promise.all(
+    data.map(async chat => {
+      let downloadedPic;
+      let chatExists = await checkChatExists(chat.username, accountUsername);
+
+      if (!chatExists) {
+        console.log('syncing new chats.....');
+        downloadedPic = await downloadImg(chat.profilePic);
+        await syncChatToLocal(
+          chat.username,
+          downloadedPic,
+          chat.status,
+          chat.adviveGenre,
+          accountUsername,
+          chat.unreadCount,
+          chat.latestMessage
+        );
+      } else {
+        downloadedPic = await downloadImg(
+          chat.profilePic,
+          chatExists?.['profile_pic'],
+        );
+        await updateSynchedChatToLocal(
+          chat.username,
+          downloadedPic,
+          chat.status,
+          chat.adviveGenre,
+          accountUsername,
+          chat.unreadCount,
+          chat.latestMessage
+        );
+      }
+    })
+  );
 };

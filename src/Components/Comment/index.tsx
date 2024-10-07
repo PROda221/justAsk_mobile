@@ -15,13 +15,14 @@ import {getProfilePic} from '../../Functions/GetProfilePic';
 import {Image} from 'expo-image';
 import {formatTimestamp} from '../../Functions/FormatTime';
 import {moderateScale} from '../../Functions/StyleScale';
+import {MyFeedbackStyles} from '../../Screens/AppScreens/MyFeedbackScreen/styles';
 
 type CommentProps = {
   numberOfLines: number;
   bgColor: string;
   textStyle: TextStyle;
   content: string;
-  feedbackStyles: FeedbackScreenStyles;
+  feedbackStyles: FeedbackScreenStyles | MyFeedbackStyles;
   commentUserPic: string;
   commentUserId: string;
   rating: number;

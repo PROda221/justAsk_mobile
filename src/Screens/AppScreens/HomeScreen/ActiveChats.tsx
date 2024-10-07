@@ -108,6 +108,7 @@ const ActiveChats = ({
   return (
     <FlashList
       data={activeChats}
+      showsVerticalScrollIndicator={false}
       ListHeaderComponent={renderListHeader}
       renderItem={renderMessage}
       keyExtractor={item => item.id}
