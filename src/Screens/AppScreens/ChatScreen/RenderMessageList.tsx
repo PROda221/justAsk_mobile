@@ -101,7 +101,11 @@ const RenderMessageList = ({
           <MaterialCommunityIcons
             name="checkbox-marked-circle"
             size={moderateScale(12)}
-            color="white"
+            color={
+              activeMsg?.[0]?._raw['read']
+                ? colors.readReceipt
+                : colors.sentReceipt
+            }
           />
         ) : activeMsg?.[0]?._raw['status'] === 'failed' ? (
           <MaterialCommunityIcons
@@ -113,7 +117,7 @@ const RenderMessageList = ({
           <MaterialCommunityIcons
             name="checkbox-blank-circle-outline"
             size={moderateScale(12)}
-            color="white"
+            color={colors.SendingReceipt}
           />
         )}
       </>

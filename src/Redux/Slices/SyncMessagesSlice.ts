@@ -4,19 +4,26 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {post} from '../../Api/AxiosConfig';
 import { Endpoints } from '../../Api/Endpoints';
 
+export type MessageObj = {
+  newMessages: Messages[];
+  unacknowledgedReadReceipts: Messages[]
+}
+
 export type Messages = {
     senderId: string;
     receiverId: string;
     message: string;
     type: string;
     timeStamp: Date;
+    isRead: boolean;
+    isAcknowledged: boolean;
     localMsgId: string;
 }
 
  type SyncMessages = {
   success: boolean;
   message: string;
-  data: Messages[];
+  data: MessageObj;
 };
 
 type SyncMessagesError = {

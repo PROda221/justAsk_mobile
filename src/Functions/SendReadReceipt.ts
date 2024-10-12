@@ -8,25 +8,31 @@ export const sendReadReceipt = async (
   sender: string,
   receiver?: string,
 ) => {
-  let firstReceivedMessage: Model = {} as Model;
+  const unreadMessages: {msg: string; msgId: string}[] = [];
+
   for (let i = 0; i < ReadMsgObj.length; i++) {
-    if (ReadMsgObj[i]._raw['is_received'] === true) {
-      firstReceivedMessage = ReadMsgObj[i];
-      break; // Exit the loop as soon as we find the first match
+    const message = ReadMsgObj[i]._raw;
+
+    const msg = message['text'];
+    const msgId = message['msg_id'];
+    const read = message['read'];
+    const isReceived = message['is_received'];
+
+    if (!msg || !msgId || !isReceived) continue;
+
+    if (!read) {
+      // Mark the message as read
+      await markMsgRead(ReadMsgObj[i].id);
+
+      // Collect unread messages in an array
+      unreadMessages.push({msg, msgId});
     }
   }
 
-  const msg = firstReceivedMessage._raw?.['text'];
-  const msgId = firstReceivedMessage._raw?.['msg_id'];
-  const read = firstReceivedMessage._raw?.['read'];
-
-  if (!msg || !msgId) return;
-
-  if (!read) {
-    await markMsgRead(firstReceivedMessage.id);
+  // Send all unread messages in one socket event if any unread messages exist
+  if (unreadMessages.length > 0) {
     socket?.emit('read receipt', {
-      msg,
-      msgId,
+      messages: unreadMessages,
       senderId: sender,
       receiverId: receiver,
     });

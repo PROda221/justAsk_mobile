@@ -18,11 +18,7 @@ import {
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
-import {
-  getCurrentChatObservable,
-  markAllRead,
-  markMsgRead,
-} from '../../../DB/DBFunctions';
+import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
 import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
@@ -100,7 +96,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     if (messages?.length) {
       sendReadReceipt(messages, socket, username, profileSuccess?.username);
     }
-  }, [messages]);
+  }, [messages[0]?._raw['id']]);
 
   // Handle animation of online status
   useEffect(() => {
@@ -278,13 +274,6 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           })}
           multiline={true}
           editable={!closeChat()}
-          // viewStyle={[
-          //   styles.chatTextInput,
-          //   {height: height < verticalScale(50) ? verticalScale(50) : height},
-          // ]}
-          // onContentSizeChange={event => {
-          //   setHeight(event.nativeEvent.contentSize.height);
-          // }}
         />
       </View>
     </View>

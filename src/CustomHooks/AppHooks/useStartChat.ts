@@ -8,12 +8,14 @@ import {
   getAllMessagesForChat,
   getLatestMessageForChat,
   storeSyncedMessages,
+  updateReadStatus,
+  updateReadStatusWebSocket,
 } from '../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
 import {AppState} from 'react-native';
 import {useSocket} from '../../useContexts/SocketContext';
 import {useSyncMessages} from './useSyncMessages';
-import {Messages} from '../../Redux/Slices/SyncMessagesSlice';
+import {MessageObj} from '../../Redux/Slices/SyncMessagesSlice';
 import NetInfo from '@react-native-community/netinfo';
 import {debounce} from 'lodash';
 
@@ -42,6 +44,13 @@ export const useStartChat = (
   } = useSyncMessages();
 
   const profileSlice = useSelector((state: RootState) => state.profileSlice);
+
+  const sendAcknowledgment = async (msgsacknowledged: string[]) => {
+    socket?.emit(
+      'acknowledge receipt',
+      msgsacknowledged,
+    );
+  }
 
   const sendMessages = async (
     messageInput: string,
@@ -138,14 +147,16 @@ export const useStartChat = (
   }, 2000);
 
   useEffect(() => {
-    const getMessages = async (data: Messages[]) => {
-      if (data.length) {
+    const getMessages = async (data: MessageObj) => {
+      if (data) {
         let newMessages: Model[] = [];
         newMessages = await storeSyncedMessages(
           profileSlice.success?.username,
           username,
-          data,
+          data.newMessages,
         );
+        const msgsacknowledged = await updateReadStatus(data.unacknowledgedReadReceipts)
+        sendAcknowledgment(msgsacknowledged)
         newMessages.reverse();
         setMessages(prevMessages => [...newMessages, ...prevMessages]);
       }
@@ -198,6 +209,11 @@ export const useStartChat = (
       socket?.on('statusUpdate', statusUpdate => {
         const {status} = statusUpdate;
         setPartnerStatus(status);
+      });
+
+      socket?.volatile.on('read receipt', async ({readMsgs}) => {
+        const acknowledgedMessages = await updateReadStatusWebSocket(readMsgs)
+        sendAcknowledgment(acknowledgedMessages)
       });
     };
 

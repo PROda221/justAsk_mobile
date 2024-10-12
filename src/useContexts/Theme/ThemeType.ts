@@ -74,4 +74,7 @@ export type DarkColors = {
   showMore: string;
   showLess: string;
   retryMsg: string;
+  readReceipt: string;
+  sentReceipt: string;
+  SendingReceipt: string;
 };

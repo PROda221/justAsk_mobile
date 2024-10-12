@@ -544,7 +544,7 @@ export function getCurrentMsgObservable(id) {
     return database.collections
       .get('messages')
       .query(Q.where('id', id))
-      .observeWithColumns(['msg_id', 'status', 'uploading_image']);
+      .observeWithColumns(['msg_id', 'status', 'uploading_image', 'read']);
   } catch (err) {
     console.log('err in observing msgId :', err);
   }
@@ -582,29 +582,108 @@ export async function unblockChats(chatIds, account) {
   }
 }
 
-export async function markMsgRead(msgLocalId) {
+export async function markMsgRead(id, serverId = false) {
   try {
     await database.write(async () => {
       try {
-        const message = await database
-          .get('messages')
-          .query(Q.where('id', msgLocalId))
-          .fetch();
+        let message = [];
+        if (serverId) {
+          message = await database
+            .get('messages')
+            .query(Q.where('msg_id', id))
+            .fetch();
+        } else {
+          message = await database
+            .get('messages')
+            .query(Q.where('id', id))
+            .fetch();
+        }
         if (message.length > 0) {
-          // Check if message exists
           await message[0].update(message => {
             message.read = true;
           });
         } else {
-          console.error('Message not found:', messageId);
+          console.error('Message not found:', msgId);
         }
       } catch (error) {
-        console.log('error updating read status :', error);
+        console.log('error updating read status 1 :', error);
       }
     });
   } catch (err) {
-    console.log('error updating read status :', err);
+    console.log('error updating read status 2 :', err);
   }
+}
+
+export async function updateReadStatusWebSocket(unacknowledgedReadReceipts) {
+  const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+  try {
+    // Extract all msg_ids
+    const ids = unacknowledgedReadReceipts.map(receipt => receipt.msgId);
+
+    // Fetch messages in bulk based on serverId or regular id
+    const messages = await database
+      .get('messages')
+      .query(Q.where('msg_id', Q.oneOf(ids)))
+      .fetch();
+
+    if (messages.length > 0) {
+      await database.write(async () => {
+        await Promise.all(
+          messages.map(async message => {
+            // Update read status and store the acknowledged message
+            await message.update(msg => {
+              msg.read = true;
+            });
+
+            // Push the updated message to the acknowledgedMessages array
+            acknowledgedMessages.push(message._raw['msg_id']);
+          }),
+        );
+      });
+    }
+  } catch (err) {
+    console.log('Error updating read status and acknowledging:', err);
+  }
+
+  // Return the array of acknowledged messages
+  return acknowledgedMessages;
+}
+
+export async function updateReadStatus(unacknowledgedReadReceipts) {
+  const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+  try {
+    // Extract all msg_ids
+    const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
+
+    // Fetch messages in bulk based on serverId or regular id
+    const messages = await database
+      .get('messages')
+      .query(Q.where('id', Q.oneOf(ids)))
+      .fetch();
+
+    if (messages.length > 0) {
+      await database.write(async () => {
+        await Promise.all(
+          messages.map(async message => {
+            // Update read status and store the acknowledged message
+            await message.update(msg => {
+              msg.read = true;
+            });
+
+            // Push the updated message to the acknowledgedMessages array
+            acknowledgedMessages.push(message._raw['msg_id']);
+          }),
+        );
+      });
+    }
+  } catch (err) {
+    console.log('Error updating read status and acknowledging:', err);
+  }
+
+  // Return the array of acknowledged messages
+  return acknowledgedMessages;
 }
 
 export async function storeSyncedMessages(account, chatId, messages) {

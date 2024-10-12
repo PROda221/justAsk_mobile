@@ -98,6 +98,9 @@ const darkColors: DarkColors = {
   showMore: '#065fd4',
   showLess: '#065fd4',
   retryMsg: '#EB5757',
+  readReceipt: '#4FB6EC',
+  sentReceipt: '#fff',
+  SendingReceipt: '#fff',
 };
 
 const ThemeContext = createContext<ThemeContextType>({
