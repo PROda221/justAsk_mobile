@@ -9,7 +9,6 @@ import {
   getLatestMessageForChat,
   storeSyncedMessages,
   updateReadStatus,
-  updateReadStatusWebSocket,
 } from '../../DB/DBFunctions';
 import {Model} from '@nozbe/watermelondb';
 import {AppState} from 'react-native';
@@ -209,11 +208,6 @@ export const useStartChat = (
       socket?.on('statusUpdate', statusUpdate => {
         const {status} = statusUpdate;
         setPartnerStatus(status);
-      });
-
-      socket?.volatile.on('read receipt', async ({readMsgs}) => {
-        const acknowledgedMessages = await updateReadStatusWebSocket(readMsgs)
-        sendAcknowledgment(acknowledgedMessages)
       });
     };
 
