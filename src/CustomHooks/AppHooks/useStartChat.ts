@@ -5,7 +5,7 @@ import {
   addMessageToChat,
   checkChatExists,
   createNewChat,
-  getAllMessagesForChat,
+  getMessagesForChat,
   getLatestMessageForChat,
   storeSyncedMessages,
   updateReadStatus,
@@ -16,6 +16,7 @@ import {useSocket} from '../../useContexts/SocketContext';
 import {useSyncMessages} from './useSyncMessages';
 import {MessageObj} from '../../Redux/Slices/SyncMessagesSlice';
 import NetInfo from '@react-native-community/netinfo';
+import SoundPlayer from 'react-native-sound-player'
 import {debounce} from 'lodash';
 
 let allMessages: Model[] = [];
@@ -57,6 +58,7 @@ export const useStartChat = (
     type: string = 'message',
     messageId: string,
   ) => {
+    SoundPlayer.playSoundFile('outgoing_sound', 'wav')
     socket?.volatile.emit(
       'chat message',
       messageInput,
@@ -83,22 +85,29 @@ export const useStartChat = (
         true,
       );
       setMessages(prevMessages => [newMessage, ...prevMessages]);
+      SoundPlayer.playSoundFile('incoming_sound', 'wav')
       return newMessage;
     } catch (err) {
       console.log('err on getMessage in useStartChat:', err);
     }
   };
 
-  const loadMoreMessages = () => {
+  const loadMoreMessages = async () => {
     if (hasMore && allMessages.length && messages?.length) {
-      const currentLength = messages.length;
-      const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
+      // const currentLength = messages.length;
+      const {localStoredMsgs} = await getMessagesForChat(
+        username,
+        profileSlice.success?.username,
+        messages[messages.length - 1]?.id ?? '',
+      );
+     
+      // const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
 
-      if (nextBatch.length < 20) {
+      if (localStoredMsgs.length < 20) {
         setHasMore(false);
       }
 
-      setMessages(prevMessages => [...prevMessages, ...nextBatch]);
+      setMessages(prevMessages => [...prevMessages, ...localStoredMsgs]);
     }
   };
 
@@ -118,11 +127,11 @@ export const useStartChat = (
           username,
           latestMsg?._raw?.['msg_id'] ?? '',
         );
-        const {allLocalStoredMsgs, chatId} = await getAllMessagesForChat(
+        const {localStoredMsgs, chatId} = await getMessagesForChat(
           username,
           profileSlice.success?.username,
         );
-        allMessages = allLocalStoredMsgs;
+        allMessages = localStoredMsgs;
         setChatId(chatId);
         if (allMessages.length) {
           setMessages(allMessages?.slice(0, 20));

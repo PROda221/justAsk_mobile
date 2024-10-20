@@ -14,7 +14,6 @@ const adapter = new SQLiteAdapter({
   const database = new Database({
     adapter,
     modelClasses: [Users, Chat, Message, Notification],
-    actionsEnabled: true,
   });
 
 export default database

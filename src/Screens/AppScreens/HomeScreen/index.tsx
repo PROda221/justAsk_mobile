@@ -19,8 +19,6 @@ import {Skeleton} from 'moti/skeleton';
 import {verticalScale} from '../../../Functions/StyleScale';
 import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccount';
 import Loader from '../../../Components/Loader/Loader';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../Redux/rootReducers';
 import {useCheckMsgStatus} from '../../../CustomHooks/AppHooks/useCheckMsgStatus';
 
 type HomeScreenProps = {

@@ -270,7 +270,7 @@ export async function getLatestMessageForChat(chatId, account) {
   }
 }
 
-export async function getAllMessagesForChat(chatId, account) {
+export async function getMessagesForChat(chatId, account, fromMessageId = '') {
   try {
     const user = await database.collections
       .get('users')
@@ -281,16 +281,65 @@ export async function getAllMessagesForChat(chatId, account) {
       .get('chats')
       .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
       .fetch();
-    const messages = await database.collections
-      .get('messages')
-      .query(Q.where('chat_id', chat[0].id), Q.sortBy('msg_created_at', Q.desc))
-      .fetch();
-    return {allLocalStoredMsgs: messages, chatId: chat[0].id};
+
+    let messagesQuery;
+
+    // If a message ID is provided, fetch 20 messages before it
+    if (fromMessageId) {
+      const referenceMessage = await database.collections
+        .get('messages')
+        .find(fromMessageId); // Find the message with the given ID
+
+      // Query to fetch messages before the reference message
+      messagesQuery = database.collections
+        .get('messages')
+        .query(
+          Q.where('chat_id', chat[0].id),
+          Q.where('msg_created_at', Q.lt(referenceMessage._raw['msg_created_at'])), // Get messages before the reference message
+          Q.sortBy('msg_created_at', Q.desc), // Sort messages by created time in descending order
+          Q.take(20) // Limit to 20 messages
+        );
+    } else {
+      // If no message ID is provided, fetch the latest 20 messages
+      messagesQuery = database.collections
+        .get('messages')
+        .query(
+          Q.where('chat_id', chat[0].id),
+          Q.sortBy('msg_created_at', Q.desc),
+          Q.take(20)
+        );
+    }
+
+    const messages = await messagesQuery.fetch();
+
+    return { localStoredMsgs: messages, chatId: chat[0].id };
   } catch (error) {
     console.error('Error fetching messages for chat:', error);
     throw error;
   }
 }
+
+// export async function getAllMessagesForChat(chatId, account) {
+//   try {
+//     const user = await database.collections
+//       .get('users')
+//       .query(Q.where('username', account))
+//       .fetch();
+
+//     const chat = await database
+//       .get('chats')
+//       .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+//       .fetch();
+//     const messages = await database.collections
+//       .get('messages')
+//       .query(Q.where('chat_id', chat[0].id), Q.sortBy('msg_created_at', Q.desc))
+//       .fetch();
+//     return {allLocalStoredMsgs: messages, chatId: chat[0].id};
+//   } catch (error) {
+//     console.error('Error fetching messages for chat:', error);
+//     throw error;
+//   }
+// }
 
 export async function checkChatExists(chatUsername, account) {
   try {
@@ -713,7 +762,7 @@ export async function storeSyncedMessages(account, chatId, messages) {
               record.text = message.message;
               record.type = message.type;
               record.received = message.senderId !== account;
-              record.read = false;
+              record.read = message.isRead;
               record.uploadingImage = false;
               record.msgId = message._id;
               record.msgCreatedAt = message.createdAt;
