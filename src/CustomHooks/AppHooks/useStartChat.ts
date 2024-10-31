@@ -145,6 +145,7 @@ export const useStartChat = (
           profileSlice.success?.username,
         );
       }
+      initialMount.current = false;
     } catch (err) {
       console.log('local db error :', err);
     }
@@ -209,7 +210,6 @@ export const useStartChat = (
   }, [newMessage]);
 
   useEffect(() => {
-    fetchMessages();
     const connectWithUser = async () => {
       const myUsername = profileSlice?.success?.username;
       socket?.emit('join', {userId: myUsername, chatPartnerId: username});
@@ -220,8 +220,8 @@ export const useStartChat = (
       });
     };
 
+    fetchMessages();
     connectWithUser();
-    initialMount.current = false;
   }, [username]);
 
   return {

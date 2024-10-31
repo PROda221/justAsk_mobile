@@ -163,6 +163,8 @@ const RenderMessageList = ({
                 contentFit="cover"
                 source={{uri: `${text}`}}
                 style={styles.imageChat}
+                placeholder={{blurhash: blurhash}}
+                recyclingKey={id}
               />
             </TouchableOpacity>
             <View>
