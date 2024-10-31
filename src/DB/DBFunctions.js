@@ -706,17 +706,29 @@ export async function updateReadStatusWebSocket(unacknowledgedReadReceipts) {
   return acknowledgedMessages;
 }
 
+
+// FOR TESTING ACKNOWLEDGEMENT IN PROD
+
 export async function updateReadStatus(unacknowledgedReadReceipts) {
   const acknowledgedMessages = []; // Array to hold acknowledged messages
 
   try {
-    // Extract all msg_ids
-    const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
+    // Extract all msg_ids and filter out undefined or null values
+    const ids = unacknowledgedReadReceipts
+      .map(receipt => receipt.localMsgId)
 
-    // Fetch messages in bulk based on serverId or regular id
+    const msgIds = unacknowledgedReadReceipts
+      .map(receipt => receipt._id)
+
+    // Fetch messages in bulk based on either 'id' or 'msg_id'
     const messages = await database
       .get('messages')
-      .query(Q.where('id', Q.oneOf(ids)))
+      .query(
+        Q.or(
+          Q.where('id', Q.oneOf(ids)),
+          Q.where('msg_id', Q.oneOf(msgIds))
+        )
+      )
       .fetch();
 
     if (messages.length > 0) {
@@ -730,7 +742,7 @@ export async function updateReadStatus(unacknowledgedReadReceipts) {
 
             // Push the updated message to the acknowledgedMessages array
             acknowledgedMessages.push(message._raw['msg_id']);
-          }),
+          })
         );
       });
     }
@@ -741,6 +753,42 @@ export async function updateReadStatus(unacknowledgedReadReceipts) {
   // Return the array of acknowledged messages
   return acknowledgedMessages;
 }
+
+// export async function updateReadStatus(unacknowledgedReadReceipts) {
+//   const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+//   try {
+//     // Extract all msg_ids
+//     const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
+
+//     // Fetch messages in bulk based on serverId or regular id
+//     const messages = await database
+//       .get('messages')
+//       .query(Q.where('id', Q.oneOf(ids)))
+//       .fetch();
+
+//     if (messages.length > 0) {
+//       await database.write(async () => {
+//         await Promise.all(
+//           messages.map(async message => {
+//             // Update read status and store the acknowledged message
+//             await message.update(msg => {
+//               msg.read = true;
+//             });
+
+//             // Push the updated message to the acknowledgedMessages array
+//             acknowledgedMessages.push(message._raw['msg_id']);
+//           }),
+//         );
+//       });
+//     }
+//   } catch (err) {
+//     console.log('Error updating read status and acknowledging:', err);
+//   }
+
+//   // Return the array of acknowledged messages
+//   return acknowledgedMessages;
+// }
 
 export async function storeSyncedMessages(account, chatId, messages) {
   try {
