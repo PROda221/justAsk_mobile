@@ -103,7 +103,7 @@ export const useStartChat = (
      
       // const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
 
-      if (localStoredMsgs.length < 20) {
+      if (localStoredMsgs.length < 50) {
         setHasMore(false);
       }
 
@@ -134,7 +134,7 @@ export const useStartChat = (
         allMessages = localStoredMsgs;
         setChatId(chatId);
         if (allMessages.length) {
-          setMessages(allMessages?.slice(0, 20));
+          setMessages(allMessages?.slice(0, 80));
         }
       } else {
         await createNewChat(

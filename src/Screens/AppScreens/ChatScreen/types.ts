@@ -6,7 +6,7 @@ export type MessageType = {
     item: {
       id: string;
       text: string;
-      type: 'image' | 'message';
+      type: 'image' | 'message' | 'gif';
       received: boolean;
       uploadingImage: boolean;
       createdAt: number;

@@ -67,10 +67,10 @@ const ActiveChats = ({
         onPress={() => openChatScreen(item)}
         style={styles.messageContainer}>
         <Image
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
           source={{uri: item._raw['profile_pic']}}
           style={styles.avatar}
-          transition={500}
+          recyclingKey={item._raw['id']}
         />
         <View style={styles.messageTextContainer}>
           <View style={{flexDirection: 'row'}}>

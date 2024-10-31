@@ -36,6 +36,7 @@ import {RenderSvg} from '../RenderSvg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
 type TextInputProps = {
@@ -51,15 +52,8 @@ type TextInputProps = {
   multiline?: boolean;
   handleRightIconPress?: () => void;
   handleLeftIconPress?: () => void;
-  leftIcon?:
-    | 'email'
-    | 'lock'
-    | 'chat'
-    | 'search'
-    | 'user'
-    | 'gallary'
-    | 'block';
-  rightIcon?: 'search' | 'chat';
+  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'block' | 'giphy';
+  rightIcon?: 'search' | 'chat' | 'gallary';
   disable?: boolean;
 };
 
@@ -128,7 +122,15 @@ const RightIconContainer = styled(TouchableOpacity)<{
 `;
 
 const renderLeftIcon = (
-  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary' | 'block',
+  leftIcon:
+    | 'email'
+    | 'lock'
+    | 'chat'
+    | 'search'
+    | 'user'
+    | 'gallary'
+    | 'block'
+    | 'giphy',
 ) => {
   switch (leftIcon) {
     case 'email':
@@ -171,6 +173,14 @@ const renderLeftIcon = (
           width={horizontalScale(20)}
         />
       );
+    case 'giphy':
+      return (
+        <MaterialCommunityIcons
+          name="sticker-emoji"
+          size={moderateScale(25)}
+          color={'white'}
+        />
+      );
     case 'gallary':
       return (
         <Entypo name="folder-images" size={moderateScale(25)} color={'white'} />
@@ -194,7 +204,7 @@ const renderEye = (showPass: boolean | undefined) => {
   }
 };
 
-const renderRightIcon = (rightIcon: 'search' | 'chat') => {
+const renderRightIcon = (rightIcon: 'search' | 'chat' | 'gallary') => {
   switch (rightIcon) {
     case 'search':
       return (
@@ -206,6 +216,10 @@ const renderRightIcon = (rightIcon: 'search' | 'chat') => {
       );
     case 'chat':
       return <Ionicons name="send" size={moderateScale(25)} color={'white'} />;
+    case 'gallary':
+      return (
+        <Entypo name="folder-images" size={moderateScale(25)} color={'white'} />
+      );
     default:
       return <View />;
   }
@@ -259,6 +273,7 @@ export const TextInput = ({
                 error={error}
                 disabled={!handleLeftIconPress}
                 onPress={handleLeftIconPress}
+                activeOpacity={1}
                 contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>

@@ -24,6 +24,8 @@ export type ChatScreenStyles = {
   messageSent: ViewStyle;
   messageBox: ViewStyle;
   msgInfoContainer: ViewStyle;
+  sendButton: ViewStyle;
+  padding: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
@@ -37,6 +39,9 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     },
     container: {
       backgroundColor: colors.appScreenPrimaryBackground,
+      flex: 1,
+    },
+    padding: {
       flex: 1,
       paddingHorizontal: horizontalScale(35),
     },
@@ -62,9 +67,11 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     },
     inputContainer: {
       alignSelf: 'center',
+      alignItems: 'center',
       flexDirection: 'row',
-      justifyContent: 'center',
-      marginBottom: verticalScale(52),
+      justifyContent: 'space-between',
+      marginBottom: verticalScale(10),
+      paddingHorizontal: horizontalScale(10),
     },
     messageContainer: {
       marginBottom: verticalScale(12),
@@ -102,5 +109,14 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     msgInfoContainer: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
+    },
+    sendButton: {
+      height: moderateScale(50),
+      width: moderateScale(50),
+      borderRadius: moderateScale(25),
+      backgroundColor: colors.primaryBackgroundColor,
+      justifyContent: 'center',
+      marginLeft: horizontalScale(10),
+      alignItems: 'center',
     },
   });

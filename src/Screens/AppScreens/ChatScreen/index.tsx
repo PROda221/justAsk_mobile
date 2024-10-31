@@ -1,6 +1,6 @@
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef} from 'react';
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getChatScreenStyles} from './styles';
 import {TextInput} from '../../../Components';
@@ -34,6 +34,9 @@ import {MessageType, Props} from './types';
 import {Model} from '@nozbe/watermelondb';
 import Loader from '../../../Components/Loader/Loader';
 import {sendReadReceipt} from '../../../Functions/SendReadReceipt';
+import {moderateScale} from '../../../Functions/StyleScale';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {SheetManager} from 'react-native-actions-sheet';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -125,7 +128,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     opacity: opacity.value,
   }));
 
-  const sendMessage = async () => {
+  const sendMessage = async (textToSend?: string, type: string = 'message') => {
     if (activeChat[0]?._raw['you_blocked_status']) {
       showAlertBox(
         activeChat[0]?._raw['deactivated']
@@ -138,11 +141,24 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
       );
       return;
     }
-    if (getValues('chattext')) {
-      const msg = getValues('chattext');
+    let msg = '';
+    if (textToSend) {
+      msg = textToSend;
+    } else if (getValues('chattext')) {
+      msg = getValues('chattext');
       resetField('chattext');
-      let newMessage: Model = await getMessages(msg, false, 'message');
-      sendMessages(msg, username, 'message', newMessage.id);
+    }
+
+    if (msg) {
+      let newMessage: Model = await getMessages(msg, false, type);
+      sendMessages(msg, username, type, newMessage.id);
+    }
+  };
+
+  const handleGifSelection = async () => {
+    let gifUrl = await SheetManager.show('GiphyPopup-sheet');
+    if (gifUrl) {
+      sendMessage(gifUrl, 'gif');
     }
   };
 
@@ -206,53 +222,57 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   return (
     <View style={styles.container}>
-      <ChatHeader
-        styles={styles}
-        colors={colors}
-        username={username}
-        animatedStyle={animatedStyle}
-        statusStyle={statusStyle}
-        image={image}
-        accountName={profileSuccess?.username}
-        openUserProfle={openUserProfle}
-      />
+      <View style={styles.padding}>
+        <ChatHeader
+          styles={styles}
+          colors={colors}
+          username={username}
+          animatedStyle={animatedStyle}
+          statusStyle={statusStyle}
+          image={image}
+          accountName={profileSuccess?.username}
+          openUserProfle={openUserProfle}
+        />
 
-      <FlashList
-        data={messages}
-        showsVerticalScrollIndicator={false}
-        ref={flashListRef}
-        renderItem={({item}: MessageType) => (
-          <RenderMessageList
-            username={username}
-            account={profileSuccess?.username}
-            id={item.id}
-            text={item.text}
-            type={item.type}
-            uploadingImage={item.uploadingImage}
-            received={item.received}
-            createdAt={item.createdAt}
-            msgCreatedAt={item.msgCreatedAt}
-            sendMessages={sendMessages}
-          />
-        )}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.chatContainer}
-        estimatedItemSize={300}
-        inverted
-        onEndReached={loadMoreMessages}
-        onEndReachedThreshold={0.1}
-        extraData={[
-          activeChat[0]?._raw['you_blocked_status'],
-          activeChat[0]?._raw['got_blocked_status'],
-        ]}
-        // OnLoad={scrollToBottom}
-      />
+        <FlashList
+          data={messages}
+          showsVerticalScrollIndicator={false}
+          decelerationRate={0.9}
+          ref={flashListRef}
+          renderItem={({item}: MessageType) => (
+            <RenderMessageList
+              username={username}
+              account={profileSuccess?.username}
+              id={item.id}
+              text={item.text}
+              type={item.type}
+              uploadingImage={item.uploadingImage}
+              received={item.received}
+              createdAt={item.createdAt}
+              msgCreatedAt={item.msgCreatedAt}
+              sendMessages={sendMessages}
+            />
+          )}
+          contentContainerStyle={styles.chatContainer}
+          getItemType={item => {
+            return item.type;
+          }}
+          estimatedItemSize={160}
+          inverted
+          onEndReached={loadMoreMessages}
+          onEndReachedThreshold={0.3}
+          extraData={[
+            activeChat[0]?._raw['you_blocked_status'],
+            activeChat[0]?._raw['got_blocked_status'],
+          ]}
+          // OnLoad={scrollToBottom}
+        />
 
-      <YourBlockStatus
-        show={activeChat[0]?._raw['you_blocked_status']}
-        username={username}
-      />
-
+        <YourBlockStatus
+          show={activeChat[0]?._raw['you_blocked_status']}
+          username={username}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
           name="chattext"
@@ -266,15 +286,20 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
                 ? content.ChatScreen.chatBlocked
                 : content.ChatScreen.message
           }
-          leftIcon={closeChat() ? 'block' : 'gallary'}
-          rightIcon="chat"
-          handleRightIconPress={sendMessage}
+          leftIcon={closeChat() ? 'block' : 'giphy'}
+          rightIcon="gallary"
+          handleRightIconPress={handleImageSelection}
           {...(!closeChat() && {
-            handleLeftIconPress: handleImageSelection,
+            handleLeftIconPress: handleGifSelection,
           })}
           multiline={true}
           editable={!closeChat()}
         />
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => sendMessage()}>
+          <Ionicons name="send" size={moderateScale(25)} color={'white'} />
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -128,7 +128,9 @@ export async function syncChatToLocal(
             record.status = status;
             record.skills = JSON.stringify(skills);
             record.lastMessage =
-              latestMsg.type === 'image' ? 'Image' : latestMsg.message;
+              latestMsg.type === 'image' || latestMsg.type === 'gif'
+                ? latestMsg.type
+                : latestMsg.message;
             record.messageTime = new Date();
             record.unreadCount = unreadCount;
             record.msgId = latestMsg._id;
@@ -174,7 +176,9 @@ export async function updateSynchedChatToLocal(
             record.status = status;
             record.skills = JSON.stringify(skills);
             record.lastMessage =
-              latestMsg.type === 'image' ? 'Image' : latestMsg.message;
+              latestMsg.type === 'image' || latestMsg.type === 'gif'
+                ? latestMsg.type
+                : latestMsg.message;
             record.messageTime = new Date();
             record.unreadCount = unreadCount;
             record.msgId = latestMsg._id;
@@ -291,14 +295,15 @@ export async function getMessagesForChat(chatId, account, fromMessageId = '') {
         .find(fromMessageId); // Find the message with the given ID
 
       // Query to fetch messages before the reference message
-      messagesQuery = database.collections
-        .get('messages')
-        .query(
-          Q.where('chat_id', chat[0].id),
-          Q.where('msg_created_at', Q.lt(referenceMessage._raw['msg_created_at'])), // Get messages before the reference message
-          Q.sortBy('msg_created_at', Q.desc), // Sort messages by created time in descending order
-          Q.take(20) // Limit to 20 messages
-        );
+      messagesQuery = database.collections.get('messages').query(
+        Q.where('chat_id', chat[0].id),
+        Q.where(
+          'msg_created_at',
+          Q.lt(referenceMessage._raw['msg_created_at']),
+        ), // Get messages before the reference message
+        Q.sortBy('msg_created_at', Q.desc), // Sort messages by created time in descending order
+        Q.take(50), // Limit to 80 messages
+      );
     } else {
       // If no message ID is provided, fetch the latest 20 messages
       messagesQuery = database.collections
@@ -306,13 +311,13 @@ export async function getMessagesForChat(chatId, account, fromMessageId = '') {
         .query(
           Q.where('chat_id', chat[0].id),
           Q.sortBy('msg_created_at', Q.desc),
-          Q.take(20)
+          Q.take(20),
         );
     }
 
     const messages = await messagesQuery.fetch();
 
-    return { localStoredMsgs: messages, chatId: chat[0].id };
+    return {localStoredMsgs: messages, chatId: chat[0].id};
   } catch (error) {
     console.error('Error fetching messages for chat:', error);
     throw error;
@@ -457,8 +462,10 @@ export async function addMessageToChat(
   createdAt = null,
 ) {
   try {
+    console.log('type :', type);
     let newMessage;
-    let lastMessage = type === 'image' ? 'Image' : text;
+    let lastMessage = type === 'image' || type === 'gif' ? type : text;
+    console.log('lastMessage :', lastMessage);
     await database.write(async () => {
       // Fetch user
       const user = await database.collections

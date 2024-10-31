@@ -2083,6 +2083,19 @@
     find-up "^5.0.0"
     js-yaml "^4.1.0"
 
+"@giphy/js-types@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@giphy/js-types/-/js-types-4.4.0.tgz#4f491a408293e52d77aa4d6b38d20f6b2828723a"
+  integrity sha512-W9G6crS2oqTn7g0RpvYu1l/sna4LnivRTk25jmxdzujOFb9kvQ+VFM/v9RPYV2GIBnzT/maW/EwjFIba9jkflA==
+
+"@giphy/react-native-sdk@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@giphy/react-native-sdk/-/react-native-sdk-3.3.1.tgz#6461bc1b159d56b3f2fab2cd313988ccd1dea079"
+  integrity sha512-Z+d39vn6MCfTOshMSgfYg3XwnDD8CE4aA7CRB6v1J4lQv8QpjybZ15fgZhygH5GaAAOQXES1pDsfp3C4wpcVqw==
+  dependencies:
+    "@giphy/js-types" "^4.4.0"
+    type-fest "^4.5.0"
+
 "@gorhom/bottom-sheet@4.6.0":
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-4.6.0.tgz#16bebbe4f5925447ece0d727830cf1776d5620f8"
@@ -10786,6 +10799,11 @@ type-fest@^0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.7.1.tgz#8dda65feaf03ed78f0a3f9678f1869147f7c5c48"
   integrity sha512-Ne2YiiGN8bmrmJJEuTWTLJR32nh/JdL1+PSicowtNb0WFpn59GK8/lfD61bVtzguz7b3PBt74nxpv/Pw5po5Rg==
+
+type-fest@^4.5.0:
+  version "4.26.1"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.26.1.tgz#a4a17fa314f976dd3e6d6675ef6c775c16d7955e"
+  integrity sha512-yOGpmOAL7CkKe/91I5O3gPICmJNLJ1G4zFYVAsRHg7M64biSnPtRj0WNQt++bRkjYOqjWXrhnUw1utzmVErAdg==
 
 typed-array-buffer@^1.0.2:
   version "1.0.2"

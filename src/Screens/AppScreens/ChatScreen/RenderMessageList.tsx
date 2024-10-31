@@ -21,12 +21,15 @@ import {moderateScale} from '../../../Functions/StyleScale';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {Model} from '@nozbe/watermelondb';
 
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
 type PropTypes = {
   activeMsg: Model[] | undefined;
   username: string;
   account?: string;
   id: string;
-  type: 'message' | 'image';
+  type: 'message' | 'image' | 'gif';
   text: string;
   received: boolean;
   uploadingImage: boolean;
@@ -160,6 +163,28 @@ const RenderMessageList = ({
                 contentFit="cover"
                 source={{uri: `${text}`}}
                 style={styles.imageChat}
+              />
+            </TouchableOpacity>
+            <View>
+              {activeMsg?.[0]?._raw['uploading_image'] && (
+                <ProgressBar progress={uploadProgress} />
+              )}
+            </View>
+          </View>
+        )}
+        {type === 'gif' && (
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                openImage(text);
+              }}>
+              <Image
+                contentFit="cover"
+                source={{uri: text}}
+                style={styles.imageChat}
+                cachePolicy={'memory-disk'}
+                placeholder={{blurhash: blurhash}}
+                recyclingKey={id}
               />
             </TouchableOpacity>
             <View>
