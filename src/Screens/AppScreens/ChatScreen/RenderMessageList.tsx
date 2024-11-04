@@ -1,8 +1,7 @@
-import {TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View, ActivityIndicator} from 'react-native';
 import {Typography} from '../../../Components';
 import React, {useEffect, useState} from 'react';
 import {ProgressBar} from '../../../Components/ProgressBar';
-import {Image} from 'expo-image';
 import {SheetManager} from 'react-native-actions-sheet';
 
 import {getChatScreenStyles} from './styles';
@@ -20,6 +19,8 @@ import moment from 'moment';
 import {moderateScale} from '../../../Functions/StyleScale';
 import {withObservables} from '@nozbe/watermelondb/react';
 import {Model} from '@nozbe/watermelondb';
+import content from '../../../Assets/Languages/english.json';
+import ImageComponent from './ImageComponent';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -157,22 +158,18 @@ const RenderMessageList = ({
           </Typography>
         )}
         {type === 'image' && (
-          <View>
-            <TouchableOpacity onPress={() => openImage(text)}>
-              <Image
-                contentFit="cover"
-                source={{uri: `${text}`}}
-                style={styles.imageChat}
-                placeholder={{blurhash: blurhash}}
-                recyclingKey={id}
-              />
-            </TouchableOpacity>
-            <View>
-              {activeMsg?.[0]?._raw['uploading_image'] && (
-                <ProgressBar progress={uploadProgress} />
-              )}
-            </View>
-          </View>
+          <ImageComponent
+            text={text}
+            styles={styles}
+            colors={colors}
+            id={id}
+            errorText={content.ChatScreen.imageError}
+            uploadingImage={activeMsg?.[0]?._raw['uploading_image']}
+            uploadProgress={uploadProgress}
+            cachePolicy="none"
+            blurhash={blurhash}
+            openImage={openImage}
+          />
         )}
         {type === 'gif' && (
           <View>
@@ -180,13 +177,18 @@ const RenderMessageList = ({
               onPress={() => {
                 openImage(text);
               }}>
-              <Image
-                contentFit="cover"
-                source={{uri: text}}
-                style={styles.imageChat}
-                cachePolicy={'memory-disk'}
-                placeholder={{blurhash: blurhash}}
-                recyclingKey={id}
+              <ImageComponent
+                text={text}
+                styles={styles}
+                colors={colors}
+                id={id}
+                cachePolicy="memory-disk"
+                errorText={content.ChatScreen.gifError}
+                uploadingImage={activeMsg?.[0]?._raw['uploading_image']}
+                uploadProgress={uploadProgress}
+                blurhash={blurhash}
+                openImage={openImage}
+                retry
               />
             </TouchableOpacity>
             <View>

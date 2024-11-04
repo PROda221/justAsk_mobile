@@ -26,6 +26,8 @@ export type ChatScreenStyles = {
   msgInfoContainer: ViewStyle;
   sendButton: ViewStyle;
   padding: ViewStyle;
+  imageErrorText: TextStyle;
+  imageStatusView: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
@@ -98,6 +100,13 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       borderRadius: moderateScale(20),
       overflow: 'hidden',
     },
+    imageStatusView: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderRadius: moderateScale(20),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,
       borderRadius: moderateScale(22),
@@ -109,6 +118,10 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     msgInfoContainer: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
+    },
+    imageErrorText: {
+      color: colors.textPrimaryColor,
+      width: moderateScale(150),
     },
     sendButton: {
       height: moderateScale(50),
