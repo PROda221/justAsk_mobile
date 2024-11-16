@@ -1,9 +1,7 @@
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {Chats} from '../Redux/Slices/SyncChatsSlice';
 import {
-  addMessageToChat,
   checkChatExists,
-  createNewChat,
   syncChatToLocal,
   updateSynchedChatToLocal,
 } from '../DB/DBFunctions';

@@ -18,6 +18,7 @@ import {MessageObj} from '../../Redux/Slices/SyncMessagesSlice';
 import NetInfo from '@react-native-community/netinfo';
 import SoundPlayer from 'react-native-sound-player'
 import {debounce} from 'lodash';
+import { forwardMsgType } from '../../Screens/AppScreens/ChatScreen/types';
 
 let allMessages: Model[] = [];
 
@@ -57,6 +58,7 @@ export const useStartChat = (
     username: string,
     type: string = 'message',
     messageId: string,
+    forwardMsg?: forwardMsgType
   ) => {
     SoundPlayer.playSoundFile('outgoing_sound', 'wav')
     socket?.volatile.emit(
@@ -67,6 +69,7 @@ export const useStartChat = (
       type,
       profileSlice.success?.profilePic,
       messageId,
+      forwardMsg
     );
   };
 
@@ -74,16 +77,18 @@ export const useStartChat = (
     msg: string | object,
     isReceived: boolean,
     type: string = 'message',
+    forwardMsg?: forwardMsgType
   ) => {
     try {
-      newMessage = await addMessageToChat(
-        username,
-        profileSlice.success?.username,
-        msg,
-        isReceived,
+      newMessage = await addMessageToChat({
+        chatId: username,
+        account: profileSlice.success?.username,
+        text: msg,
+        isReceived: isReceived,
         type,
-        true,
-      );
+        onChatScreen: true,
+        forwardMsg
+      });
       setMessages(prevMessages => [newMessage, ...prevMessages]);
       SoundPlayer.playSoundFile('incoming_sound', 'wav')
       return newMessage;
@@ -94,20 +99,21 @@ export const useStartChat = (
 
   const loadMoreMessages = async () => {
     if (hasMore && allMessages.length && messages?.length) {
-      // const currentLength = messages.length;
+      const lastMessageId = messages[messages.length - 1]?.id;
+  
       const {localStoredMsgs} = await getMessagesForChat(
         username,
         profileSlice.success?.username,
-        messages[messages.length - 1]?.id ?? '',
+        lastMessageId ?? '',
       );
-     
-      // const nextBatch = allMessages?.slice(currentLength, currentLength + 20);
-
-      if (localStoredMsgs.length < 50) {
-        setHasMore(false);
+  
+      if (localStoredMsgs.length > 0) {
+        setMessages(prevMessages => [...prevMessages, ...localStoredMsgs]);
       }
-
-      setMessages(prevMessages => [...prevMessages, ...localStoredMsgs]);
+  
+      if (localStoredMsgs.length < 50) {
+        setHasMore(false); // No more messages to load
+      }
     }
   };
 
@@ -134,7 +140,7 @@ export const useStartChat = (
         allMessages = localStoredMsgs;
         setChatId(chatId);
         if (allMessages.length) {
-          setMessages(allMessages?.slice(0, 80));
+          setMessages(allMessages);
         }
       } else {
         await createNewChat(
@@ -228,6 +234,7 @@ export const useStartChat = (
     partnerStatus,
     messages,
     syncMessagesLoading,
+    hasMore,
     getMessages,
     sendMessages,
     loadMoreMessages,

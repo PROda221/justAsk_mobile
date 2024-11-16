@@ -1,5 +1,5 @@
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getChatScreenStyles} from './styles';
@@ -19,9 +19,12 @@ import {
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
 import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
-import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
+import {
+  setInChatScreen,
+  setReplyMsgId,
+} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import RenderMessageList from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
@@ -30,13 +33,13 @@ import {YourBlockStatus} from './YourBlockStatus';
 import ChatHeader from './ChatHeader';
 import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
-import {MessageType, Props} from './types';
+import {forwardMsgType, MessageType, Props} from './types';
 import {Model} from '@nozbe/watermelondb';
-import Loader from '../../../Components/Loader/Loader';
 import {sendReadReceipt} from '../../../Functions/SendReadReceipt';
 import {moderateScale} from '../../../Functions/StyleScale';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SheetManager} from 'react-native-actions-sheet';
+import {RootState} from '../../../Redux/rootReducers';
 
 const enhance = withObservables(['route'], ({route}) => ({
   activeChat: getCurrentChatObservable(
@@ -48,9 +51,13 @@ const enhance = withObservables(['route'], ({route}) => ({
 const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {username, skills, status, image} = route.params;
 
-  const flashListRef = useRef(null);
+  const flashListRef = useRef<FlashList<MessageType> | null>(null);
+  const [forwardMsg, setForwardMsg] = useState<forwardMsgType | undefined>();
 
-  const {callGetUserProfileApi} = useUserProfile(username, image);
+  const {callGetUserProfileApi, userProfileSuccess} = useUserProfile(
+    username,
+    image,
+  );
   const {newMessage, socket} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
@@ -58,6 +65,10 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  const replyMsg = useSelector(
+    (state: RootState) => state.localReducer.replyMsg,
+  );
 
   const closeChat = () => {
     if (
@@ -94,6 +105,26 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   useEffect(() => {
     callGetUserProfileApi();
   }, []);
+
+  useEffect(() => {
+    const showRepliedMessage = async () => {
+      if (replyMsg.replyMsgId) {
+        const relativeIndex = messages
+          .slice(replyMsg.mainMsgIndex)
+          .findIndex(message => message._raw['msg_id'] === replyMsg.replyMsgId);
+
+        if (relativeIndex !== -1) {
+          const index = relativeIndex + replyMsg.mainMsgIndex;
+          flashListRef.current?.scrollToIndex({index, animated: true});
+          dispatch(setReplyMsgId({replyMsgId: '', mainMsgIndex: 0}));
+        }
+      }
+    };
+    showRepliedMessage();
+    return () => {
+      setReplyMsgId({replyMsgId: '', mainMsgIndex: 0});
+    };
+  }, [replyMsg.replyMsgId]);
 
   useEffect(() => {
     if (messages?.length) {
@@ -148,10 +179,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
       msg = getValues('chattext');
       resetField('chattext');
     }
+    setForwardMsg(undefined);
 
     if (msg) {
-      let newMessage: Model = await getMessages(msg, false, type);
-      sendMessages(msg, username, type, newMessage.id);
+      let newMessage: Model = await getMessages(msg, false, type, forwardMsg);
+      sendMessages(msg, username, type, newMessage.id, forwardMsg);
     }
   };
 
@@ -231,33 +263,41 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           statusStyle={statusStyle}
           image={image}
           accountName={profileSuccess?.username}
+          averageRating={userProfileSuccess?.averageRating[0]?.averageStars}
           openUserProfle={openUserProfle}
         />
 
         <FlashList
           data={messages}
           showsVerticalScrollIndicator={false}
+          keyExtractor={item => item.id.toString()}
           decelerationRate={0.9}
           ref={flashListRef}
-          renderItem={({item}: MessageType) => (
-            <RenderMessageList
-              username={username}
-              account={profileSuccess?.username}
-              id={item.id}
-              text={item.text}
-              type={item.type}
-              uploadingImage={item.uploadingImage}
-              received={item.received}
-              createdAt={item.createdAt}
-              msgCreatedAt={item.msgCreatedAt}
-              sendMessages={sendMessages}
-            />
-          )}
+          renderItem={({item, index}: {item: MessageType; index: number}) => {
+            return (
+              <RenderMessageList
+                username={username}
+                account={profileSuccess?.username}
+                id={item.id}
+                forwardMsg={(forwardedMsg: forwardMsgType) =>
+                  setForwardMsg(forwardedMsg)
+                }
+                text={item.text}
+                type={item.type}
+                uploadingImage={item.uploadingImage}
+                received={item.received}
+                createdAt={item.createdAt}
+                msgCreatedAt={item.msgCreatedAt}
+                sendMessages={sendMessages}
+                index={index}
+              />
+            );
+          }}
           contentContainerStyle={styles.chatContainer}
           getItemType={item => {
             return item.type;
           }}
-          estimatedItemSize={160}
+          estimatedItemSize={280}
           inverted
           onEndReached={loadMoreMessages}
           onEndReachedThreshold={0.3}
@@ -294,6 +334,8 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           })}
           multiline={true}
           editable={!closeChat()}
+          replyMessage={forwardMsg}
+          setReplyMessage={setForwardMsg}
         />
         <TouchableOpacity
           style={styles.sendButton}

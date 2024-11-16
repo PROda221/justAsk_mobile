@@ -2,10 +2,10 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import { AppRegistry } from 'react-native';
 import App from './src/App';
 import messaging from '@react-native-firebase/messaging';
-import {name as appName} from './app.json';
+import { name as appName } from './app.json';
 import {
   checkChatExists,
   addMessageToChat,
@@ -14,9 +14,9 @@ import {
   setSenderNotifications,
   clearSenderNotifications,
 } from './src/DB/DBFunctions';
-import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
-import {saveURLImage} from './src/Functions/SaveBase64Image';
-import {downloadImg} from './src/Functions/DownloadLocalPic';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import { saveURLImage } from './src/Functions/SaveBase64Image';
+import { downloadImg } from './src/Functions/DownloadLocalPic';
 
 // Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
@@ -29,10 +29,9 @@ import {downloadImg} from './src/Functions/DownloadLocalPic';
 //   }
 // });
 
-const getImageUrl = async (msg) => {
+const getImageUrl = async msg => {
   let imageUri = await saveURLImage(msg);
-  let computedImg = {uri: `file://${imageUri}`};
-  console.log('computedImgUri :', computedImg.uri)
+  let computedImg = { uri: `file://${imageUri}` };
   return computedImg.uri;
 };
 
@@ -51,12 +50,12 @@ const displayNotification = async (notifeeData, senderUsername) => {
     await setSenderNotifications(senderUsername);
     await notifee.displayNotification({
       ...notifeeData,
-      android: {...notifeeData.android, groupSummary: true},
+      android: { ...notifeeData.android, groupSummary: true },
     });
   }
 };
 
-notifee.onBackgroundEvent(async ({type, detail}) => {
+notifee.onBackgroundEvent(async ({ type, detail }) => {
   if (type === EventType.PRESS) {
     // Cancel all notifications
     await notifee.cancelAllNotifications();
@@ -78,7 +77,19 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       profilePic,
       id,
       createdAt,
+      forwardMessage,
+      forwardMessageId,
+      forwardMessageType,
+      forwardMessageReceived,
+      forwardMessageUsername,
     } = remoteMessage.data;
+    let forwardMsg = {
+      message: forwardMessage,
+      id: forwardMessageId,
+      type: forwardMessageType,
+      received: Boolean(forwardMessageReceived),
+      username: forwardMessageUsername,
+    };
     let downloadedPic;
     if (senderUsername && message && type && id && createdAt) {
       displayNotification(JSON.parse(notifee), senderUsername);
@@ -101,19 +112,19 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
           chatExists?.['profile_pic'],
         );
       }
-      
-        await addMessageToChat(
-          senderUsername,
-          receiverUsername,
-          type === 'image' ? await getImageUrl(message) : message,
-          true,
-          type,
-          false,
-          downloadedPic,
-          id,
-          createdAt,
-        );
-      
+
+      await addMessageToChat({
+        chatId: senderUsername,
+        account: receiverUsername,
+        text: type === 'image' ? await getImageUrl(message) : message,
+        isReceived: true,
+        type,
+        onChatScreen: false,
+        profilePic: downloadedPic,
+        id,
+        createdAt,
+        forwardMsg,
+      });
     }
   } catch (err) {
     throw new Error('local db error :', err);

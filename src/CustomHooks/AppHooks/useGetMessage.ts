@@ -12,6 +12,7 @@ import {saveURLImage} from '../../Functions/SaveBase64Image';
 import {downloadImg} from '../../Functions/DownloadLocalPic';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {callGetUserProfile} from '../../Redux/Slices/UserProfileSlice';
+import { forwardMsgType } from '../../Screens/AppScreens/ChatScreen/types';
 
 const getImageUrl = async (msg: string) => {
   let imageUri = await saveURLImage(msg);
@@ -35,15 +36,15 @@ export const useGetMessage = (socket: Socket | null) => {
     source = 'user',
     id: string | null,
     createdAt: Date | null,
-    tempMsgId: string | null
+    tempMsgId: string | null,
+    forwardMsg: forwardMsgType,
   ) => {
     try {
       if (source === 'server') {
         dispatch(callGetUserProfile({username: yourId}));
-      } else if(tempMsgId){
-        await updateLocalMessageId(senderId, yourId, id, tempMsgId, createdAt)
-      }
-       else {
+      } else if (tempMsgId) {
+        await updateLocalMessageId(senderId, yourId, id, tempMsgId, createdAt);
+      } else {
         let downloadedPic;
         let chatExists: boolean | _RawRecord = await checkChatExists(
           senderId,
@@ -62,17 +63,18 @@ export const useGetMessage = (socket: Socket | null) => {
         let newMessage;
         console.log('b');
 
-        newMessage = await addMessageToChat(
-          senderId,
-          yourId,
-          msg,
+        newMessage = await addMessageToChat({
+          chatId: senderId,
+          account: yourId,
+          text: msg,
           isReceived,
           type,
-          localReducer.inChatScreen,
-          downloadedPic,
+          onChatScreen: localReducer.inChatScreen,
+          profilePic: downloadedPic,
           id,
           createdAt,
-        );
+          forwardMsg,
+        });
 
         setNewMessage(newMessage);
       }
@@ -95,6 +97,7 @@ export const useGetMessage = (socket: Socket | null) => {
           id = null,
           createdAt = null,
           tempMsgId = null,
+          forwardMsg = {message: '', type: 'message', received: false, username: '', id: ''},
         } = messageData;
         getMessages(
           type === 'image' ? await getImageUrl(msg) : msg,
@@ -106,7 +109,8 @@ export const useGetMessage = (socket: Socket | null) => {
           source,
           id,
           createdAt,
-          tempMsgId
+          tempMsgId,
+          forwardMsg,
         );
       });
     };

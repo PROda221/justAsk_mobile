@@ -3,7 +3,6 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export type MessageType = {
-    item: {
       id: string;
       text: string;
       type: 'image' | 'message' | 'gif';
@@ -11,7 +10,6 @@ export type MessageType = {
       uploadingImage: boolean;
       createdAt: number;
       msgCreatedAt?: Date;
-    };
   };
   export type Params = {
     params: {
@@ -28,3 +26,5 @@ export type MessageType = {
     route: RouteProp<Params>;
     activeChat: Model[];
   };
+
+  export type forwardMsgType = {message: string; type: 'message' | 'image' | 'gif', received: boolean, username: string, id: string};

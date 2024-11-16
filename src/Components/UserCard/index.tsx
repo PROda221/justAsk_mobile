@@ -52,6 +52,7 @@ export const UserCard = ({
           source={{uri: getProfilePic(image)}}
           style={styles.image}
           transition={500}
+          recyclingKey={username}
         />
       </View>
       <View style={styles.infoContainer}>

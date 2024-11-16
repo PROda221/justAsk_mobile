@@ -305,13 +305,13 @@ export async function getMessagesForChat(chatId, account, fromMessageId = '') {
         Q.take(50), // Limit to 80 messages
       );
     } else {
-      // If no message ID is provided, fetch the latest 20 messages
+      // If no message ID is provided, fetch the latest 100 messages
       messagesQuery = database.collections
         .get('messages')
         .query(
           Q.where('chat_id', chat[0].id),
           Q.sortBy('msg_created_at', Q.desc),
-          Q.take(20),
+          Q.take(50),
         );
     }
 
@@ -450,7 +450,7 @@ export async function updateChatData(chatData, account, profilePic) {
   }
 }
 
-export async function addMessageToChat(
+export async function addMessageToChat({
   chatId,
   account,
   text,
@@ -460,12 +460,18 @@ export async function addMessageToChat(
   profilePic = '',
   id = null,
   createdAt = null,
-) {
+  forwardMsg = {
+    message: '',
+    type: 'message',
+    received: false,
+    username: '',
+    id: '',
+  },
+}) {
   try {
-    console.log('type :', type);
     let newMessage;
     let lastMessage = type === 'image' || type === 'gif' ? type : text;
-    console.log('lastMessage :', lastMessage);
+
     await database.write(async () => {
       // Fetch user
       const user = await database.collections
@@ -496,7 +502,6 @@ export async function addMessageToChat(
         id,
         createdAt,
       );
-
       // Create new message
       newMessage = await database.get('messages').create(record => {
         record.chat.set(chat[0]);
@@ -509,6 +514,11 @@ export async function addMessageToChat(
           ? new Date(createdAt).toISOString()
           : new Date().toISOString();
         record.status = isReceived ? 'success' : 'pending';
+        record.forwardMsgId = forwardMsg?.id;
+        record.forwardMsg = forwardMsg?.message;
+        record.forwardMsgType = forwardMsg?.type;
+        record.forwardMsgUsername = forwardMsg?.username;
+        record.forwardMsgReceived = forwardMsg?.received;
       });
     });
 
@@ -706,7 +716,6 @@ export async function updateReadStatusWebSocket(unacknowledgedReadReceipts) {
   return acknowledgedMessages;
 }
 
-
 // FOR TESTING ACKNOWLEDGEMENT IN PROD
 
 export async function updateReadStatus(unacknowledgedReadReceipts) {
@@ -714,20 +723,15 @@ export async function updateReadStatus(unacknowledgedReadReceipts) {
 
   try {
     // Extract all msg_ids and filter out undefined or null values
-    const ids = unacknowledgedReadReceipts
-      .map(receipt => receipt.localMsgId)
+    const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
 
-    const msgIds = unacknowledgedReadReceipts
-      .map(receipt => receipt._id)
+    const msgIds = unacknowledgedReadReceipts.map(receipt => receipt._id);
 
     // Fetch messages in bulk based on either 'id' or 'msg_id'
     const messages = await database
       .get('messages')
       .query(
-        Q.or(
-          Q.where('id', Q.oneOf(ids)),
-          Q.where('msg_id', Q.oneOf(msgIds))
-        )
+        Q.or(Q.where('id', Q.oneOf(ids)), Q.where('msg_id', Q.oneOf(msgIds))),
       )
       .fetch();
 
@@ -742,7 +746,7 @@ export async function updateReadStatus(unacknowledgedReadReceipts) {
 
             // Push the updated message to the acknowledgedMessages array
             acknowledgedMessages.push(message._raw['msg_id']);
-          })
+          }),
         );
       });
     }
@@ -821,6 +825,11 @@ export async function storeSyncedMessages(account, chatId, messages) {
               record.uploadingImage = false;
               record.msgId = message._id;
               record.msgCreatedAt = message.createdAt;
+              record.forwardMsg = message.forwardMessage;
+              record.forwardMsgId = message.forwardMessageId;
+              record.forwardMsgType = message.forwardMessageType;
+              record.forwardMsgReceived = message.forwardMessageReceived;
+              record.forwardMsgUsername = message.forwardMessageUsername;
               record.status = 'success';
             });
             newMessagesArray.push(newMessage);

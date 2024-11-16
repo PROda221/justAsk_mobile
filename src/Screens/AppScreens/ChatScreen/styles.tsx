@@ -28,6 +28,7 @@ export type ChatScreenStyles = {
   padding: ViewStyle;
   imageErrorText: TextStyle;
   imageStatusView: ViewStyle;
+  forwardLeftActionIconContainer: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
@@ -82,7 +83,7 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     messageBox: {
       borderRadius: moderateScale(20),
       padding: moderateScale(12),
-      alignItems: 'center',
+      alignItems: 'flex-start',
     },
     messageReceived: {
       alignSelf: 'flex-start',
@@ -131,5 +132,11 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       justifyContent: 'center',
       marginLeft: horizontalScale(10),
       alignItems: 'center',
+    },
+    forwardLeftActionIconContainer: {
+      justifyContent: 'center',
+      height: '80%',
+      width: '20%',
+      marginRight: moderateScale(15),
     },
   });

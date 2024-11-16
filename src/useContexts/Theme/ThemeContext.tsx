@@ -101,6 +101,8 @@ const darkColors: DarkColors = {
   readReceipt: '#4FB6EC',
   sentReceipt: '#fff',
   SendingReceipt: '#fff',
+  forwardMessageIcon: '#2196F3',
+  forwardMessageTheme: '#2196F3',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

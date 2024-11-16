@@ -21,6 +21,7 @@ type PropsType = {
   animatedStyle: ViewStyle;
   statusStyle: ViewStyle;
   activeChat: Model[];
+  averageRating?: number;
   openUserProfle: () => void;
 };
 
@@ -39,6 +40,7 @@ const ChatHeader = ({
   statusStyle,
   image,
   activeChat,
+  averageRating = 0,
   openUserProfle,
 }: PropsType) => {
   const dispatch = useDispatch();
@@ -66,6 +68,14 @@ const ChatHeader = ({
             textStyle={styles.headerText}>
             {username}
           </Typography>
+          {/* Feedback on chat header
+          <Typography
+            bgColor={colors.textPrimaryColor}
+            fontWeight="400"
+            textStyle={styles.headerText}>
+            <Entypo name="star" size={15} />
+            {`${averageRating}x`}
+          </Typography> */}
         </Animated.View>
         <Animated.View style={statusStyle}>
           <Typography

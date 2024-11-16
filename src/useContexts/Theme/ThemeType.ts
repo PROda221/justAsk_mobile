@@ -77,4 +77,6 @@ export type DarkColors = {
   readReceipt: string;
   sentReceipt: string;
   SendingReceipt: string;
+  forwardMessageIcon: string;
+  forwardMessageTheme: string;
 };

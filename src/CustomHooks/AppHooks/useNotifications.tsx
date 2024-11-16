@@ -25,6 +25,11 @@ type CustomRemoteMessageData = {
   profilePic: string;
   id?: string;
   createdAt?: string;
+  forwardMessage?: string;
+  forwardMessageId?: string;
+  forwardMessageType?: string;
+  forwardMessageReceived?: string;
+  forwardMessageUsername?: string;
 };
 
 type CustomRemoteMessage = FirebaseMessagingTypes.RemoteMessage & {
@@ -61,7 +66,19 @@ export const useNotifications = () => {
               profilePic,
               id,
               createdAt,
+              forwardMessage,
+              forwardMessageId,
+              forwardMessageType,
+              forwardMessageReceived,
+              forwardMessageUsername,
             } = remoteMessage.data;
+            let forwardMsg = {
+              message: String(forwardMessage),
+              id: String(forwardMessageId),
+              type: String(forwardMessageType),
+              received: Boolean(forwardMessageReceived),
+              username: String(forwardMessageUsername),
+            };
             let downloadedPic: string | undefined;
             if (senderUsername && message && type) {
               const chatExists = await checkChatExists(
@@ -86,29 +103,31 @@ export const useNotifications = () => {
               if (type === 'image') {
                 let imageUri = await saveURLImage(message);
                 let computedImg = {uri: `file://${imageUri}`};
-                await addMessageToChat(
-                  senderUsername,
-                  receiverUsername,
-                  computedImg.uri,
-                  true,
+                await addMessageToChat({
+                  chatId: senderUsername,
+                  account: receiverUsername,
+                  text: computedImg.uri,
+                  isReceived: true,
                   type,
-                  false,
-                  downloadedPic,
+                  onChatScreen: false,
+                  profilePic: downloadedPic,
                   id,
                   createdAt,
-                );
+                  forwardMsg,
+                });
               } else {
-                await addMessageToChat(
-                  senderUsername,
-                  receiverUsername,
-                  message,
-                  true,
+                await addMessageToChat({
+                  chatId: senderUsername,
+                  account: receiverUsername,
+                  text: message,
+                  isReceived: true,
                   type,
-                  false,
-                  downloadedPic,
+                  onChatScreen: false,
+                  profilePic: downloadedPic,
                   id,
                   createdAt,
-                );
+                  forwardMsg,
+                });
               }
             }
           }

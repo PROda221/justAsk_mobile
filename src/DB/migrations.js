@@ -23,5 +23,22 @@ export const migrations = schemaMigrations({
         }),
       ],
     },
+    {
+      // Updating from version 3 to 4
+      toVersion: 4,
+      steps: [
+        // Step 4: Add the new 'deactivated' column to the 'users' table
+        addColumns({
+          table: 'messages',
+          columns: [
+            { name: 'forward_msg_id', type: 'string'}, // New column added to 'messages'
+            { name: 'forward_msg', type: 'string' }, 
+            { name: 'forward_msg_type', type: 'string'},
+            { name: 'forward_msg_received', type: 'boolean'},
+            { name: 'forward_msg_username', type: 'string'}
+          ],
+        }),
+      ],
+    }
   ],
 });

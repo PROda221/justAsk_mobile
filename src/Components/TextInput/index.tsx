@@ -15,6 +15,7 @@ import {
   type UseFormReturn,
 } from 'react-hook-form';
 import {Typography} from '..';
+import ReplyMessageBar from '../ReplyMessageBar';
 import {type ViewStyle} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {
@@ -38,6 +39,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {DarkColors} from '../../useContexts/Theme/ThemeType';
+import {forwardMsgType} from '../../Screens/AppScreens/ChatScreen/types';
 
 type TextInputProps = {
   control: UseFormReturn<any>['control'];
@@ -55,6 +57,10 @@ type TextInputProps = {
   leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'block' | 'giphy';
   rightIcon?: 'search' | 'chat' | 'gallary';
   disable?: boolean;
+  replyMessage?: forwardMsgType;
+  setReplyMessage?: React.Dispatch<
+    React.SetStateAction<forwardMsgType | undefined>
+  >;
 };
 
 const ErrorView = styled(View)`
@@ -86,19 +92,20 @@ const StyledTextInput = styled(RNTextInput)<{
 
 const Container = styled(View)`
   flex-direction: row;
-  flex: 1;
 `;
 
 const LeftIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
+  replyMessage?: string;
 }>`
   padding: 20px;
   justify-content: center;
   align-items: center;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  border-radius: 12.84px 0 0 12.84px;
+  border-radius: ${({replyMessage}) =>
+    replyMessage ? '0 0 0 12.84px' : '12.84px 0 0 12.84px'};
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
     error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};
@@ -108,13 +115,31 @@ const LeftIconContainer = styled(TouchableOpacity)<{
 const RightIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
+  replyMessage?: string;
 }>`
   justify-content: center;
   align-items: center;
   padding: 20px;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  border-radius: 0 12.84px 12.84px 0;
+  border-radius: ${({replyMessage}) =>
+    replyMessage ? '0 0 12.84px 0' : '0 12.84px 12.84px 0'};
+  border-width: ${({error}) => (error ? '2px' : '0px')};
+  border-color: ${({error, contextStyle}) =>
+    error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};
+  border-left-width: 0px;
+`;
+
+const SecureTextEntryContainer = styled(TouchableOpacity)<{
+  contextStyle: any;
+  error: FieldError | undefined;
+}>`
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: ${({contextStyle}) =>
+    contextStyle.textInputBackgroundColor};
+  border-radius: 12.84px 12.84px 0;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
     error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};
@@ -238,6 +263,8 @@ export const TextInput = ({
   handleRightIconPress,
   handleLeftIconPress,
   disable,
+  replyMessage,
+  setReplyMessage,
   ...props
 }: TextInputProps & RNTextInputProps) => {
   const {colors} = useTheme();
@@ -265,7 +292,15 @@ export const TextInput = ({
       defaultValue=""
       rules={rules}
       render={({field: {onChange, value}, fieldState: {error}}) => (
-        <>
+        <View style={styles.mainContainer}>
+          {replyMessage && (
+            <ReplyMessageBar
+              colors={colors}
+              clearReply={setReplyMessage}
+              forwardedMsg={replyMessage}
+            />
+          )}
+
           <Container>
             {leftIcon && (
               <LeftIconContainer
@@ -274,6 +309,7 @@ export const TextInput = ({
                 disabled={!handleLeftIconPress}
                 onPress={handleLeftIconPress}
                 activeOpacity={1}
+                replyMessage={replyMessage?.message}
                 contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>
@@ -300,7 +336,7 @@ export const TextInput = ({
               onFocus={handleOnFocus}
             />
             {secureTextEntry && (
-              <RightIconContainer
+              <SecureTextEntryContainer
                 style={viewStyle}
                 error={error}
                 contextStyle={colors}
@@ -309,7 +345,7 @@ export const TextInput = ({
                 {leftIcon === 'search'
                   ? renderRightIcon(leftIcon)
                   : renderEye(watchedValues?.showPass)}
-              </RightIconContainer>
+              </SecureTextEntryContainer>
             )}
             {rightIcon && (
               <RightIconContainer
@@ -317,6 +353,7 @@ export const TextInput = ({
                 error={error}
                 contextStyle={colors}
                 activeOpacity={1}
+                replyMessage={replyMessage?.message}
                 onPress={handleRightIconPress}>
                 {renderRightIcon(rightIcon)}
               </RightIconContainer>
@@ -338,13 +375,16 @@ export const TextInput = ({
               </Typography>
             </ErrorView>
           )}
-        </>
+        </View>
       )}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
   errorStyle: {
     paddingLeft: horizontalScale(5),
     textAlign: 'left',

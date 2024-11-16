@@ -1,7 +1,7 @@
 import {appSchema, tableSchema} from '@nozbe/watermelondb';
 
 export const mySchema = appSchema({
-  version: 3,
+  version: 4,
   tables: [
     tableSchema({
       name: 'users',
@@ -52,7 +52,12 @@ export const mySchema = appSchema({
         {name: 'msg_created_at', type: 'string'},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
-        {name: 'status', type: 'string', isIndexed: true}
+        {name: 'status', type: 'string', isIndexed: true},
+        {name: 'forward_msg_id', type: 'string'},
+        {name: 'forward_msg', type: 'string'},
+        {name: 'forward_msg_type', type: 'string'},
+        {name: 'forward_msg_received', type: 'boolean'},
+        {name: 'forward_msg_username', type: 'string'},
       ],
     }),
     tableSchema({
