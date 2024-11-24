@@ -36,6 +36,40 @@ type CustomRemoteMessage = FirebaseMessagingTypes.RemoteMessage & {
   data: CustomRemoteMessageData;
 };
 
+const getImageUrl = async (msg: string): Promise<string> => {
+  try {
+    // Parse the message to get the list of images
+    const allImages: string[] = JSON.parse(msg);
+    const allDownloadedImages: string[] = [];
+
+    // Concurrently download all images
+    const downloadPromises = allImages.map(async imageUrl => {
+      try {
+        const imageUri = await saveURLImage(imageUrl);
+        return `file://${imageUri}`;
+      } catch (error) {
+        console.error(`Failed to download image: ${imageUrl}`, error);
+        return null; // Skip failed downloads
+      }
+    });
+
+    const downloadedImages = await Promise.all(downloadPromises);
+
+    // Filter out any null values (failed downloads)
+    downloadedImages.forEach(imgUri => {
+      if (imgUri) {
+        allDownloadedImages.push(imgUri);
+      }
+    });
+
+    // Return the result as a JSON string
+    return JSON.stringify(allDownloadedImages);
+  } catch (error) {
+    console.error('Error processing images:', error);
+    return JSON.stringify([]);
+  }
+};
+
 export const useNotifications = () => {
   let dispatch = useDispatch();
 
@@ -101,12 +135,10 @@ export const useNotifications = () => {
                 );
               }
               if (type === 'image') {
-                let imageUri = await saveURLImage(message);
-                let computedImg = {uri: `file://${imageUri}`};
                 await addMessageToChat({
                   chatId: senderUsername,
                   account: receiverUsername,
-                  text: computedImg.uri,
+                  text: await getImageUrl(message),
                   isReceived: true,
                   type,
                   onChatScreen: false,

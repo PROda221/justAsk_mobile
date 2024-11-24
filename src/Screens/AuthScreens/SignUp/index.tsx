@@ -168,7 +168,7 @@ const SignUp = ({navigation}: Props): JSX.Element => {
           entering={FadeInUp.duration(1000)}
           style={styles.mainContainer}>
           <Header onPress={resetCheckUserReducer} />
-          <Scroll>
+          <Scroll showsVerticalScrollIndicator={false}>
             <View style={styles.titleContainer}>
               <RenderTitle styles={styles} colors={colors} />
             </View>

@@ -15,6 +15,7 @@ import {SheetManager} from 'react-native-actions-sheet';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {moderateScale} from '../../../Functions/StyleScale';
 import ReplyMessageBar from '../../../Components/ReplyMessageBar';
+import MultiImageBox from './MultiImageBox';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -40,7 +41,7 @@ type MessageProps = {
   ) => void;
 };
 
-const openImage = (imageUrl: string) => {
+const openImage = (imageUrl: string[] | string) => {
   SheetManager.show('ViewProfileImage-sheet', {payload: {imageUrl}});
 };
 
@@ -113,6 +114,16 @@ const Message = ({
     );
   };
 
+  const getImages = (images: string) => {
+    try {
+      let imagesArray = JSON.parse(images);
+      return imagesArray;
+    } catch (err) {
+      console.log('image is :', images);
+      return [images];
+    }
+  };
+
   return (
     <TouchableOpacity
       onPress={async () => {
@@ -154,15 +165,15 @@ const Message = ({
           </Typography>
         )}
         {type === 'image' && (
-          <ImageComponent
-            text={text}
+          <MultiImageBox
+            images={getImages(text)}
             styles={styles}
             colors={colors}
             id={id}
             errorText={content.ChatScreen.imageError}
             uploadingImage={activeMsg?.[0]?._raw['uploading_image']}
             uploadProgress={uploadProgress}
-            cachePolicy="none"
+            cachePolicy="memory-disk"
             blurhash={blurhash}
             openImage={openImage}
           />

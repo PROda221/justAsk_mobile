@@ -23,7 +23,7 @@ type PropsType = {
   uploadProgress: number;
   blurhash: string;
   uploadingImage?: boolean;
-  openImage: (imageUrl: string) => void;
+  openImage?: (imageUrl: string) => void;
   cachePolicy: 'memory-disk' | 'memory' | 'disk' | 'none';
   retry?: boolean;
 };
@@ -97,7 +97,7 @@ const ImageComponent = ({
         activeOpacity={!imageStatus.error && !imageStatus.loading ? 0 : 1}
         onPress={() => {
           if (!imageStatus.error && !imageStatus.loading) {
-            openImage(text);
+            openImage?.(text);
           }
         }}>
         <Image

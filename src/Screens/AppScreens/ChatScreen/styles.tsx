@@ -29,6 +29,8 @@ export type ChatScreenStyles = {
   imageErrorText: TextStyle;
   imageStatusView: ViewStyle;
   forwardLeftActionIconContainer: ViewStyle;
+  scrollToBottomButton: ViewStyle;
+  scrollButton: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
@@ -138,5 +140,18 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       height: '80%',
       width: '20%',
       marginRight: moderateScale(15),
+    },
+    scrollToBottomButton: {
+      position: 'absolute',
+      bottom: 100,
+      right: 20,
+      backgroundColor: '#007bff',
+      borderRadius: moderateScale(25),
+      elevation: 5,
+    },
+    scrollButton: {
+      padding: moderateScale(10),
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });

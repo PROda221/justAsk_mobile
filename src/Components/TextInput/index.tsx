@@ -139,7 +139,7 @@ const SecureTextEntryContainer = styled(TouchableOpacity)<{
   padding: 20px;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  border-radius: 12.84px 12.84px 0;
+  border-radius: 0 12.84px 12.84px 0;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
     error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};

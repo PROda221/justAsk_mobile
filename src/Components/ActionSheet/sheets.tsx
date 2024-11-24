@@ -36,7 +36,7 @@ declare module 'react-native-actions-sheet' {
     }>;
     'ViewProfileImage-sheet': SheetDefinition<{
       payload: {
-        imageUrl: string;
+        imageUrl: string | string[];
       };
     }>;
     'AddProfileImage-sheet': SheetDefinition<{

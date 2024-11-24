@@ -90,7 +90,7 @@
     "message": "Message",
     "chatDeactivated": "Account Deactivated",
     "imageError": "Please ask this image to be sent again.",
-    "gifError": "Something went wrong. Please again."
+    "gifError": "Reload"
   },
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",

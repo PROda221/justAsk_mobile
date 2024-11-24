@@ -14,10 +14,38 @@ import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {callGetUserProfile} from '../../Redux/Slices/UserProfileSlice';
 import { forwardMsgType } from '../../Screens/AppScreens/ChatScreen/types';
 
-const getImageUrl = async (msg: string) => {
-  let imageUri = await saveURLImage(msg);
-  let computedImg = {uri: `file://${imageUri}`};
-  return computedImg.uri;
+const getImageUrl = async (msg: string): Promise<string> => {
+  try {
+    // Parse the message to get the list of images
+    const allImages: string[] = JSON.parse(msg);
+    const allDownloadedImages: string[] = [];
+
+    // Concurrently download all images
+    const downloadPromises = allImages.map(async (imageUrl) => {
+      try {
+        const imageUri = await saveURLImage(imageUrl);
+        return `file://${imageUri}`;
+      } catch (error) {
+        console.error(`Failed to download image: ${imageUrl}`, error);
+        return null; // Skip failed downloads
+      }
+    });
+
+    const downloadedImages = await Promise.all(downloadPromises);
+
+    // Filter out any null values (failed downloads)
+    downloadedImages.forEach((imgUri) => {
+      if (imgUri) {
+        allDownloadedImages.push(imgUri);
+      }
+    });
+
+    // Return the result as a JSON string
+    return JSON.stringify(allDownloadedImages);
+  } catch (error) {
+    console.error('Error processing images:', error);
+    return JSON.stringify([]);
+  }
 };
 
 export const useGetMessage = (socket: Socket | null) => {
@@ -45,6 +73,7 @@ export const useGetMessage = (socket: Socket | null) => {
       } else if (tempMsgId) {
         await updateLocalMessageId(senderId, yourId, id, tempMsgId, createdAt);
       } else {
+
         let downloadedPic;
         let chatExists: boolean | _RawRecord = await checkChatExists(
           senderId,
@@ -66,7 +95,7 @@ export const useGetMessage = (socket: Socket | null) => {
         newMessage = await addMessageToChat({
           chatId: senderId,
           account: yourId,
-          text: msg,
+          text:  type === 'image' ? await getImageUrl(msg) : msg,
           isReceived,
           type,
           onChatScreen: localReducer.inChatScreen,
@@ -100,7 +129,7 @@ export const useGetMessage = (socket: Socket | null) => {
           forwardMsg = {message: '', type: 'message', received: false, username: '', id: ''},
         } = messageData;
         getMessages(
-          type === 'image' ? await getImageUrl(msg) : msg,
+          msg,
           true,
           type,
           senderId,

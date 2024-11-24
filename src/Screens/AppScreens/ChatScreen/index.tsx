@@ -1,12 +1,17 @@
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
 import React, {useEffect, useRef, useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getChatScreenStyles} from './styles';
-import {TextInput} from '../../../Components';
+import {TextInput, Typography} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
-import {
+import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -38,6 +43,7 @@ import {Model} from '@nozbe/watermelondb';
 import {sendReadReceipt} from '../../../Functions/SendReadReceipt';
 import {moderateScale} from '../../../Functions/StyleScale';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {SheetManager} from 'react-native-actions-sheet';
 import {RootState} from '../../../Redux/rootReducers';
 
@@ -52,7 +58,11 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {username, skills, status, image} = route.params;
 
   const flashListRef = useRef<FlashList<MessageType> | null>(null);
+  const findMoreMessages = useRef<number>(0);
+
   const [forwardMsg, setForwardMsg] = useState<forwardMsgType | undefined>();
+  const [scrollEnabled, setScrollEnabled] = useState<boolean>(true);
+  const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
 
   const {callGetUserProfileApi, userProfileSuccess} = useUserProfile(
     username,
@@ -65,6 +75,20 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  const scrollToBottom = () => {
+    if (flashListRef.current) {
+      flashListRef.current.scrollToOffset({animated: false, offset: 0});
+    }
+  };
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const {contentOffset} = event.nativeEvent;
+    const isAtBottom = contentOffset.y <= 80;
+    if (!isAtBottom !== showScrollButton) {
+      setShowScrollButton(!isAtBottom);
+    }
+  };
 
   const replyMsg = useSelector(
     (state: RootState) => state.localReducer.replyMsg,
@@ -117,6 +141,9 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           const index = relativeIndex + replyMsg.mainMsgIndex;
           flashListRef.current?.scrollToIndex({index, animated: true});
           dispatch(setReplyMsgId({replyMsgId: '', mainMsgIndex: 0}));
+        } else {
+          loadMoreMessages();
+          findMoreMessages.current = findMoreMessages.current + 1;
         }
       }
     };
@@ -124,7 +151,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     return () => {
       setReplyMsgId({replyMsgId: '', mainMsgIndex: 0});
     };
-  }, [replyMsg.replyMsgId]);
+  }, [replyMsg.replyMsgId, findMoreMessages.current]);
 
   useEffect(() => {
     if (messages?.length) {
@@ -216,15 +243,29 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
     try {
       const result = await launchImageLibrary(options);
-      result.assets?.forEach(async image => {
-        const uri = image.uri;
-        const compressedResult = await Compress.compress(`${uri}`);
+      const allImages: string[] = [];
+
+      for (const image of result.assets || []) {
+        try {
+          const uri = image.uri;
+
+          // Compress the image
+          const compressedResult = await Compress.compress(`${uri}`);
+          // Add the compressed result to the allImages array
+          allImages.push(compressedResult);
+
+          // Optionally, handle the image further (e.g., call getMessages)
+        } catch (error) {
+          console.error('Error compressing image:', image.uri, error);
+        }
+      }
+      if (allImages.length > 0) {
         await getMessages(
-          {url: compressedResult, uploading: true},
+          {url: JSON.stringify(allImages), uploading: true},
           false,
           'image',
         );
-      });
+      }
     } catch (err) {
       console.log('err at image selection :', err);
     }
@@ -269,10 +310,13 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
         <FlashList
           data={messages}
+          bounces={false}
           showsVerticalScrollIndicator={false}
           keyExtractor={item => item.id.toString()}
           decelerationRate={0.9}
+          scrollEnabled={scrollEnabled}
           ref={flashListRef}
+          onScroll={handleScroll}
           renderItem={({item, index}: {item: MessageType; index: number}) => {
             return (
               <RenderMessageList
@@ -282,6 +326,9 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
                 forwardMsg={(forwardedMsg: forwardMsgType) =>
                   setForwardMsg(forwardedMsg)
                 }
+                toggleScroll={(scrollValue: boolean) => {
+                  setScrollEnabled(scrollValue);
+                }}
                 text={item.text}
                 type={item.type}
                 uploadingImage={item.uploadingImage}
@@ -294,10 +341,8 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
             );
           }}
           contentContainerStyle={styles.chatContainer}
-          getItemType={item => {
-            return item.type;
-          }}
-          estimatedItemSize={280}
+          getItemType={item => item.type}
+          estimatedItemSize={120}
           inverted
           onEndReached={loadMoreMessages}
           onEndReachedThreshold={0.3}
@@ -337,6 +382,20 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
           replyMessage={forwardMsg}
           setReplyMessage={setForwardMsg}
         />
+
+        {showScrollButton && (
+          <Animated.View style={styles.scrollToBottomButton}>
+            <TouchableOpacity
+              onPress={scrollToBottom}
+              style={styles.scrollButton}>
+              <AntDesign
+                name="arrowdown"
+                size={moderateScale(10)}
+                color={colors.iconPrimaryColor}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
         <TouchableOpacity
           style={styles.sendButton}
           onPress={() => sendMessage()}>

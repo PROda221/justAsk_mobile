@@ -1,21 +1,60 @@
 import storage from '@react-native-firebase/storage';
 import { Platform } from 'react-native';
 
-export const uploadImage = async (uri: string, currentProgress: (progress: number) => void) => {
-  const originalName = uri.substring(uri.lastIndexOf('/') + 1);
-  const filename = 'chat_img_' + originalName;
-  const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+export const uploadImages = async (
+  uris: string[],
+  updateProgress: (progress: number) => void
+): Promise<string[]> => {
+  let totalBytesTransferred = 0;
+  let totalBytes = 0;
 
-  const task = storage().ref(filename).putFile(uploadUri);
+  // Helper function to upload a single image
+  const uploadSingleImage = async (uri: string, index: number): Promise<string> => {
+    const originalName = uri.substring(uri.lastIndexOf('/') + 1);
+    const filename = `chat_img_${index}_${originalName}`;
+    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
-  try {
-    task.on('state_changed', taskSnapshot => {
-      currentProgress(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes)
+    const task = storage().ref(filename).putFile(uploadUri);
+
+    return new Promise<string>((resolve, reject) => {
+      let lastBytesTransferred = 0;
+
+      task.on(
+        'state_changed',
+        taskSnapshot => {
+          const { bytesTransferred, totalBytes: taskTotalBytes } = taskSnapshot;
+
+          // Ensure totalBytes is only calculated once
+          if (!totalBytes) totalBytes = uris.length * taskTotalBytes;
+
+          // Update totalBytesTransferred by subtracting the last bytes transferred
+          totalBytesTransferred += bytesTransferred - lastBytesTransferred;
+          lastBytesTransferred = bytesTransferred;
+
+          // Calculate and report overall progress
+          const progress = totalBytesTransferred / totalBytes;
+          updateProgress(progress);
+        },
+        reject, // Handle error
+        async () => {
+          try {
+            const url = await storage().ref(filename).getDownloadURL();
+            resolve(url);
+          } catch (e) {
+            reject(e);
+          }
+        }
+      );
     });
-    await task;
-    const url = await storage().ref(filename).getDownloadURL();
-    return url
-  } catch (e) {
-    console.error('error uploading :', e);
+  };
+
+  // Upload all images in parallel and return their URLs
+  try {
+    const uploadPromises = uris.map((uri, index) => uploadSingleImage(uri, index));
+    const urls = await Promise.all(uploadPromises);
+    return urls;
+  } catch (error) {
+    console.error('Error during bulk upload:', error);
+    return [];
   }
 };

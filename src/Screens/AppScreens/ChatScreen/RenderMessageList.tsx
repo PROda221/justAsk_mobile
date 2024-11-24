@@ -1,8 +1,8 @@
-import React, {useEffect, useState, useRef, MutableRefObject} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {InteractionManager} from 'react-native';
 import {ChatScreenStyles, getChatScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {uploadImage} from '../../../Functions/UploadImg';
+import {uploadImages} from '../../../Functions/UploadImg';
 import {
   getCurrentMsgObservable,
   updateImageUploadStatus,
@@ -10,6 +10,7 @@ import {
 import {withObservables} from '@nozbe/watermelondb/react';
 import {Model} from '@nozbe/watermelondb';
 import Reanimated, {
+  runOnJS,
   SharedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
@@ -19,6 +20,7 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Message from './Message';
 import {forwardMsgType} from './types';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 type PropTypes = {
   activeMsg: Model[] | undefined;
@@ -33,6 +35,7 @@ type PropTypes = {
   msgCreatedAt?: Date;
   index: number;
   forwardMsg?: (msg: forwardMsgType) => void;
+  toggleScroll: (scrollValue: boolean) => void;
   sendMessages: (
     imagemessageInputUrl: string,
     username: string,
@@ -51,10 +54,30 @@ const enhance = withObservables(['id'], ({id}) => ({
   activeMsg: getCurrentMsgObservable(id),
 }));
 
+const hepticFeedback = (giveHeptics: boolean) => {
+  const options = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+  };
+
+  if (!giveHeptics) {
+    // Trigger haptic feedback
+    ReactNativeHapticFeedback.trigger('impactLight', options);
+  }
+};
+
 const LeftAction = ({drag, styles, forwardIconColor}: LeftActionProps) => {
+  const heptics = useRef(false);
   // Animation to control the visibility of the left action
   const styleAnimation = useAnimatedStyle(() => {
     let dragVal = drag.value - 25;
+    if (dragVal > 20) {
+      runOnJS(hepticFeedback)(heptics.current);
+      heptics.current = true;
+    } else {
+      heptics.current = false;
+    }
+
     return {
       transform: [{translateX: dragVal < 20 ? dragVal : 20}],
     };
@@ -83,6 +106,7 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
     forwardMsg,
     sendMessages,
     received,
+    toggleScroll,
   } = props;
 
   const swipeableRef = useRef<any>(null);
@@ -99,10 +123,10 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
 
   const uploadAndShareImage = async () => {
     try {
-      const uploadedUrl = await uploadImage(text, currentProgress);
+      const uploadedUrl = await uploadImages(JSON.parse(text), currentProgress);
       if (uploadedUrl) {
         await updateImageUploadStatus(username, account, id, false);
-        sendMessages(uploadedUrl, username, 'image', id);
+        sendMessages(JSON.stringify(uploadedUrl), username, 'image', id);
       }
     } catch (err) {
       console.log('err at image upload :', err);
@@ -124,6 +148,12 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
       <ReanimatedSwipeable
         ref={swipeableRef}
         friction={1}
+        onSwipeableOpenStartDrag={direction => {
+          if (direction === 'left') toggleScroll(false);
+        }}
+        onSwipeableWillClose={() => {
+          toggleScroll(true);
+        }}
         onSwipeableOpen={() => {
           swipeableRef.current?.close();
           InteractionManager.runAfterInteractions(() => {

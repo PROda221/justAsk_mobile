@@ -302,7 +302,7 @@ export async function getMessagesForChat(chatId, account, fromMessageId = '') {
           Q.lt(referenceMessage._raw['msg_created_at']),
         ), // Get messages before the reference message
         Q.sortBy('msg_created_at', Q.desc), // Sort messages by created time in descending order
-        Q.take(50), // Limit to 80 messages
+        Q.take(50), // Limit to 50 messages
       );
     } else {
       // If no message ID is provided, fetch the latest 100 messages
@@ -311,7 +311,7 @@ export async function getMessagesForChat(chatId, account, fromMessageId = '') {
         .query(
           Q.where('chat_id', chat[0].id),
           Q.sortBy('msg_created_at', Q.desc),
-          Q.take(50),
+          Q.take(20),
         );
     }
 

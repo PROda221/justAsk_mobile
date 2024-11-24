@@ -2,10 +2,10 @@
  * @format
  */
 
-import { AppRegistry } from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './src/App';
 import messaging from '@react-native-firebase/messaging';
-import { name as appName } from './app.json';
+import {name as appName} from './app.json';
 import {
   checkChatExists,
   addMessageToChat,
@@ -14,9 +14,9 @@ import {
   setSenderNotifications,
   clearSenderNotifications,
 } from './src/DB/DBFunctions';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
-import { saveURLImage } from './src/Functions/SaveBase64Image';
-import { downloadImg } from './src/Functions/DownloadLocalPic';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
+import {saveURLImage} from './src/Functions/SaveBase64Image';
+import {downloadImg} from './src/Functions/DownloadLocalPic';
 
 // Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
@@ -30,9 +30,37 @@ import { downloadImg } from './src/Functions/DownloadLocalPic';
 // });
 
 const getImageUrl = async msg => {
-  let imageUri = await saveURLImage(msg);
-  let computedImg = { uri: `file://${imageUri}` };
-  return computedImg.uri;
+  try {
+    // Parse the message to get the list of images
+    const allImages = JSON.parse(msg);
+    const allDownloadedImages = [];
+
+    // Concurrently download all images
+    const downloadPromises = allImages.map(async imageUrl => {
+      try {
+        const imageUri = await saveURLImage(imageUrl);
+        return `file://${imageUri}`;
+      } catch (error) {
+        console.error(`Failed to download image: ${imageUrl}`, error);
+        return null; // Skip failed downloads
+      }
+    });
+
+    const downloadedImages = await Promise.all(downloadPromises);
+
+    // Filter out any null values (failed downloads)
+    downloadedImages.forEach(imgUri => {
+      if (imgUri) {
+        allDownloadedImages.push(imgUri);
+      }
+    });
+
+    // Return the result as a JSON string
+    return JSON.stringify(allDownloadedImages);
+  } catch (error) {
+    console.error('Error processing images:', error);
+    return JSON.stringify([]);
+  }
 };
 
 const displayNotification = async (notifeeData, senderUsername) => {
@@ -50,12 +78,12 @@ const displayNotification = async (notifeeData, senderUsername) => {
     await setSenderNotifications(senderUsername);
     await notifee.displayNotification({
       ...notifeeData,
-      android: { ...notifeeData.android, groupSummary: true },
+      android: {...notifeeData.android, groupSummary: true},
     });
   }
 };
 
-notifee.onBackgroundEvent(async ({ type, detail }) => {
+notifee.onBackgroundEvent(async ({type, detail}) => {
   if (type === EventType.PRESS) {
     // Cancel all notifications
     await notifee.cancelAllNotifications();
