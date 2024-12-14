@@ -1,14 +1,9 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
 import {InteractionManager} from 'react-native';
 import {ChatScreenStyles, getChatScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {uploadImages} from '../../../Functions/UploadImg';
-import {
-  getCurrentMsgObservable,
-  updateImageUploadStatus,
-} from '../../../DB/DBFunctions';
-import {withObservables} from '@nozbe/watermelondb/react';
-import {Model} from '@nozbe/watermelondb';
+import {updateImageUploadStatus} from '../../../DB/DBFunctions';
 import Reanimated, {
   runOnJS,
   SharedValue,
@@ -21,6 +16,7 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import Message from './Message';
 import {forwardMsgType} from './types';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {Model} from '@nozbe/watermelondb';
 
 type PropTypes = {
   activeMsg: Model[] | undefined;
@@ -49,10 +45,6 @@ type LeftActionProps = {
   styles: ChatScreenStyles;
   forwardIconColor: string;
 };
-
-const enhance = withObservables(['id'], ({id}) => ({
-  activeMsg: getCurrentMsgObservable(id),
-}));
 
 const hepticFeedback = (giveHeptics: boolean) => {
   const options = {
@@ -93,11 +85,10 @@ const LeftAction = ({drag, styles, forwardIconColor}: LeftActionProps) => {
 
 const RenderMessageList = (props: PropTypes): JSX.Element => {
   const {colors} = useTheme();
-  const styles = getChatScreenStyles(colors);
+  const styles = useMemo(() => getChatScreenStyles(colors), []);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   const {
-    activeMsg,
     username,
     account,
     id,
@@ -107,12 +98,13 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
     sendMessages,
     received,
     toggleScroll,
+    activeMsg,
   } = props;
 
   const swipeableRef = useRef<any>(null);
 
   useEffect(() => {
-    if (type === 'image' && activeMsg?.[0]?._raw['uploading_image']) {
+    if (type === 'image' && activeMsg?._raw['uploading_image']) {
       uploadAndShareImage();
     }
   }, [text]);
@@ -121,7 +113,7 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
     setUploadProgress(progress);
   };
 
-  const uploadAndShareImage = async () => {
+  const uploadAndShareImage = useCallback(async () => {
     try {
       const uploadedUrl = await uploadImages(JSON.parse(text), currentProgress);
       if (uploadedUrl) {
@@ -131,7 +123,7 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
     } catch (err) {
       console.log('err at image upload :', err);
     }
-  };
+  }, []);
 
   const renderLeftAction = (
     prog: SharedValue<number>,
@@ -162,7 +154,7 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
               type,
               received,
               username: received ? username : account ?? '',
-              id: activeMsg?.[0]?._raw['msg_id'],
+              id: activeMsg?._raw['msg_id'],
             });
           });
         }} // Automatically close on swipe complete
@@ -173,6 +165,7 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
           colors={colors}
           styles={styles}
           uploadProgress={uploadProgress}
+          // activeMsg={activeMsg}
           {...props}
         />
       </ReanimatedSwipeable>
@@ -180,4 +173,4 @@ const RenderMessageList = (props: PropTypes): JSX.Element => {
   );
 };
 
-export default enhance(React.memo(RenderMessageList));
+export default React.memo(RenderMessageList);

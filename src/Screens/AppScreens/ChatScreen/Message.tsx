@@ -70,17 +70,15 @@ const Message = ({
   const showMsgTicks = () => {
     return (
       <>
-        {activeMsg?.[0]?._raw['msg_id'] ? (
+        {activeMsg?._raw['msg_id'] ? (
           <MaterialCommunityIcons
             name="checkbox-marked-circle"
             size={moderateScale(12)}
             color={
-              activeMsg?.[0]?._raw['read']
-                ? colors.readReceipt
-                : colors.sentReceipt
+              activeMsg?._raw['read'] ? colors.readReceipt : colors.sentReceipt
             }
           />
-        ) : activeMsg?.[0]?._raw['status'] === 'failed' ? (
+        ) : activeMsg?._raw['status'] === 'failed' ? (
           <MaterialCommunityIcons
             name="checkbox-blank-circle-outline"
             size={moderateScale(12)}
@@ -119,7 +117,6 @@ const Message = ({
       let imagesArray = JSON.parse(images);
       return imagesArray;
     } catch (err) {
-      console.log('image is :', images);
       return [images];
     }
   };
@@ -130,7 +127,7 @@ const Message = ({
         await updateMsgStatus(id, 'pending');
         sendMessages(text, username, type, id);
       }}
-      disabled={activeMsg?.[0]?._raw['status'] !== 'failed'}
+      disabled={activeMsg?._raw['status'] !== 'failed'}
       style={[
         styles.messageContainer,
         received ? styles.messageReceived : styles.messageSent,
@@ -139,8 +136,8 @@ const Message = ({
         style={[
           styles.messageBox,
           {
-            minWidth: activeMsg?.[0]?._raw['forward_msg'] ? '50%' : '0%',
-            alignItems: activeMsg?.[0]?._raw['forward_msg']
+            minWidth: activeMsg?._raw['forward_msg'] ? '50%' : '0%',
+            alignItems: activeMsg?._raw['forward_msg']
               ? 'flex-start'
               : 'center',
             backgroundColor: received
@@ -148,13 +145,13 @@ const Message = ({
               : colors.sentMsgColor,
           },
         ]}>
-        {activeMsg?.[0]?._raw['forward_msg'] &&
+        {activeMsg?._raw['forward_msg'] &&
           replyTo(
-            activeMsg?.[0]?._raw['forward_msg'],
-            activeMsg?.[0]?._raw['forward_msg_type'],
-            activeMsg?.[0]?._raw['forward_msg_received'],
-            activeMsg?.[0]?._raw['forward_msg_username'],
-            activeMsg?.[0]?._raw['forward_msg_id'],
+            activeMsg?._raw['forward_msg'],
+            activeMsg?._raw['forward_msg_type'],
+            activeMsg?._raw['forward_msg_received'],
+            activeMsg?._raw['forward_msg_username'],
+            activeMsg?._raw['forward_msg_id'],
           )}
         {type === 'message' && (
           <Typography
@@ -171,7 +168,7 @@ const Message = ({
             colors={colors}
             id={id}
             errorText={content.ChatScreen.imageError}
-            uploadingImage={activeMsg?.[0]?._raw['uploading_image']}
+            uploadingImage={activeMsg?._raw['uploading_image']}
             uploadProgress={uploadProgress}
             cachePolicy="memory-disk"
             blurhash={blurhash}
@@ -191,7 +188,7 @@ const Message = ({
                 id={id}
                 cachePolicy="memory-disk"
                 errorText={content.ChatScreen.gifError}
-                uploadingImage={activeMsg?.[0]?._raw['uploading_image']}
+                uploadingImage={activeMsg?._raw['uploading_image']}
                 uploadProgress={uploadProgress}
                 blurhash={blurhash}
                 openImage={openImage}
@@ -199,7 +196,7 @@ const Message = ({
               />
             </TouchableOpacity>
             <View>
-              {activeMsg?.[0]?._raw['uploading_image'] && (
+              {activeMsg?._raw['uploading_image'] && (
                 <ProgressBar progress={uploadProgress} />
               )}
             </View>
@@ -211,11 +208,9 @@ const Message = ({
           textStyle={styles.msgTime}
           fontWeight="400"
           bgColor={
-            activeMsg?.[0]?._raw['status'] === 'failed'
-              ? colors.retryMsg
-              : 'white'
+            activeMsg?._raw['status'] === 'failed' ? colors.retryMsg : 'white'
           }>
-          {activeMsg?.[0]?._raw['status'] === 'failed'
+          {activeMsg?._raw['status'] === 'failed'
             ? 'Retry'
             : formatTimestamp(
                 convertTimeToMili(
@@ -229,4 +224,4 @@ const Message = ({
   );
 };
 
-export default Message;
+export default React.memo(Message);

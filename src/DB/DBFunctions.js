@@ -2,6 +2,7 @@ import {from, of} from 'rxjs';
 import {switchMap, catchError} from 'rxjs/operators';
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
+import {map as rxjsMap} from 'rxjs/operators'; // Import the map operator
 
 export async function createNewUser(username, profilePic, status, skills) {
   try {
@@ -272,6 +273,68 @@ export async function getLatestMessageForChat(chatId, account) {
     console.error('Error fetching latest message for chat:', error);
     throw error;
   }
+}
+
+
+export function observeMessageChanges(chatId, account, currentMessagesMap) {
+  return database.collections
+    .get('users')
+    .query(Q.where('username', account))
+    .observe()
+    .pipe(
+      switchMap(users => {
+        if (users.length === 0) {
+          console.warn('No user found for the account.');
+          return of([]); // Emit an empty array
+        }
+
+        const userId = users[0].id;
+        return database.collections
+          .get('chats')
+          .query(Q.where('user_id', userId), Q.where('chat_id', chatId))
+          .observe()
+          .pipe(
+            switchMap(chats => {
+              if (chats.length === 0) {
+                console.warn('No chat found for the user and chatId.');
+                return of([]); // Emit an empty array
+              }
+
+              const chatId = chats[0].id;
+              return database.collections
+                .get('messages')
+                .query(
+                  Q.where('chat_id', chatId),
+                  Q.sortBy('msg_created_at', Q.desc),
+                  Q.take(20),
+                )
+                .observeWithColumns([
+                  'read',
+                  'uploading_image',
+                  'msg_id',
+                  'status',
+                  'forward_msg',
+                ])
+                .pipe(
+                  rxjsMap(updatedMessages => {
+                    const updatedMessagesMap = new Map(
+                      updatedMessages.map(msg => [msg.id, msg]),
+                    );
+
+                    const changedMessages = updatedMessages.filter(msg => {
+                      const current = currentMessagesMap.get(msg.id);
+                      return (
+                        !current ||
+                        current.msg_updated_at !== msg.msg_updated_at
+                      );
+                    });
+                    return {changedMessages, updatedMessagesMap};
+                  }),
+                );
+            }),
+          );
+      }),
+    );
 }
 
 export async function getMessagesForChat(chatId, account, fromMessageId = '') {
@@ -605,16 +668,6 @@ export function getCurrentChatObservable(account, username) {
     );
 }
 
-export function getCurrentMsgObservable(id) {
-  try {
-    return database.collections
-      .get('messages')
-      .query(Q.where('id', id))
-      .observeWithColumns(['msg_id', 'status', 'uploading_image', 'read']);
-  } catch (err) {
-    console.log('err in observing msgId :', err);
-  }
-}
 
 export async function unblockChats(chatIds, account) {
   try {

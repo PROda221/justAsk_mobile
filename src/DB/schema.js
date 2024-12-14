@@ -49,7 +49,7 @@ export const mySchema = appSchema({
         {name: 'read', type: 'boolean'},
         {name: 'uploading_image', type: 'boolean'},
         {name: 'msg_id', type: 'string', isIndexed: true},
-        {name: 'msg_created_at', type: 'string'},
+        {name: 'msg_created_at', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
         {name: 'status', type: 'string', isIndexed: true},

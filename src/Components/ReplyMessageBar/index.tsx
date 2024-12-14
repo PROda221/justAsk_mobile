@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {forwardMsgType} from '../../Screens/AppScreens/ChatScreen/types';
@@ -32,7 +32,7 @@ const ReplyMessageBar = ({
   showOnlyUi,
   index,
 }: ReplyMessageBarProps) => {
-  const styles = getReplyMessageBarStyles(colors);
+  const styles = useMemo(() => getReplyMessageBarStyles(colors), []);
 
   let dispatch = useDispatch();
 
