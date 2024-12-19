@@ -71,4 +71,12 @@ export type DarkColors = {
   disabledButton: string;
   enabledButton: string;
   splashScreenBackground: string;
+  showMore: string;
+  showLess: string;
+  retryMsg: string;
+  readReceipt: string;
+  sentReceipt: string;
+  SendingReceipt: string;
+  forwardMessageIcon: string;
+  forwardMessageTheme: string;
 };

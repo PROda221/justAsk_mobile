@@ -6,12 +6,16 @@ import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {type RootState} from '../../Redux/rootReducers';
 import {callSignIn, resetSignUpResponse} from '../../Redux/Slices/SignUpSlice';
 import Toast from 'react-native-toast-message';
+import {useGoogleLogin} from './useGoogleLogin';
+import {googleSignInToken} from '../../Functions/GoogleSignInToken';
 
 export const useSignIn = (
   navigation: NativeStackNavigationProp<ParamListBase>,
   popToScreen: string,
   screenName: string,
+  isGoogleLogin?: boolean,
 ) => {
+  const {callGoogleLoginApi} = useGoogleLogin();
   const signUpSlice = useSelector((state: RootState) => state.signUpSlice);
   const dispatch = useDispatch();
 
@@ -30,19 +34,27 @@ export const useSignIn = (
 
   useEffect(() => {
     if (signUpSlice.success) {
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: signUpSlice.success.message,
-        visibilityTime: 5000,
-      });
+      if (isGoogleLogin) {
+        googleSignInToken().then(token => {
+          if (token) {
+            callGoogleLoginApi({idToken: token ?? ''});
+          }
+        });
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: signUpSlice.success.message,
+          visibilityTime: 5000,
+        });
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{name: popToScreen}, {name: screenName}],
+          }),
+        );
+      }
       resetSignUpReducer();
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [{name: popToScreen}, {name: screenName}],
-        }),
-      );
     }
   }, [signUpSlice.success]);
 

@@ -12,12 +12,14 @@ import {useNotifications} from '../../../CustomHooks/AppHooks/useNotifications';
 import {type Model} from '@nozbe/watermelondb';
 import content from '../../../Assets/Languages/english.json';
 import ActiveChats from './ActiveChats';
-import {useCheckNet} from '../../../CustomHooks/AppHooks/useCheckNet';
 import HomeHeader from './HomeHeader';
 import {useIsFocused} from '@react-navigation/native';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {Skeleton} from 'moti/skeleton';
 import {verticalScale} from '../../../Functions/StyleScale';
+import {useActivateAccount} from '../../../CustomHooks/AppHooks/useActivateAccount';
+import Loader from '../../../Components/Loader/Loader';
+import {useCheckMsgStatus} from '../../../CustomHooks/AppHooks/useCheckMsgStatus';
 
 type HomeScreenProps = {
   navigation: NativeStackNavigationProp<ParamListBase>;
@@ -30,11 +32,15 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
   useNotifications();
-  // useCheckNet();
+  useCheckMsgStatus();
   const isFocused = useIsFocused();
-
   const {profileSuccess, profileLoading, profileError, callGetProfileApi} =
     useProfile(isFocused);
+
+  const {ActivateLogoutLoading} = useActivateAccount(
+    profileSuccess?.deactivated,
+    callGetProfileApi,
+  );
 
   useEffect(() => {
     if (profileLoading) {
@@ -49,7 +55,9 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
   const searchBar = () => (
     <TouchableOpacity
       style={styles.searchButtonContainer}
-      onPress={async () => SheetManager.show('SearchFeature-sheet')}>
+      onPress={async () =>
+        SheetManager.show('SearchFeature-sheet', {payload: {navigation}})
+      }>
       <View style={styles.searchContainer}>
         <Typography
           fontWeight="400"
@@ -78,6 +86,8 @@ const HomeScreen = ({navigation}: HomeScreenProps) => {
           {searchBar()}
         </Skeleton>
       </View>
+
+      <Loader isLoading={ActivateLogoutLoading} />
 
       <ActiveChats
         navigation={navigation}

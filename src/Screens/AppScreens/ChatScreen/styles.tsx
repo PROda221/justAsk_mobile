@@ -19,11 +19,18 @@ export type ChatScreenStyles = {
   chatTextInput: ViewStyle;
   inputContainer: ViewStyle;
   imageChat: ImageStyle;
-  imageChatBottom: ViewStyle;
   msgTime: TextStyle;
   messageReceived: ViewStyle;
   messageSent: ViewStyle;
   messageBox: ViewStyle;
+  msgInfoContainer: ViewStyle;
+  sendButton: ViewStyle;
+  padding: ViewStyle;
+  imageErrorText: TextStyle;
+  imageStatusView: ViewStyle;
+  forwardLeftActionIconContainer: ViewStyle;
+  scrollToBottomButton: ViewStyle;
+  scrollButton: ViewStyle;
 };
 
 export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
@@ -37,6 +44,9 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     },
     container: {
       backgroundColor: colors.appScreenPrimaryBackground,
+      flex: 1,
+    },
+    padding: {
       flex: 1,
       paddingHorizontal: horizontalScale(35),
     },
@@ -62,9 +72,11 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     },
     inputContainer: {
       alignSelf: 'center',
+      alignItems: 'center',
       flexDirection: 'row',
-      justifyContent: 'center',
-      marginBottom: verticalScale(52),
+      justifyContent: 'space-between',
+      marginBottom: verticalScale(10),
+      paddingHorizontal: horizontalScale(10),
     },
     messageContainer: {
       marginBottom: verticalScale(12),
@@ -73,6 +85,7 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
     messageBox: {
       borderRadius: moderateScale(20),
       padding: moderateScale(12),
+      alignItems: 'flex-start',
     },
     messageReceived: {
       alignSelf: 'flex-start',
@@ -85,16 +98,60 @@ export const getChatScreenStyles = (colors: DarkColors): ChatScreenStyles =>
       textAlign: 'left',
     },
     imageChat: {
-      width: horizontalScale(250),
-      height: verticalScale(250),
+      minWidth: moderateScale(150),
+      minHeight: moderateScale(150),
+      borderRadius: moderateScale(20),
+      overflow: 'hidden',
+    },
+    imageStatusView: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderRadius: moderateScale(20),
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     profileImage: {
       backgroundColor: colors.primaryBackgroundColor,
       borderRadius: moderateScale(22),
-      height: verticalScale(45),
+      height: moderateScale(45),
       marginLeft: verticalScale(10),
-      width: horizontalScale(45),
+      width: moderateScale(45),
     },
-    msgTime: {textAlign: 'right', flex: 1, marginRight: horizontalScale(5)},
-    imageChatBottom: {},
+    msgTime: {marginRight: horizontalScale(5)},
+    msgInfoContainer: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    imageErrorText: {
+      color: colors.textPrimaryColor,
+      width: moderateScale(150),
+    },
+    sendButton: {
+      height: moderateScale(50),
+      width: moderateScale(50),
+      borderRadius: moderateScale(25),
+      backgroundColor: colors.primaryBackgroundColor,
+      justifyContent: 'center',
+      marginLeft: horizontalScale(10),
+      alignItems: 'center',
+    },
+    forwardLeftActionIconContainer: {
+      justifyContent: 'center',
+      height: '80%',
+      width: '20%',
+      marginRight: moderateScale(15),
+    },
+    scrollToBottomButton: {
+      position: 'absolute',
+      bottom: 100,
+      right: 20,
+      backgroundColor: '#007bff',
+      borderRadius: moderateScale(25),
+      elevation: 5,
+    },
+    scrollButton: {
+      padding: moderateScale(10),
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });

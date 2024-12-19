@@ -20,6 +20,7 @@ import ProfileEdit from './ProfileEdit.svg'
 import ProfilePic from './ProfilePic.png'
 import ProfilePic1 from './ProfilePic1.png'
 import HumanTouch from './HumanTouch.svg'
+import GiphyTrademark from './GiphyTrademark.png'
 
 export {
   Login,
@@ -43,5 +44,6 @@ export {
   ProfileEdit,
   ProfilePic,
   ProfilePic1,
-  HumanTouch
+  HumanTouch,
+  GiphyTrademark
 };

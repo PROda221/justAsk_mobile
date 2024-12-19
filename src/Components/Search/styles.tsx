@@ -27,10 +27,11 @@ export const getSearchStyles = (colors: DarkColors): SearchStyles =>
       padding: moderateScale(8),
     },
     searchTextInput: {
-      height: verticalScale(40),
+      minHeight: moderateScale(45),
     },
     actionSheetContainer: {
       backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
     },
     loaderContainer: {
       padding: moderateScale(15),

@@ -19,7 +19,10 @@ export type AlertBoxStyles = {
 
 export const getAlertBoxStyles = (colors: DarkColors): AlertBoxStyles =>
   StyleSheet.create<AlertBoxStyles>({
-    actionSheet: {backgroundColor: colors.appScreenPrimaryBackground},
+    actionSheet: {
+      backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
+    },
     center: {
       alignItems: 'center',
     },

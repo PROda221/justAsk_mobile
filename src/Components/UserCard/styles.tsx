@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../Functions/StyleScale';
+import {DarkColors} from '../../useContexts/Theme/ThemeType';
 
 export type UserCardStyles = {
   card: ViewStyle;
@@ -17,7 +18,7 @@ export type UserCardStyles = {
   selectButton: ViewStyle;
 };
 
-export const getUserCardStyles = (colors): UserCardStyles =>
+export const getUserCardStyles = (colors: DarkColors): UserCardStyles =>
   StyleSheet.create<UserCardStyles>({
     card: {
       backgroundColor: colors.cardBackgroundColor,
@@ -34,8 +35,8 @@ export const getUserCardStyles = (colors): UserCardStyles =>
     image: {
       alignSelf: 'center',
       borderRadius: moderateScale(40),
-      height: verticalScale(80),
-      width: horizontalScale(80),
+      height: moderateScale(80),
+      width: moderateScale(80),
     },
     imageContainer: {
       justifyContent: 'center',

@@ -7,7 +7,7 @@ import {
 import {useEffect} from 'react';
 import {updateChatData} from '../../DB/DBFunctions';
 import {useProfile} from './useProfile';
-import {downloadImage} from '../../Functions/DownloadLocalPic';
+import {downloadImageToLocal} from '../../Functions/DownloadLocalPic';
 
 export const useUserProfile = (username?: string, image?: string) => {
   const dispatch = useDispatch();
@@ -27,13 +27,14 @@ export const useUserProfile = (username?: string, image?: string) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const profilePic = await downloadImage(
+        const profilePic = await downloadImageToLocal(
           userProfileSlice.success?.response.userDetails.profilePic ?? '',
           image,
-          userProfileSlice.success?.response.userDetails.gotBlockedStatus,
+          userProfileSlice.success?.response.userDetails.gotBlockedStatus ||
+            userProfileSlice.success?.response.userDetails.deactivated,
         );
         let computedImg = {uri: `file://${profilePic}`};
-        updateChatData(
+        await updateChatData(
           userProfileSlice.success?.response.userDetails,
           profileSuccess?.username,
           profilePic ? computedImg.uri : '',

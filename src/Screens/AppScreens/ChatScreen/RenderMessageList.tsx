@@ -1,58 +1,110 @@
-import {TouchableOpacity, View} from 'react-native';
-import {Typography} from '../../../Components';
-import React, {useEffect, useState} from 'react';
-import {ProgressBar} from '../../../Components/ProgressBar';
-import {Image} from 'expo-image';
-import {SheetManager} from 'react-native-actions-sheet';
-
-import {getChatScreenStyles} from './styles';
+import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
+import {InteractionManager} from 'react-native';
+import {ChatScreenStyles, getChatScreenStyles} from './styles';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
-import {uploadImage} from '../../../Functions/UploadImg';
+import {uploadImages} from '../../../Functions/UploadImg';
 import {updateImageUploadStatus} from '../../../DB/DBFunctions';
-import {formatTimestamp} from '../../../Functions/FormatTime';
-import Autolink from 'react-native-autolink';
-import moment from 'moment';
+import Reanimated, {
+  runOnJS,
+  SharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
+import Entypo from 'react-native-vector-icons/Entypo';
+
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Message from './Message';
+import {forwardMsgType} from './types';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {Model} from '@nozbe/watermelondb';
 
 type PropTypes = {
+  activeMsg: Model[] | undefined;
   username: string;
   account?: string;
   id: string;
-  type: 'message' | 'image';
+  type: 'message' | 'image' | 'gif';
   text: string;
   received: boolean;
   uploadingImage: boolean;
   createdAt: number;
-  sendMessages: (imageUrl: string, username: string, type: string) => void;
+  msgCreatedAt?: Date;
+  index: number;
+  forwardMsg?: (msg: forwardMsgType) => void;
+  toggleScroll: (scrollValue: boolean) => void;
+  sendMessages: (
+    imagemessageInputUrl: string,
+    username: string,
+    type: string,
+    id: string,
+  ) => void;
 };
 
-const openImage = (imageUrl: string) => {
-  SheetManager.show('ViewProfileImage-sheet', {payload: {imageUrl}});
+type LeftActionProps = {
+  drag: SharedValue<number>;
+  styles: ChatScreenStyles;
+  forwardIconColor: string;
 };
 
-const convertTimeToMili = (dateString: string) => {
-  const dateObject = new Date(dateString);
-  const milliseconds = dateObject.getTime();
-  const momentDate = moment(milliseconds);
-  return momentDate;
+const hepticFeedback = (giveHeptics: boolean) => {
+  const options = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+  };
+
+  if (!giveHeptics) {
+    // Trigger haptic feedback
+    ReactNativeHapticFeedback.trigger('impactLight', options);
+  }
 };
 
-export const RenderMessageList = ({
-  username,
-  account,
-  id,
-  received,
-  text,
-  type,
-  uploadingImage,
-  createdAt,
-  sendMessages,
-}: PropTypes): JSX.Element => {
+const LeftAction = ({drag, styles, forwardIconColor}: LeftActionProps) => {
+  const heptics = useRef(false);
+  // Animation to control the visibility of the left action
+  const styleAnimation = useAnimatedStyle(() => {
+    let dragVal = drag.value - 25;
+    if (dragVal > 20) {
+      runOnJS(hepticFeedback)(heptics.current);
+      heptics.current = true;
+    } else {
+      heptics.current = false;
+    }
+
+    return {
+      transform: [{translateX: dragVal < 20 ? dragVal : 20}],
+    };
+  });
+
+  return (
+    <Reanimated.View
+      style={[styleAnimation, styles.forwardLeftActionIconContainer]}>
+      <Entypo name="forward" size={25} color={forwardIconColor} />
+    </Reanimated.View>
+  );
+};
+
+const RenderMessageList = (props: PropTypes): JSX.Element => {
   const {colors} = useTheme();
-  const styles = getChatScreenStyles(colors);
+  const styles = useMemo(() => getChatScreenStyles(colors), []);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
+  const {
+    username,
+    account,
+    id,
+    text,
+    type,
+    forwardMsg,
+    sendMessages,
+    received,
+    toggleScroll,
+    activeMsg,
+  } = props;
+
+  const swipeableRef = useRef<any>(null);
+
   useEffect(() => {
-    if (type === 'image' && uploadingImage) {
+    if (type === 'image' && activeMsg?._raw['uploading_image']) {
       uploadAndShareImage();
     }
   }, [text]);
@@ -61,55 +113,64 @@ export const RenderMessageList = ({
     setUploadProgress(progress);
   };
 
-  const uploadAndShareImage = async () => {
+  const uploadAndShareImage = useCallback(async () => {
     try {
-      const uploadedUrl = await uploadImage(text, currentProgress);
+      const uploadedUrl = await uploadImages(JSON.parse(text), currentProgress);
       if (uploadedUrl) {
         await updateImageUploadStatus(username, account, id, false);
-        sendMessages(uploadedUrl, username, 'image');
+        sendMessages(JSON.stringify(uploadedUrl), username, 'image', id);
       }
     } catch (err) {
       console.log('err at image upload :', err);
     }
-  };
+  }, []);
 
+  const renderLeftAction = (
+    prog: SharedValue<number>,
+    drag: SharedValue<number>,
+  ) => (
+    <LeftAction
+      forwardIconColor={colors.forwardMessageIcon}
+      styles={styles}
+      drag={drag}
+    />
+  );
   return (
-    <View
-      style={[
-        styles.messageContainer,
-        received ? styles.messageReceived : styles.messageSent,
-      ]}>
-      <View
-        style={[
-          styles.messageBox,
-          {
-            backgroundColor: received
-              ? colors.receivedMsgColor
-              : colors.sentMsgColor,
-          },
-        ]}>
-        {type === 'message' && (
-          <Typography
-            fontWeight="300"
-            bgColor={colors.textPrimaryColor}
-            textStyle={styles.messageText}>
-            <Autolink text={text} email phone="sms" url />
-          </Typography>
-        )}
-        {type === 'image' && (
-          <View>
-            <TouchableOpacity onPress={() => openImage(text)}>
-              <Image source={{uri: `${text}`}} style={styles.imageChat} />
-            </TouchableOpacity>
-            <View style={styles.imageChatBottom}>
-              {uploadingImage && <ProgressBar progress={uploadProgress} />}
-            </View>
-          </View>
-        )}
-      </View>
-      <Typography textStyle={styles.msgTime} fontWeight="400" bgColor="white">
-        {formatTimestamp(convertTimeToMili(createdAt.toString()))}
-      </Typography>
-    </View>
+    <GestureHandlerRootView>
+      <ReanimatedSwipeable
+        ref={swipeableRef}
+        friction={1}
+        onSwipeableOpenStartDrag={direction => {
+          if (direction === 'left') toggleScroll(false);
+        }}
+        onSwipeableWillClose={() => {
+          toggleScroll(true);
+        }}
+        onSwipeableOpen={() => {
+          swipeableRef.current?.close();
+          InteractionManager.runAfterInteractions(() => {
+            forwardMsg?.({
+              message: text,
+              type,
+              received,
+              username: received ? username : account ?? '',
+              id: activeMsg?._raw['msg_id'],
+            });
+          });
+        }} // Automatically close on swipe complete
+        renderRightActions={() => null}
+        overshootLeft={false}
+        renderLeftActions={renderLeftAction}>
+        <Message
+          colors={colors}
+          styles={styles}
+          uploadProgress={uploadProgress}
+          // activeMsg={activeMsg}
+          {...props}
+        />
+      </ReanimatedSwipeable>
+    </GestureHandlerRootView>
   );
 };
+
+export default React.memo(RenderMessageList);

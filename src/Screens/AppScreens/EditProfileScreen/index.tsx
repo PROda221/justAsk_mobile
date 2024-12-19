@@ -5,8 +5,6 @@ import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getEditProfileStyles} from './styles';
 import {CustomButton, Typography} from '../../../Components';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
-import {ParamListBase, RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {StarRatingDisplay} from 'react-native-star-rating-widget';
 import Header from '../../../Components/Header';
@@ -25,25 +23,7 @@ import {useImageColors} from '../../../CustomHooks/AppHooks/useImageColors';
 import content from '../../../Assets/Languages/english.json';
 import {removeFirebaseUrl} from '../../../Functions/DownloadLocalPic';
 import {storageBucketUrl} from '../../../Constants';
-
-type Params = {
-  params: {
-    username: string;
-    status: string;
-    image: string;
-    skills: string[] | string;
-  };
-};
-
-type UserProfileProps = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<Params>;
-};
-
-type NewProfileType = {
-  profileImg: string | null;
-  status: string | null;
-};
+import {UserProfileProps, NewProfileType} from './types';
 
 const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
   const [editProfile, setEditProfile] = useState<boolean>(false);
@@ -180,10 +160,10 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
         <View style={styles.container}>
           <Skeleton
             colorMode="light"
-            height={verticalScale(165)}
-            width={horizontalScale(165)}>
+            height={moderateScale(165)}
+            width={moderateScale(165)}>
             <TouchableOpacity
-              onPress={openFullImage}
+              onPress={editProfile ? changeProfileImg : openFullImage}
               style={styles.imageContainer}>
               <Image
                 source={{
@@ -193,15 +173,13 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
                 transition={500}
               />
               {editProfile && (
-                <TouchableOpacity
-                  style={styles.editIcon}
-                  onPress={changeProfileImg}>
+                <View style={styles.editIcon}>
                   <MaterialIcons
                     name="edit"
                     size={moderateScale(20)}
                     color={colors.editProfileButtonBgColor}
                   />
-                </TouchableOpacity>
+                </View>
               )}
             </TouchableOpacity>
           </Skeleton>
@@ -222,6 +200,7 @@ const EditProfileScreen = ({navigation, route}: UserProfileProps) => {
               <Typography
                 fontWeight="400"
                 bgColor={colors.textPrimaryColor}
+                onPress={editProfile ? changeStatus : undefined}
                 textStyle={[
                   styles.statusText,
                   {

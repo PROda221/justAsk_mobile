@@ -5,12 +5,20 @@ import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {getSearchStyles} from './styles';
 import {useForm} from 'react-hook-form';
 import SelectableAdviceList from './SelectableAdviceList';
-import ActionSheet, {Route, useSheetRouter} from 'react-native-actions-sheet';
+import ActionSheet, {
+  Route,
+  SheetProps,
+  useSheetRouter,
+} from 'react-native-actions-sheet';
 
 import {Typography} from '../Typography';
 
 import {Filter} from '../../Assets/Images';
-import {horizontalScale, verticalScale} from '../../Functions/StyleScale';
+import {
+  horizontalScale,
+  verticalScale,
+  moderateScale,
+} from '../../Functions/StyleScale';
 import {RenderSvg} from '../RenderSvg';
 import {debounce, isEqual} from 'lodash';
 import {FlashList} from 'react-native-actions-sheet/dist/src/views/FlashList';
@@ -21,7 +29,7 @@ import Loader from '../Loader/Loader';
 
 let currentGenres: string[];
 
-const SearchScreen = () => {
+const SearchScreen = ({payload}: SheetProps<'SearchFeature-sheet'>) => {
   const router = useSheetRouter('SearchFeature-sheet');
   const {colors} = useTheme();
   const styles = getSearchStyles(colors);
@@ -117,6 +125,7 @@ const SearchScreen = () => {
   const renderItem = ({item}) => {
     return (
       <UserCard
+        navigation={payload?.navigation}
         username={item.username}
         skills={item.adviceGenre}
         status={item.status}
@@ -140,7 +149,9 @@ const SearchScreen = () => {
       />
       <View
         style={{
-          height: userList.length ? verticalScale(500) : verticalScale(220),
+          justifyContent: 'center',
+          paddingTop: verticalScale(50),
+          height: userList.length ? moderateScale(500) : moderateScale(220),
         }}>
         <FlashList
           data={userList}
@@ -176,6 +187,7 @@ function SearchFeature() {
 
   return (
     <ActionSheet
+      gestureEnabled
       containerStyle={styles.actionSheetContainer}
       enableRouterBackNavigation={true}
       routes={routes}

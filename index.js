@@ -10,10 +10,13 @@ import {
   checkChatExists,
   addMessageToChat,
   createNewChat,
+  getSenderNotifications,
+  setSenderNotifications,
+  clearSenderNotifications,
 } from './src/DB/DBFunctions';
-import notifee from '@notifee/react-native';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import {saveURLImage} from './src/Functions/SaveBase64Image';
-import {downloadImage} from './src/Functions/DownloadLocalPic';
+import {downloadImg} from './src/Functions/DownloadLocalPic';
 
 // Notifee.onBackgroundEvent(async ({detail, type}) => {
 //   const {notification} = detail
@@ -26,35 +29,98 @@ import {downloadImage} from './src/Functions/DownloadLocalPic';
 //   }
 // });
 
-const displayNotification = async notifeeData => {
-  await notifee.createChannel({
-    id: 'test',
-    name: 'test',
-  });
-
-  await notifee.displayNotification(notifeeData);
-};
-
-const downloadImg = async (imgUrl, prevImg = '') => {
+const getImageUrl = async msg => {
   try {
-    let downloadedPic;
-    downloadedPic = await downloadImage(imgUrl ?? '', prevImg);
+    // Parse the message to get the list of images
+    const allImages = JSON.parse(msg);
+    const allDownloadedImages = [];
 
-    let computedImg = {uri: `file://${downloadedPic}`};
-    return computedImg.uri;
-  } catch (err) {
-    console.log('err in fetchProfilePic :', err);
+    // Concurrently download all images
+    const downloadPromises = allImages.map(async imageUrl => {
+      try {
+        const imageUri = await saveURLImage(imageUrl);
+        return `file://${imageUri}`;
+      } catch (error) {
+        console.error(`Failed to download image: ${imageUrl}`, error);
+        return null; // Skip failed downloads
+      }
+    });
+
+    const downloadedImages = await Promise.all(downloadPromises);
+
+    // Filter out any null values (failed downloads)
+    downloadedImages.forEach(imgUri => {
+      if (imgUri) {
+        allDownloadedImages.push(imgUri);
+      }
+    });
+
+    // Return the result as a JSON string
+    return JSON.stringify(allDownloadedImages);
+  } catch (error) {
+    console.error('Error processing images:', error);
+    return JSON.stringify([]);
   }
 };
 
+const displayNotification = async (notifeeData, senderUsername) => {
+  await notifee.createChannel({
+    id: 'test',
+    name: 'test',
+    importance: AndroidImportance.HIGH,
+  });
+
+  let notification = await getSenderNotifications(senderUsername);
+
+  if (notification) {
+    await notifee.displayNotification(notifeeData);
+  } else {
+    await setSenderNotifications(senderUsername);
+    await notifee.displayNotification({
+      ...notifeeData,
+      android: {...notifeeData.android, groupSummary: true},
+    });
+  }
+};
+
+notifee.onBackgroundEvent(async ({type, detail}) => {
+  if (type === EventType.PRESS) {
+    // Cancel all notifications
+    await notifee.cancelAllNotifications();
+    await clearSenderNotifications();
+
+    // Navigate to the desired screen or perform other actions
+    // Example: navigation.navigate('YourScreen');
+  }
+});
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
-    const {message, senderUsername, type, notifee, receiverUsername, profilePic} =
-      remoteMessage.data;
+    const {
+      message,
+      senderUsername,
+      type,
+      notifee,
+      receiverUsername,
+      profilePic,
+      id,
+      createdAt,
+      forwardMessage,
+      forwardMessageId,
+      forwardMessageType,
+      forwardMessageReceived,
+      forwardMessageUsername,
+    } = remoteMessage.data;
+    let forwardMsg = {
+      message: forwardMessage,
+      id: forwardMessageId,
+      type: forwardMessageType,
+      received: Boolean(forwardMessageReceived),
+      username: forwardMessageUsername,
+    };
     let downloadedPic;
-    if (senderUsername && message && type) {
-      displayNotification(JSON.parse(notifee));
+    if (senderUsername && message && type && id && createdAt) {
+      displayNotification(JSON.parse(notifee), senderUsername);
       const chatExists = await checkChatExists(
         senderUsername,
         receiverUsername,
@@ -68,35 +134,25 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
           '',
           receiverUsername,
         );
-      }else {
+      } else {
         downloadedPic = await downloadImg(
           profilePic,
           chatExists?.['profile_pic'],
         );
       }
-      if (type === 'image') {
-        let imageUri = await saveURLImage(message);
-        let computedImg = {uri: `file://${imageUri}`};
-        await addMessageToChat(
-          senderUsername,
-          receiverUsername,
-          computedImg.uri,
-          true,
-          type,
-          false,
-          downloadedPic
-        );
-      } else {
-        await addMessageToChat(
-          senderUsername,
-          receiverUsername,
-          message,
-          true,
-          type,
-          false,
-          downloadedPic
-        );
-      }
+
+      await addMessageToChat({
+        chatId: senderUsername,
+        account: receiverUsername,
+        text: type === 'image' ? await getImageUrl(message) : message,
+        isReceived: true,
+        type,
+        onChatScreen: false,
+        profilePic: downloadedPic,
+        id,
+        createdAt,
+        forwardMsg,
+      });
     }
   } catch (err) {
     throw new Error('local db error :', err);

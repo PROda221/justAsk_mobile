@@ -67,10 +67,10 @@ const ActiveChats = ({
         onPress={() => openChatScreen(item)}
         style={styles.messageContainer}>
         <Image
-          cachePolicy={'none'}
+          cachePolicy={'memory-disk'}
           source={{uri: item._raw['profile_pic']}}
           style={styles.avatar}
-          transition={500}
+          recyclingKey={item._raw['id']}
         />
         <View style={styles.messageTextContainer}>
           <View style={{flexDirection: 'row'}}>
@@ -97,7 +97,9 @@ const ActiveChats = ({
           bgColor={colors.textPrimaryColor}
           fontWeight="400"
           textStyle={styles.messageTime}>
-          {formatTimestamp(item._raw['updated_at'])}
+          {formatTimestamp(
+            item._raw['msg_created_at'] || item._raw['created_at'],
+          )}
         </Typography>
       </TouchableOpacity>
     );
@@ -106,6 +108,7 @@ const ActiveChats = ({
   return (
     <FlashList
       data={activeChats}
+      showsVerticalScrollIndicator={false}
       ListHeaderComponent={renderListHeader}
       renderItem={renderMessage}
       keyExtractor={item => item.id}

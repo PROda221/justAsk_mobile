@@ -95,6 +95,14 @@ const darkColors: DarkColors = {
   enabledButton: '#28A745',
   splashScreenBackground: '#0097b2',
   alertIcon: '#F2C94C',
+  showMore: '#065fd4',
+  showLess: '#065fd4',
+  retryMsg: '#EB5757',
+  readReceipt: '#4FB6EC',
+  sentReceipt: '#fff',
+  SendingReceipt: '#fff',
+  forwardMessageIcon: '#2196F3',
+  forwardMessageTheme: '#2196F3',
 };
 
 const ThemeContext = createContext<ThemeContextType>({

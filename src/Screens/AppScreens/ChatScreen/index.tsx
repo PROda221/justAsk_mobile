@@ -1,15 +1,12 @@
-import {type ParamListBase, type RouteProp} from '@react-navigation/native';
-import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useStartChat} from '../../../CustomHooks/AppHooks/useStartChat';
-import React, {useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import {useTheme} from '../../../useContexts/Theme/ThemeContext';
 import {getChatScreenStyles} from './styles';
-import {verticalScale} from '../../../Functions/StyleScale';
 import {TextInput} from '../../../Components';
 import {useForm} from 'react-hook-form';
 import {FlashList} from '@shopify/flash-list';
-import {
+import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -21,83 +18,83 @@ import {
 } from 'react-native-image-picker';
 import {Image as Compress} from 'react-native-compressor';
 import {useSocket} from '../../../useContexts/SocketContext';
-import {getCurrentChatObservable, markAllRead} from '../../../DB/DBFunctions';
-import {setInChatScreen} from '../../../Redux/Slices/LocalReducer';
+import {markAllRead} from '../../../DB/DBFunctions';
+import {
+  setInChatScreen,
+  setReplyMsgId,
+} from '../../../Redux/Slices/LocalReducer';
 import {useIsFocused} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {RenderMessageList} from './RenderMessageList';
+import {useDispatch, useSelector} from 'react-redux';
+import RenderMessageList from './RenderMessageList';
 import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {useUserProfile} from '../../../CustomHooks/AppHooks/useUserProfile';
-import {withObservables} from '@nozbe/watermelondb/react';
-import {Model} from '@nozbe/watermelondb';
 import {YourBlockStatus} from './YourBlockStatus';
 import ChatHeader from './ChatHeader';
 import content from '../../../Assets/Languages/english.json';
 import {hideAlertBox, showAlertBox} from '../../../Functions/ShowHideAlert';
+import {forwardMsgType, MessageType, Props} from './types';
+import {Model} from '@nozbe/watermelondb';
+import {sendReadReceipt} from '../../../Functions/SendReadReceipt';
+import {moderateScale} from '../../../Functions/StyleScale';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {SheetManager} from 'react-native-actions-sheet';
+import {RootState} from '../../../Redux/rootReducers';
+import {useActiveChat} from '../../../CustomHooks/AppHooks/useActiveChat';
 
-type MessageType = {
-  item: {
-    id: string;
-    text: string;
-    type: 'image' | 'message';
-    received: boolean;
-    uploadingImage: boolean;
-    createdAt: number;
-  };
-};
-type Params = {
-  params: {
-    username: string;
-    status: string;
-    image: string;
-    skills: string[];
-    accountName: string;
-  };
-};
+const ChatScreen = ({navigation, route}: Props) => {
+  const {username, skills, status, image, accountName} = route.params;
 
-type Props = {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  route: RouteProp<Params>;
-  activeChat: Model[];
-};
+  const flashListRef = useRef<FlashList<MessageType> | null>(null);
+  const findMoreMessages = useRef<number>(0);
+  const closeChatRef = useRef(false);
 
-const enhance = withObservables(['route'], ({route}) => ({
-  activeChat: getCurrentChatObservable(
-    route.params?.accountName,
-    route.params?.username,
-  ),
-}));
+  const {activeChat} = useActiveChat(accountName, username);
 
-const ChatScreen = ({navigation, route, activeChat}: Props) => {
-  const {username, skills, status, image} = route.params;
-  const {callGetUserProfileApi} = useUserProfile(username, image);
-  const {newMessage} = useSocket();
+  const [forwardMsg, setForwardMsg] = useState<forwardMsgType | undefined>();
+  const [scrollEnabled, setScrollEnabled] = useState<boolean>(true);
+  const [showScrollButton, setShowScrollButton] = useState<boolean>(false);
+
+  const {callGetUserProfileApi, userProfileSuccess} = useUserProfile(
+    username,
+    image,
+  );
+  const {newMessage, socket} = useSocket();
   const {getMessages, sendMessages, messages, partnerStatus, loadMoreMessages} =
     useStartChat(username, image, newMessage, skills, status);
+
   const {profileSuccess} = useProfile();
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
-  const {control, getValues, resetField} = useForm();
+  const scrollToBottom = useCallback(() => {
+    flashListRef.current?.scrollToOffset({animated: false, offset: 0});
+  }, []);
 
-  const [height, setHeight] = useState<number>(verticalScale(50));
+  const handleScroll = useCallback(event => {
+    const isAtBottom = event.nativeEvent.contentOffset.y <= 80;
+    setShowScrollButton(!isAtBottom);
+  }, []);
+
+  const replyMsg = useSelector(
+    (state: RootState) => state.localReducer.replyMsg,
+  );
+
+  const {control, getValues, setValue} = useForm();
+
+  // const [height, setHeight] = useState<number>(verticalScale(50));
 
   const position = useSharedValue(
-    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
-      ? 0
-      : 10,
+    !closeChatRef.current && partnerStatus === 'online' ? 0 : 10,
   );
   const opacity = useSharedValue(
-    !activeChat[0]?._raw['got_blocked_status'] && partnerStatus === 'online'
-      ? 1
-      : 0,
+    !closeChatRef.current && partnerStatus === 'online' ? 1 : 0,
   );
-
-  const flashListRef = useRef(null);
 
   const {colors} = useTheme();
 
-  const styles = getChatScreenStyles(colors);
+  const styles = useMemo(() => getChatScreenStyles(colors), []);
+
   useEffect(() => {
     markAllRead(username, profileSuccess?.username);
     dispatch(setInChatScreen(isFocused));
@@ -107,15 +104,47 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
   }, [isFocused]);
 
   useEffect(() => {
+    closeChatRef.current =
+      activeChat?.[0]?._raw['got_blocked_status'] ||
+      activeChat?.[0]?._raw['deactivated'];
+  }, [activeChat]);
+
+  useEffect(() => {
     callGetUserProfileApi();
   }, []);
 
+  useEffect(() => {
+    const showRepliedMessage = async () => {
+      if (replyMsg.replyMsgId) {
+        const relativeIndex = messages
+          .slice(replyMsg.mainMsgIndex)
+          .findIndex(message => message._raw['msg_id'] === replyMsg.replyMsgId);
+
+        if (relativeIndex !== -1) {
+          const index = relativeIndex + replyMsg.mainMsgIndex;
+          flashListRef.current?.scrollToIndex({index, animated: true});
+          dispatch(setReplyMsgId({replyMsgId: '', mainMsgIndex: 0}));
+        } else {
+          loadMoreMessages();
+          findMoreMessages.current = findMoreMessages.current + 1;
+        }
+      }
+    };
+    showRepliedMessage();
+    return () => {
+      setReplyMsgId({replyMsgId: '', mainMsgIndex: 0});
+    };
+  }, [replyMsg.replyMsgId, findMoreMessages.current]);
+
+  useEffect(() => {
+    if (messages?.length) {
+      sendReadReceipt(messages, socket, username, profileSuccess?.username);
+    }
+  }, [messages[0]?._raw['id']]);
+
   // Handle animation of online status
   useEffect(() => {
-    if (
-      !activeChat[0]?._raw['got_blocked_status'] &&
-      partnerStatus === 'online'
-    ) {
+    if (!closeChatRef.current && partnerStatus === 'online') {
       // Move the username up first then appear the status
       position.value = withTiming(0, {duration: 500});
       opacity.value = withDelay(500, withTiming(1, {duration: 500}));
@@ -125,7 +154,7 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
         position.value = withTiming(10, {duration: 500});
       });
     }
-  }, [partnerStatus, activeChat[0]?._raw['got_blocked_status']]);
+  }, [partnerStatus, closeChatRef.current]);
 
   // Create animation styles of online status
   const animatedStyle = useAnimatedStyle(() => ({
@@ -136,28 +165,50 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     opacity: opacity.value,
   }));
 
-  const sendMessage = async () => {
-    if (activeChat[0]?._raw['you_blocked_status']) {
+  const sendMessage = async (textToSend?: string, type: string = 'message') => {
+    if (activeChat?.[0]?._raw['you_blocked_status']) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.unblockToOpen,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.unblockToOpen,
         hideAlertBox,
       );
       return;
     }
-    if (getValues('chattext')) {
-      const msg = getValues('chattext');
-      resetField('chattext');
-      getMessages(msg, false, 'message');
-      sendMessages(msg, username, 'message');
+    let msg = '';
+    if (textToSend) {
+      msg = textToSend;
+    } else if (getValues('chattext')) {
+      msg = getValues('chattext');
+      setValue('chattext', '');
+    }
+    if (msg) {
+      let newMessage: Model = await getMessages(msg, false, type, forwardMsg);
+      sendMessages(msg, username, type, newMessage.id, forwardMsg);
+    }
+
+    setForwardMsg(undefined);
+  };
+
+  const handleGifSelection = async () => {
+    let gifUrl = await SheetManager.show('GiphyPopup-sheet');
+    if (gifUrl) {
+      sendMessage(gifUrl, 'gif');
     }
   };
 
   const handleImageSelection = async () => {
-    if (activeChat[0]?._raw['you_blocked_status']) {
+    if (activeChat?.[0]?._raw['you_blocked_status']) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.unblockToOpen,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.unblockToOpen,
         hideAlertBox,
       );
       return;
@@ -165,28 +216,49 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 0.5,
+      selectionLimit: 0,
       // includeBase64: true
     };
 
     try {
       const result = await launchImageLibrary(options);
-      const uri = result.assets?.[0].uri;
-      const compressedResult = await Compress.compress(`${uri}`);
-      await getMessages(
-        {url: compressedResult, uploading: true},
-        false,
-        'image',
-      );
+      const allImages: string[] = [];
+
+      for (const image of result.assets || []) {
+        try {
+          const uri = image.uri;
+
+          // Compress the image
+          const compressedResult = await Compress.compress(`${uri}`);
+          // Add the compressed result to the allImages array
+          allImages.push(compressedResult);
+
+          // Optionally, handle the image further (e.g., call getMessages)
+        } catch (error) {
+          console.error('Error compressing image:', image.uri, error);
+        }
+      }
+      if (allImages.length > 0) {
+        await getMessages(
+          {url: JSON.stringify(allImages), uploading: true},
+          false,
+          'image',
+        );
+      }
     } catch (err) {
       console.log('err at image selection :', err);
     }
   };
 
   const openUserProfle = () => {
-    if (activeChat[0]?._raw['got_blocked_status']) {
+    if (closeChatRef.current) {
       showAlertBox(
-        content.AlertBox.blockedTitle,
-        content.AlertBox.blockError,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivated
+          : content.AlertBox.blockedTitle,
+        activeChat?.[0]?._raw['deactivated']
+          ? content.AlertBox.accountDeactivatedDesc
+          : content.AlertBox.blockError,
         hideAlertBox,
       );
       return;
@@ -202,84 +274,118 @@ const ChatScreen = ({navigation, route, activeChat}: Props) => {
 
   return (
     <View style={styles.container}>
-      <ChatHeader
-        styles={styles}
-        colors={colors}
-        username={username}
-        animatedStyle={animatedStyle}
-        statusStyle={statusStyle}
-        image={image}
-        accountName={profileSuccess?.username}
-        openUserProfle={openUserProfle}
-      />
+      <View style={styles.padding}>
+        <ChatHeader
+          styles={styles}
+          colors={colors}
+          username={username}
+          animatedStyle={animatedStyle}
+          statusStyle={statusStyle}
+          image={image}
+          accountName={profileSuccess?.username}
+          averageRating={userProfileSuccess?.averageRating[0]?.averageStars}
+          openUserProfle={openUserProfle}
+        />
 
-      <FlashList
-        data={messages}
-        showsVerticalScrollIndicator={false}
-        ref={flashListRef}
-        renderItem={({item}: MessageType) => (
-          <RenderMessageList
-            username={username}
-            account={profileSuccess?.username}
-            id={item.id}
-            text={item.text}
-            type={item.type}
-            uploadingImage={item.uploadingImage}
-            received={item.received}
-            createdAt={item.createdAt}
-            sendMessages={sendMessages}
-          />
-        )}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.chatContainer}
-        estimatedItemSize={300}
-        inverted
-        onEndReached={loadMoreMessages}
-        onEndReachedThreshold={0.1}
-        extraData={[
-          activeChat[0]?._raw['you_blocked_status'],
-          activeChat[0]?._raw['got_blocked_status'],
-        ]}
-        // OnLoad={scrollToBottom}
-      />
+        <FlashList
+          data={messages}
+          bounces={false}
+          // estimatedListSize
+          showsVerticalScrollIndicator={false}
+          keyExtractor={item => item.id.toString()}
+          decelerationRate={0.9}
+          scrollEnabled={scrollEnabled}
+          ref={flashListRef}
+          onScroll={handleScroll}
+          renderItem={({item, index}: {item: MessageType; index: number}) => {
+            return (
+              <RenderMessageList
+                username={username}
+                account={profileSuccess?.username}
+                id={item.id}
+                forwardMsg={(forwardedMsg: forwardMsgType) =>
+                  setForwardMsg(forwardedMsg)
+                }
+                toggleScroll={(scrollValue: boolean) => {
+                  setScrollEnabled(scrollValue);
+                }}
+                text={item.text}
+                type={item.type}
+                uploadingImage={item.uploadingImage}
+                received={item.received}
+                createdAt={item.createdAt}
+                msgCreatedAt={item.msgCreatedAt}
+                sendMessages={sendMessages}
+                activeMsg={item}
+                index={index}
+              />
+            );
+          }}
+          contentContainerStyle={styles.chatContainer}
+          getItemType={item => item.type}
+          estimatedItemSize={120}
+          inverted
+          onEndReached={loadMoreMessages}
+          onEndReachedThreshold={0.6}
+          extraData={[
+            activeChat?.[0]?._raw['you_blocked_status'],
+            activeChat?.[0]?._raw['got_blocked_status'],
+          ]}
+          // OnLoad={scrollToBottom}
+        />
 
-      <YourBlockStatus
-        show={activeChat[0]?._raw['you_blocked_status']}
-        username={username}
-      />
-
+        <YourBlockStatus
+          show={activeChat?.[0]?._raw['you_blocked_status']}
+          username={username}
+        />
+      </View>
       <View style={styles.inputContainer}>
         <TextInput
-          viewStyle={[
-            styles.chatTextInput,
-            {height: height < verticalScale(50) ? verticalScale(50) : height},
-          ]}
           name="chattext"
           secureTextEntry={false}
           control={control}
           label="Write"
           placeholder={
-            activeChat[0]?._raw['got_blocked_status']
-              ? content.ChatScreen.chatBlocked
-              : content.ChatScreen.message
+            activeChat?.[0]?._raw['deactivated']
+              ? content.ChatScreen.chatDeactivated
+              : activeChat?.[0]?._raw['got_blocked_status']
+                ? content.ChatScreen.chatBlocked
+                : content.ChatScreen.message
           }
-          leftIcon={
-            activeChat[0]?._raw['got_blocked_status'] ? 'block' : 'gallary'
-          }
-          rightIcon="chat"
-          handleRightIconPress={sendMessage}
-          {...(!activeChat[0]?._raw['got_blocked_status'] && {
-            handleLeftIconPress: handleImageSelection,
+          leftIcon={closeChatRef.current ? 'block' : 'giphy'}
+          rightIcon="gallary"
+          handleRightIconPress={handleImageSelection}
+          {...(!closeChatRef.current && {
+            handleLeftIconPress: handleGifSelection,
           })}
           multiline={true}
-          editable={!activeChat[0]?._raw['got_blocked_status']}
-          onContentSizeChange={event => {
-            setHeight(event.nativeEvent.contentSize.height);
-          }}
+          editable={!closeChatRef.current}
+          replyMessage={forwardMsg}
+          setReplyMessage={setForwardMsg}
         />
+
+        {showScrollButton && (
+          <Animated.View style={styles.scrollToBottomButton}>
+            <TouchableOpacity
+              onPress={scrollToBottom}
+              style={styles.scrollButton}>
+              <AntDesign
+                name="arrowdown"
+                size={moderateScale(10)}
+                color={colors.iconPrimaryColor}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => sendMessage()}>
+          <Ionicons name="send" size={moderateScale(25)} color={'white'} />
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default enhance(ChatScreen);
+// export default enhance(ChatScreen);
+export default React.memo(ChatScreen);

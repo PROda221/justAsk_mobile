@@ -1,5 +1,5 @@
 import {ScrollView, View} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {CustomButton, TextInput, Typography} from '../../../Components';
 import styled from 'styled-components';

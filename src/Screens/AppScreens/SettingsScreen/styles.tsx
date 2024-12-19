@@ -36,8 +36,8 @@ export const getSettingsScreenStyles = (colors): SettingsScreenStyles =>
       paddingTop: 0,
     },
     profilePic: {
-      width: horizontalScale(74),
-      height: verticalScale(74),
+      width: moderateScale(74),
+      height: moderateScale(74),
       borderRadius: moderateScale(37),
     },
     profileText: {

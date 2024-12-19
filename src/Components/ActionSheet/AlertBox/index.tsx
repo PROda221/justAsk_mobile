@@ -11,7 +11,11 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
   const styles = getAlertBoxStyles(colors);
 
   return (
-    <ActionSheet containerStyle={styles.actionSheet} closeOnPressBack={false}>
+    <ActionSheet
+      gestureEnabled
+      containerStyle={styles.actionSheet}
+      closeOnTouchBackdrop={false}
+      closeOnPressBack={false}>
       <View style={styles.container}>
         <View style={styles.center}>
           <Feather name="alert-triangle" size={100} color={colors.alertIcon} />
@@ -37,7 +41,7 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
                 fontWeight="400"
                 bgColor={colors.noInternetRetryButton}
                 textStyle={styles.buttonText}>
-                {'Cancel'}
+                {payload?.cancelCustomName ?? 'Cancel'}
               </Typography>
             </TouchableOpacity>
             <TouchableOpacity
@@ -47,7 +51,7 @@ const AlertBox = ({payload}: SheetProps<'AlertBox-sheet'>) => {
                 fontWeight="400"
                 bgColor={colors.noInternetRetryButton}
                 textStyle={styles.buttonText}>
-                {'Yes'}
+                {payload?.confirmCustomName ?? 'Yes'}
               </Typography>
             </TouchableOpacity>
           </View>

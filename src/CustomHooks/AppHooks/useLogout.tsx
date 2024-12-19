@@ -4,6 +4,7 @@ import {callLogout, resetLogoutResponse} from '../../Redux/Slices/LogoutSlice';
 import {useEffect} from 'react';
 import Toast from 'react-native-toast-message';
 import {SheetManager} from 'react-native-actions-sheet';
+import {resetProfileResponse} from '../../Redux/Slices/ProfileSlice';
 
 export const useLogout = (onSuccess: () => void) => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ export const useLogout = (onSuccess: () => void) => {
     if (logoutSlice.success) {
       resetLogoutReducer();
       onSuccess?.();
+      dispatch(resetProfileResponse());
       Toast.show({
         type: 'success',
         text1: 'Success',

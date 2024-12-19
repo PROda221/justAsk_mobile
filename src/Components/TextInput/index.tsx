@@ -15,6 +15,7 @@ import {
   type UseFormReturn,
 } from 'react-hook-form';
 import {Typography} from '..';
+import ReplyMessageBar from '../ReplyMessageBar';
 import {type ViewStyle} from 'react-native';
 import {useTheme} from '../../useContexts/Theme/ThemeContext';
 import {
@@ -36,7 +37,9 @@ import {RenderSvg} from '../RenderSvg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {DarkColors} from '../../useContexts/Theme/ThemeType';
+import {forwardMsgType} from '../../Screens/AppScreens/ChatScreen/types';
 
 type TextInputProps = {
   control: UseFormReturn<any>['control'];
@@ -51,16 +54,13 @@ type TextInputProps = {
   multiline?: boolean;
   handleRightIconPress?: () => void;
   handleLeftIconPress?: () => void;
-  leftIcon?:
-    | 'email'
-    | 'lock'
-    | 'chat'
-    | 'search'
-    | 'user'
-    | 'gallary'
-    | 'block';
-  rightIcon?: 'search' | 'chat';
+  leftIcon?: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'block' | 'giphy';
+  rightIcon?: 'search' | 'chat' | 'gallary';
   disable?: boolean;
+  replyMessage?: forwardMsgType;
+  setReplyMessage?: React.Dispatch<
+    React.SetStateAction<forwardMsgType | undefined>
+  >;
 };
 
 const ErrorView = styled(View)`
@@ -74,9 +74,9 @@ const StyledTextInput = styled(RNTextInput)<{
   contextStyle: DarkColors;
   error: FieldError | undefined;
 }>`
+  flex: 1;
   font-size: 15px;
-  height: 65.52px;
-  width: ${props => (props.secure || props.rightIcon ? '64%' : '82%')};
+  min-height: 65.52px;
   border-radius: ${props =>
     props.secure || props.rightIcon ? 0 : '0 12.84px 12.84px 0'};
   font-family: 'Segoe UI';
@@ -97,14 +97,15 @@ const Container = styled(View)`
 const LeftIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
+  replyMessage?: string;
 }>`
+  padding: 20px;
   justify-content: center;
   align-items: center;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  height: 65.52px;
-  width: 65.52px;
-  border-radius: 12.84px 0 0 12.84px;
+  border-radius: ${({replyMessage}) =>
+    replyMessage ? '0 0 0 12.84px' : '12.84px 0 0 12.84px'};
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
     error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};
@@ -114,13 +115,30 @@ const LeftIconContainer = styled(TouchableOpacity)<{
 const RightIconContainer = styled(TouchableOpacity)<{
   contextStyle: any;
   error: FieldError | undefined;
+  replyMessage?: string;
 }>`
   justify-content: center;
   align-items: center;
+  padding: 20px;
   background-color: ${({contextStyle}) =>
     contextStyle.textInputBackgroundColor};
-  height: 65.52px;
-  width: 65.52px;
+  border-radius: ${({replyMessage}) =>
+    replyMessage ? '0 0 12.84px 0' : '0 12.84px 12.84px 0'};
+  border-width: ${({error}) => (error ? '2px' : '0px')};
+  border-color: ${({error, contextStyle}) =>
+    error ? contextStyle.errorBoundary : contextStyle.textInputBackgroundColor};
+  border-left-width: 0px;
+`;
+
+const SecureTextEntryContainer = styled(TouchableOpacity)<{
+  contextStyle: any;
+  error: FieldError | undefined;
+}>`
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: ${({contextStyle}) =>
+    contextStyle.textInputBackgroundColor};
   border-radius: 0 12.84px 12.84px 0;
   border-width: ${({error}) => (error ? '2px' : '0px')};
   border-color: ${({error, contextStyle}) =>
@@ -129,23 +147,63 @@ const RightIconContainer = styled(TouchableOpacity)<{
 `;
 
 const renderLeftIcon = (
-  leftIcon: 'email' | 'lock' | 'chat' | 'search' | 'user' | 'gallary' | 'block',
+  leftIcon:
+    | 'email'
+    | 'lock'
+    | 'chat'
+    | 'search'
+    | 'user'
+    | 'gallary'
+    | 'block'
+    | 'giphy',
 ) => {
   switch (leftIcon) {
     case 'email':
-      return <Email />;
+      return (
+        <RenderSvg
+          Icon={Email}
+          width={moderateScale(25)}
+          height={moderateScale(25)}
+        />
+      );
     case 'lock':
-      return <Lock />;
+      return (
+        <RenderSvg
+          Icon={Lock}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'user':
-      return <Username />;
+      return (
+        <RenderSvg
+          Icon={Username}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'search':
-      return <Search />;
+      return (
+        <RenderSvg
+          Icon={Search}
+          width={moderateScale(20)}
+          height={moderateScale(20)}
+        />
+      );
     case 'chat':
       return (
         <RenderSvg
           Icon={ChatIcon}
-          height={verticalScale(25)}
-          width={horizontalScale(25)}
+          height={verticalScale(20)}
+          width={horizontalScale(20)}
+        />
+      );
+    case 'giphy':
+      return (
+        <MaterialCommunityIcons
+          name="sticker-emoji"
+          size={moderateScale(25)}
+          color={'white'}
         />
       );
     case 'gallary':
@@ -171,7 +229,7 @@ const renderEye = (showPass: boolean | undefined) => {
   }
 };
 
-const renderRightIcon = (rightIcon: 'search' | 'chat') => {
+const renderRightIcon = (rightIcon: 'search' | 'chat' | 'gallary') => {
   switch (rightIcon) {
     case 'search':
       return (
@@ -183,6 +241,10 @@ const renderRightIcon = (rightIcon: 'search' | 'chat') => {
       );
     case 'chat':
       return <Ionicons name="send" size={moderateScale(25)} color={'white'} />;
+    case 'gallary':
+      return (
+        <Entypo name="folder-images" size={moderateScale(25)} color={'white'} />
+      );
     default:
       return <View />;
   }
@@ -201,6 +263,8 @@ export const TextInput = ({
   handleRightIconPress,
   handleLeftIconPress,
   disable,
+  replyMessage,
+  setReplyMessage,
   ...props
 }: TextInputProps & RNTextInputProps) => {
   const {colors} = useTheme();
@@ -228,7 +292,15 @@ export const TextInput = ({
       defaultValue=""
       rules={rules}
       render={({field: {onChange, value}, fieldState: {error}}) => (
-        <>
+        <View style={styles.mainContainer}>
+          {replyMessage && (
+            <ReplyMessageBar
+              colors={colors}
+              clearReply={setReplyMessage}
+              forwardedMsg={replyMessage}
+            />
+          )}
+
           <Container>
             {leftIcon && (
               <LeftIconContainer
@@ -236,6 +308,8 @@ export const TextInput = ({
                 error={error}
                 disabled={!handleLeftIconPress}
                 onPress={handleLeftIconPress}
+                activeOpacity={1}
+                replyMessage={replyMessage?.message}
                 contextStyle={colors}>
                 {renderLeftIcon(leftIcon)}
               </LeftIconContainer>
@@ -262,7 +336,7 @@ export const TextInput = ({
               onFocus={handleOnFocus}
             />
             {secureTextEntry && (
-              <RightIconContainer
+              <SecureTextEntryContainer
                 style={viewStyle}
                 error={error}
                 contextStyle={colors}
@@ -271,7 +345,7 @@ export const TextInput = ({
                 {leftIcon === 'search'
                   ? renderRightIcon(leftIcon)
                   : renderEye(watchedValues?.showPass)}
-              </RightIconContainer>
+              </SecureTextEntryContainer>
             )}
             {rightIcon && (
               <RightIconContainer
@@ -279,6 +353,7 @@ export const TextInput = ({
                 error={error}
                 contextStyle={colors}
                 activeOpacity={1}
+                replyMessage={replyMessage?.message}
                 onPress={handleRightIconPress}>
                 {renderRightIcon(rightIcon)}
               </RightIconContainer>
@@ -300,13 +375,16 @@ export const TextInput = ({
               </Typography>
             </ErrorView>
           )}
-        </>
+        </View>
       )}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
   errorStyle: {
     paddingLeft: horizontalScale(5),
     textAlign: 'left',

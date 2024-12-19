@@ -6,6 +6,14 @@ import ActionSheet, {
 } from 'react-native-actions-sheet';
 import Gallery from 'react-native-awesome-gallery';
 
+const computeImages = (images?: string | string[]) => {
+  if (typeof images === 'string') {
+    return [images];
+  }
+
+  return images;
+};
+
 function ViewImage({payload}: SheetProps<'ViewProfileImage-sheet'>) {
   return (
     <ActionSheet containerStyle={styles.actionSheetContainer}>
@@ -15,7 +23,7 @@ function ViewImage({payload}: SheetProps<'ViewProfileImage-sheet'>) {
             SheetManager.hide('ViewProfileImage-sheet');
           }}
           style={{flex: 1}}
-          data={[payload?.imageUrl]}
+          data={computeImages(payload?.imageUrl) ?? []}
         />
       </View>
     </ActionSheet>

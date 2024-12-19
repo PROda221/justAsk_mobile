@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type FeedbackScreenStyles = {
   gradientContainer: ViewStyle;
@@ -41,9 +42,13 @@ export type FeedbackScreenStyles = {
   noFeedbacksContainer: ViewStyle;
   feedbackImgContainer: ViewStyle;
   userDetailsHeader: ViewStyle;
+  viewCommentsButton: ViewStyle;
+  commentActionSheet: ViewStyle;
 };
 
-export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
+export const getFeedbackScreenStyles = (
+  colors: DarkColors,
+): FeedbackScreenStyles =>
   StyleSheet.create<FeedbackScreenStyles>({
     gradientContainer: {
       flex: 1,
@@ -99,8 +104,8 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       marginTop: verticalScale(10),
     },
     commentUserAvatar: {
-      width: horizontalScale(35),
-      height: verticalScale(35),
+      width: moderateScale(35),
+      height: moderateScale(35),
       borderRadius: moderateScale(18),
     },
     usernameText: {
@@ -128,13 +133,15 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
       textAlign: 'justify',
       padding: moderateScale(10),
       fontSize: moderateScale(12),
+      lineHeight: verticalScale(18),
+      color: colors.textPrimaryColor,
     },
     mainHeader: {
       flexDirection: 'row',
     },
     profileImage: {
-      width: horizontalScale(100),
-      height: verticalScale(100),
+      width: moderateScale(100),
+      height: moderateScale(100),
       borderRadius: moderateScale(50),
     },
     nameText: {
@@ -205,4 +212,12 @@ export const getFeedbackScreenStyles = (colors): FeedbackScreenStyles =>
     noFeedbacksContainer: {justifyContent: 'center', alignItems: 'center'},
     feedbackImgContainer: {marginLeft: horizontalScale(10)},
     userDetailsHeader: {flexDirection: 'row'},
+    viewCommentsButton: {
+      marginVertical: verticalScale(10),
+    },
+    commentActionSheet: {
+      height: '70%',
+      padding: horizontalScale(16),
+      backgroundColor: '#227B94',
+    },
   });

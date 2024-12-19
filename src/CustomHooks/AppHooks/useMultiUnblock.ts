@@ -10,9 +10,9 @@ import Toast from 'react-native-toast-message';
 import {unblockChats} from '../../DB/DBFunctions';
 
 export const useMultiUnblock = (
-  handleUnblockSuccess?: () => void,
   selectedUsers: string[],
   accountName: string,
+  handleUnblockSuccess?: () => void,
 ) => {
   const dispatch = useDispatch();
   const multiUnblockSlice = useSelector(

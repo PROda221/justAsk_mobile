@@ -83,8 +83,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 30
+        versionName "1.0.29"
     }
     signingConfigs {
         debug {
@@ -122,6 +122,12 @@ android {
         }
     }
 }
+
+configurations.all {
+       resolutionStrategy {
+           forcedModules = ['com.giphy.sdk:ui:2.3.15']
+       }
+   }
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin

@@ -13,9 +13,20 @@ import './Components/ActionSheet/sheets.tsx';
 import {toastConfig} from './Components/CustomToast/index.tsx';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import {SheetProvider} from 'react-native-actions-sheet';
+import notifee from '@notifee/react-native';
+import {clearSenderNotifications} from './DB/DBFunctions.js';
 
 const App = (): JSX.Element => {
   useEffect(() => {
+    async function initialNoti() {
+      const initialNotification = await notifee.getInitialNotification();
+
+      if (initialNotification) {
+        await clearSenderNotifications();
+        await notifee.cancelAllNotifications();
+      }
+    }
+    initialNoti();
     lockOrientation();
     GoogleSignin.configure({
       webClientId:

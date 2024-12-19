@@ -2,6 +2,7 @@ import {from, of} from 'rxjs';
 import {switchMap, catchError} from 'rxjs/operators';
 import database from './database';
 import {Q} from '@nozbe/watermelondb';
+import {map as rxjsMap} from 'rxjs/operators'; // Import the map operator
 
 export async function createNewUser(username, profilePic, status, skills) {
   try {
@@ -49,6 +50,7 @@ export const updateOrCreateUser = async (userData, profilePic) => {
           u.skills = JSON.stringify(userData.skills);
           u.emailId = userData.emailId;
           u.averageRating = userData.averageRating;
+          u.deactivated = userData.deactivated;
         });
       } else {
         // User does not exist, create a new user
@@ -101,6 +103,99 @@ export async function createNewChat(
   }
 }
 
+export async function syncChatToLocal(
+  username,
+  profilePic,
+  status,
+  skills,
+  account,
+  unreadCount,
+  latestMsg,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const newChat = await database.collections
+          .get('chats')
+          .create(record => {
+            record.user.set(user[0]);
+            record.username = username;
+            record.chatId = username;
+            record.profilePic = profilePic;
+            record.status = status;
+            record.skills = JSON.stringify(skills);
+            record.lastMessage =
+              latestMsg.type === 'image' || latestMsg.type === 'gif'
+                ? latestMsg.type
+                : latestMsg.message;
+            record.messageTime = new Date();
+            record.unreadCount = unreadCount;
+            record.msgId = latestMsg._id;
+            record.msgCreatedAt = latestMsg.createdAt;
+          });
+        return newChat?.[0]?._raw;
+      } else {
+        console.error('User not found:', account);
+      }
+    });
+  } catch (error) {
+    console.error('Error syncing old chats:', error);
+    throw error;
+  }
+}
+
+export async function updateSynchedChatToLocal(
+  username,
+  profilePic,
+  status,
+  skills,
+  account,
+  unreadCount,
+  latestMsg,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const chat = await database
+          .get('chats')
+          .query(Q.where('user_id', user[0].id), Q.where('chat_id', username))
+          .fetch();
+        if (chat.length > 0) {
+          await chat[0].update(record => {
+            record.user.set(user[0]);
+            record.username = username;
+            record.chatId = username;
+            record.profilePic = profilePic;
+            record.status = status;
+            record.skills = JSON.stringify(skills);
+            record.lastMessage =
+              latestMsg.type === 'image' || latestMsg.type === 'gif'
+                ? latestMsg.type
+                : latestMsg.message;
+            record.messageTime = new Date();
+            record.unreadCount = unreadCount;
+            record.msgId = latestMsg._id;
+            record.msgCreatedAt = latestMsg.createdAt;
+          });
+        }
+      } else {
+        console.error('User not found:', account);
+      }
+    });
+  } catch (error) {
+    console.error('Error updating while syncing old chats:', error);
+    throw error;
+  }
+}
+
 export function getUserChats(account) {
   return from(
     database.collections
@@ -114,7 +209,8 @@ export function getUserChats(account) {
           .get('chats')
           .query(
             Q.where('user_id', users[0].id),
-            Q.sortBy('updated_at', Q.desc),
+            Q.sortBy('unread_count', Q.desc), // First priority: sort by unread count in descending order
+            Q.sortBy('msg_created_at', Q.desc), // Second priority: sort by message creation time in descending order
           )
           .observeWithColumns([
             'last_message',
@@ -150,7 +246,7 @@ export async function getAllChats(account) {
   }
 }
 
-export async function getAllMessagesForChat(chatId, account) {
+export async function getLatestMessageForChat(chatId, account) {
   try {
     const user = await database.collections
       .get('users')
@@ -161,28 +257,168 @@ export async function getAllMessagesForChat(chatId, account) {
       .get('chats')
       .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
       .fetch();
-    const messages = await database.collections
+
+    const latestMessage = await database.collections
       .get('messages')
-      .query(Q.where('chat_id', chat[0].id), Q.sortBy('created_at', Q.desc))
+      .query(
+        Q.where('chat_id', chat[0].id),
+        Q.where('msg_id', Q.notEq('')),
+        Q.sortBy('msg_created_at', Q.desc),
+        Q.take(1), // Fetch only the latest message
+      )
       .fetch();
-    return {allStoredMsgs: messages, chatId: chat[0].id};
+
+    return latestMessage[0];
   } catch (error) {
-    console.error('Error fetching messages for chat:', error);
+    console.error('Error fetching latest message for chat:', error);
     throw error;
   }
 }
 
-export async function checkChatExists(chatId, account) {
+
+export function observeMessageChanges(chatId, account, currentMessagesMap) {
+  return database.collections
+    .get('users')
+    .query(Q.where('username', account))
+    .observe()
+    .pipe(
+      switchMap(users => {
+        if (users.length === 0) {
+          console.warn('No user found for the account.');
+          return of([]); // Emit an empty array
+        }
+
+        const userId = users[0].id;
+        return database.collections
+          .get('chats')
+          .query(Q.where('user_id', userId), Q.where('chat_id', chatId))
+          .observe()
+          .pipe(
+            switchMap(chats => {
+              if (chats.length === 0) {
+                console.warn('No chat found for the user and chatId.');
+                return of([]); // Emit an empty array
+              }
+
+              const chatId = chats[0].id;
+              return database.collections
+                .get('messages')
+                .query(
+                  Q.where('chat_id', chatId),
+                  Q.sortBy('msg_created_at', Q.desc),
+                  Q.take(20),
+                )
+                .observeWithColumns([
+                  'read',
+                  'uploading_image',
+                  'msg_id',
+                  'status',
+                  'forward_msg',
+                ])
+                .pipe(
+                  rxjsMap(updatedMessages => {
+                    const updatedMessagesMap = new Map(
+                      updatedMessages.map(msg => [msg.id, msg]),
+                    );
+
+                    const changedMessages = updatedMessages.filter(msg => {
+                      const current = currentMessagesMap.get(msg.id);
+                      return (
+                        !current ||
+                        current.msg_updated_at !== msg.msg_updated_at
+                      );
+                    });
+                    return {changedMessages, updatedMessagesMap};
+                  }),
+                );
+            }),
+          );
+      }),
+    );
+}
+
+export async function getMessagesForChat(chatId, account, fromMessageId = '') {
   try {
     const user = await database.collections
       .get('users')
       .query(Q.where('username', account))
       .fetch();
 
+    const chat = await database
+      .get('chats')
+      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+      .fetch();
+
+    let messagesQuery;
+
+    // If a message ID is provided, fetch 20 messages before it
+    if (fromMessageId) {
+      const referenceMessage = await database.collections
+        .get('messages')
+        .find(fromMessageId); // Find the message with the given ID
+
+      // Query to fetch messages before the reference message
+      messagesQuery = database.collections.get('messages').query(
+        Q.where('chat_id', chat[0].id),
+        Q.where(
+          'msg_created_at',
+          Q.lt(referenceMessage._raw['msg_created_at']),
+        ), // Get messages before the reference message
+        Q.sortBy('msg_created_at', Q.desc), // Sort messages by created time in descending order
+        Q.take(50), // Limit to 50 messages
+      );
+    } else {
+      // If no message ID is provided, fetch the latest 100 messages
+      messagesQuery = database.collections
+        .get('messages')
+        .query(
+          Q.where('chat_id', chat[0].id),
+          Q.sortBy('msg_created_at', Q.desc),
+          Q.take(20),
+        );
+    }
+
+    const messages = await messagesQuery.fetch();
+
+    return {localStoredMsgs: messages, chatId: chat[0].id};
+  } catch (error) {
+    console.error('Error fetching messages for chat:', error);
+    throw error;
+  }
+}
+
+// export async function getAllMessagesForChat(chatId, account) {
+//   try {
+//     const user = await database.collections
+//       .get('users')
+//       .query(Q.where('username', account))
+//       .fetch();
+
+//     const chat = await database
+//       .get('chats')
+//       .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+//       .fetch();
+//     const messages = await database.collections
+//       .get('messages')
+//       .query(Q.where('chat_id', chat[0].id), Q.sortBy('msg_created_at', Q.desc))
+//       .fetch();
+//     return {allLocalStoredMsgs: messages, chatId: chat[0].id};
+//   } catch (error) {
+//     console.error('Error fetching messages for chat:', error);
+//     throw error;
+//   }
+// }
+
+export async function checkChatExists(chatUsername, account) {
+  try {
+    const user = await database.collections
+      .get('users')
+      .query(Q.where('username', account))
+      .fetch();
 
     const chat = await database.collections
       .get('chats')
-      .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+      .query(Q.where('user_id', user[0].id), Q.where('username', chatUsername))
       .fetch();
     return chat[0]?._raw; // Returns true if chat exists, false otherwise
   } catch (error) {
@@ -196,12 +432,18 @@ export async function updateChatMsg(
   lastMessage,
   readMessage,
   profilePic,
+  msgId,
+  msgCreatedAt,
 ) {
   try {
     await chat[0].update(chat => {
       chat.lastMessage = lastMessage;
       chat.messageTime = new Date();
       chat.unreadCount = readMessage ? 0 : chat.unreadCount + 1;
+      chat.msgId = msgId;
+      chat.msgCreatedAt = msgCreatedAt
+        ? new Date(msgCreatedAt).toISOString()
+        : new Date().toISOString;
       if (profilePic) {
         chat.profilePic = profilePic;
       }
@@ -260,6 +502,7 @@ export async function updateChatData(chatData, account, profilePic) {
           chat.skills = JSON.stringify(chatData.adviceGenre);
           chat.gotBlockedStatus = chatData.gotBlockedStatus;
           chat.youBlockedStatus = chatData.youBlockedStatus;
+          chat.deactivated = chatData.deactivated;
         });
       } else {
         console.log('chat dosent exist');
@@ -270,7 +513,7 @@ export async function updateChatData(chatData, account, profilePic) {
   }
 }
 
-export async function addMessageToChat(
+export async function addMessageToChat({
   chatId,
   account,
   text,
@@ -278,36 +521,70 @@ export async function addMessageToChat(
   type,
   onChatScreen = false,
   profilePic = '',
-) {
+  id = null,
+  createdAt = null,
+  forwardMsg = {
+    message: '',
+    type: 'message',
+    received: false,
+    username: '',
+    id: '',
+  },
+}) {
   try {
     let newMessage;
-    let lastMessage = type === 'image' ? 'Image' : text;
+    let lastMessage = type === 'image' || type === 'gif' ? type : text;
+
     await database.write(async () => {
+      // Fetch user
       const user = await database.collections
         .get('users')
         .query(Q.where('username', account))
         .fetch();
-      if (user.length > 0) {
-        const chat = await database
-          .get('chats')
-          .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
-          .fetch();
-        if (chat.length > 0) {
-          // Check if chat exists
-          await updateChatMsg(chat, lastMessage, onChatScreen, profilePic);
-          newMessage = await database.get('messages').create(record => {
-            record.chat.set(chat[0]);
-            record.text = type === 'image' && !isReceived ? text.url : text;
-            record.type = type;
-            record.received = isReceived;
-            record.read = onChatScreen;
-            record.uploadingImage = type === 'image' ? text.uploading : false;
-          });
-        } else {
-          console.error('Chat not found:', chatId);
-        }
+
+      if (user.length === 0) {
+        return;
       }
+
+      // Fetch chat for the user
+      const chat = await database
+        .get('chats')
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+        .fetch();
+
+      if (chat.length === 0) {
+        return;
+      }
+
+      // Update chat with last message details
+      await updateChatMsg(
+        chat,
+        lastMessage,
+        onChatScreen,
+        profilePic,
+        id,
+        createdAt,
+      );
+      // Create new message
+      newMessage = await database.get('messages').create(record => {
+        record.chat.set(chat[0]);
+        record.text = type === 'image' && !isReceived ? text.url : text;
+        record.type = type;
+        record.received = isReceived;
+        record.uploadingImage = type === 'image' ? text.uploading : false;
+        record.msgId = id;
+        record.msgCreatedAt = createdAt
+          ? new Date(createdAt).toISOString()
+          : new Date().toISOString();
+        record.status = isReceived ? 'success' : 'pending';
+        record.forwardMsgId = forwardMsg?.id;
+        record.forwardMsg = forwardMsg?.message;
+        record.forwardMsgType = forwardMsg?.type;
+        record.forwardMsgUsername = forwardMsg?.username;
+        record.forwardMsgReceived = forwardMsg?.received;
+      });
     });
+
     return newMessage;
   } catch (error) {
     console.error('Error adding message to chat:', error);
@@ -341,7 +618,7 @@ export async function updateImageUploadStatus(
         if (message.length > 0) {
           // Check if message exists
           await message[0].update(message => {
-            message.uploadingImage = false;
+            message.uploadingImage = uploading;
           });
         } else {
           console.error('Message not found:', messageId);
@@ -373,15 +650,24 @@ export function getCurrentChatObservable(account, username) {
           return database.collections
             .get('chats')
             .query(Q.where('user_id', userId), Q.where('chat_id', username))
-            .observeWithColumns(['you_blocked_status', 'got_blocked_status', 'profile_pic', 'status', 'advice_genre', 'username']);
+            .observeWithColumns([
+              'you_blocked_status',
+              'got_blocked_status',
+              'profile_pic',
+              'status',
+              'advice_genre',
+              'username',
+              'deactivated',
+            ]);
         } catch (error) {
           console.error('Error while querying chats:', error);
           // Return an empty observable or handle the error
           return of([]); // Emit an empty array in case of error
         }
-      })
+      }),
     );
 }
+
 
 export async function unblockChats(chatIds, account) {
   try {
@@ -396,10 +682,7 @@ export async function unblockChats(chatIds, account) {
       // Query for all chats that match the userId and any of the chatIds
       const chats = await database
         .get('chats')
-        .query(
-          Q.where('user_id', userId),
-          Q.where('chat_id', Q.oneOf(chatIds))
-        )
+        .query(Q.where('user_id', userId), Q.where('chat_id', Q.oneOf(chatIds)))
         .fetch();
 
       // Update each chat's youBlockedStatus to false
@@ -415,5 +698,334 @@ export async function unblockChats(chatIds, account) {
     });
   } catch (err) {
     console.log('Error unblocking chats:', err);
+  }
+}
+
+export async function markMsgRead(id, serverId = false) {
+  try {
+    await database.write(async () => {
+      try {
+        let message = [];
+        if (serverId) {
+          message = await database
+            .get('messages')
+            .query(Q.where('msg_id', id))
+            .fetch();
+        } else {
+          message = await database
+            .get('messages')
+            .query(Q.where('id', id))
+            .fetch();
+        }
+        if (message.length > 0) {
+          await message[0].update(message => {
+            message.read = true;
+          });
+        } else {
+          console.error('Message not found:', msgId);
+        }
+      } catch (error) {
+        console.log('error updating read status 1 :', error);
+      }
+    });
+  } catch (err) {
+    console.log('error updating read status 2 :', err);
+  }
+}
+
+export async function updateReadStatusWebSocket(unacknowledgedReadReceipts) {
+  const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+  try {
+    // Extract all msg_ids
+    const ids = unacknowledgedReadReceipts.map(receipt => receipt.msgId);
+
+    // Fetch messages in bulk based on serverId or regular id
+    const messages = await database
+      .get('messages')
+      .query(Q.where('msg_id', Q.oneOf(ids)))
+      .fetch();
+
+    if (messages.length > 0) {
+      await database.write(async () => {
+        await Promise.all(
+          messages.map(async message => {
+            // Update read status and store the acknowledged message
+            await message.update(msg => {
+              msg.read = true;
+            });
+
+            // Push the updated message to the acknowledgedMessages array
+            acknowledgedMessages.push(message._raw['msg_id']);
+          }),
+        );
+      });
+    }
+  } catch (err) {
+    console.log('Error updating read status and acknowledging:', err);
+  }
+
+  // Return the array of acknowledged messages
+  return acknowledgedMessages;
+}
+
+// FOR TESTING ACKNOWLEDGEMENT IN PROD
+
+export async function updateReadStatus(unacknowledgedReadReceipts) {
+  const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+  try {
+    // Extract all msg_ids and filter out undefined or null values
+    const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
+
+    const msgIds = unacknowledgedReadReceipts.map(receipt => receipt._id);
+
+    // Fetch messages in bulk based on either 'id' or 'msg_id'
+    const messages = await database
+      .get('messages')
+      .query(
+        Q.or(Q.where('id', Q.oneOf(ids)), Q.where('msg_id', Q.oneOf(msgIds))),
+      )
+      .fetch();
+
+    if (messages.length > 0) {
+      await database.write(async () => {
+        await Promise.all(
+          messages.map(async message => {
+            // Update read status and store the acknowledged message
+            await message.update(msg => {
+              msg.read = true;
+            });
+
+            // Push the updated message to the acknowledgedMessages array
+            acknowledgedMessages.push(message._raw['msg_id']);
+          }),
+        );
+      });
+    }
+  } catch (err) {
+    console.log('Error updating read status and acknowledging:', err);
+  }
+
+  // Return the array of acknowledged messages
+  return acknowledgedMessages;
+}
+
+// export async function updateReadStatus(unacknowledgedReadReceipts) {
+//   const acknowledgedMessages = []; // Array to hold acknowledged messages
+
+//   try {
+//     // Extract all msg_ids
+//     const ids = unacknowledgedReadReceipts.map(receipt => receipt.localMsgId);
+
+//     // Fetch messages in bulk based on serverId or regular id
+//     const messages = await database
+//       .get('messages')
+//       .query(Q.where('id', Q.oneOf(ids)))
+//       .fetch();
+
+//     if (messages.length > 0) {
+//       await database.write(async () => {
+//         await Promise.all(
+//           messages.map(async message => {
+//             // Update read status and store the acknowledged message
+//             await message.update(msg => {
+//               msg.read = true;
+//             });
+
+//             // Push the updated message to the acknowledgedMessages array
+//             acknowledgedMessages.push(message._raw['msg_id']);
+//           }),
+//         );
+//       });
+//     }
+//   } catch (err) {
+//     console.log('Error updating read status and acknowledging:', err);
+//   }
+
+//   // Return the array of acknowledged messages
+//   return acknowledgedMessages;
+// }
+
+export async function storeSyncedMessages(account, chatId, messages) {
+  try {
+    let newMessagesArray = [];
+    const newMessages = await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+
+      const chat = await database
+        .get('chats')
+        .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+        .fetch();
+
+      if (chat.length > 0) {
+        // Check if chat exists
+        for (const message of messages) {
+          let msgExists = await database
+            .get('messages')
+            .query(Q.where('id', message.localMsgId ?? ''))
+            .fetch();
+          if (!msgExists.length) {
+            const newMessage = await database.get('messages').create(record => {
+              record.chat.set(chat[0]);
+              record.text = message.message;
+              record.type = message.type;
+              record.received = message.senderId !== account;
+              record.read = message.isRead;
+              record.uploadingImage = false;
+              record.msgId = message._id;
+              record.msgCreatedAt = message.createdAt;
+              record.forwardMsg = message.forwardMessage;
+              record.forwardMsgId = message.forwardMessageId;
+              record.forwardMsgType = message.forwardMessageType;
+              record.forwardMsgReceived = message.forwardMessageReceived;
+              record.forwardMsgUsername = message.forwardMessageUsername;
+              record.status = 'success';
+            });
+            newMessagesArray.push(newMessage);
+          }
+        }
+        return newMessagesArray; // Return from inside database.write
+      } else {
+        console.error('Chat not found:', chatId);
+        return newMessagesArray; // Return null if chat not found
+      }
+    });
+
+    return newMessages; // Return the array of newly added messages outside the write block
+  } catch (error) {
+    console.error('Error storing synced messages:', error);
+    throw error;
+  }
+}
+
+export async function updateLocalMessageId(
+  account,
+  chatId,
+  id,
+  tempMsgId,
+  createdAt,
+) {
+  try {
+    await database.write(async () => {
+      const user = await database.collections
+        .get('users')
+        .query(Q.where('username', account))
+        .fetch();
+      if (user.length > 0) {
+        const chat = await database
+          .get('chats')
+          .query(Q.where('user_id', user[0].id), Q.where('chat_id', chatId))
+          .fetch();
+        if (chat.length > 0) {
+          await chat[0].update(chat => {
+            chat.msgId = id;
+            chat.msgCreatedAt = createdAt;
+          });
+          const message = await database
+            .get('messages')
+            .query(Q.where('id', tempMsgId))
+            .fetch();
+          if (message.length > 0) {
+            await message[0].update(message => {
+              message.msgId = id;
+              message.msgCreatedAt = createdAt;
+              message.status = 'success';
+            });
+          }
+          // Check if chat exists
+        } else {
+          console.error('message not found:', chatId);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error updating message:', error);
+    throw error;
+  }
+}
+
+export async function getAllPendingMsgs() {
+  try {
+    const messages = await database.collections
+      .get('messages')
+      .query(Q.where('status', 'pending'), Q.where('uploading_image', false))
+      .fetch();
+    return messages;
+  } catch (error) {
+    console.error('Error fetching pending messages:', error);
+    throw error;
+  }
+}
+
+export async function updateMsgStatus(id, status) {
+  try {
+    await database.write(async () => {
+      const message = await database.collections
+        .get('messages')
+        .query(Q.where('id', id))
+        .fetch();
+      await message[0].update(message => {
+        message.status = status;
+        message.msgCreatedAt = new Date().toISOString();
+      });
+    });
+  } catch (error) {
+    console.error('Error fetching pending messages:', error);
+    throw error;
+  }
+}
+
+export async function getSenderNotifications(sender) {
+  try {
+    const notification = await database.collections
+      .get('notifications')
+      .query(Q.where('sender', sender))
+      .fetch();
+    return notification[0];
+  } catch (error) {
+    console.error('Error fetching sender notification exists:', error);
+    throw error;
+  }
+}
+
+export async function setSenderNotifications(sender) {
+  try {
+    let notification;
+    await database.write(async () => {
+      notification = await database.collections
+        .get('notifications')
+        .create(record => {
+          record.sender = sender;
+        });
+      return notification;
+    });
+    return notification;
+  } catch (error) {
+    console.error('Error setting sender notification:', error);
+    throw error;
+  }
+}
+
+export async function clearSenderNotifications() {
+  try {
+    await database.write(async () => {
+      const notifications = await database.collections
+        .get('notifications')
+        .query() // Fetch all notifications
+        .fetch();
+      const batchOperations = notifications.map(notification =>
+        notification.prepareDestroyPermanently(),
+      );
+
+      // Perform the batch delete
+      await database.batch(...batchOperations);
+    });
+  } catch (error) {
+    console.error('Error deleting sender notifications:', error);
+    throw error;
   }
 }

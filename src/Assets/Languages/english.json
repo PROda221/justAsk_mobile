@@ -87,7 +87,10 @@
   "ChatScreen": {
     "yourBlockStatus": "You blocked this user. Tap to unblock",
     "chatBlocked": "Chat Blocked",
-    "message": "Message"
+    "message": "Message",
+    "chatDeactivated": "Account Deactivated",
+    "imageError": "Please ask this image to be sent again.",
+    "gifError": "Reload"
   },
   "SearchFeature": {
     "EmptyListMsg": "Enter a name or choose a topic by clicking the filter icon to see results.",
@@ -101,7 +104,8 @@
   "UserFeedback": {
     "commentsTitle": "Comments",
     "loadMore": "Load More",
-    "noComments": "has no comments yet..."
+    "noComments": "has no comments yet...",
+    "yourComment": "Your Comment"
   },
   "MyFeedback": {
     "commentsTitle": "Comments",
@@ -117,8 +121,8 @@
   },
   "SettingsScreen": {
     "shareTitle": "HumanTouch Invite Link",
-    "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://www.npmjs.com/package/@react-native-community/netinfo]",
-    "shareUrl": "https://www.npmjs.com/package/@react-native-community/netinfo",
+    "shareMsg": "Hey there! 🌟\n\nI've been using HumanTouch, a fantastic new chat help app that makes staying connected super easy and fun! Whether you need quick answers, want to share moments, or just chat, HumanTouch has got you covered.\n\nCheck it out and join me on HumanTouch! 📱💬\n\n[https://play.google.com/store/apps/details?id=com.just_ask&hl=en]",
+    "shareUrl": "https://play.google.com/store/apps/details?id=com.just_ask&hl=en",
     "cancelButton": "Cancel",
     "yesButton": "Yes",
     "settingsTitle": "Settings",
@@ -127,6 +131,7 @@
     "blockedList": "Blocked List",
     "inviteAFriend": "Invite a friend",
     "deleteAccount": "Delete Account",
+    "deactivateAccount": "Deactivate",
     "logout": "Log out"
   },
   "NoInternetScreen": {
@@ -138,9 +143,13 @@
     "title": "Blocked Users",
     "unblockButton": "Unblock Selected"
   },
+  "CommentComponent": {
+    "showMore": "Show More",
+    "showLess": "Show Less"
+  },
   "AlertBox": {
-    "notificationTitle": "Messages Unavailable Offline",
-    "notificationDescription": "Enable notifications in your phone settings to receive messages even when you're offline.",
+    "notificationTitle": "Notifications Disabled",
+    "notificationDescription": "Enable notifications in your phone settings to be notified even when you're offline.",
     "blockedTitle": "Chat Blocked",
     "blockError": "You have been blocked by the user. You cannot send messages anymore",
     "unblockToOpen": "You have blocked this user. Please unblock to chat again",
@@ -149,6 +158,11 @@
     "resetPassTitle": "Exiting Resetting Password",
     "resetPassMessage": "Are you sure you want to leave?",
     "genereSelectionTitle": "Limit Reached",
-    "genreSelectionDescription": "You can only select up to 3 genres. Please adjust your selection."
+    "genreSelectionDescription": "You can only select up to 3 genres. Please adjust your selection.",
+    "deactivateTitle": "Deactivate Account",
+    "deactivateWarning": "Are you sure you want to deactivate your account? You will no longer be able to use the app unless you reactivate. You can reactivate again by logining in.",
+    "accountDeactivated": "Account Deactivated",
+    "accountDeactivatedDesc": "This account has been deactivated. You will no longer be able to chat unless user reactivates.",
+    "yourAccountDeactivatedDec": "Your account has been deactivated. Please reactivate to continue"
   }
 }

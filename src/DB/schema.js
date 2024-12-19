@@ -1,7 +1,7 @@
 import {appSchema, tableSchema} from '@nozbe/watermelondb';
 
 export const mySchema = appSchema({
-  version: 2,
+  version: 4,
   tables: [
     tableSchema({
       name: 'users',
@@ -15,6 +15,7 @@ export const mySchema = appSchema({
         {name: 'user_id', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
+        {name: 'deactivated', type: 'boolean'},
       ],
     }),
     tableSchema({
@@ -29,10 +30,13 @@ export const mySchema = appSchema({
         {name: 'unread_count', type: 'number'},
         {name: 'got_blocked_status', type: 'boolean'},
         {name: 'you_blocked_status', type: 'boolean'},
+        {name: 'msg_id', type: 'string', isIndexed: true},
+        {name: 'msg_created_at', type: 'string'},
         {name: 'chat_id', type: 'string', isIndexed: true, isUnique: true},
         {name: 'user_id', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
+        {name: 'deactivated', type: 'boolean'},
       ],
     }),
     tableSchema({
@@ -44,8 +48,22 @@ export const mySchema = appSchema({
         {name: 'chat_id', type: 'string', isIndexed: true},
         {name: 'read', type: 'boolean'},
         {name: 'uploading_image', type: 'boolean'},
+        {name: 'msg_id', type: 'string', isIndexed: true},
+        {name: 'msg_created_at', type: 'string', isIndexed: true},
         {name: 'created_at', type: 'number'},
         {name: 'updated_at', type: 'number'},
+        {name: 'status', type: 'string', isIndexed: true},
+        {name: 'forward_msg_id', type: 'string'},
+        {name: 'forward_msg', type: 'string'},
+        {name: 'forward_msg_type', type: 'string'},
+        {name: 'forward_msg_received', type: 'boolean'},
+        {name: 'forward_msg_username', type: 'string'},
+      ],
+    }),
+    tableSchema({
+      name: 'notifications',
+      columns: [
+        {name: 'sender', type: 'string'},
       ],
     }),
   ],

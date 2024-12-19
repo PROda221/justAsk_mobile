@@ -4,6 +4,7 @@ import {
   moderateScale,
   verticalScale,
 } from '../../../Functions/StyleScale';
+import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type MyFeedbackStyles = {
   gradientContainer: ViewStyle;
@@ -42,7 +43,7 @@ export type MyFeedbackStyles = {
   userDetailsHeader: ViewStyle;
 };
 
-export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
+export const getMyFeedbackStyles = (colors: DarkColors): MyFeedbackStyles =>
   StyleSheet.create<MyFeedbackStyles>({
     gradientContainer: {
       flex: 1,
@@ -98,8 +99,8 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
       marginTop: verticalScale(10),
     },
     commentUserAvatar: {
-      width: horizontalScale(35),
-      height: verticalScale(35),
+      width: moderateScale(35),
+      height: moderateScale(35),
       borderRadius: moderateScale(18),
     },
     usernameText: {
@@ -124,16 +125,17 @@ export const getMyFeedbackStyles = (colors): MyFeedbackStyles =>
     },
     commentText: {
       textAlign: 'justify',
-      paddingHorizontal: horizontalScale(10),
-      paddingTop: verticalScale(5),
+      padding: moderateScale(10),
       fontSize: moderateScale(12),
+      lineHeight: verticalScale(18),
+      color: colors.textPrimaryColor,
     },
     mainHeader: {
       flexDirection: 'row',
     },
     profileImage: {
-      width: horizontalScale(100),
-      height: verticalScale(100),
+      width: moderateScale(100),
+      height: moderateScale(100),
       borderRadius: moderateScale(50),
     },
     nameText: {

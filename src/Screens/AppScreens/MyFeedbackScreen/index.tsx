@@ -23,6 +23,7 @@ import {useProfile} from '../../../CustomHooks/AppHooks/useProfile';
 import {getProfilePic} from '../../../Functions/GetProfilePic';
 import content from '../../../Assets/Languages/english.json';
 import {formatTimestamp} from '../../../Functions/FormatTime';
+import {Comment as CommentComponent} from '../../../Components/Comment';
 
 const MyFeedbackPage = () => {
   const [loading, setLoading] = useState(true);
@@ -213,57 +214,17 @@ const MyFeedbackPage = () => {
 
   const renderItem: ListRenderItem<Comment> = ({item}) => {
     return (
-      <View style={styles.commentCard}>
-        <View style={styles.mainHeader}>
-          <View style={styles.feedbackImgContainer}>
-            <Image
-              source={{
-                uri: getProfilePic(item.commentUserPic),
-              }}
-              transition={500}
-              style={styles.commentUserAvatar}
-            />
-          </View>
-
-          <View style={styles.commentHeaderContainer}>
-            <View style={styles.userDetailsHeader}>
-              <Typography
-                bgColor={colors.textPrimaryColor}
-                fontWeight="400"
-                textStyle={styles.usernameText}>
-                {item.commentUserId}
-              </Typography>
-              <Typography
-                bgColor={colors.textInputPlaceholderColor}
-                fontWeight="400"
-                textStyle={styles.timeText}>
-                {formatTimestamp(item.updatedAt)}
-              </Typography>
-            </View>
-
-            <View style={styles.commentStarContainer}>
-              <Typography
-                bgColor={colors.textPrimaryColor}
-                fontWeight="400"
-                textStyle={styles.starText}>
-                {`x${item.rating}`}
-              </Typography>
-              <Entypo
-                name="star"
-                size={moderateScale(12)}
-                color={colors.starColor}
-              />
-            </View>
-          </View>
-        </View>
-
-        <Typography
-          bgColor={colors.textPrimaryColor}
-          fontWeight="400"
-          textStyle={styles.commentText}>
-          {item.content}
-        </Typography>
-      </View>
+      <CommentComponent
+        content={item.content}
+        bgColor={colors.textPrimaryColor}
+        numberOfLines={3}
+        textStyle={styles.commentText}
+        feedbackStyles={styles}
+        commentUserPic={item.commentUserPic}
+        commentUserId={item.commentUserId}
+        rating={item.rating}
+        updatedAt={item.updatedAt}
+      />
     );
   };
 

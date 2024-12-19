@@ -1,5 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import {moderateScale} from '../../../Functions/StyleScale';
+import {moderateScale, verticalScale} from '../../../Functions/StyleScale';
 import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 
 export type EditProfileSheetStyles = {
@@ -9,20 +9,28 @@ export type EditProfileSheetStyles = {
   textStyle: TextStyle;
   separator: ViewStyle;
   statusHeader: ViewStyle;
+  statusOption: ViewStyle;
+  textInputViewStyle: ViewStyle;
 };
 
 export const getEditProfileSheetStyles = (
   colors: DarkColors,
 ): EditProfileSheetStyles =>
   StyleSheet.create<EditProfileSheetStyles>({
-    actionSheet: {backgroundColor: colors.appScreenPrimaryBackground},
+    actionSheet: {
+      backgroundColor: colors.appScreenPrimaryBackground,
+      paddingVertical: verticalScale(10),
+    },
     container: {
-      height: 'auto',
       borderTopRightRadius: moderateScale(10),
       borderTopLeftRadius: moderateScale(10),
       backgroundColor: colors.appScreenPrimaryBackground,
     },
     option: {
+      padding: moderateScale(20),
+    },
+    statusOption: {
+      minHeight: moderateScale(140),
       padding: moderateScale(20),
     },
     textStyle: {
@@ -37,4 +45,5 @@ export const getEditProfileSheetStyles = (
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
+    textInputViewStyle: {maxHeight: moderateScale(66)},
   });

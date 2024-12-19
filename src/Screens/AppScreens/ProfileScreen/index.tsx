@@ -53,7 +53,7 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   const [loading, setLoading] = useState(true);
   const {username, status, skills, accountName} = route.params;
   const {userProfileSuccess, userProfileLoading} = useUserProfile(username);
-  const {callBlockUserApi} = useBlockUser(username);
+  const {callBlockUserApi, blockLoading} = useBlockUser(username);
   const {imageColors} = useImageColors(chatDetails[0]._raw?.['profile_pic']);
 
   const {colors} = useTheme();
@@ -108,7 +108,7 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
   };
 
   return (
-    <Skeleton.Group show={userProfileLoading || loading}>
+    <Skeleton.Group show={userProfileLoading || loading || blockLoading}>
       <LinearGradient
         colors={[
           imageColors?.primary ?? '#000',
@@ -119,23 +119,25 @@ const UserProfile = ({navigation, route, chatDetails}: UserProfileProps) => {
         style={styles.gradientContainer}>
         <View style={styles.headerContainer}>
           <Header />
-          <View style={styles.blockIconStyle}>
+          <TouchableOpacity
+            style={styles.blockIconStyle}
+            onPress={handleBlock}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
             <Skeleton colorMode="light">
               <Entypo
                 name="block"
-                size={moderateScale(30)}
+                size={moderateScale(40)}
                 color={colors.blockIconColor}
-                onPress={handleBlock}
               />
             </Skeleton>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.container}>
           <Skeleton
             colorMode="light"
-            height={verticalScale(165)}
-            width={horizontalScale(165)}>
+            height={moderateScale(165)}
+            width={moderateScale(165)}>
             <TouchableOpacity
               onPress={openFullImage}
               style={styles.imageContainer}>

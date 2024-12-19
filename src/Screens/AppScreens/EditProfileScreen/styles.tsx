@@ -48,7 +48,7 @@ export const getEditProfileStyles = (colors): EditProfileStyles =>
       marginTop: verticalScale(25),
     },
     feedbackButtonContainer: {
-      paddingTop: verticalScale(20),
+      paddingTop: verticalScale(30),
       width: horizontalScale(200),
     },
     feedbackButtonStyle: {
@@ -84,8 +84,8 @@ export const getEditProfileStyles = (colors): EditProfileStyles =>
       alignSelf: 'center',
     },
     imageContainer: {
-      width: horizontalScale(165),
-      height: verticalScale(165),
+      width: moderateScale(165),
+      height: moderateScale(165),
       borderRadius: moderateScale(83),
       borderWidth: moderateScale(2),
       borderColor: colors.profileRing,
@@ -99,8 +99,8 @@ export const getEditProfileStyles = (colors): EditProfileStyles =>
     },
 
     profileImage: {
-      width: horizontalScale(155),
-      height: verticalScale(155),
+      width: moderateScale(155),
+      height: moderateScale(155),
       borderRadius: moderateScale(78),
     },
     nameText: {

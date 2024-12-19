@@ -83,12 +83,15 @@ const HomeHeader = ({
             </Skeleton>
           </View>
         </View>
-        <Fontisto
-          name="player-settings"
-          size={moderateScale(20)}
-          color={colors.settingsIcons}
+        <TouchableOpacity
           onPress={openSettings}
-        />
+          hitSlop={{top: 20, bottom: 20, left: 30, right: 30}}>
+          <Fontisto
+            name="player-settings"
+            size={moderateScale(20)}
+            color={colors.settingsIcons}
+          />
+        </TouchableOpacity>
       </View>
     </Skeleton.Group>
   );

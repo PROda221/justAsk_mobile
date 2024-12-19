@@ -11,6 +11,7 @@ import { Endpoints } from '../../Api/Endpoints';
   profilePic: string;
   message: string;
   adviceGenre: string[];
+  deactivated: boolean;
   averageRating: Array<{_id: string; averageStars: number}>
 };
 

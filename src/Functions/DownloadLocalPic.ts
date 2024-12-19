@@ -1,6 +1,18 @@
 import ReactNativeBlobUtil from 'react-native-blob-util';
 import {baseURL, storageBucketUrl} from '../Constants';
 
+export const downloadImg = async (imgUrl: string, prevImg?: string) => {
+  try {
+    let downloadedPic: string | null;
+    downloadedPic = await downloadImageToLocal(imgUrl ?? '', prevImg);
+
+    let computedImg = {uri: `file://${downloadedPic}`};
+    return computedImg.uri;
+  } catch (err) {
+    console.log('err in fetchProfilePic :', err);
+  }
+};
+
 export const removeFirebaseUrl = (filePath: string = '', baseUrl: string): string => {
   // Remove the base URL from the filePath
   const updatedPath = filePath.replace(baseUrl, '');
@@ -8,7 +20,7 @@ export const removeFirebaseUrl = (filePath: string = '', baseUrl: string): strin
 };
 
 const DOWNLOAD_DIR = ReactNativeBlobUtil.fs.dirs.DownloadDir;
-export const downloadImage = async (
+export const downloadImageToLocal = async (
   url: string,
   image?: string,
   gotBlockedStatus: boolean = false,
