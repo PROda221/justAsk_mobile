@@ -21,7 +21,6 @@ import SoundPlayer from 'react-native-sound-player';
 import {forwardMsgType} from '../../Screens/AppScreens/ChatScreen/types';
 
 let allMessages: Model[] = [];
-let currentMessagesMap = new Map();
 
 export const useStartChat = (
   username: string,
@@ -34,6 +33,11 @@ export const useStartChat = (
   const [messages, setMessages] = useState<Model[]>([]);
   // const [chatId, setChatId] = useState<string>('');
   const [hasMore, setHasMore] = useState<boolean>(true);
+
+  let currentMessagesMapRef = useRef(new Map());
+  let currentMessages = useRef(messages);
+
+  // const currentMessagesMapRef = useRef(new Map());
   const appState = useRef(AppState.currentState);
   const wasConnected = useRef(false);
   const initialMount = useRef(true);
@@ -162,25 +166,18 @@ export const useStartChat = (
     currentMessages: Model[],
     updatedMessages: Model[],
   ) {
-    // Create a Map of current messages for quick lookup
-    const currentMessagesMap = new Map(
-      currentMessages.map(msg => [msg.id, msg]),
-    );
+    // Create a Map of updated messages for quick lookup
+  const messagesMap = new Map(updatedMessages.map(msg => [msg.id, msg]));
 
-    // Process each updated message
-    updatedMessages.forEach(updatedMsg => {
-      const existingMsg = currentMessagesMap.get(updatedMsg.id);
+  // Add current messages to the map only if they don't already exist
+  currentMessages.forEach(msg => {
+      messagesMap.set(msg.id, msg);
+  });
 
-      if (!existingMsg) {
-        // New message: Add it to the map
-        currentMessagesMap.set(updatedMsg.id, updatedMsg);
-      }
-    });
+  // Convert the map back to an array and preserve the order
+  const updatedMessagesArray = Array.from(messagesMap.values());
 
-    // Convert the updated map back to an array and sort it
-    const updatedMessagesArray = Array.from(currentMessagesMap.values());
-
-    return updatedMessagesArray;
+  return updatedMessagesArray;
   }
 
   // const debouncedFetchMessages = debounce(() => {
@@ -211,18 +208,22 @@ export const useStartChat = (
   }, [syncMessagesSuccess]);
 
   useEffect(() => {
+    currentMessages.current = messages;
+  }, [messages])
+
+  useEffect(() => {
     const messageSubcsription = observeMessageChanges(
       username,
       profileSlice.success?.username,
-      currentMessagesMap,
+      currentMessagesMapRef,
     ).subscribe(
       (data: {
         changedMessages: Model[];
         updatedMessagesMap: Map<string, Model>;
       }) => {
-        currentMessagesMap = data?.updatedMessagesMap;
+        currentMessagesMapRef.current = data.updatedMessagesMap;
         const newMessagesState = updateMessagesState(
-          messages,
+          currentMessages.current,
           data?.changedMessages,
         );
         if (newMessagesState.length) {
@@ -230,7 +231,6 @@ export const useStartChat = (
         }
       },
     );
-
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -252,12 +252,12 @@ export const useStartChat = (
     });
 
     return () => {
+      allMessages = [];
+      currentMessagesMapRef.current.clear();
+      messageSubcsription?.unsubscribe();
       networkSubscription();
       subscription.remove();
       socket?.off('statusUpdate');
-      allMessages = [];
-      currentMessagesMap.clear();
-      messageSubcsription?.unsubscribe();
     };
   }, []);
 

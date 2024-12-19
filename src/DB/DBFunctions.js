@@ -322,7 +322,7 @@ export function observeMessageChanges(chatId, account, currentMessagesMap) {
                     );
 
                     const changedMessages = updatedMessages.filter(msg => {
-                      const current = currentMessagesMap.get(msg.id);
+                      const current = currentMessagesMap.current.get(msg.id);
                       return (
                         !current ||
                         current.msg_updated_at !== msg.msg_updated_at
