@@ -9,26 +9,16 @@ import {
 } from '../../../Functions/StyleScale';
 import {DarkColors} from '../../../useContexts/Theme/ThemeType';
 import {HomeScreenStyles} from './styles';
-import {withObservables} from '@nozbe/watermelondb/react';
-import database from '../../../DB/database';
-import {Model, Q} from '@nozbe/watermelondb';
 import {Image} from 'expo-image';
 import {SheetManager} from 'react-native-actions-sheet';
 import {Skeleton} from 'moti/skeleton';
-
-const enhance = withObservables(['username'], ({username}) => ({
-  currentUser: database
-    .get('users')
-    .query(Q.where('username', username))
-    .observeWithColumns(['profile_pic', 'status']),
-}));
+import {useCurrentUserProfileStatus} from '../../../CustomHooks/AppHooks/useCurrentUserProfileStatus';
 
 type Props = {
   styles: HomeScreenStyles;
   colors: DarkColors;
   username: string;
   openSettings: () => void;
-  currentUser: Model[];
   loading: boolean;
 };
 
@@ -37,14 +27,15 @@ const HomeHeader = ({
   colors,
   username,
   openSettings,
-  currentUser,
   loading,
 }: Props) => {
+  const {currentUserProfile} = useCurrentUserProfileStatus(username);
+
   const openFullImage = () => {
-    if (currentUser[0]?._raw['profile_pic']) {
+    if (currentUserProfile?.[0]?._raw['profile_pic']) {
       void SheetManager.show('ViewProfileImage-sheet', {
         payload: {
-          imageUrl: currentUser[0]?._raw['profile_pic'],
+          imageUrl: currentUserProfile[0]?._raw['profile_pic'],
         },
       });
     }
@@ -65,7 +56,7 @@ const HomeHeader = ({
               <Image
                 cachePolicy={'none'}
                 source={{
-                  uri: currentUser[0]?._raw['profile_pic'],
+                  uri: currentUserProfile?.[0]?._raw['profile_pic'],
                 }}
                 style={styles.img}
                 transition={500}
@@ -97,4 +88,4 @@ const HomeHeader = ({
   );
 };
 
-export default enhance(HomeHeader);
+export default HomeHeader;

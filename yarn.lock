@@ -5756,6 +5756,11 @@ expo-asset@~10.0.10:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
+expo-blur@~13.0.2:
+  version "13.0.2"
+  resolved "https://registry.yarnpkg.com/expo-blur/-/expo-blur-13.0.2.tgz#c2d179b19b13830db1d8b90c51373235f462e958"
+  integrity sha512-t2p7BChO3Reykued++QJRMZ/og6J3aXtSQ+bU31YcBeXhZLkHwjWEhiPKPnJka7J2/yTs4+jOCNDY0kCZmcE3w==
+
 expo-constants@~16.0.0:
   version "16.0.2"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-16.0.2.tgz#eb5a1bddb7308fd8cadac8fc44decaf4784cac5e"
@@ -9246,6 +9251,11 @@ queue@6.0.2:
   integrity sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==
   dependencies:
     inherits "~2.0.3"
+
+randomcolor@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/randomcolor/-/randomcolor-0.6.2.tgz#7a57362ae1a1278439aeed2c15e5deb8ea33f56d"
+  integrity sha512-Mn6TbyYpFgwFuQ8KJKqf3bqqY9O1y37/0jgSK/61PUxV4QfIMv0+K2ioq8DfOjkBslcjwSzRfIDEXfzA9aCx7A==
 
 range-parser@~1.2.1:
   version "1.2.1"

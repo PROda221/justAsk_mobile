@@ -19,7 +19,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {Model} from '@nozbe/watermelondb';
 
 type PropTypes = {
-  activeMsg: Model[] | undefined;
+  activeMsg: Model | undefined;
   username: string;
   account?: string;
   id: string;
@@ -32,6 +32,7 @@ type PropTypes = {
   index: number;
   forwardMsg?: (msg: forwardMsgType) => void;
   toggleScroll: (scrollValue: boolean) => void;
+  highlightedMessageId: null | number;
   sendMessages: (
     imagemessageInputUrl: string,
     username: string,

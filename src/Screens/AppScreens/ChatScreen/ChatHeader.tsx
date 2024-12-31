@@ -20,17 +20,10 @@ type PropsType = {
   image: string;
   animatedStyle: ViewStyle;
   statusStyle: ViewStyle;
-  activeChat: Model[];
   averageRating?: number;
+  profilePic?: string;
   openUserProfle: () => void;
 };
-
-const enhance = withObservables(
-  ['accountName', 'username'],
-  ({accountName, username}) => ({
-    activeChat: getCurrentChatObservable(accountName, username),
-  }),
-);
 
 const ChatHeader = ({
   styles,
@@ -39,7 +32,7 @@ const ChatHeader = ({
   animatedStyle,
   statusStyle,
   image,
-  activeChat,
+  profilePic,
   averageRating = 0,
   openUserProfle,
 }: PropsType) => {
@@ -55,7 +48,7 @@ const ChatHeader = ({
       />
       <TouchableOpacity onPress={openUserProfle}>
         <Image
-          source={{uri: activeChat[0]?._raw['profile_pic'] || image}}
+          source={{uri: profilePic || image}}
           transition={200}
           style={styles.profileImage}
         />
@@ -90,4 +83,4 @@ const ChatHeader = ({
   );
 };
 
-export default enhance(ChatHeader);
+export default ChatHeader;

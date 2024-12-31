@@ -1,5 +1,5 @@
 import * as React from 'react';
-import EnhancedHomeScreen from '../../Screens/AppScreens/HomeScreen';
+import HomeScreen from '../../Screens/AppScreens/HomeScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChatScreen from '../../Screens/AppScreens/ChatScreen';
 import {SocketProvider} from '../../useContexts/SocketContext';
@@ -24,7 +24,7 @@ const AppNavigation = () => (
         animation: 'fade_from_bottom',
         statusBarColor: 'black',
       }}>
-      <AppStack.Screen name="Home" component={EnhancedHomeScreen} />
+      <AppStack.Screen name="Home" component={HomeScreen} />
       <AppStack.Screen name="ChatScreen" component={ChatScreen} />
       <AppStack.Screen name="UserProfile" component={UserProfile} />
       <AppStack.Screen name="UserFeedback" component={FeedbackScreen} />

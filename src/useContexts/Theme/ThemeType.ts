@@ -79,4 +79,5 @@ export type DarkColors = {
   SendingReceipt: string;
   forwardMessageIcon: string;
   forwardMessageTheme: string;
+  highlightMessage: string;
 };

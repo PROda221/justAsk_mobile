@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import Autolink from 'react-native-autolink';
 import {Typography} from '../../../Components';
@@ -16,6 +16,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {moderateScale} from '../../../Functions/StyleScale';
 import ReplyMessageBar from '../../../Components/ReplyMessageBar';
 import MultiImageBox from './MultiImageBox';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolateColor,
+} from 'react-native-reanimated';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -23,7 +29,7 @@ const blurhash =
 type MessageProps = {
   colors: DarkColors;
   styles: ChatScreenStyles;
-  activeMsg: Model[] | undefined;
+  activeMsg: Model | undefined;
   username: string;
   id: string;
   type: 'message' | 'image' | 'gif';
@@ -33,6 +39,7 @@ type MessageProps = {
   msgCreatedAt?: Date;
   uploadProgress: number;
   index: number;
+  highlightedMessageId: null | number;
   sendMessages: (
     imagemessageInputUrl: string,
     username: string,
@@ -66,7 +73,19 @@ const Message = ({
   styles,
   uploadProgress,
   index,
+  highlightedMessageId,
 }: MessageProps) => {
+  const fadeOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    if (highlightedMessageId === index) {
+      fadeOpacity.value = 1; // Reset to fully visible
+      fadeOpacity.value = withTiming(
+        0, // Animate to fully transparent
+        {duration: 5000}, // Duration of the fade-out
+      );
+    }
+  }, [highlightedMessageId, index]);
   const showMsgTicks = () => {
     return (
       <>
@@ -112,6 +131,28 @@ const Message = ({
     );
   };
 
+  const animatedMsgBackgroundStyle = useAnimatedStyle(() => {
+    // Ensure `highlightedMessageId` and `fadeOpacity.value` are reactive
+    const isHighlighted = highlightedMessageId === index;
+    const originalColor = received
+      ? colors.receivedMsgColor
+      : colors.sentMsgColor;
+    const backgroundColor = interpolateColor(
+      fadeOpacity.value,
+      [0, 1], // Fade range
+      [originalColor, colors.highlightMessage], // From original color to gold
+    );
+
+    return {
+      backgroundColor:
+        isHighlighted && fadeOpacity.value > 0
+          ? backgroundColor // Fading gold
+          : received
+            ? colors.receivedMsgColor // Received message color
+            : colors.sentMsgColor, // Sent message color
+    };
+  });
+
   const getImages = (images: string) => {
     try {
       let imagesArray = JSON.parse(images);
@@ -132,17 +173,15 @@ const Message = ({
         styles.messageContainer,
         received ? styles.messageReceived : styles.messageSent,
       ]}>
-      <View
+      <Animated.View
         style={[
           styles.messageBox,
+          animatedMsgBackgroundStyle,
           {
             minWidth: activeMsg?._raw['forward_msg'] ? '50%' : '0%',
             alignItems: activeMsg?._raw['forward_msg']
               ? 'flex-start'
               : 'center',
-            backgroundColor: received
-              ? colors.receivedMsgColor
-              : colors.sentMsgColor,
           },
         ]}>
         {activeMsg?._raw['forward_msg'] &&
@@ -202,7 +241,7 @@ const Message = ({
             </View>
           </View>
         )}
-      </View>
+      </Animated.View>
       <View style={styles.msgInfoContainer}>
         <Typography
           textStyle={styles.msgTime}

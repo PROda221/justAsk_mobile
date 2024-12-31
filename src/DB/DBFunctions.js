@@ -849,8 +849,10 @@ export async function updateReadStatus(unacknowledgedReadReceipts) {
 
 export async function storeSyncedMessages(account, chatId, messages) {
   try {
-    let newMessagesArray = [];
-    const newMessages = await database.write(async () => {
+    const newMessagesArray = [];
+    const BATCH_SIZE = 100; // Define a chunk size to avoid performance issues
+
+    await database.write(async () => {
       const user = await database.collections
         .get('users')
         .query(Q.where('username', account))
@@ -862,14 +864,16 @@ export async function storeSyncedMessages(account, chatId, messages) {
         .fetch();
 
       if (chat.length > 0) {
-        // Check if chat exists
+        const batchOperations = [];
+
         for (const message of messages) {
-          let msgExists = await database
+          const msgExists = await database
             .get('messages')
             .query(Q.where('id', message.localMsgId ?? ''))
             .fetch();
+
           if (!msgExists.length) {
-            const newMessage = await database.get('messages').create(record => {
+            const newMessage = database.collections.get('messages').prepareCreate(record => {
               record.chat.set(chat[0]);
               record.text = message.message;
               record.type = message.type;
@@ -885,22 +889,28 @@ export async function storeSyncedMessages(account, chatId, messages) {
               record.forwardMsgUsername = message.forwardMessageUsername;
               record.status = 'success';
             });
+            batchOperations.push(newMessage);
             newMessagesArray.push(newMessage);
           }
         }
-        return newMessagesArray; // Return from inside database.write
+
+        // Split batchOperations into chunks
+        for (let i = 0; i < batchOperations.length; i += BATCH_SIZE) {
+          const chunk = batchOperations.slice(i, i + BATCH_SIZE);
+          await database.batch(...chunk); // Process each chunk separately
+        }
       } else {
         console.error('Chat not found:', chatId);
-        return newMessagesArray; // Return null if chat not found
       }
     });
 
-    return newMessages; // Return the array of newly added messages outside the write block
+    return newMessagesArray; // Return the array of newly added messages
   } catch (error) {
     console.error('Error storing synced messages:', error);
     throw error;
   }
 }
+
 
 export async function updateLocalMessageId(
   account,

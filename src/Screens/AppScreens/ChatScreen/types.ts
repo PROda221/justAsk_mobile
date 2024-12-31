@@ -2,7 +2,7 @@ import { Model } from "@nozbe/watermelondb";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export type MessageType = {
+export type MessageType = Model & {
       id: string;
       text: string;
       type: 'image' | 'message' | 'gif';

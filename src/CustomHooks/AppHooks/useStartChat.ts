@@ -167,17 +167,17 @@ export const useStartChat = (
     updatedMessages: Model[],
   ) {
     // Create a Map of updated messages for quick lookup
-  const messagesMap = new Map(updatedMessages.map(msg => [msg.id, msg]));
+    const messagesMap = new Map(updatedMessages.map(msg => [msg.id, msg]));
 
-  // Add current messages to the map only if they don't already exist
-  currentMessages.forEach(msg => {
+    // Add current messages to the map only if they don't already exist
+    currentMessages.forEach(msg => {
       messagesMap.set(msg.id, msg);
-  });
+    });
 
-  // Convert the map back to an array and preserve the order
-  const updatedMessagesArray = Array.from(messagesMap.values());
+    // Convert the map back to an array and preserve the order
+    const updatedMessagesArray = Array.from(messagesMap.values());
 
-  return updatedMessagesArray;
+    return updatedMessagesArray;
   }
 
   // const debouncedFetchMessages = debounce(() => {
@@ -187,8 +187,10 @@ export const useStartChat = (
   useEffect(() => {
     const getMessages = async (data: MessageObj) => {
       if (data) {
-        let newMessages: Model[] = [];
-        newMessages = await storeSyncedMessages(
+        // let newMessages: Model[] = [];
+        // newMessages = 
+        
+        await storeSyncedMessages(
           profileSlice.success?.username,
           username,
           data.newMessages,
@@ -209,28 +211,9 @@ export const useStartChat = (
 
   useEffect(() => {
     currentMessages.current = messages;
-  }, [messages])
+  }, [messages]);
 
   useEffect(() => {
-    const messageSubcsription = observeMessageChanges(
-      username,
-      profileSlice.success?.username,
-      currentMessagesMapRef,
-    ).subscribe(
-      (data: {
-        changedMessages: Model[];
-        updatedMessagesMap: Map<string, Model>;
-      }) => {
-        currentMessagesMapRef.current = data.updatedMessagesMap;
-        const newMessagesState = updateMessagesState(
-          currentMessages.current,
-          data?.changedMessages,
-        );
-        if (newMessagesState.length) {
-          setMessages(newMessagesState);
-        }
-      },
-    );
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
         appState.current.match(/inactive|background/) &&
@@ -250,6 +233,26 @@ export const useStartChat = (
         wasConnected.current = false; // Reset connection status when offline
       }
     });
+
+    const messageSubcsription = observeMessageChanges(
+      username,
+      profileSlice.success?.username,
+      currentMessagesMapRef,
+    ).subscribe(
+      (data: {
+        changedMessages: Model[];
+        updatedMessagesMap: Map<string, Model>;
+      }) => {
+          currentMessagesMapRef.current = data.updatedMessagesMap;
+          const newMessagesState = updateMessagesState(
+            currentMessages.current,
+            data?.changedMessages,
+          );
+          if (newMessagesState.length) {
+            setMessages(newMessagesState);
+          }
+        }
+    );
 
     return () => {
       allMessages = [];
@@ -272,8 +275,10 @@ export const useStartChat = (
       });
     };
 
-    fetchMessages();
-    connectWithUser();
+    if (username) {
+      fetchMessages();
+      connectWithUser();
+    }
   }, [username]);
 
   return {

@@ -1,5 +1,7 @@
 import { Platform } from "react-native";
 
+const circleBackgroundColors = ['#2E5077', '#4DA1A9', '#79D7BE', '#213555', '#0000']
+
 const allGenres = [
     "Health & Fitness",
     "Relationships",
@@ -37,4 +39,4 @@ const allGenres = [
   // const baseURL = 'http://52.66.244.89:8001'
   const storageBucketUrl = "https://storage.googleapis.com/justask-ee06a.appspot.com"
 
-  export {allGenres, baseURL, storageBucketUrl}
+  export {allGenres, baseURL, storageBucketUrl, circleBackgroundColors}

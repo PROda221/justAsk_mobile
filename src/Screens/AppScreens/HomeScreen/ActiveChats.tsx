@@ -10,10 +10,9 @@ import {getHomeScreenStyles} from './styles';
 import {_RawRecord} from '@nozbe/watermelondb/RawRecord';
 import {ParamListBase} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {getUserChats} from '../../../DB/DBFunctions';
-import {withObservables} from '@nozbe/watermelondb/react';
 import NewMsgNumber from './NewMsgNumber';
 import ErrorBox from '../../../Components/ErrorBox';
+import {useActiveChats} from '../../../CustomHooks/AppHooks/useActiveChats';
 
 type ActiveChatsType = {
   _raw: _RawRecord;
@@ -23,21 +22,17 @@ type PropsType = {
   accountName?: string;
   error: string;
   navigation: NativeStackNavigationProp<ParamListBase>;
-  activeChats: Model[] | [];
   retryProfileApi: () => void;
 };
 
-const enhance = withObservables(['accountName'], ({accountName}) => ({
-  activeChats: getUserChats(accountName),
-}));
-
 const ActiveChats = ({
-  activeChats,
   navigation,
   error,
   accountName,
   retryProfileApi,
 }: PropsType) => {
+  const {activeChats} = useActiveChats(accountName);
+
   const {colors} = useTheme();
   const styles = getHomeScreenStyles(colors);
 
@@ -118,4 +113,4 @@ const ActiveChats = ({
   );
 };
 
-export default enhance(ActiveChats);
+export default ActiveChats;
